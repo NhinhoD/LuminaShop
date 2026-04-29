@@ -39,3 +39,11 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# legacy and backups
+_legacy/
+_vite_backup/
+
+# agent specific
+AGENTS.md
+CLAUDE.md
