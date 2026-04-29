@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>LUMINA - E-commerce Homepage</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "tertiary-fixed": "#6ffbbe",
+                      "inverse-surface": "#213145",
+                      "on-primary-fixed-variant": "#3f465c",
+                      "surface-variant": "#d3e4fe",
+                      "tertiary-fixed-dim": "#4edea3",
+                      "outline": "#76777d",
+                      "on-primary": "#ffffff",
+                      "on-secondary-container": "#fefcff",
+                      "on-primary-container": "#7c839b",
+                      "outline-variant": "#c6c6cd",
+                      "surface-bright": "#f8f9ff",
+                      "on-secondary-fixed": "#00174b",
+                      "inverse-primary": "#bec6e0",
+                      "background": "#f8f9ff",
+                      "secondary-fixed": "#dbe1ff",
+                      "surface-container": "#e5eeff",
+                      "secondary": "#0051d5",
+                      "tertiary": "#000000",
+                      "on-tertiary-container": "#009668",
+                      "on-secondary-fixed-variant": "#003ea8",
+                      "surface-container-high": "#dce9ff",
+                      "on-background": "#0b1c30",
+                      "on-error": "#ffffff",
+                      "surface": "#f8f9ff",
+                      "primary-container": "#131b2e",
+                      "tertiary-container": "#002113",
+                      "primary-fixed-dim": "#bec6e0",
+                      "on-tertiary-fixed-variant": "#005236",
+                      "secondary-container": "#316bf3",
+                      "on-tertiary-fixed": "#002113",
+                      "error-container": "#ffdad6",
+                      "on-secondary": "#ffffff",
+                      "surface-container-low": "#eff4ff",
+                      "error": "#ba1a1a",
+                      "primary": "#000000",
+                      "surface-dim": "#cbdbf5",
+                      "on-surface": "#0b1c30",
+                      "on-primary-fixed": "#131b2e",
+                      "surface-container-highest": "#d3e4fe",
+                      "on-error-container": "#93000a",
+                      "secondary-fixed-dim": "#b4c5ff",
+                      "inverse-on-surface": "#eaf1ff",
+                      "primary-fixed": "#dae2fd",
+                      "surface-tint": "#565e74",
+                      "on-surface-variant": "#45464d",
+                      "on-tertiary": "#ffffff",
+                      "surface-container-lowest": "#ffffff"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "gutter": "24px",
+                      "sm": "12px",
+                      "base": "8px",
+                      "xs": "4px",
+                      "md": "24px",
+                      "xl": "80px",
+                      "container-max": "1280px",
+                      "lg": "48px"
+              },
+              "fontFamily": {
+                      "h1": ["Manrope"],
+                      "body-lg": ["Manrope"],
+                      "label-md": ["Manrope"],
+                      "h2": ["Manrope"],
+                      "body-sm": ["Manrope"],
+                      "h3": ["Manrope"],
+                      "label-sm": ["Manrope"],
+                      "body-md": ["Manrope"],
+                      "display": ["Manrope"]
+              },
+              "fontSize": {
+                      "h1": ["32px", {"lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                      "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                      "label-md": ["14px", {"lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                      "h2": ["24px", {"lineHeight": "1.4", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                      "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                      "h3": ["20px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                      "label-sm": ["12px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                      "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                      "display": ["48px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "800"}]
+              }
+            }
+          }
+        }
+    </script>
+<style>
+        /* Custom utilities that might not be fully covered by simple inline tailwind classes */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .image-overlay {
+            background: linear-gradient(to top, rgba(11, 28, 48, 0.8) 0%, rgba(11, 28, 48, 0) 100%);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md text-body-md antialiased selection:bg-primary selection:text-on-primary">
+<!-- TopNavBar -->
+<header class="fixed top-0 w-full z-50 bg-white/90 backdrop-blur-md dark:bg-slate-950/90 border-b border-slate-100 dark:border-slate-800 shadow-sm dark:shadow-none">
+<div class="flex justify-between items-center w-full px-8 md:px-12 py-4 max-w-[1280px] mx-auto">
+<!-- Navigation Links (Left) -->
+<nav class="hidden md:flex gap-6 items-center">
+<a class="font-['Manrope'] text-sm font-medium tracking-wide uppercase text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors hover:opacity-70 transition-opacity duration-200" href="#">Shop All</a>
+<a class="font-['Manrope'] text-sm font-medium tracking-wide uppercase text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors hover:opacity-70 transition-opacity duration-200" href="#">New Arrivals</a>
+<a class="font-['Manrope'] text-sm font-medium tracking-wide uppercase text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors hover:opacity-70 transition-opacity duration-200" href="#">Collections</a>
+<a class="font-['Manrope'] text-sm font-medium tracking-wide uppercase text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors hover:opacity-70 transition-opacity duration-200" href="#">Sustainability</a>
+<a class="font-['Manrope'] text-sm font-medium tracking-wide uppercase text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors hover:opacity-70 transition-opacity duration-200" href="#">Journal</a>
+</nav>
+<!-- Mobile Menu Toggle -->
+<button class="md:hidden text-slate-900 dark:text-slate-50">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+<!-- Brand Logo (Center) -->
+<div class="absolute left-1/2 -translate-x-1/2">
+<a class="text-2xl font-black tracking-tighter text-slate-900 dark:text-white" href="#">LUMINA</a>
+</div>
+<!-- Trailing Icons (Right) -->
+<div class="flex gap-4 items-center text-slate-900 dark:text-slate-50">
+<button class="hover:opacity-70 transition-opacity duration-200">
+<span class="material-symbols-outlined" data-icon="search">search</span>
+</button>
+<button class="hover:opacity-70 transition-opacity duration-200">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+</button>
+<button class="hover:opacity-70 transition-opacity duration-200 relative">
+<span class="material-symbols-outlined" data-icon="shopping_cart">shopping_cart</span>
+<span class="absolute -top-1 -right-1 bg-primary text-on-primary text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">2</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="pt-[72px]"> <!-- Offset for fixed header -->
+<!-- Hero Section (Bento/Asymmetric Style) -->
+<section class="max-w-[1280px] mx-auto px-4 md:px-lg mt-md mb-xl">
+<div class="grid grid-cols-1 md:grid-cols-12 gap-gutter h-[819px] min-h-[600px] max-h-[800px]">
+<!-- Main Feature Image -->
+<div class="md:col-span-8 relative rounded-xl overflow-hidden shadow-sm group">
+<img alt="New Collection" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="high-end editorial fashion shot of woman wearing neutral minimalist clothing in a modern architectural setting with soft natural lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuABPQZDdL10rfSPF6U6Zc_69c9jeDKoUTIHI7buYyX2DcnG-lucxXtErY1w-JDfT9g01dJd9U7oAhnqAFlXj8Nk2QnGyEIwuaFnis70TLOvr2RPGt-eDb9uIZfP5RUH_JJrutQyuVI04huaYNkVTZZiCs8HsIOYxoFRykirOaUaUEGObUyksNxQBPuUgWSt0XdwJJ_UXmkL0_mVL_LF8ZHdwSqA92N1AW7Flr3I7uiEog7WQfTh9F_KLdGN8uVnjy0kyzZJbNH-x5vs"/>
+<div class="absolute inset-0 image-overlay opacity-60"></div>
+<div class="absolute bottom-0 left-0 p-lg w-full md:w-3/4">
+<span class="inline-block px-3 py-1 bg-surface/80 backdrop-blur-sm text-primary font-label-sm text-label-sm rounded-full mb-md">SS24 Collection</span>
+<h1 class="font-display text-display text-on-primary mb-sm">The Essence of Modernity.</h1>
+<p class="font-body-lg text-body-lg text-on-primary/90 mb-md max-w-md">Discover our new line of essential pieces designed for effortless elegance and everyday versatility.</p>
+<button class="bg-on-primary text-primary font-label-md text-label-md px-8 py-4 hover:bg-surface transition-colors flex items-center gap-2 rounded-DEFAULT group-hover:shadow-md">
+                            Shop the Collection
+                            <span class="material-symbols-outlined text-sm" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Secondary Images / Bento Tiles -->
+<div class="hidden md:grid md:col-span-4 grid-rows-2 gap-gutter">
+<!-- Top Tile -->
+<div class="relative rounded-xl overflow-hidden shadow-sm group bg-surface-container-low">
+<img alt="Interior Design" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="minimalist interior design showing a sleek curved sofa and sculptural coffee table in a sunlit room with neutral tones" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA9lX2gzDPKeR4HJbxBzHYjqA2rLpDSFH1bHdgzsS62F9hKZur5BnFIZqwdeb7J4OBTnizzwYZeC619QeI3GMbw4wpI1g7fmUdJOl8IFuZls2DKdlPaxugTNO8F91LfpkgqwiS1imRnYm2Qi9DlOgFdUxB-UpTDNKbMB8Fm7z1qJ4sz6yCVwcDh5XS75jHt0clUE9ZXIcUk7hWlEb81pZvFDlz8iZH4Vf8l1fElPL3NVV0my-oSMyvrox6SSeBNMJCTyAMfNwjpoeuE"/>
+<div class="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors duration-500"></div>
+<div class="absolute inset-0 flex flex-col justify-end p-md">
+<h2 class="font-h3 text-h3 text-on-primary shadow-sm">Curated Spaces</h2>
+<a class="font-label-md text-label-md text-on-primary underline mt-xs hover:text-surface transition-colors" href="#">Explore Home</a>
+</div>
+</div>
+<!-- Bottom Tile -->
+<div class="relative rounded-xl overflow-hidden shadow-sm group bg-surface-container">
+<img alt="Accessories" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="close up of premium leather handbag and minimalist gold jewelry on a smooth stone surface with dramatic side shadows" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA9D07EJuWhQR9_79bZ5iID2tjETxOwPcAMPLmx58e5qVCX9YFhUW5qLm4qm4wCzJVqekyXchHjmWFzqKhezlUe1rohLO2K8D5u_5gf_pDUM_dVc7dZy_oNVue9jA_tyz_0x3FbisA2S0PDcrxEjAVGFnojwxN2GM8QjBFDhEzxE8TxsLi3k60fUmkZvBfDj3VwTGedlJ_-44AMu8osxNGA0ArrJ5W9uo0ijzLcYLALUhq1KbvBg_dSnx9H7QMiqFPxbveUcfrsHsbO"/>
+<div class="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors duration-500"></div>
+<div class="absolute inset-0 flex flex-col justify-end p-md">
+<h2 class="font-h3 text-h3 text-on-primary shadow-sm">Finer Details</h2>
+<a class="font-label-md text-label-md text-on-primary underline mt-xs hover:text-surface transition-colors" href="#">Shop Accessories</a>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Shop by Category (Glassmorphism Cards) -->
+<section class="max-w-[1280px] mx-auto px-4 md:px-lg mb-xl">
+<div class="flex justify-between items-end mb-lg">
+<h2 class="font-h2 text-h2 text-primary">Shop by Category</h2>
+<a class="font-label-md text-label-md text-primary flex items-center gap-1 hover:text-on-surface-variant transition-colors" href="#">
+                    View All <span class="material-symbols-outlined text-sm" data-icon="east">east</span>
+</a>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-gutter">
+<!-- Category 1 -->
+<a class="group relative h-80 rounded-xl overflow-hidden shadow-sm" href="#">
+<img alt="Apparel" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" data-alt="minimalist clothing rack featuring neutral toned linen and cotton garments against a clean white background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD3h50e_Gc3j8AajRynQ3ZC3oCbydv-QcWdKlGvJ0kqFSTVDOtvwja3XLuQa857kaPesmtaFlSnRViidGNaW16gW3c79C4jO9K5VXk5gWeHX5jrTOUXEzFfZ8UOGlhki-DsTUOW7qno1Hm57Iet8-JGz8vwEqry2QqU0cA0-osb8-8LbAk-881eiGALYa3c_hsZA806_244FDDihkg_m-2Buh82sJ1Z8edxXeSIUDY__0ZfQitsSq04ZtiXVMMllm7tYQ6rrmwnUvA6"/>
+<div class="absolute bottom-4 left-4 right-4 glass-panel rounded-lg p-4 flex justify-between items-center transform translate-y-2 group-hover:translate-y-0 transition-all duration-300">
+<h3 class="font-h3 text-h3 text-primary">Apparel</h3>
+<span class="material-symbols-outlined text-primary bg-white/50 rounded-full p-1" data-icon="arrow_forward">arrow_forward</span>
+</div>
+</a>
+<!-- Category 2 -->
+<a class="group relative h-80 rounded-xl overflow-hidden shadow-sm" href="#">
+<img alt="Footwear" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" data-alt="pair of minimalist modern white sneakers placed on a smooth concrete block with harsh sunlight creating sharp shadows" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD_6HxL1oBR2zSF2WkQp5wJ6zHR451G2yo2UgijYUWKpakwwn_Ru94UGff9uTEjIiSvENc1FuVrH21hTKXo9WHfsU5liw6iu7lnocRjTOAq4A3v4m9WflWbHnkz-wa4bEOJCqrAvA7ooTwIapF_41V7gDhMX91AkhMC9fXmhFTGMfcYJ-FQpB77E82xhslRer4otxWQ-dmwiXA3nmg7Bq_zbmHMRPxDZPd33PXjxl9OTkTrmSTxATYu2XqDc9V9VZnM-7rSErq5fKvQ"/>
+<div class="absolute bottom-4 left-4 right-4 glass-panel rounded-lg p-4 flex justify-between items-center transform translate-y-2 group-hover:translate-y-0 transition-all duration-300">
+<h3 class="font-h3 text-h3 text-primary">Footwear</h3>
+<span class="material-symbols-outlined text-primary bg-white/50 rounded-full p-1" data-icon="arrow_forward">arrow_forward</span>
+</div>
+</a>
+<!-- Category 3 -->
+<a class="group relative h-80 rounded-xl overflow-hidden shadow-sm" href="#">
+<img alt="Home Decor" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" data-alt="ceramic minimalist vase with dry neutral branches sitting on a solid oak table next to a stack of art books" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDQOrIVaEVxTCAH-ckbH7VzfUzzm5lzUDDDF185sa102041EZWKOrG4CHcsWPIstUY0m7-ofsOIjB8svntxoyPwI0rGm__YLUw13N5_fucuF9SLe2R-DMI8KRNvYdce8pr36jJs1cM-z7gLt5OOw2rUKSmbylAUdiP4lxT5CG0zIlJYZBTrVpPHx7j5U1yPAnkMoK0ky2v_E84V2BJ0Bk0nt-qgvFN5KVo52sLmdVqCLoMl367ukFoUwE6Pu8IC8211Fyzt49NMdM88"/>
+<div class="absolute bottom-4 left-4 right-4 glass-panel rounded-lg p-4 flex justify-between items-center transform translate-y-2 group-hover:translate-y-0 transition-all duration-300">
+<h3 class="font-h3 text-h3 text-primary">Home</h3>
+<span class="material-symbols-outlined text-primary bg-white/50 rounded-full p-1" data-icon="arrow_forward">arrow_forward</span>
+</div>
+</a>
+</div>
+</section>
+<!-- Featured Products Grid -->
+<section class="max-w-[1280px] mx-auto px-4 md:px-lg mb-xl">
+<h2 class="font-h2 text-h2 text-primary mb-lg text-center">Featured Products</h2>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-gutter">
+<!-- Product 1 -->
+<div class="group">
+<div class="relative bg-surface-container-low rounded-lg overflow-hidden mb-sm aspect-[3/4]">
+<img alt="Classic White Tee" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="basic high quality white t-shirt neatly folded on a pale grey surface" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA2_RmVpvo_FKnnPNrCXHhOyj69G-IHwUJlgeQC4ryxei8mWzfF-PXLt6vIFnM5y4pHoDtLi-qBK2Lv8bKE9htkiir9U0Kc7Sr7898MsiI85qoz3haMDXjCZxqOM0lmiL4PQamW4qKG6t6-DWDQIyuvsc6e-3dWfKWNACTM0XLlmOpCrcc9-chkNsPJ3ivPBo1exZ0Hng-3JBrNoAMRTWdBhJvC_s_XcWRCJAYgNcFJ_XzwmFFIZxb_WpZ6IGBYwwBx6m_C24ghrnuG"/>
+<div class="absolute top-3 left-3">
+<span class="bg-surface/90 text-primary font-label-sm text-label-sm px-2 py-1 rounded">New In</span>
+</div>
+<button class="absolute bottom-3 right-3 bg-white/90 text-primary p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-sm hover:bg-primary hover:text-white">
+<span class="material-symbols-outlined text-sm" data-icon="add_shopping_cart">add_shopping_cart</span>
+</button>
+</div>
+<div>
+<h3 class="font-h3 text-h3 text-primary truncate">Essential Cotton Tee</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-xs">Organic Cotton</p>
+<p class="font-label-md text-label-md text-primary">$45.00</p>
+</div>
+</div>
+<!-- Product 2 -->
+<div class="group">
+<div class="relative bg-surface-container-low rounded-lg overflow-hidden mb-sm aspect-[3/4]">
+<img alt="Leather Jacket" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="premium minimalist black leather jacket hanging on a wooden hanger against a textured concrete wall" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA2RhiETHj7c38NJEDxR3f3mQHWn-QlQhTFmzpc6tNQMW4pWDa9KwNShM24Doa6l-b41wc4rjpIzq_GYQyG7OxesP3IXZUehD3MwEUKmzW9rItNU68ud7JQomin3rJkBX4GzSN9dZOlmhdcEiOIbcjdeQ8R-7aK-gBab4uN26jorjlibbM7lA_hCW9WnRyvf3uxA2qF1E3bESXKfawEAfXxkzlcZPnVPkh5TBjsSD5pf94mToxknlYxygFQ-GR6tYZRmo3zpXA1wEPW"/>
+<button class="absolute bottom-3 right-3 bg-white/90 text-primary p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-sm hover:bg-primary hover:text-white">
+<span class="material-symbols-outlined text-sm" data-icon="add_shopping_cart">add_shopping_cart</span>
+</button>
+</div>
+<div>
+<h3 class="font-h3 text-h3 text-primary truncate">Structured Leather Jacket</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-xs">Italian Leather</p>
+<p class="font-label-md text-label-md text-primary">$450.00</p>
+</div>
+</div>
+<!-- Product 3 -->
+<div class="group">
+<div class="relative bg-surface-container-low rounded-lg overflow-hidden mb-sm aspect-[3/4]">
+<img alt="Wool Sweater" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="chunky knit beige wool sweater folded elegantly on a white linen surface" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB8VA4iWSU-YdrwJzNlTiHl8vlZ4nkJW0WlCxDxutRmw8c_iUqPZ-31HoJy7PBdCL0NC-dszIegAFFjwJLV_2x1IxB4FcIXxVpS5XelcNKaQ1hviEj-hZ6mvJoc8pfEvAfZ5Sod_JxkxSiiARtP4ar82eFeorn9HQr5F2oPDU3xuMjCIZ54T-bxvjQnntzqKd1YmLjXBJ6pPreR3Sfy2cCtZgPcID4BnETdTfDynD_Hvzj34Wfu7wqK_vvriTsjidK8-GzxKGwe-rn2"/>
+<button class="absolute bottom-3 right-3 bg-white/90 text-primary p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-sm hover:bg-primary hover:text-white">
+<span class="material-symbols-outlined text-sm" data-icon="add_shopping_cart">add_shopping_cart</span>
+</button>
+</div>
+<div>
+<h3 class="font-h3 text-h3 text-primary truncate">Merino Wool Knit</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-xs">Ethically Sourced</p>
+<p class="font-label-md text-label-md text-primary">$185.00</p>
+</div>
+</div>
+<!-- Product 4 -->
+<div class="group">
+<div class="relative bg-surface-container-low rounded-lg overflow-hidden mb-sm aspect-[3/4]">
+<img alt="Canvas Tote" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="heavyweight cream canvas tote bag with leather straps resting on a wooden chair" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBVIqiaJz8abxW7PQOsxn5tqMoTR-bC3HjKDDVxx6jko3Q0WpVU4atL0IUsCJGP3h9f6byOTAiTPiwk_nX_60u_IVXPwiseCJ-AhA1f_tlwUieqt-VpNm1cFgyjTMA0IACxMoUaMkJe9NSbLvUfnNKPmkqISw-iEZw4nHPAlkR6UdvkKJF9L0Bf8TJKJOKMkk03UOnTwhlPnrhhgIPOFoDti_8klGPnTMgCx7Uqkr5-5C4F0B8wMUmLCamI6l28S8Ra2TUkILACv_Bs"/>
+<button class="absolute bottom-3 right-3 bg-white/90 text-primary p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-sm hover:bg-primary hover:text-white">
+<span class="material-symbols-outlined text-sm" data-icon="add_shopping_cart">add_shopping_cart</span>
+</button>
+</div>
+<div>
+<h3 class="font-h3 text-h3 text-primary truncate">Everyday Canvas Tote</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-xs">Heavyweight Canvas</p>
+<p class="font-label-md text-label-md text-primary">$85.00</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Newsletter Signup Promotional Section -->
+<section class="max-w-[1280px] mx-auto px-4 md:px-lg mb-xl">
+<div class="bg-surface-container-high rounded-xl p-8 md:p-xl flex flex-col md:flex-row items-center justify-between gap-lg">
+<div class="md:w-1/2">
+<h2 class="font-h2 text-h2 text-primary mb-sm">Join the Insider List</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant mb-md">Subscribe to receive early access to new collections, exclusive editorial content, and 10% off your first order.</p>
+</div>
+<div class="md:w-1/2 w-full">
+<form class="flex flex-col sm:flex-row gap-4">
+<div class="flex-grow">
+<label class="sr-only" for="email-signup">Email address</label>
+<input class="w-full bg-surface border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary rounded-DEFAULT px-4 py-3 font-body-md text-body-md text-primary placeholder:text-outline outline-none transition-colors" id="email-signup" placeholder="Email address" type="email"/>
+</div>
+<button class="bg-primary text-on-primary font-label-md text-label-md px-8 py-3 rounded-DEFAULT hover:bg-on-primary-fixed transition-colors whitespace-nowrap" type="submit">
+                            Subscribe
+                        </button>
+</form>
+<p class="font-label-sm text-label-sm text-outline mt-3 text-center sm:text-left">By subscribing, you agree to our Terms of Service &amp; Privacy Policy.</p>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-slate-50 dark:bg-slate-900 w-full border-t border-slate-200 dark:border-slate-800 tonal-shift-bg flat no-shadows">
+<div class="flex flex-col md:flex-row justify-between items-center w-full px-8 md:px-20 py-12 max-w-[1280px] mx-auto">
+<!-- Brand & Copyright -->
+<div class="flex flex-col items-center md:items-start mb-8 md:mb-0">
+<span class="text-lg font-bold text-slate-900 dark:text-white mb-2">LUMINA</span>
+<span class="font-['Manrope'] text-xs font-light tracking-widest uppercase text-slate-500 dark:text-slate-400">© 2024 LUMINA. ALL RIGHTS RESERVED.</span>
+</div>
+<!-- Links -->
+<nav class="flex flex-wrap justify-center gap-x-6 gap-y-4">
+<a class="font-['Manrope'] text-xs font-light tracking-widest uppercase text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors underline" href="#">Privacy Policy</a>
+<a class="font-['Manrope'] text-xs font-light tracking-widest uppercase text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors underline" href="#">Terms of Service</a>
+<a class="font-['Manrope'] text-xs font-light tracking-widest uppercase text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors underline" href="#">Shipping &amp; Returns</a>
+<a class="font-['Manrope'] text-xs font-light tracking-widest uppercase text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors underline" href="#">Contact Us</a>
+<a class="font-['Manrope'] text-xs font-light tracking-widest uppercase text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors underline" href="#">Store Locator</a>
+</nav>
+</div>
+</footer>
+</body></html>

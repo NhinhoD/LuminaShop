@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Shop All - LUMINA</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-fixed": "#6ffbbe",
+                        "inverse-surface": "#213145",
+                        "on-primary-fixed-variant": "#3f465c",
+                        "surface-variant": "#d3e4fe",
+                        "tertiary-fixed-dim": "#4edea3",
+                        "outline": "#76777d",
+                        "on-primary": "#ffffff",
+                        "on-secondary-container": "#fefcff",
+                        "on-primary-container": "#7c839b",
+                        "outline-variant": "#c6c6cd",
+                        "surface-bright": "#f8f9ff",
+                        "on-secondary-fixed": "#00174b",
+                        "inverse-primary": "#bec6e0",
+                        "background": "#f8f9ff",
+                        "secondary-fixed": "#dbe1ff",
+                        "surface-container": "#e5eeff",
+                        "secondary": "#0051d5",
+                        "tertiary": "#000000",
+                        "on-tertiary-container": "#009668",
+                        "on-secondary-fixed-variant": "#003ea8",
+                        "surface-container-high": "#dce9ff",
+                        "on-background": "#0b1c30",
+                        "on-error": "#ffffff",
+                        "surface": "#f8f9ff",
+                        "primary-container": "#131b2e",
+                        "tertiary-container": "#002113",
+                        "primary-fixed-dim": "#bec6e0",
+                        "on-tertiary-fixed-variant": "#005236",
+                        "secondary-container": "#316bf3",
+                        "on-tertiary-fixed": "#002113",
+                        "error-container": "#ffdad6",
+                        "on-secondary": "#ffffff",
+                        "surface-container-low": "#eff4ff",
+                        "error": "#ba1a1a",
+                        "primary": "#000000",
+                        "surface-dim": "#cbdbf5",
+                        "on-surface": "#0b1c30",
+                        "on-primary-fixed": "#131b2e",
+                        "surface-container-highest": "#d3e4fe",
+                        "on-error-container": "#93000a",
+                        "secondary-fixed-dim": "#b4c5ff",
+                        "inverse-on-surface": "#eaf1ff",
+                        "primary-fixed": "#dae2fd",
+                        "surface-tint": "#565e74",
+                        "on-surface-variant": "#45464d",
+                        "on-tertiary": "#ffffff",
+                        "surface-container-lowest": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "24px",
+                        "sm": "12px",
+                        "base": "8px",
+                        "xs": "4px",
+                        "md": "24px",
+                        "xl": "80px",
+                        "container-max": "1280px",
+                        "lg": "48px"
+                    },
+                    "fontFamily": {
+                        "h1": ["Manrope"],
+                        "body-lg": ["Manrope"],
+                        "label-md": ["Manrope"],
+                        "h2": ["Manrope"],
+                        "body-sm": ["Manrope"],
+                        "h3": ["Manrope"],
+                        "label-sm": ["Manrope"],
+                        "body-md": ["Manrope"],
+                        "display": ["Manrope"]
+                    },
+                    "fontSize": {
+                        "h1": ["32px", {"lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "label-md": ["14px", {"lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "h2": ["24px", {"lineHeight": "1.4", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                        "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "h3": ["20px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                        "label-sm": ["12px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                        "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "display": ["48px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "800"}]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background text-on-background font-body-md antialiased min-h-screen flex flex-col pt-24">
+<!-- TopNavBar -->
+<header class="fixed top-0 w-full z-50 bg-white/90 backdrop-blur-md border-b border-slate-100 shadow-sm">
+<div class="flex justify-between items-center w-full px-8 md:px-12 py-4 max-w-[1280px] mx-auto">
+<!-- Brand Logo -->
+<a class="text-2xl font-black tracking-tighter text-slate-900" href="#">LUMINA</a>
+<!-- Desktop Navigation -->
+<nav class="hidden md:flex items-center gap-6">
+<a class="font-['Manrope'] text-sm font-medium tracking-wide uppercase text-slate-900 border-b-2 border-slate-900 pb-1" href="#">Shop All</a>
+<a class="font-['Manrope'] text-sm font-medium tracking-wide uppercase text-slate-500 hover:text-slate-900 transition-colors" href="#">New Arrivals</a>
+<a class="font-['Manrope'] text-sm font-medium tracking-wide uppercase text-slate-500 hover:text-slate-900 transition-colors" href="#">Collections</a>
+<a class="font-['Manrope'] text-sm font-medium tracking-wide uppercase text-slate-500 hover:text-slate-900 transition-colors" href="#">Sustainability</a>
+<a class="font-['Manrope'] text-sm font-medium tracking-wide uppercase text-slate-500 hover:text-slate-900 transition-colors" href="#">Journal</a>
+</nav>
+<!-- Trailing Icons -->
+<div class="flex items-center gap-4 text-slate-900">
+<button aria-label="Search" class="hover:opacity-70 transition-opacity duration-200">
+<span class="material-symbols-outlined">search</span>
+</button>
+<button aria-label="Shopping Cart" class="hover:opacity-70 transition-opacity duration-200 relative">
+<span class="material-symbols-outlined">shopping_cart</span>
+<span class="absolute -top-1 -right-1 bg-secondary text-white text-[10px] font-bold h-4 w-4 rounded-full flex items-center justify-center">2</span>
+</button>
+<button aria-label="Profile" class="hover:opacity-70 transition-opacity duration-200 hidden md:block">
+<span class="material-symbols-outlined">person</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="flex-grow w-full max-w-[1280px] mx-auto px-8 md:px-12 py-xl grid grid-cols-1 md:grid-cols-12 gap-gutter">
+<!-- Page Header & Sorting -->
+<div class="md:col-span-12 flex flex-col md:flex-row justify-between items-start md:items-end mb-lg border-b border-outline-variant pb-sm">
+<div>
+<h1 class="font-display text-display text-on-background mb-xs">Shop All</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Discover our curated collection of premium essentials.</p>
+</div>
+<div class="mt-md md:mt-0 flex items-center gap-sm">
+<label class="font-label-md text-label-md text-on-surface-variant hidden md:block" for="sort">Sort by</label>
+<div class="relative">
+<select class="appearance-none bg-surface border border-outline-variant rounded px-4 py-2 pr-10 font-body-sm text-body-sm text-on-background focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary transition-colors cursor-pointer" id="sort">
+<option value="featured">Featured</option>
+<option value="newest">Newest Arrivals</option>
+<option value="price-low">Price: Low to High</option>
+<option value="price-high">Price: High to Low</option>
+</select>
+<span class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-on-surface-variant">expand_more</span>
+</div>
+</div>
+</div>
+<!-- Sidebar Filters (Desktop) / Hidden Mobile Drawer Trigger -->
+<aside class="hidden md:block md:col-span-3 pr-md">
+<div class="sticky top-32 space-y-md">
+<!-- Category Filter -->
+<div class="border-b border-outline-variant pb-md">
+<h3 class="font-label-md text-label-md text-on-background uppercase mb-sm">Category</h3>
+<ul class="space-y-sm">
+<li>
+<label class="flex items-center gap-3 cursor-pointer group">
+<input checked="" class="form-checkbox h-4 w-4 text-secondary border-outline-variant rounded rounded-sm focus:ring-secondary focus:ring-offset-background" type="checkbox"/>
+<span class="font-body-sm text-body-sm text-on-surface-variant group-hover:text-on-background transition-colors">All Clothing</span>
+</label>
+</li>
+<li>
+<label class="flex items-center gap-3 cursor-pointer group">
+<input class="form-checkbox h-4 w-4 text-secondary border-outline-variant rounded rounded-sm focus:ring-secondary focus:ring-offset-background" type="checkbox"/>
+<span class="font-body-sm text-body-sm text-on-surface-variant group-hover:text-on-background transition-colors">Outerwear</span>
+</label>
+</li>
+<li>
+<label class="flex items-center gap-3 cursor-pointer group">
+<input class="form-checkbox h-4 w-4 text-secondary border-outline-variant rounded rounded-sm focus:ring-secondary focus:ring-offset-background" type="checkbox"/>
+<span class="font-body-sm text-body-sm text-on-surface-variant group-hover:text-on-background transition-colors">Knitwear</span>
+</label>
+</li>
+<li>
+<label class="flex items-center gap-3 cursor-pointer group">
+<input class="form-checkbox h-4 w-4 text-secondary border-outline-variant rounded rounded-sm focus:ring-secondary focus:ring-offset-background" type="checkbox"/>
+<span class="font-body-sm text-body-sm text-on-surface-variant group-hover:text-on-background transition-colors">Bottoms</span>
+</label>
+</li>
+</ul>
+</div>
+<!-- Price Range Filter -->
+<div class="border-b border-outline-variant pb-md">
+<h3 class="font-label-md text-label-md text-on-background uppercase mb-sm">Price</h3>
+<div class="space-y-4">
+<div class="flex items-center gap-2">
+<div class="relative w-full">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 font-body-sm text-on-surface-variant">$</span>
+<input class="w-full bg-surface border border-outline-variant rounded pl-7 py-2 font-body-sm text-body-sm text-on-background focus:border-secondary focus:ring-1 focus:ring-secondary transition-colors placeholder:text-outline" placeholder="Min" type="number"/>
+</div>
+<span class="text-on-surface-variant">-</span>
+<div class="relative w-full">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 font-body-sm text-on-surface-variant">$</span>
+<input class="w-full bg-surface border border-outline-variant rounded pl-7 py-2 font-body-sm text-body-sm text-on-background focus:border-secondary focus:ring-1 focus:ring-secondary transition-colors placeholder:text-outline" placeholder="Max" type="number"/>
+</div>
+</div>
+</div>
+</div>
+<!-- Color Filter -->
+<div class="border-b border-outline-variant pb-md">
+<h3 class="font-label-md text-label-md text-on-background uppercase mb-sm">Color</h3>
+<div class="flex flex-wrap gap-2">
+<button aria-label="Black" class="w-6 h-6 rounded-full bg-black ring-1 ring-offset-2 ring-secondary"></button>
+<button aria-label="White" class="w-6 h-6 rounded-full bg-white border border-outline-variant"></button>
+<button aria-label="Grey" class="w-6 h-6 rounded-full bg-slate-500"></button>
+<button aria-label="Brown" class="w-6 h-6 rounded-full bg-amber-800"></button>
+<button aria-label="Navy" class="w-6 h-6 rounded-full bg-blue-900"></button>
+<button aria-label="Green" class="w-6 h-6 rounded-full bg-emerald-800"></button>
+</div>
+</div>
+<!-- Size Filter -->
+<div>
+<h3 class="font-label-md text-label-md text-on-background uppercase mb-sm">Size</h3>
+<div class="grid grid-cols-3 gap-2">
+<button class="border border-outline-variant rounded py-1 font-body-sm text-body-sm text-on-surface-variant hover:border-secondary hover:text-secondary transition-colors">XS</button>
+<button class="border border-outline-variant rounded py-1 font-body-sm text-body-sm text-on-surface-variant hover:border-secondary hover:text-secondary transition-colors bg-surface-container">S</button>
+<button class="border border-secondary rounded py-1 font-body-sm text-body-sm text-secondary bg-surface-container">M</button>
+<button class="border border-outline-variant rounded py-1 font-body-sm text-body-sm text-on-surface-variant hover:border-secondary hover:text-secondary transition-colors">L</button>
+<button class="border border-outline-variant rounded py-1 font-body-sm text-body-sm text-on-surface-variant hover:border-secondary hover:text-secondary transition-colors">XL</button>
+</div>
+</div>
+</div>
+</aside>
+<!-- Mobile Filter Button -->
+<div class="md:hidden col-span-1 mb-md">
+<button class="w-full flex items-center justify-center gap-2 border border-outline-variant rounded py-3 font-label-md text-label-md text-on-background bg-surface">
+<span class="material-symbols-outlined">tune</span>
+                Filters &amp; Sort
+            </button>
+</div>
+<!-- Product Grid -->
+<div class="col-span-1 md:col-span-9 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-gutter gap-y-xl">
+<!-- Product Card 1 -->
+<article class="group flex flex-col relative">
+<div class="relative aspect-[3/4] mb-sm overflow-hidden rounded bg-surface-container-low">
+<img alt="Model wearing a structured minimalist wool coat in charcoal grey against a studio background" class="object-cover w-full h-full transition-transform duration-700 group-hover:scale-105" data-alt="Model wearing a structured minimalist wool coat in charcoal grey against a studio background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBzn5oudAXVPaFXLvfLKzBsQYmhW_8djEQhdClSsF_KPyAmQYIZHZAk35sCyuD-7ffzJ8xXpP5Em4ZtmY_7qsJv82DYMX3kBF0-HnQ7Wkmsh_Y6nR7m0OFED1yxbCuP4se_F1CZLgCqjurFv5bp3we2AyeGp23aIJtCnlOU4zkVOPTzdF86oxqN3d3BiJfuCE_FGsqbgbVxMPqgW2nPGIfTaLmE_AukFkw5xMqbByVjroblcGLwB7QYisLvGGu2XEi8ZU0H9tr8ivhG"/>
+<!-- Badges -->
+<div class="absolute top-2 left-2 flex flex-col gap-1">
+<span class="bg-surface-container/90 backdrop-blur px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-on-background rounded-sm">New In</span>
+</div>
+<!-- Quick Add Hover Overlay -->
+<div class="absolute bottom-0 left-0 w-full p-4 translate-y-full opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
+<button class="w-full bg-primary text-on-primary font-label-md text-label-md py-3 rounded hover:bg-on-background transition-colors flex items-center justify-center gap-2">
+<span class="material-symbols-outlined" style="font-size: 18px;">add_shopping_cart</span>
+                            Add to Cart
+                        </button>
+</div>
+</div>
+<div class="flex flex-col flex-grow justify-between">
+<div>
+<h3 class="font-h3 text-h3 text-on-background truncate">The Architect Coat</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Charcoal Heavyweight Wool</p>
+</div>
+<div class="mt-2">
+<span class="font-body-lg text-body-lg font-bold text-on-background">$345</span>
+</div>
+</div>
+</article>
+<!-- Product Card 2 -->
+<article class="group flex flex-col relative">
+<div class="relative aspect-[3/4] mb-sm overflow-hidden rounded bg-surface-container-low">
+<img alt="Crisp white oversized cotton button-down shirt neatly folded on a minimal surface with soft directional light" class="object-cover w-full h-full transition-transform duration-700 group-hover:scale-105" data-alt="Crisp white oversized cotton button-down shirt neatly folded on a minimal surface with soft directional light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDrrrSiuPvnWdaWYPcA0QWacYJDnmFuWAPd1cdnNDlHXSIWIFJr0o8z-Hfp0XbsM75CEG96x6XW9V4ifgarQc6p9ym9RrsJ3sHki41rBgN9mw-Hgpv2Ac-DV9qR7xwzK0ji9OWzDSI-Azbkb8IAy9JD5e5CK3M8tMs3sVIQhVWZOakZ--JCausRTrGcE1zvVvEipGZl7cMFyAIBbltzIKjN1Ffa7EuQzN6yU2xB62T2beaZdFl5HZmhSkRRQXhJyM41XtnT-JywOhDS"/>
+<div class="absolute bottom-0 left-0 w-full p-4 translate-y-full opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
+<button class="w-full bg-primary text-on-primary font-label-md text-label-md py-3 rounded hover:bg-on-background transition-colors flex items-center justify-center gap-2">
+<span class="material-symbols-outlined" style="font-size: 18px;">add_shopping_cart</span>
+                            Add to Cart
+                        </button>
+</div>
+</div>
+<div class="flex flex-col flex-grow justify-between">
+<div>
+<h3 class="font-h3 text-h3 text-on-background truncate">Oversized Poplin Shirt</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Optic White Cotton</p>
+</div>
+<div class="mt-2">
+<span class="font-body-lg text-body-lg font-bold text-on-background">$120</span>
+</div>
+</div>
+</article>
+<!-- Product Card 3 -->
+<article class="group flex flex-col relative">
+<div class="relative aspect-[3/4] mb-sm overflow-hidden rounded bg-surface-container-low">
+<img alt="Straight leg classic blue denim jeans laid flat against a clean off-white background" class="object-cover w-full h-full transition-transform duration-700 group-hover:scale-105" data-alt="Straight leg classic blue denim jeans laid flat against a clean off-white background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDkmgMzMFdMAw5FKbqxOtNgwpMK1_1FS7x-d_SMDMvMbl3wiCDwOh3u9n1WWCS9oeFxTwjRStk2VLSrjyyTrzbVC1hFOeL256BxXtmhl5_s0Y7NIClkoi_zKJhhRfDY11WMs6xNMOYIeOMRYjnZD3HV_MjEZzx-lzr6D-CjSM6HKZomrQ-lsaAgfYS_z2AUmCyfi1FSqw1G37Vftc7tK3OyNZeOjX3wtmG45K5Puc8LVYqVvgUaTT4gfXAhW8Ke3PKjwu0mYv1Z3wVN"/>
+<div class="absolute bottom-0 left-0 w-full p-4 translate-y-full opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
+<button class="w-full bg-primary text-on-primary font-label-md text-label-md py-3 rounded hover:bg-on-background transition-colors flex items-center justify-center gap-2">
+<span class="material-symbols-outlined" style="font-size: 18px;">add_shopping_cart</span>
+                            Add to Cart
+                        </button>
+</div>
+</div>
+<div class="flex flex-col flex-grow justify-between">
+<div>
+<h3 class="font-h3 text-h3 text-on-background truncate">Heritage Straight Denim</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Vintage Wash Selvedge</p>
+</div>
+<div class="mt-2">
+<span class="font-body-lg text-body-lg font-bold text-on-background">$185</span>
+</div>
+</div>
+</article>
+<!-- Product Card 4 -->
+<article class="group flex flex-col relative">
+<div class="relative aspect-[3/4] mb-sm overflow-hidden rounded bg-surface-container-low">
+<img alt="Chunky knit crewneck sweater in warm oatmeal color, draped softly to show texture" class="object-cover w-full h-full transition-transform duration-700 group-hover:scale-105" data-alt="Chunky knit crewneck sweater in warm oatmeal color, draped softly to show texture" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCUiLiB2KX4kLrJXDnFQ7bEeTRHjX8y8NDFQJX5PqVh6UjO3Sv6jXG_nSW0yZO13LU38qFyQRo5803KwL5ehQXZC6BnvdQEf5BQ-XNoArJqWv86ALVjfq485cObIau_NC-rSF52RkfVZ4H9IZ23iTax1_wAYoIm_nkjY9KDe8cZCr1hmKghVS79GY5BnbdAeDNXZV8HkfQ1nuJJBoh1d1pA3njB0thZ8LI3GzyTGuDiPjhTeNbQ3Am2TgohLxycVSRJgV3TNUEO3bxz"/>
+<div class="absolute top-2 left-2 flex flex-col gap-1">
+<span class="bg-surface-container/90 backdrop-blur px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-on-background rounded-sm">Bestseller</span>
+</div>
+<div class="absolute bottom-0 left-0 w-full p-4 translate-y-full opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
+<button class="w-full bg-primary text-on-primary font-label-md text-label-md py-3 rounded hover:bg-on-background transition-colors flex items-center justify-center gap-2">
+<span class="material-symbols-outlined" style="font-size: 18px;">add_shopping_cart</span>
+                            Add to Cart
+                        </button>
+</div>
+</div>
+<div class="flex flex-col flex-grow justify-between">
+<div>
+<h3 class="font-h3 text-h3 text-on-background truncate">Alpaca Blend Crew</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Oatmeal Heather</p>
+</div>
+<div class="mt-2">
+<span class="font-body-lg text-body-lg font-bold text-on-background">$210</span>
+</div>
+</div>
+</article>
+<!-- Product Card 5 -->
+<article class="group flex flex-col relative">
+<div class="relative aspect-[3/4] mb-sm overflow-hidden rounded bg-surface-container-low">
+<img alt="Sleek black turtleneck long sleeve top with ribbed texture, shown in flat lay styling" class="object-cover w-full h-full transition-transform duration-700 group-hover:scale-105" data-alt="Sleek black turtleneck long sleeve top with ribbed texture, shown in flat lay styling" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAmCB6PfUlbLTkixsY2sMjHzzUCN80c4y07r8ztUCPA6yIbISWsfAQ6I2YlaX8d3eq0QZzRvUYntZuzeSeViIncZiKYyzKz4FI4YSa18iCBvY8fagU2Hm5aBbuvRII5ceR8Nmd-en1tQoPjO3hlDsuwPZzIMuS20Hrf-02Ap1GR0__xeqMN88p27zVrkqEELvoWArasCyXVd5QrZ2OPJ9zL0uPE9F3t2tWYS8EH70S-y94Dxr2KuGX2eoFfSq-zHrlHe_Fso_gmFG7M"/>
+<div class="absolute bottom-0 left-0 w-full p-4 translate-y-full opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
+<button class="w-full bg-primary text-on-primary font-label-md text-label-md py-3 rounded hover:bg-on-background transition-colors flex items-center justify-center gap-2">
+<span class="material-symbols-outlined" style="font-size: 18px;">add_shopping_cart</span>
+                            Add to Cart
+                        </button>
+</div>
+</div>
+<div class="flex flex-col flex-grow justify-between">
+<div>
+<h3 class="font-h3 text-h3 text-on-background truncate">Ribbed Merino Turtleneck</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Midnight Black</p>
+</div>
+<div class="mt-2">
+<span class="font-body-lg text-body-lg font-bold text-on-background">$145</span>
+</div>
+</div>
+</article>
+<!-- Product Card 6 -->
+<article class="group flex flex-col relative">
+<div class="relative aspect-[3/4] mb-sm overflow-hidden rounded bg-surface-container-low">
+<img alt="Wide leg tailored trousers in camel brown draped elegantly to emphasize the fluid fabric" class="object-cover w-full h-full transition-transform duration-700 group-hover:scale-105" data-alt="Wide leg tailored trousers in camel brown draped elegantly to emphasize the fluid fabric" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC8B_I_P-9xFRJSXx5_PMnN0g01lKJjB-1ccIVDwG1OBCunKtkGD_Cf-e-h9D-FoD1iJJq6Nk5COu6BrY2WqGBW8C9sruZwwzudwa19yoNbEnBctDOAoOz2asPAbqQj_nhIF6UxhuxU2W1U04uiYBkmQPhzD01-sB5mbrYCjAKylQ2si-87tkzIDIWY2Uy5VrMgfObtme-wvTI40iraaEbuS3hEAU4O32g1R2cZTymr6p13skasLrI277BZTEwX53po28OJ9g2eOgls"/>
+<div class="absolute bottom-0 left-0 w-full p-4 translate-y-full opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
+<button class="w-full bg-primary text-on-primary font-label-md text-label-md py-3 rounded hover:bg-on-background transition-colors flex items-center justify-center gap-2">
+<span class="material-symbols-outlined" style="font-size: 18px;">add_shopping_cart</span>
+                            Add to Cart
+                        </button>
+</div>
+</div>
+<div class="flex flex-col flex-grow justify-between">
+<div>
+<h3 class="font-h3 text-h3 text-on-background truncate">Fluid Drape Trousers</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Camel Twill</p>
+</div>
+<div class="mt-2">
+<span class="font-body-lg text-body-lg font-bold text-on-background">$195</span>
+</div>
+</div>
+</article>
+</div>
+</main>
+<!-- Footer -->
+<footer class="w-full border-t border-slate-200 bg-slate-50 mt-xl">
+<div class="flex flex-col md:flex-row justify-between items-center w-full px-8 md:px-20 py-12 max-w-[1280px] mx-auto">
+<div class="mb-8 md:mb-0">
+<span class="text-lg font-bold text-slate-900">LUMINA</span>
+<p class="font-['Manrope'] text-xs font-light tracking-widest uppercase mt-2 text-slate-500">© 2024 LUMINA. ALL RIGHTS RESERVED.</p>
+</div>
+<nav class="flex flex-wrap justify-center md:justify-end gap-6 md:gap-8">
+<a class="font-['Manrope'] text-xs font-light tracking-widest uppercase text-slate-500 hover:text-slate-900 transition-colors underline" href="#">Privacy Policy</a>
+<a class="font-['Manrope'] text-xs font-light tracking-widest uppercase text-slate-500 hover:text-slate-900 transition-colors underline" href="#">Terms of Service</a>
+<a class="font-['Manrope'] text-xs font-light tracking-widest uppercase text-slate-500 hover:text-slate-900 transition-colors underline" href="#">Shipping &amp; Returns</a>
+<a class="font-['Manrope'] text-xs font-light tracking-widest uppercase text-slate-500 hover:text-slate-900 transition-colors underline" href="#">Contact Us</a>
+<a class="font-['Manrope'] text-xs font-light tracking-widest uppercase text-slate-500 hover:text-slate-900 transition-colors underline" href="#">Store Locator</a>
+</nav>
+</div>
+</footer>
+</body></html>

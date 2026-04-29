@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Shopping Cart - LuminaCommerce</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "error-container": "#ffdad6",
+                        "surface-container-highest": "#d3e4fe",
+                        "secondary": "#0051d5",
+                        "surface-container-low": "#eff4ff",
+                        "on-surface": "#0b1c30",
+                        "outline": "#76777d",
+                        "primary-fixed": "#dae2fd",
+                        "on-background": "#0b1c30",
+                        "surface-variant": "#d3e4fe",
+                        "surface-tint": "#565e74",
+                        "on-secondary-fixed": "#00174b",
+                        "background": "#f8f9ff",
+                        "error": "#ba1a1a",
+                        "secondary-fixed-dim": "#b4c5ff",
+                        "tertiary": "#000000",
+                        "tertiary-container": "#002113",
+                        "on-secondary-container": "#fefcff",
+                        "on-primary-fixed-variant": "#3f465c",
+                        "on-primary-container": "#7c839b",
+                        "surface-container-high": "#dce9ff",
+                        "surface-container": "#e5eeff",
+                        "on-tertiary-container": "#009668",
+                        "inverse-on-surface": "#eaf1ff",
+                        "on-primary-fixed": "#131b2e",
+                        "primary-fixed-dim": "#bec6e0",
+                        "primary-container": "#131b2e",
+                        "on-error-container": "#93000a",
+                        "on-tertiary-fixed": "#002113",
+                        "surface-dim": "#cbdbf5",
+                        "surface": "#f8f9ff",
+                        "secondary-container": "#316bf3",
+                        "on-tertiary": "#ffffff",
+                        "on-tertiary-fixed-variant": "#005236",
+                        "on-secondary": "#ffffff",
+                        "outline-variant": "#c6c6cd",
+                        "surface-container-lowest": "#ffffff",
+                        "primary": "#000000",
+                        "on-primary": "#ffffff",
+                        "inverse-primary": "#bec6e0",
+                        "surface-bright": "#f8f9ff",
+                        "on-secondary-fixed-variant": "#003ea8",
+                        "tertiary-fixed": "#6ffbbe",
+                        "on-surface-variant": "#45464d",
+                        "on-error": "#ffffff",
+                        "secondary-fixed": "#dbe1ff",
+                        "tertiary-fixed-dim": "#4edea3",
+                        "inverse-surface": "#213145"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "md": "24px",
+                        "container-max": "1280px",
+                        "lg": "48px",
+                        "gutter": "24px",
+                        "xs": "4px",
+                        "sm": "12px",
+                        "base": "8px",
+                        "xl": "80px"
+                    },
+                    "fontFamily": {
+                        "h1": ["Manrope"],
+                        "label-sm": ["Manrope"],
+                        "h2": ["Manrope"],
+                        "body-lg": ["Manrope"],
+                        "body-md": ["Manrope"],
+                        "display": ["Manrope"],
+                        "h3": ["Manrope"],
+                        "label-md": ["Manrope"],
+                        "body-sm": ["Manrope"]
+                    },
+                    "fontSize": {
+                        "h1": ["32px", { "lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                        "label-sm": ["12px", { "lineHeight": "1.2", "fontWeight": "600" }],
+                        "h2": ["24px", { "lineHeight": "1.4", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "display": ["48px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "800" }],
+                        "h3": ["20px", { "lineHeight": "1.4", "fontWeight": "600" }],
+                        "label-md": ["14px", { "lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "body-sm": ["14px", { "lineHeight": "1.5", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background text-on-background font-body-md antialiased flex flex-col min-h-screen">
+<!-- TopNavBar -->
+<header class="fixed top-0 w-full z-50 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md shadow-sm border-slate-200 dark:border-slate-800">
+<div class="flex justify-between items-center h-20 px-8 max-w-[1280px] mx-auto">
+<div class="text-xl font-bold tracking-tighter text-slate-900 dark:text-white">LuminaCommerce</div>
+<nav class="hidden md:flex items-center gap-8">
+<a class="font-manrope text-sm font-medium tracking-tight text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors" href="#">Shop All</a>
+<a class="font-manrope text-sm font-medium tracking-tight text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors" href="#">New Arrivals</a>
+<a class="font-manrope text-sm font-medium tracking-tight text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors" href="#">Collections</a>
+<a class="font-manrope text-sm font-medium tracking-tight text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors" href="#">Editorial</a>
+<a class="font-manrope text-sm font-medium tracking-tight text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors" href="#">Support</a>
+</nav>
+<div class="flex items-center gap-6 text-blue-600 dark:text-blue-400">
+<button class="cursor-pointer active:scale-95 duration-150 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all duration-200 p-2 rounded-full">
+<span class="material-symbols-outlined" data-icon="search">search</span>
+</button>
+<button class="cursor-pointer active:scale-95 duration-150 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all duration-200 p-2 rounded-full">
+<span class="material-symbols-outlined" data-icon="shopping_cart">shopping_cart</span>
+</button>
+<button class="cursor-pointer active:scale-95 duration-150 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all duration-200 p-2 rounded-full hidden md:block">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Main Cart Canvas -->
+<main class="flex-grow pt-[120px] pb-xl px-lg max-w-container-max mx-auto w-full">
+<header class="mb-lg">
+<h1 class="font-h1 text-h1 text-on-surface">Your Cart</h1>
+<p class="font-body-md text-body-md text-on-surface-variant mt-xs">2 items selected</p>
+</header>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-start">
+<!-- Cart Items List -->
+<div class="lg:col-span-8 flex flex-col gap-md">
+<!-- Item 1 -->
+<div class="flex flex-col sm:flex-row gap-md p-md bg-surface-container-lowest rounded-lg shadow-sm border border-outline-variant/30 relative group">
+<div class="w-full sm:w-[160px] h-[200px] sm:h-[160px] bg-surface-variant rounded flex-shrink-0 overflow-hidden relative">
+<img alt="Minimalist Scandinavian lounge chair in soft beige fabric with light oak wood legs, placed in a bright airy room with soft natural lighting." class="w-full h-full object-cover mix-blend-multiply" data-alt="Minimalist Scandinavian lounge chair in soft beige fabric with light oak wood legs, placed in a bright airy room with soft natural lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAUtNem0u0z17VzakmlHioX-l0FvNbtInRUpfugWP-drF_SS4D13AgGjXctvX6JSQ8UDX462wJvCIgdEQoXZ5O15jwLx0qGJ6Fveb0KYkvhNFFWs-RNQkaMK8Ne0jfAL-4EGfR5F7T_PXaZzI5k7Dvmm1PF55E_OM_UC5RoAEOlDlKGy7m7dLxzpBuEvXVFhQS2hsVT_izfMs8iPTA6SGpkQ3khnSlkBuNbv4-DDgUB4d8lj64rQQSRQ1p4aswQvwyrpx5qyd7kGE_4"/>
+</div>
+<div class="flex flex-col flex-grow justify-between py-xs">
+<div>
+<div class="flex justify-between items-start">
+<div>
+<h3 class="font-h3 text-h3 text-on-surface">Aura Lounge Chair</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Color: Oat • Material: Bouclé</p>
+</div>
+<span class="font-h3 text-h3 text-on-surface">$895.00</span>
+</div>
+</div>
+<div class="flex justify-between items-center mt-md">
+<div class="flex items-center border border-outline-variant rounded-DEFAULT h-[40px]">
+<button class="px-sm text-on-surface-variant hover:text-on-surface transition-colors flex items-center justify-center h-full">
+<span class="material-symbols-outlined text-[18px]">remove</span>
+</button>
+<span class="font-body-md text-body-md text-on-surface px-sm min-w-[40px] text-center">1</span>
+<button class="px-sm text-on-surface-variant hover:text-on-surface transition-colors flex items-center justify-center h-full">
+<span class="material-symbols-outlined text-[18px]">add</span>
+</button>
+</div>
+<button class="flex items-center gap-1 text-outline hover:text-error transition-colors">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+<span class="font-label-sm text-label-sm uppercase tracking-wider">Remove</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="flex flex-col sm:flex-row gap-md p-md bg-surface-container-lowest rounded-lg shadow-sm border border-outline-variant/30 relative group">
+<div class="w-full sm:w-[160px] h-[200px] sm:h-[160px] bg-surface-variant rounded flex-shrink-0 overflow-hidden relative">
+<img alt="Handcrafted matte black ceramic vase with subtle texture, sitting on a polished white marble surface with dramatic side lighting." class="w-full h-full object-cover mix-blend-multiply" data-alt="Handcrafted matte black ceramic vase with subtle texture, sitting on a polished white marble surface with dramatic side lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBR327bRy-_ohXu0cbzdkqrzrA4ZPNzcMJszfBxJsehcFWTPRmZLSiqMXiEMt5TZGyvMvJcpiGmAfBaZivJ6teRLnhWHX0UVeh7wEnTqR_zDFGRqo_vfJclnLR3_rdEMsgtfaly8Pe6yljqfyCGu8K5NvYE84QwHl80-IpmaoUG0prjO0Fif8qlJFsUNzciqAoZh1wZYher_e7DbzzAseDgB7CJqCkAWQj3I89LujrfTxEtCdJTNM0phawqsqBjPFJR-WDYZMwDurU0"/>
+</div>
+<div class="flex flex-col flex-grow justify-between py-xs">
+<div>
+<div class="flex justify-between items-start">
+<div>
+<h3 class="font-h3 text-h3 text-on-surface">Nocturne Ceramic Vase</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Size: Large • Finish: Matte</p>
+</div>
+<span class="font-h3 text-h3 text-on-surface">$145.00</span>
+</div>
+</div>
+<div class="flex justify-between items-center mt-md">
+<div class="flex items-center border border-outline-variant rounded-DEFAULT h-[40px]">
+<button class="px-sm text-on-surface-variant hover:text-on-surface transition-colors flex items-center justify-center h-full">
+<span class="material-symbols-outlined text-[18px]">remove</span>
+</button>
+<span class="font-body-md text-body-md text-on-surface px-sm min-w-[40px] text-center">2</span>
+<button class="px-sm text-on-surface-variant hover:text-on-surface transition-colors flex items-center justify-center h-full">
+<span class="material-symbols-outlined text-[18px]">add</span>
+</button>
+</div>
+<button class="flex items-center gap-1 text-outline hover:text-error transition-colors">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+<span class="font-label-sm text-label-sm uppercase tracking-wider">Remove</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Order Summary Sidebar -->
+<div class="lg:col-span-4 sticky top-[120px]">
+<div class="bg-surface-container-lowest p-lg rounded-lg shadow-sm border border-outline-variant/30 flex flex-col gap-md">
+<h2 class="font-h2 text-h2 text-on-surface mb-xs">Order Summary</h2>
+<div class="flex justify-between items-center py-sm border-b border-surface-container-high">
+<span class="font-body-md text-body-md text-on-surface-variant">Subtotal</span>
+<span class="font-body-md text-body-md text-on-surface font-medium">$1,185.00</span>
+</div>
+<div class="flex justify-between items-center py-sm border-b border-surface-container-high">
+<span class="font-body-md text-body-md text-on-surface-variant">Estimated Shipping</span>
+<span class="font-body-md text-body-md text-on-surface font-medium">Calculated at checkout</span>
+</div>
+<div class="flex justify-between items-center py-sm border-b border-surface-container-high">
+<span class="font-body-md text-body-md text-on-surface-variant">Estimated Tax</span>
+<span class="font-body-md text-body-md text-on-surface font-medium">$94.80</span>
+</div>
+<div class="flex justify-between items-center py-md mt-sm">
+<span class="font-h3 text-h3 text-on-surface">Total</span>
+<span class="font-h2 text-h2 text-on-surface">$1,279.80</span>
+</div>
+<button class="w-full bg-secondary text-on-secondary font-label-md text-label-md py-[16px] rounded flex items-center justify-center gap-2 hover:bg-secondary-container hover:text-on-secondary-container transition-all shadow-sm hover:shadow-md mt-sm">
+<span class="material-symbols-outlined text-[20px]">lock</span>
+                        Proceed to Checkout
+                    </button>
+<div class="mt-sm flex items-center justify-center gap-4 text-outline">
+<span class="material-symbols-outlined text-[24px]">local_shipping</span>
+<span class="material-symbols-outlined text-[24px]">verified_user</span>
+<span class="material-symbols-outlined text-[24px]">credit_card</span>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="w-full border-t mt-auto border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-12 py-16 px-8 max-w-[1280px] mx-auto focus-within:ring-2 focus-within:ring-blue-500">
+<div class="md:col-span-1">
+<div class="text-lg font-bold text-slate-900 dark:text-white mb-4">LuminaCommerce</div>
+<p class="font-manrope text-sm text-slate-500 dark:text-slate-400">© 2024 LuminaCommerce. Built for excellence.</p>
+</div>
+<div class="md:col-span-3 grid grid-cols-2 sm:grid-cols-3 gap-8">
+<div class="flex flex-col gap-3">
+<a class="font-manrope text-sm text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:underline transition-all" href="#">Sustainability</a>
+<a class="font-manrope text-sm text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:underline transition-all" href="#">Track Order</a>
+</div>
+<div class="flex flex-col gap-3">
+<a class="font-manrope text-sm text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:underline transition-all" href="#">Returns &amp; Exchanges</a>
+<a class="font-manrope text-sm text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:underline transition-all" href="#">Size Guide</a>
+</div>
+<div class="flex flex-col gap-3">
+<a class="font-manrope text-sm text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:underline transition-all" href="#">Privacy Policy</a>
+<a class="font-manrope text-sm text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:underline transition-all" href="#">Terms of Service</a>
+</div>
+</div>
+</div>
+</footer>
+</body></html>

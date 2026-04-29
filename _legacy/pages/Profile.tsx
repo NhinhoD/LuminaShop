@@ -1,7 +1,7 @@
 import { User, ReceiptText, Heart, Home, Package, Truck, ChevronRight } from 'lucide-react';
-import { motion } from 'motion/react';
+import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { cn } from '@/src/lib/utils';
+import { cn } from '../lib/utils';
 
 export default function Profile() {
   const sidebarItems = [

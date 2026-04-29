@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Checkout - LuminaCommerce</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "error-container": "#ffdad6",
+                      "surface-container-highest": "#d3e4fe",
+                      "secondary": "#0051d5",
+                      "surface-container-low": "#eff4ff",
+                      "on-surface": "#0b1c30",
+                      "outline": "#76777d",
+                      "primary-fixed": "#dae2fd",
+                      "on-background": "#0b1c30",
+                      "surface-variant": "#d3e4fe",
+                      "surface-tint": "#565e74",
+                      "on-secondary-fixed": "#00174b",
+                      "background": "#f8f9ff",
+                      "error": "#ba1a1a",
+                      "secondary-fixed-dim": "#b4c5ff",
+                      "tertiary": "#000000",
+                      "tertiary-container": "#002113",
+                      "on-secondary-container": "#fefcff",
+                      "on-primary-fixed-variant": "#3f465c",
+                      "on-primary-container": "#7c839b",
+                      "surface-container-high": "#dce9ff",
+                      "surface-container": "#e5eeff",
+                      "on-tertiary-container": "#009668",
+                      "inverse-on-surface": "#eaf1ff",
+                      "on-primary-fixed": "#131b2e",
+                      "primary-fixed-dim": "#bec6e0",
+                      "primary-container": "#131b2e",
+                      "on-error-container": "#93000a",
+                      "on-tertiary-fixed": "#002113",
+                      "surface-dim": "#cbdbf5",
+                      "surface": "#f8f9ff",
+                      "secondary-container": "#316bf3",
+                      "on-tertiary": "#ffffff",
+                      "on-tertiary-fixed-variant": "#005236",
+                      "on-secondary": "#ffffff",
+                      "outline-variant": "#c6c6cd",
+                      "surface-container-lowest": "#ffffff",
+                      "primary": "#000000",
+                      "on-primary": "#ffffff",
+                      "inverse-primary": "#bec6e0",
+                      "surface-bright": "#f8f9ff",
+                      "on-secondary-fixed-variant": "#003ea8",
+                      "tertiary-fixed": "#6ffbbe",
+                      "on-surface-variant": "#45464d",
+                      "on-error": "#ffffff",
+                      "secondary-fixed": "#dbe1ff",
+                      "tertiary-fixed-dim": "#4edea3",
+                      "inverse-surface": "#213145"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "md": "24px",
+                      "container-max": "1280px",
+                      "lg": "48px",
+                      "gutter": "24px",
+                      "xs": "4px",
+                      "sm": "12px",
+                      "base": "8px",
+                      "xl": "80px"
+              },
+              "fontFamily": {
+                      "h1": [
+                              "Manrope"
+                      ],
+                      "label-sm": [
+                              "Manrope"
+                      ],
+                      "h2": [
+                              "Manrope"
+                      ],
+                      "body-lg": [
+                              "Manrope"
+                      ],
+                      "body-md": [
+                              "Manrope"
+                      ],
+                      "display": [
+                              "Manrope"
+                      ],
+                      "h3": [
+                              "Manrope"
+                      ],
+                      "label-md": [
+                              "Manrope"
+                      ],
+                      "body-sm": [
+                              "Manrope"
+                      ]
+              },
+              "fontSize": {
+                      "h1": [
+                              "32px",
+                              {
+                                      "lineHeight": "1.3",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "label-sm": [
+                              "12px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "h2": [
+                              "24px",
+                              {
+                                      "lineHeight": "1.4",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "display": [
+                              "48px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "800"
+                              }
+                      ],
+                      "h3": [
+                              "20px",
+                              {
+                                      "lineHeight": "1.4",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "label-md": [
+                              "14px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-sm": [
+                              "14px",
+                              {
+                                      "lineHeight": "1.5",
+                                      "fontWeight": "400"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen flex flex-col font-body-md">
+<!-- Minimalist Checkout Header (Supressed full nav as per transactional rule) -->
+<header class="w-full border-b border-outline-variant bg-surface-container-lowest py-sm px-8">
+<div class="max-w-container-max mx-auto flex justify-between items-center">
+<a class="font-h2 text-h2 text-primary" href="#">LuminaCommerce</a>
+<div class="flex items-center gap-xs text-outline">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">lock</span>
+<span class="font-label-sm text-label-sm">Secure Checkout</span>
+</div>
+</div>
+</header>
+<main class="flex-grow max-w-container-max w-full mx-auto px-8 py-lg grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+<!-- Left Column: Checkout Flow -->
+<div class="lg:col-span-7 flex flex-col gap-md">
+<!-- Breadcrumbs / Progress -->
+<nav class="flex items-center gap-sm font-label-md text-label-md mb-sm text-outline">
+<span class="text-primary">Information</span>
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+<span>Shipping</span>
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+<span>Payment</span>
+</nav>
+<!-- Section 1: Contact & Shipping -->
+<section class="bg-surface-container-lowest rounded-lg p-md border border-outline-variant shadow-[0_4px_20px_rgb(0,0,0,0.05)]">
+<div class="flex justify-between items-center mb-md pb-sm border-b border-outline-variant">
+<h2 class="font-h3 text-h3 text-primary">Shipping Information</h2>
+</div>
+<form class="flex flex-col gap-sm">
+<h3 class="font-label-sm text-label-sm text-on-surface-variant mt-sm">Contact</h3>
+<div class="grid grid-cols-1 gap-sm">
+<input class="w-full border-outline-variant rounded-DEFAULT py-sm px-md focus:border-secondary focus:ring-1 focus:ring-secondary text-on-surface bg-surface-bright placeholder:text-outline transition-colors font-body-sm text-body-sm" placeholder="Email address" type="email"/>
+</div>
+<h3 class="font-label-sm text-label-sm text-on-surface-variant mt-md">Shipping Address</h3>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-sm">
+<input class="w-full border-outline-variant rounded-DEFAULT py-sm px-md focus:border-secondary focus:ring-1 focus:ring-secondary text-on-surface bg-surface-bright placeholder:text-outline transition-colors font-body-sm text-body-sm" placeholder="First name" type="text"/>
+<input class="w-full border-outline-variant rounded-DEFAULT py-sm px-md focus:border-secondary focus:ring-1 focus:ring-secondary text-on-surface bg-surface-bright placeholder:text-outline transition-colors font-body-sm text-body-sm" placeholder="Last name" type="text"/>
+</div>
+<div class="grid grid-cols-1 gap-sm">
+<input class="w-full border-outline-variant rounded-DEFAULT py-sm px-md focus:border-secondary focus:ring-1 focus:ring-secondary text-on-surface bg-surface-bright placeholder:text-outline transition-colors font-body-sm text-body-sm" placeholder="Address" type="text"/>
+<input class="w-full border-outline-variant rounded-DEFAULT py-sm px-md focus:border-secondary focus:ring-1 focus:ring-secondary text-on-surface bg-surface-bright placeholder:text-outline transition-colors font-body-sm text-body-sm" placeholder="Apartment, suite, etc. (optional)" type="text"/>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-sm">
+<input class="w-full border-outline-variant rounded-DEFAULT py-sm px-md focus:border-secondary focus:ring-1 focus:ring-secondary text-on-surface bg-surface-bright placeholder:text-outline transition-colors font-body-sm text-body-sm" placeholder="City" type="text"/>
+<select class="w-full border-outline-variant rounded-DEFAULT py-sm px-md focus:border-secondary focus:ring-1 focus:ring-secondary text-on-surface bg-surface-bright font-body-sm text-body-sm appearance-none">
+<option value="">State / Province</option>
+<option value="NY">New York</option>
+<option value="CA">California</option>
+</select>
+<input class="w-full border-outline-variant rounded-DEFAULT py-sm px-md focus:border-secondary focus:ring-1 focus:ring-secondary text-on-surface bg-surface-bright placeholder:text-outline transition-colors font-body-sm text-body-sm" placeholder="ZIP code" type="text"/>
+</div>
+<label class="flex items-center gap-sm mt-xs cursor-pointer group">
+<input class="rounded border-outline-variant text-secondary focus:ring-secondary w-5 h-5" type="checkbox"/>
+<span class="font-body-sm text-body-sm text-on-surface group-hover:text-primary transition-colors">Save this information for next time</span>
+</label>
+</form>
+</section>
+<!-- Section 2: Shipping Method (Collapsed visual state) -->
+<section class="bg-surface-container-lowest rounded-lg p-md border border-outline-variant shadow-[0_2px_10px_rgb(0,0,0,0.02)] opacity-60">
+<div class="flex justify-between items-center">
+<h2 class="font-h3 text-h3 text-outline">Shipping Method</h2>
+<span class="material-symbols-outlined text-outline">expand_more</span>
+</div>
+</section>
+<!-- Section 3: Payment (Collapsed visual state) -->
+<section class="bg-surface-container-lowest rounded-lg p-md border border-outline-variant shadow-[0_2px_10px_rgb(0,0,0,0.02)] opacity-60">
+<div class="flex justify-between items-center">
+<h2 class="font-h3 text-h3 text-outline">Payment</h2>
+<span class="material-symbols-outlined text-outline">expand_more</span>
+</div>
+</section>
+<div class="mt-sm flex justify-end">
+<button class="bg-secondary text-on-secondary font-label-md text-label-md py-sm px-lg rounded-DEFAULT hover:bg-on-secondary-fixed-variant transition-all active:scale-95 duration-150 min-h-[48px] flex items-center justify-center">
+                    Continue to Shipping
+                </button>
+</div>
+</div>
+<!-- Right Column: Order Summary -->
+<div class="lg:col-span-5 relative">
+<div class="sticky top-lg bg-surface-container-low rounded-lg p-md border border-outline-variant shadow-[0_4px_20px_rgb(0,0,0,0.03)]">
+<h2 class="font-h3 text-h3 text-primary mb-md border-b border-outline-variant pb-sm">Order Summary</h2>
+<!-- Items List -->
+<div class="flex flex-col gap-md mb-md max-h-[300px] overflow-y-auto pr-xs">
+<!-- Item 1 -->
+<div class="flex gap-sm items-center">
+<div class="w-16 h-16 rounded bg-surface-container overflow-hidden flex-shrink-0 relative border border-outline-variant">
+<img alt="red nike sneaker on dark background with dramatic lighting" class="w-full h-full object-cover" data-alt="red nike sneaker on dark background with dramatic lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAIrCpfjk6SmYVROkF3_yafcYaVFPx4n-LH3AmFug26DKse66YRqktJb-jQmEk8Cfxo9cMWF8aopj8f_Z17m6Q33oeiVv3B9xTf7bJNQ8JpBr85MV5uFAP3drGbMFGLhEN3mnWQQRwKxLPkrQcbLB3wpKaaV1qh3PH0QFNxdiLI2iJjO8Kf2Ao9s7sFmhoDep9NqTOZQ2TRO4YRGytoaQJI3K8lAmaTGO7sYQTfzApcOV1soqj-Ty5yA382TLkq8Rg44q3LYPfrJCQV"/>
+<div class="absolute -top-2 -right-2 bg-secondary text-on-secondary w-5 h-5 rounded-full flex items-center justify-center font-label-sm text-[10px]">1</div>
+</div>
+<div class="flex-grow">
+<h4 class="font-body-md text-body-md text-primary font-medium">Aero Glide Runners</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Crimson Red / Size 10</p>
+</div>
+<div class="font-body-md text-body-md text-primary font-semibold whitespace-nowrap">
+                            $145.00
+                        </div>
+</div>
+<!-- Item 2 -->
+<div class="flex gap-sm items-center">
+<div class="w-16 h-16 rounded bg-surface-container overflow-hidden flex-shrink-0 relative border border-outline-variant">
+<img alt="minimalist black t-shirt folded neatly on white background" class="w-full h-full object-cover" data-alt="minimalist black t-shirt folded neatly on white background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCLjyLLXGxaMpYc2XV51J-w_gW5ICfR3aUFCc0CEtRY4_iCYy45Ezm5GL543zB91NfkQ_SraFZb4zLtzId51HeEG0glIZreg8ML2Tl-T56pMw1qDfYRmG43nxTVdWrxH3FUM9hUeedPPkLduInw4Fqbl_cbSUGqtYlwgRVBucpTi4trRJXrd9eZoDEudduq-hdNxd6jaTmUT78m1KPlJw3_oeZOrxBvKegliw-WzLldeNskYg5vfSTaF-7VWmprMF13MBL9KOt8cP4S"/>
+<div class="absolute -top-2 -right-2 bg-secondary text-on-secondary w-5 h-5 rounded-full flex items-center justify-center font-label-sm text-[10px]">2</div>
+</div>
+<div class="flex-grow">
+<h4 class="font-body-md text-body-md text-primary font-medium">Essential Basic Tee</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Midnight Black / M</p>
+</div>
+<div class="font-body-md text-body-md text-primary font-semibold whitespace-nowrap">
+                            $50.00
+                        </div>
+</div>
+</div>
+<!-- Discount Code -->
+<div class="flex gap-sm mb-md py-md border-y border-outline-variant">
+<input class="flex-grow border-outline-variant rounded-DEFAULT py-sm px-md focus:border-secondary focus:ring-1 focus:ring-secondary text-on-surface bg-surface-bright placeholder:text-outline font-body-sm text-body-sm" placeholder="Gift card or discount code" type="text"/>
+<button class="bg-surface-container-high text-on-surface font-label-md text-label-md py-sm px-md rounded-DEFAULT hover:bg-surface-dim transition-colors border border-outline-variant">
+                        Apply
+                    </button>
+</div>
+<!-- Totals -->
+<div class="flex flex-col gap-sm mb-md">
+<div class="flex justify-between items-center font-body-sm text-body-sm text-on-surface-variant">
+<span>Subtotal</span>
+<span class="text-primary font-medium">$195.00</span>
+</div>
+<div class="flex justify-between items-center font-body-sm text-body-sm text-on-surface-variant">
+<span>Shipping</span>
+<span class="text-outline italic">Calculated next step</span>
+</div>
+<div class="flex justify-between items-center font-body-sm text-body-sm text-on-surface-variant">
+<span>Taxes</span>
+<span class="text-primary font-medium">$15.60</span>
+</div>
+</div>
+<div class="flex justify-between items-end border-t border-outline-variant pt-md">
+<span class="font-h3 text-h3 text-primary">Total</span>
+<div class="flex items-baseline gap-xs">
+<span class="font-label-sm text-label-sm text-outline">USD</span>
+<span class="font-h2 text-h2 text-primary">$210.60</span>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer from JSON (Used exact styling commands) -->
+<footer class="w-full border-t mt-auto border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-blue-600 dark:text-blue-400 font-manrope text-sm text-slate-500 dark:text-slate-400">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-12 py-16 px-8 max-w-[1280px] mx-auto focus-within:ring-2 focus-within:ring-blue-500">
+<div>
+<div class="text-lg font-bold text-slate-900 dark:text-white mb-4">LuminaCommerce</div>
+<p>© 2024 LuminaCommerce. Built for excellence.</p>
+</div>
+<div class="flex flex-col gap-2">
+<a class="text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:underline transition-all" href="#">Sustainability</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:underline transition-all" href="#">Track Order</a>
+</div>
+<div class="flex flex-col gap-2">
+<a class="text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:underline transition-all" href="#">Returns &amp; Exchanges</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:underline transition-all" href="#">Size Guide</a>
+</div>
+<div class="flex flex-col gap-2">
+<a class="text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:underline transition-all" href="#">Privacy Policy</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:underline transition-all" href="#">Terms of Service</a>
+</div>
+</div>
+</footer>
+</body></html>
