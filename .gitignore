@@ -45,5 +45,4 @@ _legacy/
 _vite_backup/
 
 # agent specific
-AGENTS.md
-CLAUDE.md
+# AGENTS.md and CLAUDE.md are tracked
