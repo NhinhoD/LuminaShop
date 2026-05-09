@@ -3,9 +3,10 @@
 import { useState, useEffect } from 'react';
 import { login, signup, signout } from '@/presentation/actions/auth';
 import { makeSupabaseClient } from '@/infrastructure/supabase/container';
+import { User } from '@supabase/supabase-js';
 
 export function useAuth() {
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -15,8 +16,8 @@ export function useAuth() {
         const supabase = await makeSupabaseClient();
         const { data: { user } } = await supabase.auth.getUser();
         setUser(user);
-      } catch (err: any) {
-        setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'An error occurred');
       } finally {
         setIsLoading(false);
       }
@@ -46,8 +47,8 @@ export function useAuth() {
     setError(null);
     try {
       await login(formData);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
       setIsLoading(false);
     }
@@ -58,8 +59,8 @@ export function useAuth() {
     setError(null);
     try {
       await signup(formData);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
       setIsLoading(false);
     }
@@ -71,8 +72,8 @@ export function useAuth() {
     try {
       await signout();
       setUser(null);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
       setIsLoading(false);
     }

@@ -7,6 +7,8 @@ import {
   getCartAction
 } from '@/presentation/actions/cart';
 
+import { CartItem as DomainCartItem } from '@/domain/entities/Cart';
+
 export interface CartItem {
   id: string;
   productId: string;
@@ -78,7 +80,7 @@ export const useCartStore = create<CartState>()(
         try {
           const result = await getCartAction();
           if (result.data) {
-            const mappedItems = result.data.items.map((i: any) => ({
+            const mappedItems: CartItem[] = result.data.items.map((i: DomainCartItem) => ({
               id: i.id,
               productId: i.productId,
               variantId: i.variantId,
@@ -92,8 +94,8 @@ export const useCartStore = create<CartState>()(
             // Not logged in or error getting cart
             set({ isGuest: true });
           }
-        } catch (error: any) {
-          set({ error: error.message });
+        } catch (error: unknown) {
+          set({ error: error instanceof Error ? error.message : 'An error occurred' });
         } finally {
           set({ isLoading: false });
         }
@@ -138,8 +140,8 @@ export const useCartStore = create<CartState>()(
                });
             }
           }
-        } catch (error: any) {
-          set({ error: error.message });
+        } catch (error: unknown) {
+          set({ error: error instanceof Error ? error.message : 'An error occurred' });
         } finally {
           set({ isLoading: false });
         }
@@ -156,8 +158,8 @@ export const useCartStore = create<CartState>()(
             if (result.error) {
                set({ items: previousItems, error: result.error });
             }
-          } catch (error: any) {
-             set({ items: previousItems, error: error.message });
+          } catch (error: unknown) {
+             set({ items: previousItems, error: error instanceof Error ? error.message : 'An error occurred removing item' });
           }
         }
       },
@@ -175,8 +177,8 @@ export const useCartStore = create<CartState>()(
             if (result.error) {
               set({ items: previousItems, error: result.error });
             }
-          } catch (error: any) {
-            set({ items: previousItems, error: error.message });
+          } catch (error: unknown) {
+            set({ items: previousItems, error: error instanceof Error ? error.message : 'An error occurred updating quantity' });
           }
         }
       },

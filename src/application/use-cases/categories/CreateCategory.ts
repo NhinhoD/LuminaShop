@@ -18,7 +18,7 @@ export class CreateCategoryUseCase {
 
       const category = await this.categoryRepo.create(data);
       return ok(category);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('CreateCategoryUseCase Error:', error);
       return fail(new Error('Đã có lỗi xảy ra khi tạo danh mục.'));
     }

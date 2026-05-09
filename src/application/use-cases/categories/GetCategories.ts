@@ -9,7 +9,7 @@ export class GetCategoriesUseCase {
     try {
       const categories = await this.categoryRepo.findAll();
       return ok(categories);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('GetCategoriesUseCase Error:', error);
       return fail(new Error('Đã có lỗi xảy ra khi lấy danh sách danh mục.'));
     }

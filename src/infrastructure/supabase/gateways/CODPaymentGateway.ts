@@ -1,7 +1,8 @@
 import { IPaymentGateway, PaymentResult } from '@/domain/repositories/IPaymentGateway';
+import { SupabaseClient } from '@supabase/supabase-js';
 
 export class CODPaymentGateway implements IPaymentGateway {
-  constructor(private supabase: any) {}
+  constructor(private supabase: SupabaseClient) {}
 
   async processPayment(orderId: string, amount: number, method: string): Promise<PaymentResult> {
     if (method !== 'cod') {
@@ -33,7 +34,7 @@ export class CODPaymentGateway implements IPaymentGateway {
         paymentId: data.id,
         message: 'Thanh toán COD thành công'
       };
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('CODPaymentGateway error:', error);
       return {
         success: false,

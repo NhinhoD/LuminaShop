@@ -17,7 +17,7 @@ export class UpdateProductUseCase {
 
       const product = await this.productRepo.update(id, data);
       return ok(product);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('UpdateProductUseCase Error:', error);
       return fail(new Error('Đã có lỗi xảy ra khi cập nhật sản phẩm.'));
     }

@@ -43,7 +43,7 @@ export async function deleteProductAction(id: string) {
     await productRepository.delete(id);
     revalidatePath("/admin/products");
     return { success: true };
-  } catch (error: any) {
+  } catch (error: unknown) {
     return { error: "Không thể xóa sản phẩm." };
   }
 }

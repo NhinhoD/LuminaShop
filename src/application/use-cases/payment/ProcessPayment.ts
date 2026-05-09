@@ -26,12 +26,12 @@ export class ProcessPaymentUseCase {
       }
 
       return result;
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('ProcessPaymentUseCase Error:', error);
       return {
         success: false,
         paymentId: '',
-        message: error.message || 'Payment processing failed.'
+        message: error instanceof Error ? error.message : 'Payment processing failed.'
       };
     }
   }

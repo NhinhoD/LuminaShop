@@ -4,11 +4,28 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createProductAction, updateProductAction } from "@/presentation/actions/product";
 import { Category } from "@/domain/entities/Category";
-import { CreateProductDTO, UpdateProductDTO } from "@/domain/entities/Product";
+import { CreateProductDTO, UpdateProductDTO, Product, ProductVariant } from "@/domain/entities/Product";
 
 interface ProductFormProps {
   categories: Category[];
-  initialData?: any; // For editing
+  initialData?: Product; // For editing
+}
+
+interface VariantData {
+  id?: string;
+  name: string;
+  priceAdjustment: number;
+  stockQuantity: number;
+}
+
+interface ProductFormData {
+  title: string;
+  description: string;
+  price: number;
+  stock: number;
+  categoryId: string;
+  imageUrl: string;
+  isActive: boolean;
 }
 
 export function ProductForm({ categories, initialData }: ProductFormProps) {
@@ -16,7 +33,7 @@ export function ProductForm({ categories, initialData }: ProductFormProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<ProductFormData>({
     title: initialData?.title || "",
     description: initialData?.description || "",
     price: initialData?.price || 0,
@@ -26,7 +43,14 @@ export function ProductForm({ categories, initialData }: ProductFormProps) {
     isActive: initialData?.isActive ?? true,
   });
 
-  const [variants, setVariants] = useState<any[]>(initialData?.variants || []);
+  const [variants, setVariants] = useState<VariantData[]>(
+    initialData?.variants?.map(v => ({
+      id: v.id,
+      name: v.name,
+      priceAdjustment: v.priceAdjustment,
+      stockQuantity: v.stockQuantity
+    })) || []
+  );
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
@@ -40,9 +64,14 @@ export function ProductForm({ categories, initialData }: ProductFormProps) {
     setVariants([...variants, { name: "", priceAdjustment: 0, stockQuantity: 0 }]);
   };
 
-  const handleVariantChange = (index: number, field: string, value: any) => {
+  const handleVariantChange = (index: number, field: keyof VariantData, value: string | number) => {
     const newVariants = [...variants];
-    newVariants[index][field] = field === 'priceAdjustment' || field === 'stockQuantity' ? parseInt(value) || 0 : value;
+    const target = newVariants[index];
+    if (field === 'priceAdjustment' || field === 'stockQuantity') {
+      target[field] = parseInt(value as string) || 0;
+    } else if (field === 'name') {
+      target[field] = value as string;
+    }
     setVariants(newVariants);
   };
 
@@ -55,7 +84,7 @@ export function ProductForm({ categories, initialData }: ProductFormProps) {
     setLoading(true);
     setError(null);
 
-    const payload: any = {
+    const payload: CreateProductDTO | UpdateProductDTO = {
       ...formData,
       variants: variants.length > 0 ? variants : undefined
     };

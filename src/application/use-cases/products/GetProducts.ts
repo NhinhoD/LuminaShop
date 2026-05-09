@@ -15,7 +15,7 @@ export class GetProductsUseCase {
     try {
       const data = await this.productRepo.findAll(filters);
       return ok(data);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('GetProductsUseCase Error:', error);
       return fail(new Error('Đã có lỗi xảy ra khi lấy danh sách sản phẩm.'));
     }

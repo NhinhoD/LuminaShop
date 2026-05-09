@@ -1,4 +1,5 @@
 import { getOrderAction } from "@/presentation/actions/order";
+import { OrderItem } from "@/domain/entities/Order";
 import { formatCurrency } from "@/lib/utils";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -29,7 +30,7 @@ export default async function OrderFailedPage(props: { params: Promise<{ id: str
         <h2 className="font-bold text-h4 mb-6 pb-4 border-b border-outline-variant">Tóm tắt đơn hàng</h2>
         
         <div className="space-y-4 mb-6">
-          {order.items.map((item: any) => (
+          {order.items.map((item: OrderItem) => (
             <div key={item.id} className="flex justify-between items-center text-sm">
               <div className="flex-1">
                 <p className="font-bold">{item.productSnapshot?.title || item.productTitle || 'Sản phẩm'}</p>

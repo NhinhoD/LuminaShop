@@ -12,7 +12,7 @@ export class GetProductByIdUseCase {
         return fail(new Error('Không tìm thấy sản phẩm.'));
       }
       return ok(product);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('GetProductByIdUseCase Error:', error);
       return fail(new Error('Đã có lỗi xảy ra khi lấy thông tin sản phẩm.'));
     }

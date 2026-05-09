@@ -10,7 +10,7 @@ export class ReleaseStockUseCase {
       
       await this.inventoryRepo.release(inventoryItemId, quantity);
       return ok(undefined);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('ReleaseStockUseCase Error:', error);
       return fail(new Error('Đã có lỗi xảy ra khi giải phóng kho hàng.'));
     }

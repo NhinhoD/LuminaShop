@@ -1,9 +1,10 @@
 import { IOrderRepository } from '@/domain/repositories/IOrderRepository';
-import { Order, OrderItem, OrderStatus } from '@/domain/entities/Order';
-import { createClient } from '@/infrastructure/supabase/server';
+import { Order, OrderItem, OrderStatus, PaymentStatus, ShippingAddress, ProductSnapshot } from '@/domain/entities/Order';
+import { OrderRow, OrderItemRow } from '../types';
+import { SupabaseClient } from '@supabase/supabase-js';
 
 export class SupabaseOrderRepository implements IOrderRepository {
-  constructor(private supabase: any) {}
+  constructor(private supabase: SupabaseClient) {}
 
   async findById(id: string): Promise<Order | null> {
     const supabase = this.supabase;
@@ -26,7 +27,7 @@ export class SupabaseOrderRepository implements IOrderRepository {
       .order('created_at', { ascending: false });
 
     if (error) throw new Error(error.message);
-    return (data || []).map((row: any) => this.mapToEntity(row));
+    return (data as OrderRow[] || []).map((row) => this.mapToEntity(row));
   }
 
   async findAll(filters?: { status?: OrderStatus }): Promise<Order[]> {
@@ -39,10 +40,10 @@ export class SupabaseOrderRepository implements IOrderRepository {
 
     const { data, error } = await query.order('created_at', { ascending: false });
     if (error) throw new Error(error.message);
-    return (data || []).map((row: any) => this.mapToEntity(row));
+    return (data as OrderRow[] || []).map((row) => this.mapToEntity(row));
   }
 
-  async create(order: any, items: any[]): Promise<Order> {
+  async create(order: Omit<Order, 'id' | 'createdAt' | 'updatedAt' | 'items'>, items: Omit<OrderItem, 'id' | 'orderId'>[]): Promise<Order> {
     const supabase = this.supabase;
     
     // Create order
@@ -65,8 +66,8 @@ export class SupabaseOrderRepository implements IOrderRepository {
     if (orderError) throw new Error(orderError.message);
 
     // Create order items
-    const itemsToInsert = items.map((item: any) => ({
-      order_id: orderData.id,
+    const itemsToInsert = items.map((item) => ({
+      order_id: (orderData as OrderRow).id,
       product_id: item.productId,
       variant_id: item.variantId,
       quantity: item.quantity,
@@ -103,26 +104,27 @@ export class SupabaseOrderRepository implements IOrderRepository {
     if (error) throw new Error(error.message);
   }
 
-  private mapToEntity(row: any): Order {
+  private mapToEntity(row: OrderRow): Order {
     return {
       id: row.id,
-      userId: row.user_id,
+      userId: row.user_id || '',
       status: row.status as OrderStatus,
-      totalAmount: parseInt(row.total_amount),
-      shippingAddress: typeof row.shipping_address === 'string' ? JSON.parse(row.shipping_address) : row.shipping_address,
-      contactEmail: row.contact_email,
-      contactPhone: row.contact_phone,
+      totalAmount: typeof row.total_amount === 'string' ? parseInt(row.total_amount) : row.total_amount,
+      shippingAddress: (typeof row.shipping_address === 'string' ? JSON.parse(row.shipping_address) : row.shipping_address) as ShippingAddress,
+      contactEmail: row.contact_email || undefined,
+      contactPhone: row.contact_phone || undefined,
       paymentMethod: row.payment_method,
-      paymentStatus: row.payment_status,
-      notes: row.notes,
-      items: (row.order_items || []).map((item: any) => ({
+      paymentStatus: row.payment_status as PaymentStatus,
+      notes: row.notes || undefined,
+      items: (row.items || []).map((item) => ({
         id: item.id,
         orderId: item.order_id,
         productId: item.product_id,
-        variantId: item.variant_id,
+        variantId: item.variant_id || undefined,
         quantity: item.quantity,
-        priceAtPurchase: parseInt(item.price_at_purchase),
-        productSnapshot: typeof item.product_snapshot === 'string' ? JSON.parse(item.product_snapshot) : item.product_snapshot
+        priceAtPurchase: typeof item.price_at_purchase === 'string' ? parseInt(item.price_at_purchase) : item.price_at_purchase,
+        productTitle: item.product?.title,
+        productSnapshot: (typeof item.product_snapshot === 'string' ? JSON.parse(item.product_snapshot) : item.product_snapshot) as ProductSnapshot
       })),
       createdAt: new Date(row.created_at),
       updatedAt: new Date(row.updated_at)

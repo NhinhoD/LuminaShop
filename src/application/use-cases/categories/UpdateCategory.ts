@@ -20,7 +20,7 @@ export class UpdateCategoryUseCase {
 
       const category = await this.categoryRepo.update(id, data);
       return ok(category);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('UpdateCategoryUseCase Error:', error);
       return fail(new Error('Đã có lỗi xảy ra khi cập nhật danh mục.'));
     }

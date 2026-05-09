@@ -8,7 +8,7 @@ export class DeleteCategoryUseCase {
     try {
       await this.categoryRepo.delete(id);
       return ok(undefined);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('DeleteCategoryUseCase Error:', error);
       return fail(new Error('Đã có lỗi xảy ra khi xóa danh mục.'));
     }

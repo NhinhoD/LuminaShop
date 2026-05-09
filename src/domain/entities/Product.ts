@@ -25,7 +25,10 @@ export interface Product {
 }
 
 export type CreateProductDTO = Omit<Product, 'id' | 'createdAt' | 'updatedAt' | 'variants' | 'isActive'> & {
-  variants?: Omit<ProductVariant, 'id' | 'productId' | 'createdAt' | 'updatedAt'>[];
+  variants?: (Omit<ProductVariant, 'id' | 'productId' | 'createdAt' | 'updatedAt' | 'sku'> & { sku?: string })[];
 };
 
-export type UpdateProductDTO = Partial<CreateProductDTO> & { isActive?: boolean };
+export type UpdateProductDTO = Partial<Omit<Product, 'id' | 'createdAt' | 'updatedAt' | 'variants'>> & {
+  variants?: (Omit<ProductVariant, 'id' | 'productId' | 'createdAt' | 'updatedAt' | 'sku'> & { id?: string; sku?: string })[];
+  isActive?: boolean;
+};

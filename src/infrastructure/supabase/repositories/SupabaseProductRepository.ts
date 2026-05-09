@@ -1,10 +1,23 @@
 import { IProductRepository } from '@/domain/repositories/IProductRepository';
 import { Product, CreateProductDTO, UpdateProductDTO, ProductVariant } from '@/domain/entities/Product';
-import { createClient } from '@/infrastructure/supabase/server';
+import { ProductRow, ProductVariantRow } from '../types';
+import { SupabaseClient } from '@supabase/supabase-js';
 import { generateSlug, generateSKU } from '@/lib/utils';
 
+interface ProductDTO {
+  category_id?: string;
+  title?: string;
+  slug?: string;
+  description?: string;
+  price?: number;
+  stock?: number;
+  image_url?: string | null;
+  is_active?: boolean;
+  updated_at?: string;
+}
+
 export class SupabaseProductRepository implements IProductRepository {
-  constructor(private supabase: any) {}
+  constructor(private supabase: SupabaseClient) {}
 
   async findById(id: string): Promise<Product | null> {
     const supabase = this.supabase;
@@ -58,7 +71,7 @@ export class SupabaseProductRepository implements IProductRepository {
     if (error) throw new Error(error.message);
     
     return {
-      products: (data || []).map((row: any) => this.mapToEntity(row)),
+      products: (data as ProductRow[] || []).map((row) => this.mapToEntity(row)),
       total: count || 0
     };
   }
@@ -85,7 +98,7 @@ export class SupabaseProductRepository implements IProductRepository {
 
     // Create variants if any
     if (data.variants && data.variants.length > 0) {
-      const variantsToInsert = data.variants.map((v: any) => ({
+      const variantsToInsert = data.variants.map((v) => ({
         product_id: product.id,
         sku: v.sku || generateSKU(data.title, v.name),
         name: v.name,
@@ -102,7 +115,7 @@ export class SupabaseProductRepository implements IProductRepository {
 
       // Create inventory items for variants
       if (insertedVariants && insertedVariants.length > 0) {
-        const inventoryToInsert = insertedVariants.map((v: any) => ({
+        const inventoryToInsert = (insertedVariants as ProductVariantRow[]).map((v) => ({
           product_id: product.id,
           variant_id: v.id,
           sku: v.sku,
@@ -135,7 +148,7 @@ export class SupabaseProductRepository implements IProductRepository {
   async update(id: string, data: UpdateProductDTO): Promise<Product> {
     const supabase = this.supabase;
     
-    const dbData: any = {};
+    const dbData: ProductDTO = {};
     if (data.categoryId) dbData.category_id = data.categoryId;
     if (data.title) {
       dbData.title = data.title;
@@ -165,7 +178,7 @@ export class SupabaseProductRepository implements IProductRepository {
         currentTitle = p?.title;
       }
 
-      const variantsToProcess = data.variants.map((v: any) => ({
+      const variantsToProcess = data.variants.map((v) => ({
         id: v.id,
         product_id: id,
         sku: v.sku || generateSKU(currentTitle || '', v.name),
@@ -175,13 +188,13 @@ export class SupabaseProductRepository implements IProductRepository {
       }));
 
       // Handle deletions: Remove variants that are in the database but not in the incoming list
-      const incomingIds = variantsToProcess.filter((v: any) => v.id).map((v: any) => v.id);
+      const incomingIds = variantsToProcess.filter((v) => v.id).map((v) => v.id);
       const { data: existingVariants } = await supabase
         .from('product_variants')
         .select('id')
         .eq('product_id', id);
       
-      const idsToDelete = existingVariants?.filter((v: any) => !incomingIds.includes(v.id)).map((v: any) => v.id) || [];
+      const idsToDelete = (existingVariants as { id: string }[] | null)?.filter((v) => !incomingIds.includes(v.id)).map((v) => v.id) || [];
 
       if (idsToDelete.length > 0) {
         // Delete inventory items first due to foreign key
@@ -190,8 +203,10 @@ export class SupabaseProductRepository implements IProductRepository {
       }
 
       // Handle Upserts: Split into new variants (insert) and existing variants (update)
-      const newVariants = variantsToProcess.filter((v: any) => !v.id).map(({ id, ...rest }: any) => rest);
-      const existingToUpdate = variantsToProcess.filter((v: any) => v.id);
+      const newVariants = variantsToProcess
+        .filter((v) => !v.id)
+        .map(({ id: _id, ...rest }) => rest);
+      const existingToUpdate = variantsToProcess.filter((v) => v.id);
 
       if (newVariants.length > 0) {
         const { data: inserted, error: insertError } = await supabase
@@ -203,7 +218,7 @@ export class SupabaseProductRepository implements IProductRepository {
         
         // Create inventory items for new variants
         if (inserted) {
-          const inventoryToInsert = inserted.map((v: any) => ({
+          const inventoryToInsert = (inserted as ProductVariantRow[]).map((v) => ({
             product_id: id,
             variant_id: v.id,
             sku: v.sku,
@@ -255,7 +270,7 @@ export class SupabaseProductRepository implements IProductRepository {
     if (error) throw new Error(`Database error: ${error.message}`);
   }
 
-  async addVariant(productId: string, variant: any): Promise<void> {
+  async addVariant(productId: string, variant: Omit<ProductVariant, 'id' | 'productId' | 'createdAt' | 'updatedAt'>): Promise<void> {
     const supabase = this.supabase;
     
     let sku = variant.sku;
@@ -284,23 +299,23 @@ export class SupabaseProductRepository implements IProductRepository {
     if (error) throw new Error(`Database error: ${error.message}`);
   }
 
-  private mapToEntity(row: any): Product {
+  private mapToEntity(row: ProductRow): Product {
     return {
       id: row.id,
       categoryId: row.category_id,
       title: row.title,
       slug: row.slug,
       description: row.description,
-      price: parseInt(row.price),
+      price: typeof row.price === 'string' ? parseInt(row.price) : row.price,
       stock: row.stock,
-      imageUrl: row.image_url,
+      imageUrl: row.image_url || undefined,
       isActive: row.is_active,
-      variants: row.variants?.map((v: any) => ({
+      variants: row.variants?.map((v) => ({
         id: v.id,
         productId: v.product_id,
         sku: v.sku,
         name: v.name,
-        priceAdjustment: parseInt(v.price_adjustment),
+        priceAdjustment: typeof v.price_adjustment === 'string' ? parseInt(v.price_adjustment) : v.price_adjustment,
         stockQuantity: v.stock_quantity,
         createdAt: new Date(v.created_at),
         updatedAt: new Date(v.updated_at),

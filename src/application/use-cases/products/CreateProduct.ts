@@ -28,7 +28,7 @@ export class CreateProductUseCase {
 
       const product = await this.productRepo.create(data);
       return ok(product);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('CreateProductUseCase Error:', error);
       return fail(new Error('Đã có lỗi xảy ra khi tạo sản phẩm.'));
     }

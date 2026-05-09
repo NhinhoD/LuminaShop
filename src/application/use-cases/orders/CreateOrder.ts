@@ -3,9 +3,19 @@ import { IInventoryRepository } from '@/domain/repositories/IInventoryRepository
 import { Order, OrderStatus, ShippingAddress, PaymentMethod, PaymentStatus } from '@/domain/entities/Order';
 import { Result, ok, fail } from '@/domain/shared/Result';
 
+export interface CartItemDTO {
+  productId: string;
+  variantId?: string;
+  quantity: number;
+  price: number;
+  title: string;
+  imageUrl?: string;
+  variantName?: string;
+}
+
 export interface CreateOrderDTO {
   userId: string;
-  cartItems: any[];
+  cartItems: CartItemDTO[];
   shippingAddress: ShippingAddress;
   paymentMethod: PaymentMethod;
   notes?: string;
@@ -89,9 +99,10 @@ export class CreateOrderUseCase {
       }
 
       return ok(order);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('CreateOrderUseCase Error:', error);
-      return fail(new Error('Đã có lỗi xảy ra khi đặt hàng.'));
+      const message = error instanceof Error ? error.message : 'Đã có lỗi xảy ra khi đặt hàng.';
+      return fail(new Error(message));
     }
   }
 }

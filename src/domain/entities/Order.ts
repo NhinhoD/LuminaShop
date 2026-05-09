@@ -30,6 +30,7 @@ export interface OrderItem {
   variantId?: string;
   quantity: number;
   priceAtPurchase: number;
+  productTitle?: string;
   productSnapshot?: ProductSnapshot;
 }
 

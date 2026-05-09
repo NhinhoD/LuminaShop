@@ -23,7 +23,7 @@ export class AddToCartUseCase {
       }
 
       return ok(undefined);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('AddToCartUseCase Error:', error);
       return fail(new Error('Không thể thêm sản phẩm vào giỏ hàng.'));
     }

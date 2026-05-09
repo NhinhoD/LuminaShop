@@ -1,9 +1,10 @@
 import { IInventoryRepository } from '@/domain/repositories/IInventoryRepository';
 import { InventoryItem, StockMovement } from '@/domain/entities/Inventory';
-import { createClient } from '@/infrastructure/supabase/server';
+import { InventoryItemRow } from '../types';
+import { SupabaseClient } from '@supabase/supabase-js';
 
 export class SupabaseInventoryRepository implements IInventoryRepository {
-  constructor(private supabase: any) {}
+  constructor(private supabase: SupabaseClient) {}
 
   async findByProductId(productId: string): Promise<InventoryItem[]> {
     const supabase = this.supabase;
@@ -13,7 +14,7 @@ export class SupabaseInventoryRepository implements IInventoryRepository {
       .eq('product_id', productId);
     
     if (error) throw new Error(error.message);
-    return (data || []).map((row: any) => this.mapToEntity(row));
+    return (data as InventoryItemRow[] || []).map((row) => this.mapToEntity(row));
   }
 
   async findByVariantId(variantId: string): Promise<InventoryItem | null> {
@@ -87,16 +88,16 @@ export class SupabaseInventoryRepository implements IInventoryRepository {
     // Optional: implement a movements table if needed for history
   }
 
-  private mapToEntity(row: any): InventoryItem {
+  private mapToEntity(row: InventoryItemRow): InventoryItem {
     return {
       id: row.id,
       productId: row.product_id,
-      variantId: row.variant_id,
+      variantId: row.variant_id || undefined,
       sku: row.sku,
       quantity: row.quantity,
       reserved: row.reserved,
       available: row.quantity - row.reserved,
-      location: row.location,
+      location: row.location || undefined,
       updatedAt: new Date(row.updated_at),
     };
   }

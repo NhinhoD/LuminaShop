@@ -26,7 +26,9 @@ export async function addToCartAction(item: { productId: string, variantId?: str
   return { success: true };
 }
 
-export async function mergeCartAction(localItems: any[]) {
+import { CartItem as DomainCartItem } from "@/domain/entities/Cart";
+
+export async function mergeCartAction(localItems: Omit<DomainCartItem, 'id' | 'cartId'>[]) {
   const userId = await getUserId();
   if (!userId) return { error: "Unauthorized" };
 
@@ -53,7 +55,7 @@ export async function updateCartItemAction(itemId: string, quantity: number) {
     await cartRepo.updateItem(itemId, quantity);
     revalidatePath("/cart");
     return { success: true };
-  } catch (error: any) {
+  } catch (error: unknown) {
     return { error: "Không thể cập nhật số lượng." };
   }
 }
@@ -64,7 +66,7 @@ export async function removeCartItemAction(itemId: string) {
     await cartRepo.removeItem(itemId);
     revalidatePath("/cart");
     return { success: true };
-  } catch (error: any) {
+  } catch (error: unknown) {
     return { error: "Không thể xóa sản phẩm khỏi giỏ hàng." };
   }
 }

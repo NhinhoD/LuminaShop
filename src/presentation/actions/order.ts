@@ -36,7 +36,7 @@ export async function getOrderAction(id: string) {
     const orderRepo = await makeOrderRepository();
     const order = await orderRepo.findById(id);
     return { data: order };
-  } catch (error: any) {
+  } catch (error: unknown) {
     return { error: "Không thể lấy thông tin đơn hàng." };
   }
 }
@@ -49,7 +49,7 @@ export async function getUserOrdersAction() {
     const orderRepo = await makeOrderRepository();
     const orders = await orderRepo.findByUserId(userId);
     return { data: orders };
-  } catch (error: any) {
+  } catch (error: unknown) {
     return { error: "Không thể lấy danh sách đơn hàng." };
   }
 }

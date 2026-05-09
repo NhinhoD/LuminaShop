@@ -1,4 +1,4 @@
-import { Product, CreateProductDTO, UpdateProductDTO } from '../entities/Product';
+import { Product, CreateProductDTO, UpdateProductDTO, ProductVariant } from '../entities/Product';
 
 export interface IProductRepository {
   findById(id: string): Promise<Product | null>;
@@ -15,5 +15,5 @@ export interface IProductRepository {
   delete(id: string): Promise<void>;
   
   // Variant management
-  addVariant(productId: string, variant: Omit<Product, 'id' | 'productId' | 'createdAt' | 'updatedAt'>): Promise<void>;
+  addVariant(productId: string, variant: Omit<ProductVariant, 'id' | 'productId' | 'createdAt' | 'updatedAt'>): Promise<void>;
 }

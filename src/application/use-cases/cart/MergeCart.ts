@@ -1,10 +1,11 @@
 import { ICartRepository } from '@/domain/repositories/ICartRepository';
+import { CartItem } from '@/domain/entities/Cart';
 import { Result, ok, fail } from '@/domain/shared/Result';
 
 export class MergeCartUseCase {
   constructor(private cartRepo: ICartRepository) {}
 
-  async execute(userId: string, localItems: any[]): Promise<Result<void>> {
+  async execute(userId: string, localItems: Omit<CartItem, 'id' | 'cartId'>[]): Promise<Result<void>> {
     try {
       if (localItems.length === 0) return ok(undefined);
 
@@ -30,7 +31,7 @@ export class MergeCartUseCase {
       }
 
       return ok(undefined);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('MergeCartUseCase Error:', error);
       return fail(new Error('Lỗi khi đồng bộ giỏ hàng.'));
     }

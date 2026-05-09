@@ -1,9 +1,10 @@
 import { ICartRepository } from '@/domain/repositories/ICartRepository';
 import { Cart, CartItem } from '@/domain/entities/Cart';
-import { createClient } from '@/infrastructure/supabase/server';
+import { CartRow, CartItemRow } from '../types';
+import { SupabaseClient } from '@supabase/supabase-js';
 
 export class SupabaseCartRepository implements ICartRepository {
-  constructor(private supabase: any) {}
+  constructor(private supabase: SupabaseClient) {}
 
   async findByUserId(userId: string): Promise<Cart | null> {
     const supabase = this.supabase;
@@ -31,16 +32,17 @@ export class SupabaseCartRepository implements ICartRepository {
 
     return {
       id: cart.id,
-      userId: cart.user_id,
-      items: (items || []).map((item: any) => ({
+      userId: cart.user_id || '',
+      items: (items as CartItemRow[] || []).map((item) => ({
         id: item.id,
         cartId: item.cart_id,
         productId: item.product_id,
-        variantId: item.variant_id,
+        variantId: item.variant_id || undefined,
         quantity: item.quantity,
         productTitle: item.product?.title,
-        productPrice: (item.product?.price || 0) + (item.variant?.price_adjustment || 0),
-        productImageUrl: item.product?.image_url
+        productPrice: (typeof item.product?.price === 'string' ? parseInt(item.product.price) : (item.product?.price || 0)) + 
+                      (typeof item.variant?.price_adjustment === 'string' ? parseInt(item.variant.price_adjustment) : (item.variant?.price_adjustment || 0)),
+        productImageUrl: item.product?.image_url || undefined
       })),
       createdAt: new Date(cart.created_at),
       updatedAt: new Date(cart.updated_at)

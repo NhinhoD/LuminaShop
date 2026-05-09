@@ -10,9 +10,10 @@ export class ReserveStockUseCase {
       
       await this.inventoryRepo.reserve(inventoryItemId, quantity);
       return ok(undefined);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('ReserveStockUseCase Error:', error);
-      return fail(new Error(error.message || 'Không đủ hàng trong kho.'));
+      const message = error instanceof Error ? error.message : 'Không đủ hàng trong kho.';
+      return fail(new Error(message));
     }
   }
 }

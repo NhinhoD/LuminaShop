@@ -1,9 +1,10 @@
 import { ICategoryRepository } from '@/domain/repositories/ICategoryRepository';
 import { Category, CreateCategoryDTO, UpdateCategoryDTO } from '@/domain/entities/Category';
-import { createClient } from '@/infrastructure/supabase/server';
+import { CategoryRow } from '../types';
+import { SupabaseClient } from '@supabase/supabase-js';
 
 export class SupabaseCategoryRepository implements ICategoryRepository {
-  constructor(private supabase: any) {}
+  constructor(private supabase: SupabaseClient) {}
 
   async findAll(): Promise<Category[]> {
     const supabase = this.supabase;
@@ -16,7 +17,7 @@ export class SupabaseCategoryRepository implements ICategoryRepository {
       .order('name');
 
     if (error) throw new Error(error.message);
-    return (data || []).map((row: any) => ({
+    return (data as CategoryRow[] || []).map((row) => ({
       ...this.mapToEntity(row),
       productCount: row.products?.[0]?.count || 0
     }));
@@ -90,12 +91,12 @@ export class SupabaseCategoryRepository implements ICategoryRepository {
     if (error) throw new Error(error.message);
   }
 
-  private mapToEntity(row: any): Category {
+  private mapToEntity(row: CategoryRow): Category {
     return {
       id: row.id,
       name: row.name,
       slug: row.slug,
-      description: row.description,
+      description: row.description || undefined,
       createdAt: new Date(row.created_at),
       updatedAt: new Date(row.updated_at),
     };

@@ -6,12 +6,13 @@ import {
   updateProductAction, 
   deleteProductAction 
 } from '@/presentation/actions/product';
+import { CreateProductDTO, UpdateProductDTO } from '@/domain/entities/Product';
 
 export function useProduct() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const createProduct = useCallback(async (data: any) => {
+  const createProduct = useCallback(async (data: CreateProductDTO) => {
     setIsLoading(true);
     setError(null);
     try {
@@ -21,8 +22,8 @@ export function useProduct() {
         return { success: false, error: result.error };
       }
       return { success: true, data: result.data };
-    } catch (err: any) {
-      const msg = err.message || 'An unexpected error occurred';
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'An unexpected error occurred';
       setError(msg);
       return { success: false, error: msg };
     } finally {
@@ -30,7 +31,7 @@ export function useProduct() {
     }
   }, []);
 
-  const updateProduct = useCallback(async (id: string, data: any) => {
+  const updateProduct = useCallback(async (id: string, data: UpdateProductDTO) => {
     setIsLoading(true);
     setError(null);
     try {
@@ -40,8 +41,8 @@ export function useProduct() {
         return { success: false, error: result.error };
       }
       return { success: true, data: result.data };
-    } catch (err: any) {
-      const msg = err.message || 'An unexpected error occurred';
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'An unexpected error occurred';
       setError(msg);
       return { success: false, error: msg };
     } finally {
@@ -59,8 +60,8 @@ export function useProduct() {
         return { success: false, error: result.error };
       }
       return { success: true };
-    } catch (err: any) {
-      const msg = err.message || 'An unexpected error occurred';
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'An unexpected error occurred';
       setError(msg);
       return { success: false, error: msg };
     } finally {
