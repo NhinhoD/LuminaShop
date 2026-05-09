@@ -37,7 +37,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
    git push origin Dev
    ```
 
-5. **Before merging Dev → main (checklist)**:
+5. **Before merging Dev → main**:
    - [x] All planned features for this release are done
    - [x] `npm run build` passes
    - [x] `npm run lint` passes (remaining warnings are non-blocking)
@@ -45,14 +45,14 @@ This version has breaking changes — APIs, conventions, and file structure may 
    - [x] No "any" TypeScript types in `src`
    - [ ] `README.md` is updated
    - [x] `AGENTS.md` is updated with current status
-   - [ ] User has reviewed and approved the diff
+   - [ ] User has reviewed and approved the status
 
-6. **Merge Dev → main only after user approval**:
-   ```bash
-   git checkout main
-   git merge Dev
-   git push origin main
-   ```
+6. **Merging Dev → main (PR Workflow)**:
+   - **NEVER** run: `git merge Dev` on your local `main` branch.
+   - Instead, push `Dev` to GitHub: `git push origin Dev`
+   - Create a **Pull Request** on GitHub (From: `Dev` → To: `main`).
+   - Wait for manual review and approval on GitHub.
+   - The user will perform the merge on GitHub.
 
 ---
 
