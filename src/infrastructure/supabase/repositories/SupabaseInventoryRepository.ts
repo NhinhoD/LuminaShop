@@ -28,6 +28,19 @@ export class SupabaseInventoryRepository implements IInventoryRepository {
     return this.mapToEntity(data);
   }
 
+  async findBaseInventoryByProductId(productId: string): Promise<InventoryItem | null> {
+    const supabase = this.supabase;
+    const { data, error } = await supabase
+      .from('inventory_items')
+      .select('*')
+      .eq('product_id', productId)
+      .is('variant_id', null)
+      .single();
+    
+    if (error || !data) return null;
+    return this.mapToEntity(data);
+  }
+
   async findBySku(sku: string): Promise<InventoryItem | null> {
     const supabase = this.supabase;
     const { data, error } = await supabase

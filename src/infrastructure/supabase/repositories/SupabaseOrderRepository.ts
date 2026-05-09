@@ -54,6 +54,8 @@ export class SupabaseOrderRepository implements IOrderRepository {
         total_amount: order.totalAmount,
         shipping_address: order.shippingAddress,
         contact_phone: order.contactPhone,
+        contact_email: order.contactEmail,
+        notes: order.notes,
         payment_method: order.paymentMethod,
         payment_status: order.paymentStatus
       })
@@ -68,7 +70,8 @@ export class SupabaseOrderRepository implements IOrderRepository {
       product_id: item.productId,
       variant_id: item.variantId,
       quantity: item.quantity,
-      price_at_purchase: item.priceAtPurchase
+      price_at_purchase: item.priceAtPurchase,
+      product_snapshot: item.productSnapshot
     }));
 
     const { error: itemsError } = await supabase
@@ -90,16 +93,28 @@ export class SupabaseOrderRepository implements IOrderRepository {
     if (error) throw new Error(error.message);
   }
 
+  async updatePaymentStatus(id: string, paymentStatus: string): Promise<void> {
+    const supabase = this.supabase;
+    const { error } = await supabase
+      .from('orders')
+      .update({ payment_status: paymentStatus, updated_at: new Date().toISOString() })
+      .eq('id', id);
+
+    if (error) throw new Error(error.message);
+  }
+
   private mapToEntity(row: any): Order {
     return {
       id: row.id,
       userId: row.user_id,
       status: row.status as OrderStatus,
       totalAmount: parseInt(row.total_amount),
-      shippingAddress: row.shipping_address,
+      shippingAddress: typeof row.shipping_address === 'string' ? JSON.parse(row.shipping_address) : row.shipping_address,
+      contactEmail: row.contact_email,
       contactPhone: row.contact_phone,
       paymentMethod: row.payment_method,
       paymentStatus: row.payment_status,
+      notes: row.notes,
       items: (row.order_items || []).map((item: any) => ({
         id: item.id,
         orderId: item.order_id,
@@ -107,7 +122,7 @@ export class SupabaseOrderRepository implements IOrderRepository {
         variantId: item.variant_id,
         quantity: item.quantity,
         priceAtPurchase: parseInt(item.price_at_purchase),
-        productTitle: item.product?.title
+        productSnapshot: typeof item.product_snapshot === 'string' ? JSON.parse(item.product_snapshot) : item.product_snapshot
       })),
       createdAt: new Date(row.created_at),
       updatedAt: new Date(row.updated_at)

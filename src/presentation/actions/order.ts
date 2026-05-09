@@ -1,11 +1,11 @@
 "use server";
 
 import { 
-  makePlaceOrderUseCase, 
+  makeCreateOrderUseCase, 
   makeOrderRepository,
   makeSupabaseClient
 } from "@/infrastructure/supabase/container";
-import { PlaceOrderDTO } from "@/application/use-cases/orders/PlaceOrder";
+import { CreateOrderDTO } from "@/application/use-cases/orders/CreateOrder";
 import { revalidatePath } from "next/cache";
 
 async function getUserId() {
@@ -14,12 +14,12 @@ async function getUserId() {
   return user?.id;
 }
 
-export async function placeOrderAction(data: Omit<PlaceOrderDTO, 'userId'>) {
+export async function createOrderAction(data: Omit<CreateOrderDTO, 'userId'>) {
   const userId = await getUserId();
   if (!userId) return { error: "Bạn cần đăng nhập để đặt hàng." };
 
-  const placeOrderUseCase = await makePlaceOrderUseCase();
-  const result = await placeOrderUseCase.execute({ ...data, userId });
+  const createOrderUseCase = await makeCreateOrderUseCase();
+  const result = await createOrderUseCase.execute({ ...data, userId });
 
   if (!result.success) {
     return { error: result.error.message };

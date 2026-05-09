@@ -12,11 +12,13 @@ import { CreateCategoryUseCase } from '@/application/use-cases/categories/Create
 import { DeleteCategoryUseCase } from '@/application/use-cases/categories/DeleteCategory';
 import { GetCategoriesUseCase } from '@/application/use-cases/categories/GetCategories';
 import { UpdateCategoryUseCase } from '@/application/use-cases/categories/UpdateCategory';
-import { PlaceOrderUseCase } from '@/application/use-cases/orders/PlaceOrder';
+import { CreateOrderUseCase } from '@/application/use-cases/orders/CreateOrder';
 import { CreateProductUseCase } from '@/application/use-cases/products/CreateProduct';
 import { UpdateProductUseCase } from '@/application/use-cases/products/UpdateProduct';
 import { GetProductByIdUseCase } from '@/application/use-cases/products/GetProductById';
 import { GetProductsUseCase } from '@/application/use-cases/products/GetProducts';
+import { ProcessPaymentUseCase } from '@/application/use-cases/payment/ProcessPayment';
+import { CODPaymentGateway } from './gateways/CODPaymentGateway';
 
 // Repository Factories
 export async function makeCartRepository() {
@@ -75,11 +77,10 @@ export async function makeUpdateCategoryUseCase() {
   return new UpdateCategoryUseCase(repo);
 }
 
-export async function makePlaceOrderUseCase() {
+export async function makeCreateOrderUseCase() {
   const orderRepo = await makeOrderRepository();
-  const cartRepo = await makeCartRepository();
   const inventoryRepo = await makeInventoryRepository();
-  return new PlaceOrderUseCase(orderRepo, cartRepo, inventoryRepo);
+  return new CreateOrderUseCase(orderRepo, inventoryRepo);
 }
 
 export async function makeCreateProductUseCase() {
@@ -100,4 +101,15 @@ export async function makeGetProductByIdUseCase() {
 export async function makeGetProductsUseCase() {
   const repo = await makeProductRepository();
   return new GetProductsUseCase(repo);
+}
+
+export async function makeCODPaymentGateway() {
+  const supabase = await makeSupabaseClient();
+  return new CODPaymentGateway(supabase);
+}
+
+export async function makeProcessPaymentUseCase() {
+  const gateway = await makeCODPaymentGateway(); // default to COD for now, ideally dynamically chosen
+  const orderRepo = await makeOrderRepository();
+  return new ProcessPaymentUseCase(gateway, orderRepo);
 }

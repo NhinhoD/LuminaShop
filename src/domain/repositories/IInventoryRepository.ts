@@ -3,6 +3,7 @@ import { InventoryItem, StockMovement } from '../entities/Inventory';
 export interface IInventoryRepository {
   findByProductId(productId: string): Promise<InventoryItem[]>;
   findByVariantId(variantId: string): Promise<InventoryItem | null>;
+  findBaseInventoryByProductId(productId: string): Promise<InventoryItem | null>;
   findBySku(sku: string): Promise<InventoryItem | null>;
   
   updateQuantity(id: string, delta: number): Promise<void>;

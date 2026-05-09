@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useCart } from "@/presentation/components/common/CartContext";
+import { useCart } from "@/presentation/hooks/useCart";
 import { ROUTES } from "@/presentation/constants";
 
 export default function NavbarCartIcon() {

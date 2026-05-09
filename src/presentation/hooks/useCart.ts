@@ -1,27 +1,20 @@
 'use client';
 
-import { useCartContext } from '@/presentation/providers/CartProvider';
+import { useCartStore } from './useCartStore';
 
 export function useCart() {
-  const { 
-    state, 
-    addItem, 
-    removeItem, 
-    updateQuantity, 
-    clearCart, 
-    syncWithServer 
-  } = useCartContext();
+  const store = useCartStore();
 
   return {
-    items: state.items,
-    isLoading: state.isLoading,
-    error: state.error,
-    totalItems: state.items.reduce((total, item) => total + item.quantity, 0),
-    totalPrice: state.items.reduce((total, item) => total + (item.productPrice || 0) * item.quantity, 0),
-    addItem,
-    removeItem,
-    updateQuantity,
-    clearCart,
-    syncWithServer,
+    items: store.items,
+    isLoading: store.isLoading,
+    error: store.error,
+    totalItems: store.items.reduce((total, item) => total + item.quantity, 0),
+    subtotal: store.items.reduce((total, item) => total + (item.price || 0) * item.quantity, 0),
+    addItem: store.addItem,
+    removeItem: store.removeItem,
+    updateQuantity: store.updateQuantity,
+    clearCart: store.clearCart,
+    syncWithServer: store.syncWithServer,
   };
 }

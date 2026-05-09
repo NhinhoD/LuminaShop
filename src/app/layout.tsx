@@ -7,7 +7,6 @@ export const metadata: Metadata = {
 };
 
 import { BreadcrumbProvider } from "@/presentation/components/common/BreadcrumbContext";
-import { CartProvider } from "@/presentation/components/common/CartContext";
 
 export default function RootLayout({
   children,
@@ -24,9 +23,7 @@ export default function RootLayout({
       </head>
       <body className="bg-background text-on-background font-body-md text-body-md antialiased selection:bg-primary selection:text-on-primary">
         <BreadcrumbProvider>
-          <CartProvider>
-            {children}
-          </CartProvider>
+          {children}
         </BreadcrumbProvider>
       </body>
     </html>
