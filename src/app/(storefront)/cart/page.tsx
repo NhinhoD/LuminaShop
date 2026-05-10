@@ -14,7 +14,7 @@ export default function CartPage() {
           <span className="material-symbols-outlined text-slate-300 text-4xl">shopping_bag</span>
         </div>
         <h1 className="text-3xl font-bold text-slate-950 mb-4">Your cart is empty</h1>
-        <p className="text-slate-500 mb-10 max-w-md text-sm">Looks like you haven't added anything to your cart yet. Explore our collection to find your next favorite piece.</p>
+        <p className="text-slate-500 mb-10 max-w-md text-sm">Looks like you haven&apos;t added anything to your cart yet. Explore our collection to find your next favorite piece.</p>
         <Link 
           href={ROUTES.SHOP} 
           className="bg-slate-950 text-white font-bold text-xs px-10 py-4 rounded uppercase tracking-widest hover:bg-slate-800 transition-colors"

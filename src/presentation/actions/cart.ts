@@ -55,8 +55,8 @@ export async function updateCartItemAction(itemId: string, quantity: number) {
     await cartRepo.updateItem(itemId, quantity);
     revalidatePath("/cart");
     return { success: true };
-  } catch (error: unknown) {
-    return { error: "Không thể cập nhật số lượng." };
+  } catch (_error: unknown) {
+    return { success: false, error: 'Failed to update cart item' };
   }
 }
 

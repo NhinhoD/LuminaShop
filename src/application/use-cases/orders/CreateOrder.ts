@@ -1,6 +1,6 @@
 import { IOrderRepository } from '@/domain/repositories/IOrderRepository';
 import { IInventoryRepository } from '@/domain/repositories/IInventoryRepository';
-import { Order, OrderStatus, ShippingAddress, PaymentMethod, PaymentStatus } from '@/domain/entities/Order';
+import { Order, OrderStatus, ShippingAddress, PaymentMethod } from '@/domain/entities/Order';
 import { Result, ok, fail } from '@/domain/shared/Result';
 
 export interface CartItemDTO {

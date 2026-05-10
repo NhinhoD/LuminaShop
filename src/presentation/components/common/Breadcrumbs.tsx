@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import {  } from "react";
 
 interface BreadcrumbItem {
   label: string;
@@ -20,17 +20,9 @@ interface BreadcrumbsProps {
  */
 export function Breadcrumbs({ items }: BreadcrumbsProps) {
   const router = useRouter();
-  const [referrer, setReferrer] = useState("");
-
-  useEffect(() => {
-    if (typeof document !== "undefined") {
-      setReferrer(document.referrer);
-    }
-  }, []);
-
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     // If we're returning to a page we just came from, use history.back() for scroll restoration
-    if (referrer.includes(href)) {
+    if (typeof document !== "undefined" && document.referrer.includes(href)) {
       e.preventDefault();
       router.back();
     }

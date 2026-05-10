@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Category, CreateCategoryDTO, UpdateCategoryDTO } from "@/domain/entities/Category";
+import { Category } from "@/domain/entities/Category";
 import { createCategoryAction, updateCategoryAction } from "@/presentation/actions/category";
 import { generateSlug } from "@/lib/utils";
 

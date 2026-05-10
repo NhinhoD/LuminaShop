@@ -84,7 +84,7 @@ export class SupabaseInventoryRepository implements IInventoryRepository {
     if (error) throw new Error(error.message);
   }
 
-  async addMovement(movement: Omit<StockMovement, 'id' | 'createdAt'>): Promise<void> {
+  async addMovement(_movement: Omit<StockMovement, 'id' | 'createdAt'>): Promise<void> {
     // Optional: implement a movements table if needed for history
   }
 

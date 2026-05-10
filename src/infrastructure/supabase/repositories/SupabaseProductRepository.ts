@@ -205,7 +205,7 @@ export class SupabaseProductRepository implements IProductRepository {
       // Handle Upserts: Split into new variants (insert) and existing variants (update)
       const newVariants = variantsToProcess
         .filter((v) => !v.id)
-        .map(({ id: _id, ...rest }) => rest);
+        .map(({ id: _, ...rest }) => rest);
       const existingToUpdate = variantsToProcess.filter((v) => v.id);
 
       if (newVariants.length > 0) {
