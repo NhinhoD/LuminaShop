@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/infrastructure/supabase/server";
 import { ROLES, ROUTES } from "@/presentation/constants";

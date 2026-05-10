@@ -83,7 +83,7 @@ export default async function LoginPage({ searchParams }: { searchParams: { erro
         </div>
 
         <div className="text-center text-sm text-slate-500">
-          Don't have an account? <Link href={ROUTES.REGISTER} className="text-slate-950 font-black hover:underline underline-offset-4">Sign Up</Link>
+          Don&apos;t have an account? <Link href={ROUTES.REGISTER} className="text-slate-950 font-black hover:underline underline-offset-4">Sign Up</Link>
         </div>
       </div>
     </div>

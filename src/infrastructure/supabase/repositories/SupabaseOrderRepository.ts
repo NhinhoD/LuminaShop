@@ -1,6 +1,6 @@
 import { IOrderRepository } from '@/domain/repositories/IOrderRepository';
 import { Order, OrderItem, OrderStatus, PaymentStatus, ShippingAddress, ProductSnapshot } from '@/domain/entities/Order';
-import { OrderRow, OrderItemRow } from '../types';
+import { OrderRow } from '../types';
 import { SupabaseClient } from '@supabase/supabase-js';
 
 export class SupabaseOrderRepository implements IOrderRepository {

@@ -28,7 +28,7 @@ export function BreadcrumbSetter({ currentLabel, parentLabels }: BreadcrumbSette
     if (currentLabel) {
       setCustomLabel(pathname, currentLabel);
     }
-  }, [pathname, currentLabel, parentLabelsKey, setCustomLabel]); // Removed direct parentLabels from deps
+  }, [pathname, currentLabel, parentLabels, parentLabelsKey, setCustomLabel]); 
 
   return null;
 }

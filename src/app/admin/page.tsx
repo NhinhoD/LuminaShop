@@ -7,7 +7,7 @@ export default function AdminDashboardPage() {
       <div className="flex justify-between items-end mb-8">
         <div>
           <h1 className="text-h1 text-on-surface">Overview</h1>
-          <p className="text-body-md text-on-surface-variant mt-1">Here's what's happening with your store today.</p>
+          <p className="text-body-md text-on-surface-variant mt-1">Here&apos;s what&apos;s happening with your store today.</p>
         </div>
         <div className="flex gap-4">
           <button className="px-4 py-2 border border-outline-variant rounded-lg font-label-md text-label-md text-on-surface hover:bg-surface-container-low transition-colors flex items-center gap-2">

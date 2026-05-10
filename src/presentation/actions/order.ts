@@ -36,9 +36,9 @@ export async function getOrderAction(id: string) {
     const orderRepo = await makeOrderRepository();
     const order = await orderRepo.findById(id);
     return { data: order };
-  } catch (error: unknown) {
-    return { error: "Không thể lấy thông tin đơn hàng." };
-  }
+    } catch (_error: unknown) {
+      return { success: false, error: 'Failed to get orders' };
+    }
 }
 
 export async function getUserOrdersAction() {
@@ -49,7 +49,7 @@ export async function getUserOrdersAction() {
     const orderRepo = await makeOrderRepository();
     const orders = await orderRepo.findByUserId(userId);
     return { data: orders };
-  } catch (error: unknown) {
-    return { error: "Không thể lấy danh sách đơn hàng." };
-  }
+    } catch (_error: unknown) {
+      return { success: false, error: 'Failed to create order' };
+    }
 }

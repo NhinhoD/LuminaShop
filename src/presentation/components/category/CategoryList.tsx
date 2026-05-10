@@ -13,8 +13,8 @@ export function CategoryList() {
   const [editingCategory, setEditingCategory] = useState<Category | undefined>(undefined);
   const [searchTerm, setSearchTerm] = useState("");
 
-  const fetchCategories = async () => {
-    setLoading(true);
+  const fetchCategories = async (showLoading = true) => {
+    if (showLoading) setLoading(true);
     const result = await getCategoriesAction();
     if (result.data) {
       setCategories(result.data);
@@ -23,7 +23,7 @@ export function CategoryList() {
   };
 
   useEffect(() => {
-    fetchCategories();
+    Promise.resolve().then(() => fetchCategories(false));
   }, []);
 
   const handleDelete = async (id: string) => {

@@ -1,6 +1,6 @@
 import { ICartRepository } from '@/domain/repositories/ICartRepository';
 import { Cart, CartItem } from '@/domain/entities/Cart';
-import { CartRow, CartItemRow } from '../types';
+import { CartItemRow } from '../types';
 import { SupabaseClient } from '@supabase/supabase-js';
 
 export class SupabaseCartRepository implements ICartRepository {

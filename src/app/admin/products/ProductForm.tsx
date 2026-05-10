@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createProductAction, updateProductAction } from "@/presentation/actions/product";
 import { Category } from "@/domain/entities/Category";
-import { CreateProductDTO, UpdateProductDTO, Product, ProductVariant } from "@/domain/entities/Product";
+import { CreateProductDTO, UpdateProductDTO, Product } from "@/domain/entities/Product";
 
 interface ProductFormProps {
   categories: Category[];

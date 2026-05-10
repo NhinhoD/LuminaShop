@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
 import { useBreadcrumbs } from "./BreadcrumbContext";
 import { ROUTES, UI_CONFIG } from "@/presentation/constants";
 
@@ -15,14 +14,6 @@ export function AutoBreadcrumbs() {
   const pathname = usePathname();
   const router = useRouter();
   const { customLabels } = useBreadcrumbs();
-  const [referrer, setReferrer] = useState("");
-
-  useEffect(() => {
-    if (typeof document !== "undefined") {
-      setReferrer(document.referrer);
-    }
-  }, []);
-
   // Don't show breadcrumbs on the homepage
   if (pathname === ROUTES.HOME) return null;
 
@@ -46,7 +37,7 @@ export function AutoBreadcrumbs() {
   ];
 
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-    if (referrer.includes(href)) {
+    if (typeof document !== "undefined" && document.referrer.includes(href)) {
       e.preventDefault();
       router.back();
     }

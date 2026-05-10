@@ -20,7 +20,7 @@ export function BackButton({ className = "" }: BackButtonProps) {
     // Note: window.history.length > 1 doesn't always mean there's a previous page from our site,
     // but it's a good heuristic.
     if (typeof window !== "undefined" && window.history.length > 1) {
-      setCanGoBack(true);
+      requestAnimationFrame(() => setCanGoBack(true));
     }
   }, []);
 
