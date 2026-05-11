@@ -1,5 +1,4 @@
 import { IOrderRepository } from '@/domain/repositories/IOrderRepository';
-import { IInventoryRepository } from '@/domain/repositories/IInventoryRepository';
 import { Order, OrderStatus, ShippingAddress, PaymentMethod } from '@/domain/entities/Order';
 import { Result, ok, fail } from '@/domain/shared/Result';
 
@@ -25,8 +24,7 @@ export interface CreateOrderDTO {
 
 export class CreateOrderUseCase {
   constructor(
-    private orderRepo: IOrderRepository,
-    private inventoryRepo: IInventoryRepository
+    private orderRepo: IOrderRepository
   ) {}
 
   async execute(data: CreateOrderDTO): Promise<Result<Order>> {
@@ -35,30 +33,10 @@ export class CreateOrderUseCase {
         return fail(new Error('Giỏ hàng trống.'));
       }
 
-      // 1. Validate inventory for all items
-      for (const item of data.cartItems) {
-        let inventoryItem;
-        if (item.variantId) {
-          inventoryItem = await this.inventoryRepo.findByVariantId(item.variantId);
-        } else {
-          inventoryItem = await this.inventoryRepo.findBaseInventoryByProductId(item.productId);
-        }
-
-        if (!inventoryItem) {
-          const name = item.variantName ? `${item.title || ''} - ${item.variantName}` : (item.title || '');
-          return fail(new Error(`Không tìm thấy tồn kho cho sản phẩm ${name} (PID: ${item.productId}, VID: ${item.variantId}).`));
-        }
-
-        if (inventoryItem.available < item.quantity) {
-          const name = item.variantName ? `${item.title || ''} - ${item.variantName}` : (item.title || '');
-          return fail(new Error(`Sản phẩm ${name} không đủ hàng. (Yêu cầu: ${item.quantity}, Có sẵn: ${inventoryItem.available})`));
-        }
-      }
-
-      // 2. Calculate total amount
+      // 1. Calculate total amount
       const totalAmount = data.cartItems.reduce((acc, item) => acc + (item.price || 0) * item.quantity, 0);
       
-      // 3. Map to OrderItems with productSnapshot
+      // 2. Map to OrderItems with productSnapshot
       const orderItems = data.cartItems.map(item => ({
         productId: item.productId,
         variantId: item.variantId,
@@ -71,7 +49,12 @@ export class CreateOrderUseCase {
         }
       }));
 
-      // 4. Create order
+      // 3. Create order
+      // The repository now calls an atomic RPC that handles:
+      // - Real-time stock validation with row-level locking
+      // - Order and items insertion
+      // - Immediate stock deduction from quantity
+      // - Automatic sync to products/variants via DB triggers
       const order = await this.orderRepo.create({
         userId: data.userId,
         totalAmount,
@@ -83,20 +66,6 @@ export class CreateOrderUseCase {
         status: OrderStatus.PENDING,
         notes: data.notes
       }, orderItems);
-
-      // 5. Update inventory (deduct/reserve)
-      for (const item of data.cartItems) {
-        let inventoryItem;
-        if (item.variantId) {
-          inventoryItem = await this.inventoryRepo.findByVariantId(item.variantId);
-        } else {
-          inventoryItem = await this.inventoryRepo.findBaseInventoryByProductId(item.productId);
-        }
-
-        if (inventoryItem) {
-          await this.inventoryRepo.reserve(inventoryItem.id, item.quantity);
-        }
-      }
 
       return ok(order);
     } catch (error: unknown) {

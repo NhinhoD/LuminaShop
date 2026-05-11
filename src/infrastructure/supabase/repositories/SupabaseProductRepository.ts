@@ -125,15 +125,8 @@ export class SupabaseProductRepository implements IProductRepository {
       }
     }
 
-    // Also create base inventory item for the product itself if no variants
-    const { data: existingBaseInventory } = await supabase
-      .from('inventory_items')
-      .select('id')
-      .eq('product_id', product.id)
-      .is('variant_id', null)
-      .single();
-
-    if (!existingBaseInventory) {
+    // Task 3: Only create base inventory item if NO variants exist
+    if (!data.variants || data.variants.length === 0) {
       await supabase.from('inventory_items').insert({
         product_id: product.id,
         variant_id: null,
@@ -205,7 +198,13 @@ export class SupabaseProductRepository implements IProductRepository {
       // Handle Upserts: Split into new variants (insert) and existing variants (update)
       const newVariants = variantsToProcess
         .filter((v) => !v.id)
-        .map(({ id: _, ...rest }) => rest);
+        .map((v) => ({
+          product_id: v.product_id,
+          sku: v.sku,
+          name: v.name,
+          price_adjustment: v.price_adjustment,
+          stock_quantity: v.stock_quantity
+        }));
       const existingToUpdate = variantsToProcess.filter((v) => v.id);
 
       if (newVariants.length > 0) {
@@ -244,8 +243,41 @@ export class SupabaseProductRepository implements IProductRepository {
         }
       }
 
-      // Sync base product inventory if needed
-      if (data.stock !== undefined) {
+      // Task 3: Repository cleanup
+      // We only manage base inventory (variant_id=NULL) for products without variants.
+      const hasVariantsAfterUpdate = data.variants.length > 0;
+      if (hasVariantsAfterUpdate) {
+        // Remove base inventory if variants are present/added
+        await supabase.from('inventory_items').delete().eq('product_id', id).is('variant_id', null);
+      } else if (data.stock !== undefined) {
+        // Update or create base inventory item if no variants
+        const { data: baseInv } = await supabase
+          .from('inventory_items')
+          .select('id')
+          .eq('product_id', id)
+          .is('variant_id', null)
+          .single();
+
+        if (baseInv) {
+          await supabase.from('inventory_items').update({ quantity: data.stock }).eq('id', baseInv.id);
+        } else {
+          const { data: p } = await supabase.from('products').select('slug').eq('id', id).single();
+          await supabase.from('inventory_items').insert({
+            product_id: id,
+            variant_id: null,
+            sku: `${p?.slug || 'unknown'}-BASE`,
+            quantity: data.stock
+          });
+        }
+      }
+    } else if (data.stock !== undefined) {
+      // Variants not part of this update, check if they exist currently
+      const { count } = await supabase
+        .from('product_variants')
+        .select('id', { count: 'exact', head: true })
+        .eq('product_id', id);
+
+      if (count === 0) {
         await supabase
           .from('inventory_items')
           .update({ quantity: data.stock })

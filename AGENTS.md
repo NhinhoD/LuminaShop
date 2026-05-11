@@ -23,6 +23,8 @@ When starting ANY new session, always do this first — no exceptions:
 7. Read @public/stitch_e_commerce_ux_ui_design — UI design references
 8. Read @.agents/skills/supabase — Supabase patterns
 9. Read @.agents/skills/supabase-postgres-best-practices — DB best practices
+10. Read @.agents/skills/stitch-design — UI/UX & Stitch patterns
+11. Read @.agents/skills/react-components — React & Tailwind patterns
 
 After reading, report to user:
 - ✅ What is DONE
@@ -270,10 +272,12 @@ chore: install supabase agent skills
 - **Task 1 (Cart):** Zustand store, server actions, persistent state
 - **Task 2 (Checkout):** Multi-step form, Zod validation, order creation
 - **Task 3a (COD Payment):** CODPaymentGateway, payment flow, success/failure pages
-- **Task 4 (Admin Suite - basic):** Product & category management, inventory tracking
-- **Type Safety:** 100% — 0 `any` types in `src/`
+- **Task 4 (Admin Suite & Customer Dashboard):** Full order management, status tracking, and profile history
+- **Task 1b (Atomic Inventory):** Atomic stock deduction via SQL RPC, race-condition prevention
+- **Inventory Sync:** Auto-sync products.stock from variants via DB triggers
+- **Type Safety:** 100% — 0 `any` types in `src/`, 0 build/lint errors
 - **Git Workflow:** PR-based workflow enforced
-- **Supabase Skills:** Installed in `.agents/skills/`
+- **All Skills:** Consolidated in `.agents/skills/`
 - **MCP GitHub:** Connected and configured
 
 ### 🔄 In Progress:
