@@ -13,6 +13,10 @@ import { DeleteCategoryUseCase } from '@/application/use-cases/categories/Delete
 import { GetCategoriesUseCase } from '@/application/use-cases/categories/GetCategories';
 import { UpdateCategoryUseCase } from '@/application/use-cases/categories/UpdateCategory';
 import { CreateOrderUseCase } from '@/application/use-cases/orders/CreateOrder';
+import { GetAllOrdersUseCase } from '@/application/use-cases/orders/GetAllOrders';
+import { GetOrderDetailUseCase } from '@/application/use-cases/orders/GetOrderDetail';
+import { GetUserOrdersUseCase } from '@/application/use-cases/orders/GetUserOrders';
+import { UpdateOrderStatusUseCase } from '@/application/use-cases/orders/UpdateOrderStatus';
 import { CreateProductUseCase } from '@/application/use-cases/products/CreateProduct';
 import { UpdateProductUseCase } from '@/application/use-cases/products/UpdateProduct';
 import { GetProductByIdUseCase } from '@/application/use-cases/products/GetProductById';
@@ -79,8 +83,27 @@ export async function makeUpdateCategoryUseCase() {
 
 export async function makeCreateOrderUseCase() {
   const orderRepo = await makeOrderRepository();
-  const inventoryRepo = await makeInventoryRepository();
-  return new CreateOrderUseCase(orderRepo, inventoryRepo);
+  return new CreateOrderUseCase(orderRepo);
+}
+
+export async function makeGetAllOrdersUseCase() {
+  const repo = await makeOrderRepository();
+  return new GetAllOrdersUseCase(repo);
+}
+
+export async function makeGetOrderDetailUseCase() {
+  const repo = await makeOrderRepository();
+  return new GetOrderDetailUseCase(repo);
+}
+
+export async function makeGetUserOrdersUseCase() {
+  const repo = await makeOrderRepository();
+  return new GetUserOrdersUseCase(repo);
+}
+
+export async function makeUpdateOrderStatusUseCase() {
+  const repo = await makeOrderRepository();
+  return new UpdateOrderStatusUseCase(repo);
 }
 
 export async function makeCreateProductUseCase() {

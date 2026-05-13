@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { createClient } from '@/infrastructure/supabase/server';
 import { signout } from '@/presentation/actions/auth';
 import { ROUTES, UI_LABELS, PLACEHOLDERS } from '@/presentation/constants';
+import { StatusBadge } from '@/presentation/components/orders/StatusBadge';
 
 export default async function ProfilePage() {
   const supabase = await createClient();
@@ -13,9 +14,17 @@ export default async function ProfilePage() {
   }
 
   const { data: profile } = await supabase.from('profiles').select('*').eq('id', user.id).single();
+  
+  // Fetch recent orders
+  const { getUserOrdersAction } = await import('@/presentation/actions/order');
+  const response = await getUserOrdersAction();
+  const recentOrders = (response.data || []).slice(0, 2);
+
+  const { UserOrdersRealtimeTracker } = await import('@/presentation/components/orders/UserOrdersRealtimeTracker');
 
   return (
     <main className="flex-grow pt-24 pb-24 bg-[#f8f9fa]">
+      <UserOrdersRealtimeTracker userId={user.id} />
       <div className="max-w-[1440px] mx-auto px-8 md:px-12">
         
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
@@ -38,19 +47,19 @@ export default async function ProfilePage() {
 
               {/* Sidebar Navigation */}
               <nav className="space-y-1">
-                <Link href="#" className="flex items-center gap-4 px-4 py-3.5 bg-[#0b1c30] text-white rounded-lg font-semibold text-[13px] transition-all">
+                <Link href="/profile" className="flex items-center gap-4 px-4 py-3.5 bg-[#0b1c30] text-white rounded-lg font-semibold text-[13px] transition-all">
                   <span className="material-symbols-outlined text-[20px]">person</span>
                   {UI_LABELS.PROFILE_INFO}
                 </Link>
-                <Link href="#" className="flex items-center gap-4 px-4 py-3.5 text-slate-500 hover:bg-slate-50 hover:text-slate-900 rounded-lg font-semibold text-[13px] transition-all group">
+                <Link href="/profile/orders" className="flex items-center gap-4 px-4 py-3.5 text-slate-500 hover:bg-slate-50 hover:text-slate-900 rounded-lg font-semibold text-[13px] transition-all group">
                   <span className="material-symbols-outlined text-[20px] text-slate-400 group-hover:text-slate-900">receipt_long</span>
                   {UI_LABELS.ORDER_HISTORY}
                 </Link>
-                <Link href="#" className="flex items-center gap-4 px-4 py-3.5 text-slate-500 hover:bg-slate-50 hover:text-slate-900 rounded-lg font-semibold text-[13px] transition-all group">
+                <Link href="/profile/wishlist" className="flex items-center gap-4 px-4 py-3.5 text-slate-500 hover:bg-slate-50 hover:text-slate-900 rounded-lg font-semibold text-[13px] transition-all group">
                   <span className="material-symbols-outlined text-[20px] text-slate-400 group-hover:text-slate-900">favorite</span>
                   {UI_LABELS.WISHLIST}
                 </Link>
-                <Link href="#" className="flex items-center gap-4 px-4 py-3.5 text-slate-500 hover:bg-slate-50 hover:text-slate-900 rounded-lg font-semibold text-[13px] transition-all group">
+                <Link href="/profile/addresses" className="flex items-center gap-4 px-4 py-3.5 text-slate-500 hover:bg-slate-50 hover:text-slate-900 rounded-lg font-semibold text-[13px] transition-all group">
                   <span className="material-symbols-outlined text-[20px] text-slate-400 group-hover:text-slate-900">home</span>
                   {UI_LABELS.ADDRESSES}
                 </Link>
@@ -107,6 +116,7 @@ export default async function ProfilePage() {
                   <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-2">Phone Number</label>
                   <input 
                     type="tel" 
+                    defaultValue={profile?.phone || ''}
                     placeholder="+1 (555) 123-4567"
                     className="w-full h-12 px-4 bg-white border border-slate-200 rounded-sm text-sm focus:border-[#0051d5] focus:ring-1 focus:ring-[#0051d5] outline-none transition-all"
                   />
@@ -124,39 +134,43 @@ export default async function ProfilePage() {
             <section className="bg-white rounded-xl border border-slate-100 p-10 shadow-sm">
               <div className="flex justify-between items-center mb-10">
                 <h2 className="text-xl font-bold text-slate-900">{UI_LABELS.RECENT_ORDERS}</h2>
-                <Link href="#" className="text-[11px] font-bold text-[#0051d5] uppercase tracking-[0.1em] hover:underline underline-offset-4">{UI_LABELS.VIEW_ALL}</Link>
+                <Link href="/profile/orders" className="text-[11px] font-bold text-[#0051d5] uppercase tracking-[0.1em] hover:underline underline-offset-4">{UI_LABELS.VIEW_ALL}</Link>
               </div>
 
               <div className="space-y-4">
-                {/* Order Item 1 */}
-                <div className="flex items-center gap-6 p-6 border border-slate-100 rounded-xl hover:border-slate-200 transition-colors group">
-                  <div className="w-14 h-14 bg-blue-50 text-[#0051d5] rounded-lg flex items-center justify-center flex-shrink-0">
-                    <span className="material-symbols-outlined text-[28px]">inventory_2</span>
+                {recentOrders.length === 0 ? (
+                  <div className="py-8 text-center border border-dashed border-slate-200 rounded-xl">
+                    <p className="text-slate-400 text-sm">Bạn chưa có đơn hàng nào.</p>
                   </div>
-                  <div className="flex-grow">
-                    <h3 className="font-bold text-slate-900 text-sm mb-1 group-hover:text-[#0051d5] transition-colors">Order #ORD-84729</h3>
-                    <p className="text-slate-400 text-[11px]">Placed on Oct 12, 2023</p>
-                  </div>
-                  <div className="text-right">
-                    <span className="block font-black text-slate-900 text-lg mb-1">$145.00</span>
-                    <span className="inline-flex px-2.5 py-1 bg-green-50 text-green-600 text-[9px] font-bold uppercase tracking-wider rounded-sm">Delivered</span>
-                  </div>
-                </div>
-
-                {/* Order Item 2 */}
-                <div className="flex items-center gap-6 p-6 border border-slate-100 rounded-xl hover:border-slate-200 transition-colors group">
-                  <div className="w-14 h-14 bg-blue-50 text-[#0051d5] rounded-lg flex items-center justify-center flex-shrink-0">
-                    <span className="material-symbols-outlined text-[28px]">local_shipping</span>
-                  </div>
-                  <div className="flex-grow">
-                    <h3 className="font-bold text-slate-900 text-sm mb-1 group-hover:text-[#0051d5] transition-colors">Order #ORD-84610</h3>
-                    <p className="text-slate-400 text-[11px]">Placed on Sep 28, 2023</p>
-                  </div>
-                  <div className="text-right">
-                    <span className="block font-black text-slate-900 text-lg mb-1">$89.50</span>
-                    <span className="inline-flex px-2.5 py-1 bg-blue-50 text-[#0051d5] text-[9px] font-bold uppercase tracking-wider rounded-sm">In Transit</span>
-                  </div>
-                </div>
+                ) : (
+                  recentOrders.map((order) => (
+                    <Link 
+                      key={order.id}
+                      href={`/profile/orders/${order.id}`}
+                      className="flex items-center gap-6 p-6 border border-slate-100 rounded-xl hover:border-slate-200 transition-colors group"
+                    >
+                      <div className="w-14 h-14 bg-blue-50 text-[#0051d5] rounded-lg flex items-center justify-center flex-shrink-0">
+                        <span className="material-symbols-outlined text-[28px]">
+                          {order.status === 'shipped' || order.status === 'delivered' ? 'local_shipping' : 'inventory_2'}
+                        </span>
+                      </div>
+                      <div className="flex-grow">
+                        <h3 className="font-bold text-slate-900 text-sm mb-1 group-hover:text-[#0051d5] transition-colors">
+                          Order #{order.id.slice(0, 8).toUpperCase()}
+                        </h3>
+                        <p className="text-slate-400 text-[11px]">
+                          Placed on {new Date(order.createdAt).toLocaleDateString('vi-VN')}
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <span className="block font-black text-slate-900 text-lg mb-1">
+                          {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(order.totalAmount)}
+                        </span>
+                        <StatusBadge status={order.status} />
+                      </div>
+                    </Link>
+                  ))
+                )}
               </div>
             </section>
 

@@ -1,6 +1,6 @@
 import { IOrderRepository } from '@/domain/repositories/IOrderRepository';
 import { Order, OrderItem, OrderStatus, PaymentStatus, ShippingAddress, ProductSnapshot } from '@/domain/entities/Order';
-import { OrderRow } from '../types';
+import { OrderRow, OrderItemRow } from '../types';
 import { SupabaseClient } from '@supabase/supabase-js';
 
 export class SupabaseOrderRepository implements IOrderRepository {
@@ -10,7 +10,7 @@ export class SupabaseOrderRepository implements IOrderRepository {
     const supabase = this.supabase;
     const { data, error } = await supabase
       .from('orders')
-      .select('*, order_items(*, product:products(title))')
+      .select('*, items:order_items(*, product:products(title))')
       .eq('id', id)
       .single();
 
@@ -22,7 +22,7 @@ export class SupabaseOrderRepository implements IOrderRepository {
     const supabase = this.supabase;
     const { data, error } = await supabase
       .from('orders')
-      .select('*, order_items(*, product:products(title))')
+      .select('*, items:order_items(*, product:products(title))')
       .eq('user_id', userId)
       .order('created_at', { ascending: false });
 
@@ -32,7 +32,7 @@ export class SupabaseOrderRepository implements IOrderRepository {
 
   async findAll(filters?: { status?: OrderStatus }): Promise<Order[]> {
     const supabase = this.supabase;
-    let query = supabase.from('orders').select('*, order_items(*, product:products(title))');
+    let query = supabase.from('orders').select('*, items:order_items(*, product:products(title))');
     
     if (filters?.status) {
       query = query.eq('status', filters.status);
@@ -46,12 +46,11 @@ export class SupabaseOrderRepository implements IOrderRepository {
   async create(order: Omit<Order, 'id' | 'createdAt' | 'updatedAt' | 'items'>, items: Omit<OrderItem, 'id' | 'orderId'>[]): Promise<Order> {
     const supabase = this.supabase;
     
-    // Create order
-    const { data: orderData, error: orderError } = await supabase
-      .from('orders')
-      .insert({
+    // Call atomic RPC for order creation and inventory deduction
+    const { data, error } = await supabase.rpc('create_order_atomic', {
+      order_data: {
         user_id: order.userId,
-        status: OrderStatus.PENDING,
+        status: order.status,
         total_amount: order.totalAmount,
         shipping_address: order.shippingAddress,
         contact_phone: order.contactPhone,
@@ -59,29 +58,29 @@ export class SupabaseOrderRepository implements IOrderRepository {
         notes: order.notes,
         payment_method: order.paymentMethod,
         payment_status: order.paymentStatus
-      })
-      .select()
-      .single();
+      },
+      items: items.map(item => ({
+        product_id: item.productId,
+        variant_id: item.variantId || null,
+        quantity: item.quantity,
+        price_at_purchase: item.priceAtPurchase,
+        product_snapshot: item.productSnapshot
+      }))
+    });
 
-    if (orderError) throw new Error(orderError.message);
+    if (error) {
+      console.error('SupabaseOrderRepository.create error:', error);
+      throw new Error(error.message || 'Không thể tạo đơn hàng do lỗi hệ thống hoặc hết hàng.');
+    }
 
-    // Create order items
-    const itemsToInsert = items.map((item) => ({
-      order_id: (orderData as OrderRow).id,
-      product_id: item.productId,
-      variant_id: item.variantId,
-      quantity: item.quantity,
-      price_at_purchase: item.priceAtPurchase,
-      product_snapshot: item.productSnapshot
-    }));
+    const result = data as { order_id: string };
+    const createdOrder = await this.findById(result.order_id);
+    
+    if (!createdOrder) {
+      throw new Error('Đơn hàng đã được tạo nhưng không thể tìm thấy.');
+    }
 
-    const { error: itemsError } = await supabase
-      .from('order_items')
-      .insert(itemsToInsert);
-
-    if (itemsError) throw new Error(itemsError.message);
-
-    return this.findById(orderData.id) as Promise<Order>;
+    return createdOrder;
   }
 
   async updateStatus(id: string, status: OrderStatus): Promise<void> {
@@ -105,18 +104,20 @@ export class SupabaseOrderRepository implements IOrderRepository {
   }
 
   private mapToEntity(row: OrderRow): Order {
+    const items = (row.items || []) as OrderItemRow[];
+
     return {
       id: row.id,
       userId: row.user_id || '',
       status: row.status as OrderStatus,
-      totalAmount: typeof row.total_amount === 'string' ? parseInt(row.total_amount) : row.total_amount,
+      totalAmount: typeof row.total_amount === 'string' ? parseInt(row.total_amount.toString()) : row.total_amount,
       shippingAddress: (typeof row.shipping_address === 'string' ? JSON.parse(row.shipping_address) : row.shipping_address) as ShippingAddress,
       contactEmail: row.contact_email || undefined,
       contactPhone: row.contact_phone || undefined,
       paymentMethod: row.payment_method,
       paymentStatus: row.payment_status as PaymentStatus,
       notes: row.notes || undefined,
-      items: (row.items || []).map((item) => ({
+      items: items.map((item) => ({
         id: item.id,
         orderId: item.order_id,
         productId: item.product_id,

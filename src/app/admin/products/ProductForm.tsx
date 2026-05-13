@@ -52,6 +52,10 @@ export function ProductForm({ categories, initialData }: ProductFormProps) {
     })) || []
   );
 
+  const hasVariants = variants.length > 0;
+  const calculatedStock = variants.reduce((sum, v) => sum + v.stockQuantity, 0);
+  const displayStock = hasVariants ? calculatedStock : formData.stock;
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
     setFormData(prev => ({
@@ -86,6 +90,7 @@ export function ProductForm({ categories, initialData }: ProductFormProps) {
 
     const payload: CreateProductDTO | UpdateProductDTO = {
       ...formData,
+      stock: displayStock,
       variants: variants.length > 0 ? variants : undefined
     };
 
@@ -177,14 +182,22 @@ export function ProductForm({ categories, initialData }: ProductFormProps) {
         </div>
 
         <div className="space-y-2">
-          <label className="text-label-md font-medium text-on-surface">Tồn kho tổng</label>
+          <label className="text-label-md font-medium text-on-surface flex items-center gap-2">
+            {hasVariants ? "Tồn kho tổng (tính từ biến thể)" : "Tồn kho tổng"}
+            {hasVariants && <span className="material-symbols-outlined text-sm text-on-surface-variant">lock</span>}
+          </label>
           <input
             required
             type="number"
             name="stock"
-            value={formData.stock}
+            value={displayStock}
             onChange={handleChange}
-            className="w-full px-4 py-2 border border-outline-variant rounded-lg bg-surface focus:ring-2 focus:ring-primary outline-none"
+            readOnly={hasVariants}
+            className={`w-full px-4 py-2 border border-outline-variant rounded-lg bg-surface focus:ring-2 focus:ring-primary outline-none transition-all ${
+              hasVariants 
+                ? 'bg-surface-container-highest opacity-70 cursor-not-allowed border-dashed' 
+                : ''
+            }`}
           />
         </div>
       </div>

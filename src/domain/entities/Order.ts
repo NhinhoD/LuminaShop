@@ -20,6 +20,7 @@ export interface ShippingAddress {
 export interface ProductSnapshot {
   title: string;
   image?: string;
+  image_url?: string;
   variantName?: string;
 }
 
