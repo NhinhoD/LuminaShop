@@ -4,7 +4,11 @@ import { useState, useRef, useEffect, useTransition } from 'react'
 import { verifySignupOtpAction, resendOtpAction } from '@/presentation/actions/auth'
 import { motion } from 'framer-motion'
 
-export default function VerifyOtpForm({ email }: { email: string }) {
+interface VerifyOtpFormProps {
+  email: string
+}
+
+export default function VerifyOtpForm({ email }: VerifyOtpFormProps): JSX.Element {
   const [otp, setOtp] = useState(['', '', '', '', '', ''])
   const inputRefs = useRef<(HTMLInputElement | null)[]>([])
   const [isPending, startTransition] = useTransition()
@@ -12,7 +16,7 @@ export default function VerifyOtpForm({ email }: { email: string }) {
   
   const [timer, setTimer] = useState(60)
   const canResend = timer === 0
-  const [resendStatus, setResendStatus] = useState<{ type: 'success' | 'error', message: string } | null>(null)
+  const [resendStatus, setResendStatus] = useState<{ type: 'success' | 'error' | 'pending', message: string } | null>(null)
 
   useEffect(() => {
     let interval: NodeJS.Timeout
@@ -82,15 +86,22 @@ export default function VerifyOtpForm({ email }: { email: string }) {
   }
 
   const handleResend = async () => {
-    setTimer(60)
-    setResendStatus(null)
+    // Guard: return early if resend is already in progress
+    if (resendStatus?.type === 'pending') {
+      return
+    }
+
+    setResendStatus({ type: 'pending', message: 'Đang gửi...' })
     setError(null)
-    
+
     const result = await resendOtpAction()
+
     if (result?.error) {
       setResendStatus({ type: 'error', message: result.error })
     } else {
       setResendStatus({ type: 'success', message: 'Mã OTP mới đã được gửi.' })
+      // Only reset timer on successful resend
+      setTimer(60)
     }
   }
 
