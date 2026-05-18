@@ -238,6 +238,12 @@ When running PR review checklist:
 - **Only report to user when ALL checks PASS**
 - Exception: if fix requires a business logic decision → ask user first
 
+### After CodeRabbit autofix pushes a commit:
+- Always run: `npm run build`
+- If build fails → fix the errors CodeRabbit introduced
+- Never merge if Vercel deployment fails
+
+
 ---
 
 ## ─── COMMIT CONVENTIONS ───
