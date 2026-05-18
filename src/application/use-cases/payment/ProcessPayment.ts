@@ -20,7 +20,6 @@ export class ProcessPaymentUseCase {
       
       if (result.success) {
         await this.orderRepo.updatePaymentStatus(data.orderId, 'paid');
-        await this.orderRepo.updateStatus(data.orderId, OrderStatus.PROCESSING);
       } else {
         await this.orderRepo.updatePaymentStatus(data.orderId, 'failed');
       }

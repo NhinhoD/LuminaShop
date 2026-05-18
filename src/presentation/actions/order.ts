@@ -221,8 +221,12 @@ export async function cancelOrderAction(orderId: string): Promise<ActionResponse
       return { success: false, error: "Bạn không có quyền hủy đơn hàng này." };
     }
 
-    if (orderResult.data.status !== OrderStatus.PENDING) {
-      return { success: false, error: "Chỉ có thể hủy đơn hàng đang ở trạng thái chờ xác nhận." };
+    if (
+      orderResult.data.status === OrderStatus.SHIPPED || 
+      orderResult.data.status === OrderStatus.DELIVERED || 
+      orderResult.data.status === OrderStatus.CANCELLED
+    ) {
+      return { success: false, error: "Chỉ có thể hủy đơn hàng đang chờ xác nhận hoặc đang xử lý." };
     }
 
     const result = await useCase.execute({

@@ -38,6 +38,7 @@ export class SupabaseCartRepository implements ICartRepository {
         cartId: item.cart_id,
         productId: item.product_id,
         variantId: item.variant_id || undefined,
+        variantName: item.variant?.name ?? undefined,
         quantity: item.quantity,
         productTitle: item.product?.title,
         productPrice: (typeof item.product?.price === 'string' ? parseInt(item.product.price) : (item.product?.price || 0)) + 

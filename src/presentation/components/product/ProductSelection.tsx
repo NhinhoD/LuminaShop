@@ -89,6 +89,7 @@ export default function ProductSelection({ product }: ProductSelectionProps) {
             id: selectedVariant ? `${product.id}-${selectedVariant.id}` : product.id,
             productId: product.id,
             variantId: selectedVariant?.id,
+            variantName: selectedVariant?.name ?? undefined,
             title: selectedVariant ? `${product.title} - ${selectedVariant.name}` : product.title,
             price: currentPrice,
             imageUrl: product.imageUrl || undefined,
