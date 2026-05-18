@@ -4,8 +4,6 @@ import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { cookies } from 'next/headers'
 import { makeSupabaseClient } from '@/infrastructure/supabase/container'
-import { VerifySignupOtpUseCase } from '@/application/use-cases/auth/VerifySignupOtp'
-import { ResendOtpUseCase } from '@/application/use-cases/auth/ResendOtp'
 
 export async function login(formData: FormData) {
   const supabase = await makeSupabaseClient()
@@ -72,6 +70,7 @@ export async function signup(formData: FormData) {
 }
 
 export async function verifySignupOtpAction(formData: FormData): Promise<{ error?: string }> {
+  const supabase = await makeSupabaseClient()
   const cookieStore = await cookies()
   const email = cookieStore.get('pending_verification_email')?.value
 
@@ -84,11 +83,14 @@ export async function verifySignupOtpAction(formData: FormData): Promise<{ error
     return { error: 'Vui lòng nhập mã OTP' }
   }
 
-  const verifyOtpUseCase = new VerifySignupOtpUseCase()
-  const result = await verifyOtpUseCase.execute(email, token)
+  const { error } = await supabase.auth.verifyOtp({
+    email,
+    token,
+    type: 'signup'
+  })
 
-  if (result.isFailure) {
-    return { error: result.error.message }
+  if (error) {
+    return { error: error.message || 'Mã OTP không hợp lệ hoặc đã hết hạn' }
   }
 
   // Clear the cookie upon success
@@ -99,6 +101,7 @@ export async function verifySignupOtpAction(formData: FormData): Promise<{ error
 }
 
 export async function resendOtpAction(): Promise<{ success?: boolean; error?: string }> {
+  const supabase = await makeSupabaseClient()
   const cookieStore = await cookies()
   const email = cookieStore.get('pending_verification_email')?.value
 
@@ -106,11 +109,13 @@ export async function resendOtpAction(): Promise<{ success?: boolean; error?: st
     return { error: 'Phiên bản đã hết hạn hoặc không tìm thấy email' }
   }
 
-  const resendOtpUseCase = new ResendOtpUseCase()
-  const result = await resendOtpUseCase.execute(email)
+  const { error } = await supabase.auth.resend({
+    type: 'signup',
+    email,
+  })
 
-  if (result.isFailure) {
-    return { error: result.error.message }
+  if (error) {
+    return { error: error.message || 'Gửi lại mã OTP thất bại' }
   }
 
   return { success: true }

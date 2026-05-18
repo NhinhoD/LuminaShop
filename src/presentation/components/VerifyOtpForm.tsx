@@ -8,7 +8,7 @@ interface VerifyOtpFormProps {
   email: string
 }
 
-export default function VerifyOtpForm({ email }: VerifyOtpFormProps): JSX.Element {
+export default function VerifyOtpForm({ email }: VerifyOtpFormProps) {
   const [otp, setOtp] = useState(['', '', '', '', '', ''])
   const inputRefs = useRef<(HTMLInputElement | null)[]>([])
   const [isPending, startTransition] = useTransition()
