@@ -279,16 +279,15 @@ chore: install supabase agent skills
 - **Git Workflow:** PR-based workflow enforced
 - **All Skills:** Consolidated in `.agents/skills/`
 - **MCP GitHub:** Connected and configured
+- **Cart Bug Fixes**: Corrected cart negative quantity decrement limit and added variant checks to QuickAddButton.
 
 ### 🔄 In Progress:
 - None
 
 ### ⏳ Next Tasks (recommended order):
-1. **Task 4 Full** — Order Management + Customer Dashboard
-   *(no external dependencies — start here)*
-2. **Task 3b** — VNPay / MoMo payment integration
+1. **Task 3b** — VNPay / MoMo payment integration
    *(requires merchant sandbox account first)*
-3. **Task 5** — Performance optimization
+2. **Task 5** — Performance optimization
    *(image optimization, edge caching, lazy loading)*
 
 ### ⚠️ Known Issues:

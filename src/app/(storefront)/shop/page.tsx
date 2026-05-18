@@ -107,6 +107,7 @@ export default async function ShopPage() {
                         imageUrl: product.imageUrl || undefined,
                         quantity: 1
                       }} 
+                      hasVariants={(product.variants?.length ?? 0) > 0}
                     />
                   </div>
                   

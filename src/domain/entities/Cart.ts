@@ -3,6 +3,7 @@ export interface CartItem {
   cartId: string;
   productId: string;
   variantId?: string;
+  variantName?: string;
   quantity: number;
   // Denormalized for ease of display in UI if needed, 
   // though usually fetched via join

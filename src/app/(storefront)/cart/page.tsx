@@ -66,8 +66,13 @@ export default function CartPage() {
                     <div className="flex items-center gap-6">
                       <div className="flex items-center border border-slate-100 rounded-full h-9 px-1">
                         <button 
-                          onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                          className="w-7 h-7 flex items-center justify-center text-slate-400 hover:text-slate-950 transition-colors"
+                          onClick={() => item.quantity > 1 && updateQuantity(item.id, item.quantity - 1)}
+                          disabled={item.quantity <= 1}
+                          className={`w-7 h-7 flex items-center justify-center text-slate-400 transition-colors ${
+                            item.quantity <= 1 
+                              ? "opacity-50 cursor-not-allowed" 
+                              : "hover:text-slate-950"
+                          }`}
                         >
                           <span className="material-symbols-outlined text-[16px]">remove</span>
                         </button>

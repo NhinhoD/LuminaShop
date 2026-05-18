@@ -13,6 +13,7 @@ export interface CartItem {
   id: string;
   productId: string;
   variantId?: string;
+  variantName?: string;
   title: string;
   price: number;
   imageUrl?: string;
@@ -26,7 +27,7 @@ interface CartState {
   isGuest: boolean;
   setGuestStatus: (isGuest: boolean) => void;
   syncWithServer: () => Promise<void>;
-  addItem: (item: { productId: string, variantId?: string, quantity: number, title?: string, price?: number, imageUrl?: string }) => Promise<void>;
+  addItem: (item: { productId: string, variantId?: string, variantName?: string, quantity: number, title?: string, price?: number, imageUrl?: string }) => Promise<void>;
   removeItem: (itemId: string) => Promise<void>;
   updateQuantity: (itemId: string, quantity: number) => Promise<void>;
   clearCart: () => Promise<void>;
@@ -84,6 +85,7 @@ export const useCartStore = create<CartState>()(
               id: i.id,
               productId: i.productId,
               variantId: i.variantId,
+              variantName: i.variantName ?? undefined,
               title: i.productTitle || "",
               price: i.productPrice || 0,
               imageUrl: i.productImageUrl,
@@ -132,6 +134,7 @@ export const useCartStore = create<CartState>()(
                    id: Math.random().toString(36).substring(2, 9),
                    productId: item.productId,
                    variantId: item.variantId,
+                   variantName: item.variantName ?? undefined,
                    quantity: item.quantity,
                    title: item.title || "",
                    price: item.price || 0,
@@ -167,13 +170,14 @@ export const useCartStore = create<CartState>()(
       updateQuantity: async (itemId, quantity) => {
         const { isGuest, items } = get();
         const previousItems = items;
+        const finalQuantity = Math.max(1, quantity);
         set({
-          items: items.map(item => item.id === itemId ? { ...item, quantity } : item)
+          items: items.map(item => item.id === itemId ? { ...item, quantity: finalQuantity } : item)
         });
 
         if (!isGuest) {
           try {
-            const result = await updateCartItemAction(itemId, quantity);
+            const result = await updateCartItemAction(itemId, finalQuantity);
             if (result.error) {
               set({ items: previousItems, error: result.error });
             }

@@ -7,6 +7,7 @@ import { formatPrice, formatDate, cn } from "@/presentation/utils";
 import { BackButton } from "@/presentation/components/common/BackButton";
 import { Package, MapPin, CreditCard, Truck, Calendar, ShoppingBag } from "lucide-react";
 import Image from "next/image";
+import { ImageWithFallback } from "@/presentation/components/common/ImageWithFallback";
 import { OrderStatus, OrderItem } from "@/domain/entities/Order";
 import { Metadata } from "next";
 
@@ -82,7 +83,7 @@ export default async function OrderDetailPage({ params }: PageProps) {
 
             <OrderTimeline currentStatus={order.status} />
             
-            {order.status === OrderStatus.PENDING && (
+            {(order.status === OrderStatus.PENDING || order.status === OrderStatus.PROCESSING) && (
               <div className="mt-8 flex justify-end">
                 <CancelOrderButton orderId={order.id} />
               </div>
@@ -100,11 +101,12 @@ export default async function OrderDetailPage({ params }: PageProps) {
                 <div key={item.id} className="p-6 flex gap-4 items-center">
                   <div className="relative w-16 h-16 bg-slate-100 rounded-lg overflow-hidden flex-shrink-0">
                     {item.productSnapshot?.image_url || item.productSnapshot?.image ? (
-                      <Image
+                      <ImageWithFallback
                         src={item.productSnapshot.image_url || item.productSnapshot.image || ""}
                         alt={item.productTitle || "Product"}
                         fill
                         className="object-cover"
+                        fallbackElement={<Package className="w-8 h-8 text-slate-300 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />}
                       />
                     ) : (
                       <Package className="w-8 h-8 text-slate-300 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
