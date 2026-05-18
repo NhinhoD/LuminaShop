@@ -47,3 +47,6 @@ _vite_backup/
 # agent specific
 # AGENTS.md and CLAUDE.md are tracked
 .mcp.json
+
+# temporary files
+*.txt
