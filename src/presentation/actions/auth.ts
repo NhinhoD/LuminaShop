@@ -4,6 +4,12 @@ import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { cookies } from 'next/headers'
 import { makeSupabaseClient } from '@/infrastructure/supabase/container'
+import { z } from 'zod'
+
+const SignUpFormSchema = z.object({
+  firstName: z.preprocess((val) => val ?? undefined, z.string().optional()),
+  lastName: z.preprocess((val) => val ?? undefined, z.string().optional()),
+})
 
 export async function login(formData: FormData) {
   const supabase = await makeSupabaseClient()
@@ -35,12 +41,21 @@ export async function signup(formData: FormData) {
 
   const email = formData.get('email')
   const password = formData.get('password')
-  const firstName = formData.get('firstName')
-  const lastName = formData.get('lastName')
 
   if (!email || typeof email !== 'string' || !password || typeof password !== 'string') {
     redirect('/register?error=SignUpFailed')
   }
+
+  const parsed = SignUpFormSchema.safeParse({
+    firstName: formData.get('firstName'),
+    lastName: formData.get('lastName'),
+  })
+
+  if (!parsed.success) {
+    redirect('/register?error=SignUpFailed')
+  }
+
+  const { firstName, lastName } = parsed.data
 
   const data = {
     email,
@@ -109,6 +124,23 @@ export async function resendOtpAction(): Promise<{ success?: boolean; error?: st
     return { error: 'Phiên bản đã hết hạn hoặc không tìm thấy email' }
   }
 
+  // 1) look up the last_resend_at for the email from the persistent Supabase table
+  const { data: rateLimit } = await supabase
+    .from('otp_rate_limits')
+    .select('last_resend_at')
+    .eq('email', email)
+    .maybeSingle()
+
+  // 2) if now - last_resend_at < 60 seconds return error
+  if (rateLimit?.last_resend_at) {
+    const lastResend = new Date(rateLimit.last_resend_at).getTime()
+    const now = Date.now()
+    if (now - lastResend < 60000) {
+      return { error: 'Vui lòng chờ trước khi yêu cầu mã OTP mới' }
+    }
+  }
+
+  // 3) call supabase.auth.resend
   const { error } = await supabase.auth.resend({
     type: 'signup',
     email,
@@ -117,6 +149,23 @@ export async function resendOtpAction(): Promise<{ success?: boolean; error?: st
   if (error) {
     return { error: error.message || 'Gửi lại mã OTP thất bại' }
   }
+
+  // On success, upsert last_resend_at to now
+  await supabase
+    .from('otp_rate_limits')
+    .upsert({
+      email,
+      last_resend_at: new Date().toISOString()
+    }, {
+      onConflict: 'email'
+    })
+
+  // Refresh the pending_verification_email cookie with updated expiry (10 more minutes)
+  cookieStore.set('pending_verification_email', email, { 
+    httpOnly: true, 
+    secure: process.env.NODE_ENV === 'production',
+    maxAge: 60 * 10 // 10 minutes
+  })
 
   return { success: true }
 }
