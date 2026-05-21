@@ -32,6 +32,11 @@ import { VerifyOtpUseCase } from '@/application/use-cases/auth/VerifyOtpUseCase'
 import { ResendOtpUseCase } from '@/application/use-cases/auth/ResendOtpUseCase';
 import { SignoutUseCase } from '@/application/use-cases/auth/SignoutUseCase';
 
+import { HttpLocationRepository } from '../repositories/HttpLocationRepository';
+import { GetProvincesUseCase } from '@/application/use-cases/location/GetProvinces';
+import { GetDistrictsUseCase } from '@/application/use-cases/location/GetDistricts';
+import { GetWardsUseCase } from '@/application/use-cases/location/GetWards';
+
 // Repository Factories
 export async function makeCartRepository() {
   const supabase = await makeSupabaseClient();
@@ -175,3 +180,24 @@ export async function makeSignoutUseCase(): Promise<SignoutUseCase> {
   const repo = await makeAuthRepository();
   return new SignoutUseCase(repo);
 }
+
+// Location Factories
+export function makeLocationRepository() {
+  return new HttpLocationRepository();
+}
+
+export function makeGetProvincesUseCase() {
+  const repo = makeLocationRepository();
+  return new GetProvincesUseCase(repo);
+}
+
+export function makeGetDistrictsUseCase() {
+  const repo = makeLocationRepository();
+  return new GetDistrictsUseCase(repo);
+}
+
+export function makeGetWardsUseCase() {
+  const repo = makeLocationRepository();
+  return new GetWardsUseCase(repo);
+}
+

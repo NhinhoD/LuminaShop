@@ -4,10 +4,12 @@ import { useCart } from "@/presentation/hooks/useCart";
 import { createOrderAction } from "@/presentation/actions/order";
 import { processPaymentAction } from "@/presentation/actions/payment";
 import { formatCurrency } from "@/lib/utils";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { z } from "zod";
 import { motion, AnimatePresence } from "framer-motion";
+import { getProvincesAction, getDistrictsAction, getWardsAction } from "@/presentation/actions/location";
+import { Province, District, Ward } from "@/domain/entities/Location";
 
 const shippingSchema = z.object({
   fullName: z.string().min(2, "Họ tên phải có ít nhất 2 ký tự"),
@@ -15,6 +17,7 @@ const shippingSchema = z.object({
   street: z.string().min(5, "Địa chỉ phải có ít nhất 5 ký tự"),
   district: z.string().min(2, "Quận/Huyện không được để trống"),
   city: z.string().min(2, "Tỉnh/Thành phố không được để trống"),
+  ward: z.string().min(2, "Phường/Xã không được để trống"),
   notes: z.string().optional(),
   paymentMethod: z.enum(["cod", "vnpay", "momo"])
 });
@@ -35,11 +38,106 @@ export default function CheckoutPage() {
     street: "",
     district: "",
     city: "",
+    ward: "",
     notes: "",
     paymentMethod: "cod"
   });
   
   const [validationErrors, setValidationErrors] = useState<Partial<Record<keyof ShippingFormData, string>>>({});
+
+  const [provinces, setProvinces] = useState<Province[]>([]);
+  const [districts, setDistricts] = useState<District[]>([]);
+  const [wards, setWards] = useState<Ward[]>([]);
+
+  const [selectedProvinceId, setSelectedProvinceId] = useState("");
+  const [selectedDistrictId, setSelectedDistrictId] = useState("");
+  const [selectedWardId, setSelectedWardId] = useState("");
+
+  useEffect(() => {
+    const fetchProvinces = async () => {
+      const res = await getProvincesAction();
+      if (res.data) {
+        setProvinces(res.data);
+      }
+    };
+    fetchProvinces();
+  }, []);
+
+  const handleProvinceChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const provinceId = e.target.value;
+    const selectedProv = provinces.find(p => p.id === provinceId);
+    
+    setSelectedProvinceId(provinceId);
+    setSelectedDistrictId("");
+    setSelectedWardId("");
+    setDistricts([]);
+    setWards([]);
+    
+    setFormData(prev => ({
+      ...prev,
+      city: selectedProv ? selectedProv.name : "",
+      district: "",
+      ward: ""
+    }));
+
+    setValidationErrors(prev => ({
+      ...prev,
+      city: undefined,
+      district: undefined,
+      ward: undefined
+    }));
+
+    if (provinceId) {
+      const res = await getDistrictsAction(provinceId);
+      if (res.data) {
+        setDistricts(res.data);
+      }
+    }
+  };
+
+  const handleDistrictChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const districtId = e.target.value;
+    const selectedDist = districts.find(d => d.id === districtId);
+    
+    setSelectedDistrictId(districtId);
+    setSelectedWardId("");
+    setWards([]);
+    
+    setFormData(prev => ({
+      ...prev,
+      district: selectedDist ? selectedDist.name : "",
+      ward: ""
+    }));
+
+    setValidationErrors(prev => ({
+      ...prev,
+      district: undefined,
+      ward: undefined
+    }));
+
+    if (districtId) {
+      const res = await getWardsAction(districtId);
+      if (res.data) {
+        setWards(res.data);
+      }
+    }
+  };
+
+  const handleWardChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const wardId = e.target.value;
+    const selectedW = wards.find(w => w.id === wardId);
+    
+    setSelectedWardId(wardId);
+    setFormData(prev => ({
+      ...prev,
+      ward: selectedW ? selectedW.name : ""
+    }));
+    
+    setValidationErrors(prev => ({
+      ...prev,
+      ward: undefined
+    }));
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
@@ -76,7 +174,8 @@ export default function CheckoutPage() {
         phone: formData.phone,
         street: formData.street,
         district: formData.district,
-        city: formData.city
+        city: formData.city,
+        ward: formData.ward
       },
       paymentMethod: formData.paymentMethod,
       notes: formData.notes
@@ -202,26 +301,53 @@ export default function CheckoutPage() {
                     </div>
                   </div>
                   
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="space-y-2">
                       <label className="text-sm font-medium">Tỉnh/Thành phố *</label>
-                      <input 
+                      <select 
                         name="city" 
-                        value={formData.city} 
-                        onChange={handleChange} 
-                        className={`w-full px-4 py-3 rounded-xl border ${validationErrors.city ? 'border-error' : 'border-outline-variant'} focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all`} 
-                      />
+                        value={selectedProvinceId} 
+                        onChange={handleProvinceChange} 
+                        className={`w-full px-4 py-3 rounded-xl border ${validationErrors.city ? 'border-error' : 'border-outline-variant'} focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all bg-surface-container-lowest`} 
+                      >
+                        <option value="">-- Chọn Tỉnh/Thành phố --</option>
+                        {provinces.map(p => (
+                          <option key={p.id} value={p.id}>{p.name}</option>
+                        ))}
+                      </select>
                       {validationErrors.city && <p className="text-error text-xs">{validationErrors.city}</p>}
                     </div>
                     <div className="space-y-2">
                       <label className="text-sm font-medium">Quận/Huyện *</label>
-                      <input 
+                      <select 
                         name="district" 
-                        value={formData.district} 
-                        onChange={handleChange} 
-                        className={`w-full px-4 py-3 rounded-xl border ${validationErrors.district ? 'border-error' : 'border-outline-variant'} focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all`} 
-                      />
+                        value={selectedDistrictId} 
+                        disabled={!selectedProvinceId}
+                        onChange={handleDistrictChange} 
+                        className={`w-full px-4 py-3 rounded-xl border ${validationErrors.district ? 'border-error' : 'border-outline-variant'} focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all bg-surface-container-lowest disabled:opacity-50`} 
+                      >
+                        <option value="">-- Chọn Quận/Huyện --</option>
+                        {districts.map(d => (
+                          <option key={d.id} value={d.id}>{d.name}</option>
+                        ))}
+                      </select>
                       {validationErrors.district && <p className="text-error text-xs">{validationErrors.district}</p>}
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">Phường/Xã *</label>
+                      <select 
+                        name="ward" 
+                        value={selectedWardId} 
+                        disabled={!selectedDistrictId}
+                        onChange={handleWardChange} 
+                        className={`w-full px-4 py-3 rounded-xl border ${validationErrors.ward ? 'border-error' : 'border-outline-variant'} focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all bg-surface-container-lowest disabled:opacity-50`} 
+                      >
+                        <option value="">-- Chọn Phường/Xã --</option>
+                        {wards.map(w => (
+                          <option key={w.id} value={w.id}>{w.name}</option>
+                        ))}
+                      </select>
+                      {validationErrors.ward && <p className="text-error text-xs">{validationErrors.ward}</p>}
                     </div>
                   </div>
                   
@@ -319,7 +445,7 @@ export default function CheckoutPage() {
                     <h3 className="font-bold mb-2">Thông tin người nhận</h3>
                     <p className="text-sm">{formData.fullName} - {formData.phone}</p>
                     <p className="text-sm text-on-surface-variant mt-1">
-                      {formData.street}, {formData.district}, {formData.city}
+                      {formData.street}, {formData.ward}, {formData.district}, {formData.city}
                     </p>
                   </div>
 
