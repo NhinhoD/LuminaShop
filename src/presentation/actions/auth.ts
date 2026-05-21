@@ -11,7 +11,7 @@ const SignUpFormSchema = z.object({
   lastName: z.preprocess((val) => val ?? undefined, z.string().optional()),
 })
 
-export async function login(formData: FormData) {
+export async function login(formData: FormData): Promise<never> {
   const supabase = await makeSupabaseClient()
 
   const email = formData.get('email')
@@ -36,7 +36,7 @@ export async function login(formData: FormData) {
   redirect('/profile')
 }
 
-export async function signup(formData: FormData) {
+export async function signup(formData: FormData): Promise<never> {
   const supabase = await makeSupabaseClient()
 
   const email = formData.get('email')
@@ -151,7 +151,7 @@ export async function resendOtpAction(): Promise<{ success?: boolean; error?: st
   }
 
   // On success, upsert last_resend_at to now
-  await supabase
+  const { error: upsertError } = await supabase
     .from('otp_rate_limits')
     .upsert({
       email,
@@ -159,6 +159,11 @@ export async function resendOtpAction(): Promise<{ success?: boolean; error?: st
     }, {
       onConflict: 'email'
     })
+
+  if (upsertError) {
+    console.error('Failed to upsert OTP rate limit:', upsertError)
+    return { error: 'Gửi lại mã OTP thất bại do lỗi hệ thống' }
+  }
 
   // Refresh the pending_verification_email cookie with updated expiry (10 more minutes)
   cookieStore.set('pending_verification_email', email, { 
@@ -170,7 +175,7 @@ export async function resendOtpAction(): Promise<{ success?: boolean; error?: st
   return { success: true }
 }
 
-export async function signout() {
+export async function signout(): Promise<never> {
   const supabase = await makeSupabaseClient()
   await supabase.auth.signOut()
   revalidatePath('/', 'layout')
