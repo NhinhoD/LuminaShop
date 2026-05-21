@@ -1,10 +1,6 @@
 "use server";
 
-import {
-  makeGetProvincesUseCase,
-  makeGetDistrictsUseCase,
-  makeGetWardsUseCase
-} from "@/infrastructure/supabase/container";
+import { LocationProvider } from "@/application/di/LocationProvider";
 import { Province, District, Ward } from "@/domain/entities/Location";
 import { z } from "zod";
 
@@ -17,7 +13,7 @@ const districtIdSchema = z.string().min(1, "District ID is required");
 
 export async function getProvincesAction(): Promise<ActionResult<Province[]>> {
   try {
-    const useCase = makeGetProvincesUseCase();
+    const useCase = LocationProvider.getGetProvincesUseCase();
     const result = await useCase.execute();
 
     if (!result.success) {
@@ -39,7 +35,7 @@ export async function getDistrictsAction(provinceId: string): Promise<ActionResu
       return { data: [] };
     }
 
-    const useCase = makeGetDistrictsUseCase();
+    const useCase = LocationProvider.getGetDistrictsUseCase();
     const result = await useCase.execute(validation.data);
 
     if (!result.success) {
@@ -61,7 +57,7 @@ export async function getWardsAction(districtId: string): Promise<ActionResult<W
       return { data: [] };
     }
 
-    const useCase = makeGetWardsUseCase();
+    const useCase = LocationProvider.getGetWardsUseCase();
     const result = await useCase.execute(validation.data);
 
     if (!result.success) {
@@ -75,4 +71,5 @@ export async function getWardsAction(districtId: string): Promise<ActionResult<W
     };
   }
 }
+
 

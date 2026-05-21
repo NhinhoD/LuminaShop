@@ -36,6 +36,7 @@ import { HttpLocationRepository } from '../repositories/HttpLocationRepository';
 import { GetProvincesUseCase } from '@/application/use-cases/location/GetProvinces';
 import { GetDistrictsUseCase } from '@/application/use-cases/location/GetDistricts';
 import { GetWardsUseCase } from '@/application/use-cases/location/GetWards';
+import { LocationProvider } from '@/application/di/LocationProvider';
 
 // Repository Factories
 export async function makeCartRepository() {
@@ -200,5 +201,12 @@ export function makeGetWardsUseCase(): GetWardsUseCase {
   const repo = makeLocationRepository();
   return new GetWardsUseCase(repo);
 }
+
+LocationProvider.register(
+  makeGetProvincesUseCase,
+  makeGetDistrictsUseCase,
+  makeGetWardsUseCase
+);
+
 
 

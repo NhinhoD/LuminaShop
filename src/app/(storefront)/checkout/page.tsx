@@ -181,38 +181,42 @@ export default function CheckoutPage() {
     setLoading(true);
     setError(null);
 
-    // Use domain-level constant for district value to maintain system integration requirements
-    const result = await createOrderAction({
-      cartItems: items,
-      shippingAddress: {
-        fullName: formData.fullName,
-        phone: formData.phone,
-        street: formData.street,
-        district: DEFAULT_DISTRICT,
-        city: formData.city,
-        ward: formData.ward
-      },
-      paymentMethod: formData.paymentMethod,
-      notes: formData.notes
-    });
-    
-    if (result.error) {
-      setLoading(false);
-      setError(result.error);
-      return;
-    } 
+    try {
+      // Use domain-level constant for district value to maintain system integration requirements
+      const result = await createOrderAction({
+        cartItems: items,
+        shippingAddress: {
+          fullName: formData.fullName,
+          phone: formData.phone,
+          street: formData.street,
+          district: DEFAULT_DISTRICT,
+          city: formData.city,
+          ward: formData.ward
+        },
+        paymentMethod: formData.paymentMethod,
+        notes: formData.notes
+      });
+      
+      if (result.error) {
+        setError(result.error);
+        return;
+      } 
 
-    if (result.data) {
-      const paymentResult = await processPaymentAction(result.data.id, subtotal, formData.paymentMethod);
-      
-      setLoading(false);
-      clearCart();
-      
-      if (paymentResult.error) {
-        router.push(`/orders/${result.data.id}/failed`);
-      } else {
-        router.push(`/orders/${result.data.id}/success`);
+      if (result.data) {
+        const paymentResult = await processPaymentAction(result.data.id, subtotal, formData.paymentMethod);
+        
+        clearCart();
+        
+        if (paymentResult.error) {
+          router.push(`/orders/${result.data.id}/failed`);
+        } else {
+          router.push(`/orders/${result.data.id}/success`);
+        }
       }
+    } catch (error) {
+      setError(error instanceof Error ? error.message : "Không thể đặt hàng lúc này");
+    } finally {
+      setLoading(false);
     }
   };
 
