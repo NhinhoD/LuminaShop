@@ -182,22 +182,23 @@ export async function makeSignoutUseCase(): Promise<SignoutUseCase> {
 }
 
 // Location Factories
-export function makeLocationRepository() {
+export function makeLocationRepository(): HttpLocationRepository {
   return new HttpLocationRepository();
 }
 
-export function makeGetProvincesUseCase() {
+export function makeGetProvincesUseCase(): GetProvincesUseCase {
   const repo = makeLocationRepository();
   return new GetProvincesUseCase(repo);
 }
 
-export function makeGetDistrictsUseCase() {
+export function makeGetDistrictsUseCase(): GetDistrictsUseCase {
   const repo = makeLocationRepository();
   return new GetDistrictsUseCase(repo);
 }
 
-export function makeGetWardsUseCase() {
+export function makeGetWardsUseCase(): GetWardsUseCase {
   const repo = makeLocationRepository();
   return new GetWardsUseCase(repo);
 }
+
 

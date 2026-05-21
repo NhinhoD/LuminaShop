@@ -10,6 +10,7 @@ import { z } from "zod";
 import { motion, AnimatePresence } from "framer-motion";
 import { getProvincesAction, getDistrictsAction, getWardsAction } from "@/presentation/actions/location";
 import { Province, District, Ward } from "@/domain/entities/Location";
+import { DEFAULT_DISTRICT } from "@/domain/constants/Location";
 import { 
   User, 
   Phone, 
@@ -62,6 +63,7 @@ export default function CheckoutPage() {
 
   const [provinces, setProvinces] = useState<Province[]>([]);
   const [wards, setWards] = useState<Ward[]>([]);
+  const [loadingWards, setLoadingWards] = useState(false);
 
   const [selectedProvinceId, setSelectedProvinceId] = useState("");
   const [selectedDistrictId, setSelectedDistrictId] = useState("");
@@ -69,9 +71,17 @@ export default function CheckoutPage() {
 
   useEffect(() => {
     const fetchProvinces = async () => {
-      const res = await getProvincesAction();
-      if (res.data) {
-        setProvinces(res.data);
+      try {
+        const res = await getProvincesAction();
+        if (res.error) {
+          setError(res.error);
+          return;
+        }
+        if (res.data) {
+          setProvinces(res.data);
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Không thể tải danh sách Tỉnh/Thành phố");
       }
     };
     fetchProvinces();
@@ -99,18 +109,31 @@ export default function CheckoutPage() {
     }));
 
     if (provinceId) {
-      const res = await getDistrictsAction(provinceId);
-      if (res.data) {
-        // Auto-select the placeholder district and retrieve wards immediately behind the scenes
-        if (res.data.length === 1) {
+      setLoadingWards(true);
+      setError(null);
+      try {
+        const res = await getDistrictsAction(provinceId);
+        if (res.error) {
+          setError(res.error);
+          return;
+        }
+        if (res.data && res.data.length === 1) {
           const singleDistrict = res.data[0];
           setSelectedDistrictId(singleDistrict.id);
           
           const wardsRes = await getWardsAction(singleDistrict.id);
+          if (wardsRes.error) {
+            setError(wardsRes.error);
+            return;
+          }
           if (wardsRes.data) {
             setWards(wardsRes.data);
           }
         }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Không thể tải dữ liệu địa chỉ");
+      } finally {
+        setLoadingWards(false);
       }
     }
   };
@@ -158,14 +181,14 @@ export default function CheckoutPage() {
     setLoading(true);
     setError(null);
 
-    // Hardcode "Khu vực trực thuộc" as the district value to maintain system integration requirements
+    // Use domain-level constant for district value to maintain system integration requirements
     const result = await createOrderAction({
       cartItems: items,
       shippingAddress: {
         fullName: formData.fullName,
         phone: formData.phone,
         street: formData.street,
-        district: "Khu vực trực thuộc",
+        district: DEFAULT_DISTRICT,
         city: formData.city,
         ward: formData.ward
       },
@@ -470,16 +493,20 @@ export default function CheckoutPage() {
                         <label className="text-[13px] font-bold text-slate-700">Phường/Xã *</label>
                         <div className="relative group">
                           <span className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-slate-800 transition-colors duration-200">
-                            <MapPin className="w-4.5 h-4.5" />
+                            {loadingWards ? (
+                              <div className="w-4.5 h-4.5 border-2 border-slate-400 border-t-transparent rounded-full animate-spin" />
+                            ) : (
+                              <MapPin className="w-4.5 h-4.5" />
+                            )}
                           </span>
                           <select 
                             name="ward" 
                             value={selectedWardId} 
-                            disabled={!selectedDistrictId}
+                            disabled={!selectedDistrictId || loadingWards}
                             onChange={handleWardChange} 
                             className={`w-full pl-11 pr-10 py-3 bg-white border ${validationErrors.ward ? 'border-red-400 ring-2 ring-red-400/5' : 'border-slate-200 focus:border-slate-800'} rounded-2xl outline-none focus:ring-4 focus:ring-slate-900/5 transition-all duration-300 text-[14px] font-medium text-slate-800 placeholder-slate-400 appearance-none disabled:opacity-50 disabled:bg-slate-50`} 
                           >
-                            <option value="">-- Chọn Phường/Xã --</option>
+                            <option value="">{loadingWards ? "-- Đang tải Phường/Xã... --" : "-- Chọn Phường/Xã --"}</option>
                             {wards.map(w => (
                               <option key={w.id} value={w.id}>{w.name}</option>
                             ))}

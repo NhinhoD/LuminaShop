@@ -1,5 +1,6 @@
 import { ILocationRepository } from '@/domain/repositories/ILocationRepository';
 import { Province, District, Ward } from '@/domain/entities/Location';
+import { DEFAULT_DISTRICT } from '@/domain/constants/Location';
 
 interface OpenApiV2Ward {
   name: string;
@@ -22,10 +23,15 @@ export class HttpLocationRepository implements ILocationRepository {
   private readonly baseUrl = 'https://provinces.open-api.vn/api/v2';
 
   async getProvinces(): Promise<Province[]> {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
+
     try {
       const response = await fetch(`${this.baseUrl}/p/`, {
-        next: { revalidate: 86400 } // Cache for 24 hours in Next.js
+        next: { revalidate: 86400 }, // Cache for 24 hours in Next.js
+        signal: controller.signal
       });
+      clearTimeout(timeoutId);
 
       if (!response.ok) {
         throw new Error(`Failed to fetch provinces: ${response.statusText}`);
@@ -39,7 +45,11 @@ export class HttpLocationRepository implements ILocationRepository {
         name: item.name,
         fullName: item.name
       }));
-    } catch (error) {
+    } catch (error: unknown) {
+      clearTimeout(timeoutId);
+      if (error instanceof Error && error.name === 'AbortError') {
+        throw new Error('Yêu cầu lấy danh sách Tỉnh/Thành phố quá thời gian chờ (timeout)');
+      }
       throw error;
     }
   }
@@ -52,8 +62,8 @@ export class HttpLocationRepository implements ILocationRepository {
       return [
         {
           id: provinceId,
-          name: 'Khu vực trực thuộc',
-          fullName: 'Khu vực trực thuộc',
+          name: DEFAULT_DISTRICT,
+          fullName: DEFAULT_DISTRICT,
           provinceId
         }
       ];
@@ -63,13 +73,18 @@ export class HttpLocationRepository implements ILocationRepository {
   }
 
   async getWards(districtId: string): Promise<Ward[]> {
-    try {
-      if (!districtId) return [];
+    if (!districtId) return [];
 
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
+
+    try {
       // districtId is equal to the provinceId, which we query for its wards
       const response = await fetch(`${this.baseUrl}/p/${districtId}?depth=2`, {
-        next: { revalidate: 86400 }
+        next: { revalidate: 86400 },
+        signal: controller.signal
       });
+      clearTimeout(timeoutId);
 
       if (!response.ok) {
         throw new Error(`Failed to fetch wards: ${response.statusText}`);
@@ -84,8 +99,13 @@ export class HttpLocationRepository implements ILocationRepository {
         fullName: item.name,
         districtId
       }));
-    } catch (error) {
+    } catch (error: unknown) {
+      clearTimeout(timeoutId);
+      if (error instanceof Error && error.name === 'AbortError') {
+        throw new Error('Yêu cầu lấy danh sách Phường/Xã quá thời gian chờ (timeout)');
+      }
       throw error;
     }
   }
 }
+
