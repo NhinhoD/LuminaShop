@@ -202,11 +202,10 @@ export function makeGetWardsUseCase(): GetWardsUseCase {
   return new GetWardsUseCase(repo);
 }
 
-LocationProvider.register(
-  makeGetProvincesUseCase,
-  makeGetDistrictsUseCase,
-  makeGetWardsUseCase
-);
+LocationProvider.registerProvincesFactory(makeGetProvincesUseCase);
+LocationProvider.registerDistrictsFactory(makeGetDistrictsUseCase);
+LocationProvider.registerWardsFactory(makeGetWardsUseCase);
+
 
 
 

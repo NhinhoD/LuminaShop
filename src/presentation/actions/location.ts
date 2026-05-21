@@ -1,8 +1,10 @@
 "use server";
 
+import "@/infrastructure/supabase/container";
 import { LocationProvider } from "@/application/di/LocationProvider";
 import { Province, District, Ward } from "@/domain/entities/Location";
 import { z } from "zod";
+
 
 type ActionResult<T> = 
   | { data: T; error?: never }

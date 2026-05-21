@@ -180,6 +180,7 @@ export default function CheckoutPage() {
   const handlePlaceOrder = async () => {
     setLoading(true);
     setError(null);
+    let createdOrderId: string | null = null;
 
     try {
       // Use domain-level constant for district value to maintain system integration requirements
@@ -203,18 +204,24 @@ export default function CheckoutPage() {
       } 
 
       if (result.data) {
-        const paymentResult = await processPaymentAction(result.data.id, subtotal, formData.paymentMethod);
+        createdOrderId = result.data.id;
         
+        // Clear cart immediately after successful order creation to prevent double-submissions
         clearCart();
         
+        const paymentResult = await processPaymentAction(createdOrderId, subtotal, formData.paymentMethod);
+        
         if (paymentResult.error) {
-          router.push(`/orders/${result.data.id}/failed`);
+          router.push(`/orders/${createdOrderId}/failed`);
         } else {
-          router.push(`/orders/${result.data.id}/success`);
+          router.push(`/orders/${createdOrderId}/success`);
         }
       }
     } catch (error) {
       setError(error instanceof Error ? error.message : "Không thể đặt hàng lúc này");
+      if (createdOrderId) {
+        router.push(`/orders/${createdOrderId}/failed`);
+      }
     } finally {
       setLoading(false);
     }
