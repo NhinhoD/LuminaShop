@@ -3,8 +3,20 @@
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { cookies } from 'next/headers'
-import { makeSupabaseClient } from '@/infrastructure/supabase/container'
+import { 
+  makeLoginUseCase, 
+  makeSignupUseCase, 
+  makeVerifyOtpUseCase, 
+  makeResendOtpUseCase, 
+  makeSignoutUseCase 
+} from '@/infrastructure/supabase/container'
 import { z } from 'zod'
+import { unstable_rethrow } from 'next/navigation'
+
+const credentialsSchema = z.object({
+  email: z.string().email('Email không hợp lệ'),
+  password: z.string().min(6, 'Mật khẩu phải từ 6 ký tự'),
+})
 
 const SignUpFormSchema = z.object({
   firstName: z.preprocess((val) => val ?? undefined, z.string().optional()),
@@ -12,172 +24,157 @@ const SignUpFormSchema = z.object({
 })
 
 export async function login(formData: FormData): Promise<never> {
-  const supabase = await makeSupabaseClient()
+  try {
+    const email = formData.get('email')
+    const password = formData.get('password')
 
-  const email = formData.get('email')
-  const password = formData.get('password')
+    const parsed = credentialsSchema.safeParse({ email, password })
+    if (!parsed.success) {
+      redirect('/login?error=InvalidCredentials')
+    }
 
-  if (!email || typeof email !== 'string' || !password || typeof password !== 'string') {
-    redirect('/login?error=InvalidCredentials')
+    const { email: parsedEmail, password: parsedPassword } = parsed.data
+
+    const loginUseCase = await makeLoginUseCase()
+    const result = await loginUseCase.execute(parsedEmail, parsedPassword)
+
+    if (!result.success) {
+      redirect('/login?error=InvalidCredentials')
+    }
+
+    revalidatePath('/', 'layout')
+    redirect('/profile')
+  } catch (error: unknown) {
+    unstable_rethrow(error)
+    console.error('Login action server error:', error)
+    redirect('/login?error=ServerError')
   }
-
-  const data = {
-    email,
-    password,
-  }
-
-  const { error } = await supabase.auth.signInWithPassword(data)
-
-  if (error) {
-    redirect('/login?error=InvalidCredentials')
-  }
-
-  revalidatePath('/', 'layout')
-  redirect('/profile')
 }
 
 export async function signup(formData: FormData): Promise<never> {
-  const supabase = await makeSupabaseClient()
+  try {
+    const email = formData.get('email')
+    const password = formData.get('password')
 
-  const email = formData.get('email')
-  const password = formData.get('password')
-
-  if (!email || typeof email !== 'string' || !password || typeof password !== 'string') {
-    redirect('/register?error=SignUpFailed')
-  }
-
-  const parsed = SignUpFormSchema.safeParse({
-    firstName: formData.get('firstName'),
-    lastName: formData.get('lastName'),
-  })
-
-  if (!parsed.success) {
-    redirect('/register?error=SignUpFailed')
-  }
-
-  const { firstName, lastName } = parsed.data
-
-  const data = {
-    email,
-    password,
-    options: {
-      data: {
-        full_name: `${firstName || ''} ${lastName || ''}`.trim(),
-      }
+    const parsedCredentials = credentialsSchema.safeParse({ email, password })
+    if (!parsedCredentials.success) {
+      redirect('/register?error=SignUpFailed')
     }
+
+    const parsedNames = SignUpFormSchema.safeParse({
+      firstName: formData.get('firstName'),
+      lastName: formData.get('lastName'),
+    })
+
+    if (!parsedNames.success) {
+      redirect('/register?error=SignUpFailed')
+    }
+
+    const { email: parsedEmail, password: parsedPassword } = parsedCredentials.data
+    const { firstName, lastName } = parsedNames.data
+
+    const signupUseCase = await makeSignupUseCase()
+    const fullName = `${firstName || ''} ${lastName || ''}`.trim()
+    
+    const result = await signupUseCase.execute(parsedEmail, parsedPassword, fullName)
+
+    if (!result.success) {
+      redirect('/register?error=SignUpFailed')
+    }
+
+    // Store email in cookie for OTP page
+    const cookieStore = await cookies()
+    cookieStore.set('pending_verification_email', parsedEmail, { 
+      httpOnly: true, 
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 60 * 10 // 10 minutes
+    })
+
+    redirect('/verify-otp')
+  } catch (error: unknown) {
+    unstable_rethrow(error)
+    console.error('Signup action server error:', error)
+    redirect('/register?error=ServerError')
   }
-
-  const { error } = await supabase.auth.signUp(data)
-
-  if (error) {
-    redirect('/register?error=SignUpFailed')
-  }
-
-  // Store email in cookie for OTP page
-  const cookieStore = await cookies()
-  cookieStore.set('pending_verification_email', email, { 
-    httpOnly: true, 
-    secure: process.env.NODE_ENV === 'production',
-    maxAge: 60 * 10 // 10 minutes
-  })
-
-  redirect('/verify-otp')
 }
 
 export async function verifySignupOtpAction(formData: FormData): Promise<{ error?: string }> {
-  const supabase = await makeSupabaseClient()
-  const cookieStore = await cookies()
-  const email = cookieStore.get('pending_verification_email')?.value
+  try {
+    const cookieStore = await cookies()
+    const email = cookieStore.get('pending_verification_email')?.value
 
-  if (!email) {
-    return { error: 'Phiên bản đã hết hạn hoặc không tìm thấy email' }
+    if (!email) {
+      return { error: 'Phiên bản đã hết hạn hoặc không tìm thấy email' }
+    }
+
+    const token = formData.get('token')
+    if (!token || typeof token !== 'string') {
+      return { error: 'Vui lòng nhập mã OTP' }
+    }
+
+    const verifyOtpUseCase = await makeVerifyOtpUseCase()
+    const result = await verifyOtpUseCase.execute(email, token)
+
+    if (!result.success) {
+      return { error: result.error.message || 'Mã OTP không hợp lệ hoặc đã hết hạn' }
+    }
+
+    // Clear the cookie upon success
+    cookieStore.delete('pending_verification_email')
+
+    revalidatePath('/', 'layout')
+    redirect('/')
+  } catch (error: unknown) {
+    unstable_rethrow(error)
+    console.error('Verify OTP action server error:', error)
+    return { error: 'Lỗi máy chủ khi xác nhận mã OTP' }
   }
-
-  const token = formData.get('token')
-  if (!token || typeof token !== 'string') {
-    return { error: 'Vui lòng nhập mã OTP' }
-  }
-
-  const { error } = await supabase.auth.verifyOtp({
-    email,
-    token,
-    type: 'signup'
-  })
-
-  if (error) {
-    return { error: error.message || 'Mã OTP không hợp lệ hoặc đã hết hạn' }
-  }
-
-  // Clear the cookie upon success
-  cookieStore.delete('pending_verification_email')
-
-  revalidatePath('/', 'layout')
-  redirect('/')
 }
 
 export async function resendOtpAction(): Promise<{ success?: boolean; error?: string }> {
-  const supabase = await makeSupabaseClient()
-  const cookieStore = await cookies()
-  const email = cookieStore.get('pending_verification_email')?.value
+  try {
+    const cookieStore = await cookies()
+    const email = cookieStore.get('pending_verification_email')?.value
 
-  if (!email) {
-    return { error: 'Phiên bản đã hết hạn hoặc không tìm thấy email' }
-  }
-
-  // 1) look up the last_resend_at for the email from the persistent Supabase table
-  const { data: rateLimit } = await supabase
-    .from('otp_rate_limits')
-    .select('last_resend_at')
-    .eq('email', email)
-    .maybeSingle()
-
-  // 2) if now - last_resend_at < 60 seconds return error
-  if (rateLimit?.last_resend_at) {
-    const lastResend = new Date(rateLimit.last_resend_at).getTime()
-    const now = Date.now()
-    if (now - lastResend < 60000) {
-      return { error: 'Vui lòng chờ trước khi yêu cầu mã OTP mới' }
+    if (!email) {
+      return { error: 'Phiên bản đã hết hạn hoặc không tìm thấy email' }
     }
-  }
 
-  // 3) call supabase.auth.resend
-  const { error } = await supabase.auth.resend({
-    type: 'signup',
-    email,
-  })
+    const resendOtpUseCase = await makeResendOtpUseCase()
+    const result = await resendOtpUseCase.execute(email)
 
-  if (error) {
-    return { error: error.message || 'Gửi lại mã OTP thất bại' }
-  }
+    if (!result.success) {
+      return { error: result.error.message }
+    }
 
-  // On success, upsert last_resend_at to now
-  const { error: upsertError } = await supabase
-    .from('otp_rate_limits')
-    .upsert({
-      email,
-      last_resend_at: new Date().toISOString()
-    }, {
-      onConflict: 'email'
+    // Refresh the pending_verification_email cookie with updated expiry (10 more minutes)
+    cookieStore.set('pending_verification_email', email, { 
+      httpOnly: true, 
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 60 * 10 // 10 minutes
     })
 
-  if (upsertError) {
-    console.error('Failed to upsert OTP rate limit:', upsertError)
-    return { error: 'Gửi lại mã OTP thất bại do lỗi hệ thống' }
+    return { success: true }
+  } catch (error: unknown) {
+    console.error('Resend OTP action server error:', error)
+    return { error: 'Lỗi máy chủ khi gửi lại mã OTP' }
   }
-
-  // Refresh the pending_verification_email cookie with updated expiry (10 more minutes)
-  cookieStore.set('pending_verification_email', email, { 
-    httpOnly: true, 
-    secure: process.env.NODE_ENV === 'production',
-    maxAge: 60 * 10 // 10 minutes
-  })
-
-  return { success: true }
 }
 
 export async function signout(): Promise<never> {
-  const supabase = await makeSupabaseClient()
-  await supabase.auth.signOut()
-  revalidatePath('/', 'layout')
-  redirect('/')
+  try {
+    const signoutUseCase = await makeSignoutUseCase()
+    const result = await signoutUseCase.execute()
+
+    if (!result.success) {
+      redirect('/')
+    }
+
+    revalidatePath('/', 'layout')
+    redirect('/')
+  } catch (error: unknown) {
+    unstable_rethrow(error)
+    console.error('Signout action server error:', error)
+    redirect('/')
+  }
 }
