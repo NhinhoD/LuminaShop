@@ -1,22 +1,50 @@
 import { ILocationRepository } from '@/domain/repositories/ILocationRepository';
 import { Province, District, Ward } from '@/domain/entities/Location';
 
-interface EsgooResponse {
-  error: number;
-  error_text: string;
-  data: Array<{
-    id: string;
+interface OpenApiProvinceResponse {
+  name: string;
+  code: number;
+  division_type: string;
+  codename: string;
+  phone_code: number;
+}
+
+interface OpenApiProvinceWithDistrictsResponse {
+  name: string;
+  code: number;
+  division_type: string;
+  codename: string;
+  phone_code: number;
+  districts: Array<{
     name: string;
-    full_name: string;
+    code: number;
+    division_type: string;
+    codename: string;
+    province_code: number;
+  }>;
+}
+
+interface OpenApiDistrictWithWardsResponse {
+  name: string;
+  code: number;
+  division_type: string;
+  codename: string;
+  province_code: number;
+  wards: Array<{
+    name: string;
+    code: number;
+    division_type: string;
+    codename: string;
+    province_code: number;
   }>;
 }
 
 export class HttpLocationRepository implements ILocationRepository {
-  private readonly baseUrl = 'https://esgoo.net/api-tinhthanh';
+  private readonly baseUrl = 'https://provinces.open-api.vn/api';
 
   async getProvinces(): Promise<Province[]> {
     try {
-      const response = await fetch(`${this.baseUrl}/1/0.htm`, {
+      const response = await fetch(`${this.baseUrl}/p/`, {
         next: { revalidate: 86400 } // Cache for 24 hours in Next.js
       });
 
@@ -24,15 +52,12 @@ export class HttpLocationRepository implements ILocationRepository {
         throw new Error(`Failed to fetch provinces: ${response.statusText}`);
       }
 
-      const result = (await response.json()) as EsgooResponse;
-      if (result.error !== 0) {
-        throw new Error(`API Error fetching provinces: ${result.error_text}`);
-      }
-
-      return result.data.map((item) => ({
-        id: item.id,
+      const result = (await response.json()) as OpenApiProvinceResponse[];
+      
+      return result.map((item) => ({
+        id: String(item.code),
         name: item.name,
-        fullName: item.full_name
+        fullName: item.name
       }));
     } catch (error) {
       console.error('HttpLocationRepository getProvinces Error:', error);
@@ -44,7 +69,7 @@ export class HttpLocationRepository implements ILocationRepository {
     try {
       if (!provinceId) return [];
 
-      const response = await fetch(`${this.baseUrl}/2/${provinceId}.htm`, {
+      const response = await fetch(`${this.baseUrl}/p/${provinceId}?depth=2`, {
         next: { revalidate: 86400 }
       });
 
@@ -52,15 +77,13 @@ export class HttpLocationRepository implements ILocationRepository {
         throw new Error(`Failed to fetch districts: ${response.statusText}`);
       }
 
-      const result = (await response.json()) as EsgooResponse;
-      if (result.error !== 0) {
-        throw new Error(`API Error fetching districts: ${result.error_text}`);
-      }
+      const result = (await response.json()) as OpenApiProvinceWithDistrictsResponse;
+      if (!result.districts) return [];
 
-      return result.data.map((item) => ({
-        id: item.id,
+      return result.districts.map((item) => ({
+        id: String(item.code),
         name: item.name,
-        fullName: item.full_name,
+        fullName: item.name,
         provinceId
       }));
     } catch (error) {
@@ -73,7 +96,7 @@ export class HttpLocationRepository implements ILocationRepository {
     try {
       if (!districtId) return [];
 
-      const response = await fetch(`${this.baseUrl}/3/${districtId}.htm`, {
+      const response = await fetch(`${this.baseUrl}/d/${districtId}?depth=2`, {
         next: { revalidate: 86400 }
       });
 
@@ -81,15 +104,13 @@ export class HttpLocationRepository implements ILocationRepository {
         throw new Error(`Failed to fetch wards: ${response.statusText}`);
       }
 
-      const result = (await response.json()) as EsgooResponse;
-      if (result.error !== 0) {
-        throw new Error(`API Error fetching wards: ${result.error_text}`);
-      }
+      const result = (await response.json()) as OpenApiDistrictWithWardsResponse;
+      if (!result.wards) return [];
 
-      return result.data.map((item) => ({
-        id: item.id,
+      return result.wards.map((item) => ({
+        id: String(item.code),
         name: item.name,
-        fullName: item.full_name,
+        fullName: item.name,
         districtId
       }));
     } catch (error) {
@@ -98,3 +119,4 @@ export class HttpLocationRepository implements ILocationRepository {
     }
   }
 }
+
