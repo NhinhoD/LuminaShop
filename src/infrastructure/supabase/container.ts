@@ -6,6 +6,7 @@ import { SupabaseInventoryRepository } from './repositories/SupabaseInventoryRep
 import { SupabaseOrderRepository } from './repositories/SupabaseOrderRepository';
 import { SupabaseProductRepository } from './repositories/SupabaseProductRepository';
 import { SupabaseAuthRepository } from './repositories/SupabaseAuthRepository';
+import { IAuthRepository } from '@/domain/repositories/IAuthRepository';
 
 import { AddToCartUseCase } from '@/application/use-cases/cart/AddToCart';
 import { MergeCartUseCase } from '@/application/use-cases/cart/MergeCart';
@@ -145,32 +146,32 @@ export async function makeProcessPaymentUseCase() {
 }
 
 // Auth Factories
-export async function makeAuthRepository() {
+export async function makeAuthRepository(): Promise<IAuthRepository> {
   const supabase = await makeSupabaseClient();
   return new SupabaseAuthRepository(supabase);
 }
 
-export async function makeLoginUseCase() {
+export async function makeLoginUseCase(): Promise<LoginUseCase> {
   const repo = await makeAuthRepository();
   return new LoginUseCase(repo);
 }
 
-export async function makeSignupUseCase() {
+export async function makeSignupUseCase(): Promise<SignupUseCase> {
   const repo = await makeAuthRepository();
   return new SignupUseCase(repo);
 }
 
-export async function makeVerifyOtpUseCase() {
+export async function makeVerifyOtpUseCase(): Promise<VerifyOtpUseCase> {
   const repo = await makeAuthRepository();
   return new VerifyOtpUseCase(repo);
 }
 
-export async function makeResendOtpUseCase() {
+export async function makeResendOtpUseCase(): Promise<ResendOtpUseCase> {
   const repo = await makeAuthRepository();
   return new ResendOtpUseCase(repo);
 }
 
-export async function makeSignoutUseCase() {
+export async function makeSignoutUseCase(): Promise<SignoutUseCase> {
   const repo = await makeAuthRepository();
   return new SignoutUseCase(repo);
 }

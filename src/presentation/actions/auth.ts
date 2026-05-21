@@ -23,6 +23,13 @@ const SignUpFormSchema = z.object({
   lastName: z.preprocess((val) => val ?? undefined, z.string().optional()),
 })
 
+const otpVerificationSchema = z.object({
+  email: z.string().email('Email không hợp lệ'),
+  token: z.string().min(1, 'Vui lòng nhập mã OTP'),
+})
+
+const emailCookieSchema = z.string().email('Email không hợp lệ')
+
 export async function login(formData: FormData): Promise<never> {
   try {
     const email = formData.get('email')
@@ -102,18 +109,24 @@ export async function verifySignupOtpAction(formData: FormData): Promise<{ error
   try {
     const cookieStore = await cookies()
     const email = cookieStore.get('pending_verification_email')?.value
-
-    if (!email) {
-      return { error: 'Phiên bản đã hết hạn hoặc không tìm thấy email' }
-    }
-
     const token = formData.get('token')
-    if (!token || typeof token !== 'string') {
-      return { error: 'Vui lòng nhập mã OTP' }
+
+    const parsed = otpVerificationSchema.safeParse({ email, token })
+    if (!parsed.success) {
+      const errors = parsed.error.format()
+      if (errors.email) {
+        return { error: 'Phiên bản đã hết hạn hoặc không tìm thấy email' }
+      }
+      if (errors.token) {
+        return { error: errors.token._errors[0] || 'Vui lòng nhập mã OTP' }
+      }
+      return { error: 'Dữ liệu không hợp lệ' }
     }
+
+    const { email: validatedEmail, token: validatedToken } = parsed.data
 
     const verifyOtpUseCase = await makeVerifyOtpUseCase()
-    const result = await verifyOtpUseCase.execute(email, token)
+    const result = await verifyOtpUseCase.execute(validatedEmail, validatedToken)
 
     if (!result.success) {
       return { error: result.error.message || 'Mã OTP không hợp lệ hoặc đã hết hạn' }
@@ -136,19 +149,22 @@ export async function resendOtpAction(): Promise<{ success?: boolean; error?: st
     const cookieStore = await cookies()
     const email = cookieStore.get('pending_verification_email')?.value
 
-    if (!email) {
+    const parsed = emailCookieSchema.safeParse(email)
+    if (!parsed.success) {
       return { error: 'Phiên bản đã hết hạn hoặc không tìm thấy email' }
     }
 
+    const validatedEmail = parsed.data
+
     const resendOtpUseCase = await makeResendOtpUseCase()
-    const result = await resendOtpUseCase.execute(email)
+    const result = await resendOtpUseCase.execute(validatedEmail)
 
     if (!result.success) {
       return { error: result.error.message }
     }
 
     // Refresh the pending_verification_email cookie with updated expiry (10 more minutes)
-    cookieStore.set('pending_verification_email', email, { 
+    cookieStore.set('pending_verification_email', validatedEmail, { 
       httpOnly: true, 
       secure: process.env.NODE_ENV === 'production',
       maxAge: 60 * 10 // 10 minutes
