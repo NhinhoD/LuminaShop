@@ -69,7 +69,7 @@ export class HttpLocationRepository implements ILocationRepository {
 
       const result = (await response.json()) as TracuudiachiProvincesResponse;
       if (!result.data) return [];
-      
+
       return result.data.map((item) => ({
         id: String(item.code),
         name: item.name,
