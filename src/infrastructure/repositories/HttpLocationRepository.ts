@@ -1,65 +1,29 @@
 import { ILocationRepository } from '@/domain/repositories/ILocationRepository';
 import { Province, District, Ward } from '@/domain/entities/Location';
 
-interface TracuudiachiProvince {
-  id: number;
+interface OpenApiV2Ward {
   name: string;
   code: number;
-  level: string;
-  code_name: string;
-  created_at: string;
-  updated_at: string;
-}
-
-interface TracuudiachiDistrict {
-  id: number;
-  name: string;
-  code: number;
-  level: string;
-  code_name: string;
+  division_type: string;
+  codename: string;
   province_code: number;
-  created_at: string;
-  updated_at: string;
 }
 
-interface TracuudiachiWard {
-  id: number;
+interface OpenApiV2Province {
   name: string;
   code: number;
-  level: string;
-  code_name: string;
-  province_code: number;
-  district_code: number;
-  created_at: string;
-  updated_at: string;
-}
-
-interface TracuudiachiProvincesResponse {
-  data: TracuudiachiProvince[];
-  meta: {
-    total: number;
-    page: number;
-    icpp: number;
-    totalPages: number;
-  };
-}
-
-interface TracuudiachiDistrictsResponse {
-  data: TracuudiachiDistrict[];
-}
-
-interface TracuudiachiDistrictWithWardsResponse {
-  data: TracuudiachiDistrict & {
-    wards: TracuudiachiWard[];
-  };
+  division_type: string;
+  codename: string;
+  phone_code: number;
+  wards?: OpenApiV2Ward[];
 }
 
 export class HttpLocationRepository implements ILocationRepository {
-  private readonly baseUrl = 'https://api.tracuudiachi.io.vn/api/v1';
+  private readonly baseUrl = 'https://provinces.open-api.vn/api/v2';
 
   async getProvinces(): Promise<Province[]> {
     try {
-      const response = await fetch(`${this.baseUrl}/provinces?icpp=100`, {
+      const response = await fetch(`${this.baseUrl}/p/`, {
         next: { revalidate: 86400 } // Cache for 24 hours in Next.js
       });
 
@@ -67,16 +31,15 @@ export class HttpLocationRepository implements ILocationRepository {
         throw new Error(`Failed to fetch provinces: ${response.statusText}`);
       }
 
-      const result = (await response.json()) as TracuudiachiProvincesResponse;
-      if (!result.data) return [];
+      const result = (await response.json()) as OpenApiV2Province[];
+      if (!result) return [];
 
-      return result.data.map((item) => ({
+      return result.map((item) => ({
         id: String(item.code),
         name: item.name,
         fullName: item.name
       }));
     } catch (error) {
-      console.error('HttpLocationRepository getProvinces Error:', error);
       throw error;
     }
   }
@@ -85,25 +48,16 @@ export class HttpLocationRepository implements ILocationRepository {
     try {
       if (!provinceId) return [];
 
-      const response = await fetch(`${this.baseUrl}/provinces/${provinceId}/districts?icpp=100`, {
-        next: { revalidate: 86400 }
-      });
-
-      if (!response.ok) {
-        throw new Error(`Failed to fetch districts: ${response.statusText}`);
-      }
-
-      const result = (await response.json()) as TracuudiachiDistrictsResponse;
-      if (!result.data) return [];
-
-      return result.data.map((item) => ({
-        id: String(item.code),
-        name: item.name,
-        fullName: item.name,
-        provinceId
-      }));
+      // Open-api v2 uses a 2-tier system (province -> wards), so we return a placeholder district
+      return [
+        {
+          id: provinceId,
+          name: 'Khu vực trực thuộc',
+          fullName: 'Khu vực trực thuộc',
+          provinceId
+        }
+      ];
     } catch (error) {
-      console.error(`HttpLocationRepository getDistricts Error for provinceId ${provinceId}:`, error);
       throw error;
     }
   }
@@ -112,7 +66,8 @@ export class HttpLocationRepository implements ILocationRepository {
     try {
       if (!districtId) return [];
 
-      const response = await fetch(`${this.baseUrl}/districts/${districtId}?expand=wards`, {
+      // districtId is equal to the provinceId, which we query for its wards
+      const response = await fetch(`${this.baseUrl}/p/${districtId}?depth=2`, {
         next: { revalidate: 86400 }
       });
 
@@ -120,17 +75,16 @@ export class HttpLocationRepository implements ILocationRepository {
         throw new Error(`Failed to fetch wards: ${response.statusText}`);
       }
 
-      const result = (await response.json()) as TracuudiachiDistrictWithWardsResponse;
-      if (!result.data || !result.data.wards) return [];
+      const result = (await response.json()) as OpenApiV2Province;
+      if (!result || !result.wards) return [];
 
-      return result.data.wards.map((item) => ({
+      return result.wards.map((item) => ({
         id: String(item.code),
         name: item.name,
         fullName: item.name,
         districtId
       }));
     } catch (error) {
-      console.error(`HttpLocationRepository getWards Error for districtId ${districtId}:`, error);
       throw error;
     }
   }

@@ -91,6 +91,25 @@ export default function CheckoutPage() {
       const res = await getDistrictsAction(provinceId);
       if (res.data) {
         setDistricts(res.data);
+        
+        // Auto-select placeholder district if it's the only one, and fetch wards immediately
+        if (res.data.length === 1) {
+          const singleDistrict = res.data[0];
+          setSelectedDistrictId(singleDistrict.id);
+          setFormData(prev => ({
+            ...prev,
+            district: singleDistrict.name
+          }));
+          setValidationErrors(prev => ({
+            ...prev,
+            district: undefined
+          }));
+          
+          const wardsRes = await getWardsAction(singleDistrict.id);
+          if (wardsRes.data) {
+            setWards(wardsRes.data);
+          }
+        }
       }
     }
   };
