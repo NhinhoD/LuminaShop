@@ -50,3 +50,6 @@ _vite_backup/
 
 # temporary files
 *.txt
+
+# Harness Telemetry Logs
+harness_execution.log
