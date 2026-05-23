@@ -15,6 +15,7 @@ export interface ShippingAddress {
   street: string;
   district: string;
   city: string;
+  ward?: string;
 }
 
 export interface ProductSnapshot {

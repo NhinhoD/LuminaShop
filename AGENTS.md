@@ -311,3 +311,14 @@ Report the checklist table. Fix all issues automatically.
 When all checks pass, use MCP GitHub to create the Pull Request
 and send me the URL.
 ```
+
+---
+
+## 🤖 Harness & Autonomous Execution Rules
+
+- **Automated Validation**: Always run `npm run lint` and `npm run build` automatically after any code modifications to ensure visual and structural integrity.
+- **Self-Healing Loop**: If compiler or linter errors arise, analyze the terminal logs directly and refactor files iteratively until 0 errors are achieved. Do not stop to prompt the user mid-loop.
+- **Strict Architecture Boundaries**: Strictly respect the 4-layer boundaries (Clean Architecture). Do not employ runtime workarounds (such as dynamic `require` or runtime import bypasses) to bypass import restrictions from the Presentation/Application layers into the Infrastructure layer.
+- **Idempotent Order Logic**: Ensure order creation processes are safely wrapped in `try/catch/finally` blocks. Release any loading states and clear active carts immediately upon receiving a successful Order ID to prevent duplicate submissions.
+- **Enterprise Static Gate**: Before opening a Pull Request, the agent MUST programmatically verify that NO `console.log` or explicit `: any` types exist in the `src/` directory. If found, they must be stripped or refactored into descriptive TypeScript interfaces automatically.
+- **Automatic Rollback Policy**: If a feature integration causes fatal compilation breaks that cannot be healed within 5 attempts, the agent must execute `git checkout -- .` on the affected files to preserve codebase stability and prevent corrupted states on the `Dev` branch.
