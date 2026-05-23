@@ -5,7 +5,7 @@ import { StatusBadge } from "@/presentation/components/orders/StatusBadge";
 import { CancelOrderButton } from "@/presentation/components/orders/CancelOrderButton";
 import { formatPrice, formatDate, cn } from "@/presentation/utils";
 import { BackButton } from "@/presentation/components/common/BackButton";
-import { Package, MapPin, CreditCard, Truck, Calendar, ShoppingBag } from "lucide-react";
+import { Package, MapPin, CreditCard, Truck, Calendar, ShoppingBag, FileText } from "lucide-react";
 import Image from "next/image";
 import { ImageWithFallback } from "@/presentation/components/common/ImageWithFallback";
 import { OrderStatus, OrderItem } from "@/domain/entities/Order";
@@ -162,13 +162,26 @@ export default async function OrderDetailPage({ params }: PageProps) {
               <p className="font-bold text-slate-900">{order.shippingAddress?.fullName}</p>
               <p className="text-sm text-slate-600 leading-relaxed">
                 {order.shippingAddress?.street}<br />
-                {order.shippingAddress?.district}, {order.shippingAddress?.city}
+                {order.shippingAddress?.ward ? `${order.shippingAddress.ward}, ` : ''}{order.shippingAddress?.district !== 'Khu vực trực thuộc' ? `${order.shippingAddress.district}, ` : ''}{order.shippingAddress?.city}
               </p>
               <div className="pt-2 text-sm text-slate-500">
                 Số điện thoại: {order.shippingAddress?.phone}
               </div>
             </div>
           </div>
+
+          {/* Order Notes */}
+          {order.notes && (
+            <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+              <div className="flex items-center gap-2 mb-4">
+                <FileText className="w-5 h-5 text-primary" />
+                <h2 className="font-bold text-slate-900">Ghi chú đơn hàng</h2>
+              </div>
+              <p className="text-sm text-slate-600 italic leading-relaxed">
+                &ldquo;{order.notes}&rdquo;
+              </p>
+            </div>
+          )}
 
           {/* Payment Info */}
           <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">

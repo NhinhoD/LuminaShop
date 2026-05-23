@@ -5,7 +5,7 @@ import { OrderStatus, Order, OrderItem } from "@/domain/entities/Order";
 import { getOrderAction, updateOrderStatusAction } from "@/presentation/actions/order";
 import { StatusBadge } from "@/presentation/components/orders/StatusBadge";
 import { formatPrice, formatDate, cn } from "@/presentation/utils";
-import { X, Package, MapPin, CreditCard, Clock, Truck, CheckCircle, AlertCircle } from "lucide-react";
+import { X, Package, MapPin, CreditCard, Clock, Truck, CheckCircle, AlertCircle, FileText } from "lucide-react";
 import { toast } from "react-hot-toast";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
@@ -127,7 +127,7 @@ export function OrderDetailModal({ orderId, onClose }: OrderDetailModalProps) {
                     <p className="font-bold text-slate-900">{order.shippingAddress?.fullName}</p>
                     <p className="text-sm text-slate-600">{order.shippingAddress?.phone}</p>
                     <p className="text-sm text-slate-600 leading-relaxed">
-                      {order.shippingAddress?.street}, {order.shippingAddress?.district}, {order.shippingAddress?.city}
+                      {order.shippingAddress?.street}, {order.shippingAddress?.ward ? `${order.shippingAddress.ward}, ` : ''}{order.shippingAddress?.district !== 'Khu vực trực thuộc' ? `${order.shippingAddress.district}, ` : ''}{order.shippingAddress?.city}
                     </p>
                   </div>
                 </section>
@@ -146,6 +146,19 @@ export function OrderDetailModal({ orderId, onClose }: OrderDetailModalProps) {
                     </span>
                   </div>
                 </section>
+
+                {order.notes && (
+                  <section>
+                    <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-3 flex items-center gap-2">
+                      <FileText className="w-4 h-4" /> Ghi chú đơn hàng
+                    </h3>
+                    <div className="bg-slate-50 p-4 rounded-2xl">
+                      <p className="text-sm text-slate-600 italic leading-relaxed">
+                        &ldquo;{order.notes}&rdquo;
+                      </p>
+                    </div>
+                  </section>
+                )}
               </div>
 
               {/* Status Update */}
