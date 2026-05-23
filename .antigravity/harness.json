@@ -1,0 +1,17 @@
+{
+  "harness_mode": true,
+  "autonomous_level": "full",
+  "max_allowed_iterations": 9999,
+  "auto_approve_tools": [
+    "mcp:fs:read_file",
+    "mcp:fs:write_file",
+    "mcp:terminal:run_command",
+    "mcp:git:status",
+    "mcp:git:diff"
+  ],
+  "error_recovery": {
+    "retry_on_lint_fail": true,
+    "retry_on_build_fail": true,
+    "max_fix_attempts": 10
+  }
+}

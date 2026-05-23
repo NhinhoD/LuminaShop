@@ -48,6 +48,7 @@ export default function CheckoutPage() {
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [createdOrderId, setCreatedOrderId] = useState<string | null>(null);
   
   const [formData, setFormData] = useState<ShippingFormData>({
     fullName: "",
@@ -178,49 +179,56 @@ export default function CheckoutPage() {
   };
 
   const handlePlaceOrder = async () => {
+    if (loading || createdOrderId) return;
+
     setLoading(true);
     setError(null);
-    let createdOrderId: string | null = null;
+    let currentOrderId: string | null = createdOrderId;
 
     try {
-      // Use domain-level constant for district value to maintain system integration requirements
-      const result = await createOrderAction({
-        cartItems: items,
-        shippingAddress: {
-          fullName: formData.fullName,
-          phone: formData.phone,
-          street: formData.street,
-          district: DEFAULT_DISTRICT,
-          city: formData.city,
-          ward: formData.ward
-        },
-        paymentMethod: formData.paymentMethod,
-        notes: formData.notes
-      });
-      
-      if (result.error) {
-        setError(result.error);
-        return;
-      } 
+      if (!currentOrderId) {
+        // Use domain-level constant for district value to maintain system integration requirements
+        const result = await createOrderAction({
+          cartItems: items,
+          shippingAddress: {
+            fullName: formData.fullName,
+            phone: formData.phone,
+            street: formData.street,
+            district: DEFAULT_DISTRICT,
+            city: formData.city,
+            ward: formData.ward
+          },
+          paymentMethod: formData.paymentMethod,
+          notes: formData.notes
+        });
+        
+        if (result.error) {
+          setError(result.error);
+          return;
+        } 
 
-      if (result.data) {
-        createdOrderId = result.data.id;
-        
-        // Clear cart immediately after successful order creation to prevent double-submissions
-        clearCart();
-        
-        const paymentResult = await processPaymentAction(createdOrderId, subtotal, formData.paymentMethod);
+        if (result.data) {
+          currentOrderId = result.data.id;
+          setCreatedOrderId(currentOrderId);
+          
+          // Clear cart immediately after successful order creation to prevent double-submissions
+          clearCart();
+        }
+      }
+
+      if (currentOrderId) {
+        const paymentResult = await processPaymentAction(currentOrderId, subtotal, formData.paymentMethod);
         
         if (paymentResult.error) {
-          router.push(`/orders/${createdOrderId}/failed`);
+          router.push(`/orders/${currentOrderId}/failed`);
         } else {
-          router.push(`/orders/${createdOrderId}/success`);
+          router.push(`/orders/${currentOrderId}/success`);
         }
       }
     } catch (error) {
       setError(error instanceof Error ? error.message : "Không thể đặt hàng lúc này");
-      if (createdOrderId) {
-        router.push(`/orders/${createdOrderId}/failed`);
+      if (currentOrderId) {
+        router.push(`/orders/${currentOrderId}/failed`);
       }
     } finally {
       setLoading(false);
