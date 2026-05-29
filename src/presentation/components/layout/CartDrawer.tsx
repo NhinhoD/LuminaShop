@@ -57,7 +57,7 @@ export default function CartDrawer() {
             <div className="flex items-center justify-between px-8 py-6 bg-white soft-elevation">
               <div className="flex items-center gap-3">
                 <span className="material-symbols-outlined text-slate-900">shopping_bag</span>
-                <h2 className="text-lg font-playfair font-bold text-slate-900 tracking-wide">Your Selection</h2>
+                <h2 className="text-lg font-playfair font-bold text-slate-900 tracking-wide">Your Gourmet Order</h2>
                 <span className="bg-slate-100 text-slate-800 text-[10px] font-black px-2 py-0.5 rounded-full font-manrope">
                   {items.reduce((acc, curr) => acc + curr.quantity, 0)}
                 </span>
@@ -88,16 +88,16 @@ export default function CartDrawer() {
                 </div>
               ) : items.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-full text-center py-16">
-                  <span className="material-symbols-outlined text-[48px] text-slate-300 mb-4">
+                  <span className="material-symbols-outlined text-[48px] text-slate-350 mb-4">
                     shopping_bag
                   </span>
-                  <p className="text-slate-800 font-bold text-sm mb-2 uppercase tracking-widest font-manrope">Your selection is empty</p>
-                  <p className="text-slate-400 text-xs mb-8 font-manrope">Select timeless essentials to start</p>
+                  <p className="text-slate-800 font-bold text-sm mb-2 uppercase tracking-widest font-manrope">Your order is empty</p>
+                  <p className="text-slate-400 text-xs mb-8 font-manrope">Select signature delicacies to start</p>
                   <button 
                     onClick={closeDrawer}
                     className="bg-slate-950 text-white font-button text-button uppercase tracking-widest px-8 py-4 hover:bg-slate-900 transition-colors"
                   >
-                    Continue Shopping
+                    Explore Menu Board
                   </button>
                 </div>
               ) : (
@@ -142,7 +142,7 @@ export default function CartDrawer() {
                             </div>
                             {item.variantName && (
                               <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-1 font-manrope">
-                                Size: {item.variantName}
+                                Portion: {item.variantName}
                               </p>
                             )}
                           </div>
@@ -187,7 +187,7 @@ export default function CartDrawer() {
                   <span className="text-base font-manrope">VND {subtotal.toLocaleString()}</span>
                 </div>
                 <p className="text-[10px] text-slate-400 font-manrope leading-relaxed">
-                  Complimentary global delivery is included with this curated selection.
+                  Complimentary temperature-controlled premium delivery is included with this selection.
                 </p>
                 <div className="grid grid-cols-1 gap-2 pt-2">
                   <Link 
@@ -202,7 +202,7 @@ export default function CartDrawer() {
                     onClick={closeDrawer}
                     className="w-full bg-transparent border-none text-slate-500 hover:text-slate-900 font-button text-[10px] uppercase tracking-widest py-3 hover:translate-x-1 transition-all"
                   >
-                    Continue Shopping
+                    Continue Exploring
                   </button>
                 </div>
               </div>

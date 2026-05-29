@@ -6,6 +6,7 @@
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&amp;family=Manrope:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <script id="tailwind-config">
         tailwind.config = {
             darkMode: "class",
@@ -103,6 +104,9 @@
         }
     </script>
 <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
         .soft-elevation {
             box-shadow: 0px 20px 40px rgba(15, 23, 42, 0.05);
         }
@@ -112,6 +116,7 @@
     </style>
 </head>
 <body class="bg-surface text-on-surface font-body-md selection:bg-accent-gold selection:text-deep-navy">
+<!-- Top Navigation Bar -->
 <nav class="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-md transition-colors duration-500 ease-in-out shadow-[0px_20px_40px_rgba(15,23,42,0.05)]">
 <div class="flex justify-between items-center px-gutter py-6 max-w-container-max-width mx-auto">
 <div class="flex items-center gap-8">
@@ -133,15 +138,18 @@
 </div>
 </nav>
 <main class="pt-32 pb-section-gap px-gutter max-w-container-max-width mx-auto">
+<!-- Header Section -->
 <header class="mb-16">
 <h1 class="font-headline-xl text-headline-xl mb-4">Your Selection</h1>
 <p class="font-body-lg text-body-lg text-on-surface-variant italic max-w-2xl">Refined essentials curated for the modern aesthetic. Review your chosen pieces before moving to the checkout gallery.</p>
 </header>
 <div class="grid grid-cols-1 lg:grid-cols-12 gap-16 items-start">
+<!-- Cart Items List -->
 <section class="lg:col-span-8 space-y-12">
+<!-- Item 1 -->
 <article class="group relative flex flex-col md:flex-row gap-8 items-center bg-white p-8 soft-elevation transition-all hover:scale-[1.01]">
 <div class="w-full md:w-64 aspect-[4/5] bg-slate-surface overflow-hidden">
-<img class="w-full h-full object-cover grayscale-[20%] group-hover:scale-105 transition-transform duration-700" data-alt="Sculptural Wool Overcoat" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBeThSi3q-n2c8uuViyam1b2_2pJAgJlHuNIIgjEmCyPwG5XpcajjcWm-5FGiLliZNL_gshSTBtxWDzDKPNHOva9Ph-GJeDXnpdDn7tQSgKwBDZadnCeuQxqS09E-Wf4BPt-ftlB9QdobtniTQCyxavZMXrid606Nl3YZfJEelerGPzGLHIhq8f4WofWGLm5fwm8B9_dnUq3Tb-Io-NFovt-sTT34MmJX6iApgvJJ9BzK8llQShaPrkAUlJ8_1XoA8zalMw3Qr5ngq6"/>
+<img class="w-full h-full object-cover grayscale-[20%] group-hover:scale-105 transition-transform duration-700" data-alt="A high-end, minimalist studio portrait of a tailored charcoal grey wool coat draped elegantly over a pristine white sculptural pedestal. The lighting is soft and directional, casting long, gentle shadows that emphasize the premium texture of the fabric. The background is a seamless, matte off-white, creating a clean, editorial atmosphere that aligns with a luxury fashion publication." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBeThSi3q-n2c8uuViyam1b2_2pJAgJlHuNIIgjEmCyPwG5XpcajjcWm-5FGiLliZNL_gshSTBtxWDzDKPNHOva9Ph-GJeDXnpdDn7tQSgKwBDZadnCeuQxqS09E-Wf4BPt-ftlB9QdobtniTQCyxavZMXrid606Nl3YZfJEelerGPzGLHIhq8f4WofWGLm5fwm8B9_dnUq3Tb-Io-NFovt-sTT34MmJX6iApgvJJ9BzK8llQShaPrkAUlJ8_1XoA8zalMw3Qr5ngq6"/>
 </div>
 <div class="flex-1 flex flex-col justify-between h-full py-2">
 <div>
@@ -154,23 +162,24 @@
 <div class="flex items-center justify-between mt-auto">
 <div class="flex items-center gap-6 bg-slate-surface px-4 py-2">
 <button class="hover:text-accent-gold transition-colors p-1" onclick="updateQty(this, -1)">
-<span class="material-symbols-outlined text-sm">remove</span>
+<span class="material-symbols-outlined text-sm" data-icon="remove">remove</span>
 </button>
 <span class="font-button text-button w-4 text-center">01</span>
 <button class="hover:text-accent-gold transition-colors p-1" onclick="updateQty(this, 1)">
-<span class="material-symbols-outlined text-sm">add</span>
+<span class="material-symbols-outlined text-sm" data-icon="add">add</span>
 </button>
 </div>
 <button class="font-label-caps text-label-caps text-on-surface-variant hover:text-error transition-colors flex items-center gap-2">
-<span class="material-symbols-outlined text-[18px]">close</span>
+<span class="material-symbols-outlined text-[18px]" data-icon="close">close</span>
                                 REMOVE
                             </button>
 </div>
 </div>
 </article>
+<!-- Item 2 -->
 <article class="group relative flex flex-col md:flex-row gap-8 items-center bg-white p-8 soft-elevation transition-all hover:scale-[1.01]">
 <div class="w-full md:w-64 aspect-[4/5] bg-slate-surface overflow-hidden">
-<img class="w-full h-full object-cover grayscale-[20%] group-hover:scale-105 transition-transform duration-700" data-alt="Obsidian Ceramic Vessel" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAd6_odzYx0FDTRx4M7o1lMezeCU3fa461FqM3CpA4vMYlqTrfE7H5dBIHyLtWfj0UanxhbQSUh9Xt1-Z7kjMu-NRUPH42dy2__X6mSew9u5PxMMftl4l2vGqK7xUnCJIyLAFvLNKbeDWPxsNGuZNKz6IN1gFzXzu4NjSCZfOpJWAfW4xCwJJ2UMMJPOmbks--wy_O2eHF-fLG4Msf7lmyMKiUlOFsfhwszbCnZrYYQ49qvXlc-hvLV9IXkYJ3nkppraGNbP7qjp4Iy"/>
+<img class="w-full h-full object-cover grayscale-[20%] group-hover:scale-105 transition-transform duration-700" data-alt="Close-up shot of an artisanal, hand-poured ceramic vessel in matte obsidian black. The texture is organic and slightly porous, reflecting light in a soft, diffused manner. It sits on a slab of honed white marble against a dark, moody background. The scene is shot with a shallow depth of field, emphasizing the quiet, luxurious craftsmanship of the object." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAd6_odzYx0FDTRx4M7o1lMezeCU3fa461FqM3CpA4vMYlqTrfE7H5dBIHyLtWfj0UanxhbQSUh9Xt1-Z7kjMu-NRUPH42dy2__X6mSew9u5PxMMftl4l2vGqK7xUnCJIyLAFvLNKbeDWPxsNGuZNKz6IN1gFzXzu4NjSCZfOpJWAfW4xCwJJ2UMMJPOmbks--wy_O2eHF-fLG4Msf7lmyMKiUlOFsfhwszbCnZrYYQ49qvXlc-hvLV9IXkYJ3nkppraGNbP7qjp4Iy"/>
 </div>
 <div class="flex-1 flex flex-col justify-between h-full py-2">
 <div>
@@ -183,21 +192,22 @@
 <div class="flex items-center justify-between mt-auto">
 <div class="flex items-center gap-6 bg-slate-surface px-4 py-2">
 <button class="hover:text-accent-gold transition-colors p-1" onclick="updateQty(this, -1)">
-<span class="material-symbols-outlined text-sm">remove</span>
+<span class="material-symbols-outlined text-sm" data-icon="remove">remove</span>
 </button>
 <span class="font-button text-button w-4 text-center">01</span>
 <button class="hover:text-accent-gold transition-colors p-1" onclick="updateQty(this, 1)">
-<span class="material-symbols-outlined text-sm">add</span>
+<span class="material-symbols-outlined text-sm" data-icon="add">add</span>
 </button>
 </div>
 <button class="font-label-caps text-label-caps text-on-surface-variant hover:text-error transition-colors flex items-center gap-2">
-<span class="material-symbols-outlined text-[18px]">close</span>
+<span class="material-symbols-outlined text-[18px]" data-icon="close">close</span>
                                 REMOVE
                             </button>
 </div>
 </div>
 </article>
 </section>
+<!-- Order Summary Sidebar -->
 <aside class="lg:col-span-4 sticky top-32">
 <div class="bg-white p-10 soft-elevation space-y-8">
 <h3 class="font-headline-md text-headline-md border-b border-slate-surface pb-6">Summary</h3>
@@ -222,45 +232,47 @@
 <div class="pt-8 space-y-4">
 <button class="w-full bg-deep-navy text-white font-button text-button py-6 hover:opacity-90 transition-opacity uppercase tracking-widest flex items-center justify-center gap-3 group">
                             Checkout
-                            <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                            <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform" data-icon="arrow_forward">arrow_forward</span>
 </button>
 <p class="text-center font-label-caps text-[10px] text-on-surface-variant uppercase tracking-widest">Complimentary delivery for members</p>
 </div>
+<!-- Payment Icons -->
 <div class="flex justify-center gap-6 pt-8 opacity-40">
-<span class="material-symbols-outlined">credit_card</span>
-<span class="material-symbols-outlined">account_balance</span>
-<span class="material-symbols-outlined">payments</span>
+<span class="material-symbols-outlined" data-icon="credit_card">credit_card</span>
+<span class="material-symbols-outlined" data-icon="account_balance">account_balance</span>
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
 </div>
 </div>
 <div class="mt-8 px-4 flex items-start gap-4 text-on-surface-variant italic font-body-md">
-<span class="material-symbols-outlined text-accent-gold">verified</span>
+<span class="material-symbols-outlined text-accent-gold" data-icon="verified">verified</span>
 <p class="text-sm">Each piece in our collection is authenticated by the Modern Édition studio to ensure unparalleled quality and provenance.</p>
 </div>
 </aside>
 </div>
+<!-- Featured Carousel (Asymmetric/Magazine style) -->
 <section class="mt-section-gap">
 <h4 class="font-label-caps text-label-caps mb-8 text-on-surface-variant">COMPLEMENT THE LOOK</h4>
 <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
 <div class="aspect-[3/4] overflow-hidden bg-slate-surface relative group">
-<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" data-alt="Leather Carryall" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBpwGh8511sfWTVEwz8_bMYjr2UvHxxcO3dGctXQovDDsz_Dei6SkscusGq51JffTE6UF4lPTnJvVuFto4zAXwH5FdzLFIag4cnPCd1j6v1eWwq76mgSLQTaM_QRocQmAtSfhepzLsP6xkBzmrpHtrI2xzuZECHBwcNgjUYt_uD5QqQOMsnxFISP6mD8AxvqmBgsMIXChjITpfQS0UpS52aGsFGz2oYBgvbW-HaF-SDt-Jpn0woD729drMlHhXxB_Ufo1vX7t9JJNdZ"/>
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" data-alt="A luxurious minimalist designer handbag in smooth, camel-colored calfskin leather. The bag is showcased in a high-fashion editorial style, resting on a sharp-edged concrete plinth. Soft, cold morning light fills the room, highlighting the clean lines and meticulous stitching. The aesthetic is extremely clean and professional, focusing on texture and form." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBpwGh8511sfWTVEwz8_bMYjr2UvHxxcO3dGctXQovDDsz_Dei6SkscusGq51JffTE6UF4lPTnJvVuFto4zAXwH5FdzLFIag4cnPCd1j6v1eWwq76mgSLQTaM_QRocQmAtSfhepzLsP6xkBzmrpHtrI2xzuZECHBwcNgjUYt_uD5QqQOMsnxFISP6mD8AxvqmBgsMIXChjITpfQS0UpS52aGsFGz2oYBgvbW-HaF-SDt-Jpn0woD729drMlHhXxB_Ufo1vX7t9JJNdZ"/>
 <div class="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all flex flex-col justify-end p-6 opacity-0 group-hover:opacity-100">
 <p class="text-white font-label-caps">Leather Carryall — $850</p>
 </div>
 </div>
 <div class="aspect-[3/4] overflow-hidden bg-slate-surface relative group mt-12 md:mt-24">
-<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" data-alt="Hand-Blown Carafe" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCE0qj6q0yQdvA-EKxnIvhVFG8kx7bEl9_dPLpKTaP4FAyHuKXbKZrN5y3At0hzD-43CKPiu-ut7IbNdd242OKepwvFs-EpObWb-9tbnywcNQGJCLy_dkSI5xvofD4xW0rLbjTRhuFmi_J18Ub72hGxad6PWQWGOr7PzRroleeFf6cnY5298UlwVq_9NGTQlervkWhi-XFTs66-F_OmLzLyjeuNKjBjQL-zaa6x4b5LBrAzHN6J-flFSRz3F7en5y5Y9rQ3m_gc0fEy"/>
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" data-alt="An artistic composition featuring a single, modernist glass carafe and a matching tumbler. The glassware is delicate and architectural, catching glints of light that create sharp prismatic effects on a light-colored wooden surface. The mood is tranquil and sophisticated, typical of high-end lifestyle photography found in premium architectural magazines." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCE0qj6q0yQdvA-EKxnIvhVFG8kx7bEl9_dPLpKTaP4FAyHuKXbKZrN5y3At0hzD-43CKPiu-ut7IbNdd242OKepwvFs-EpObWb-9tbnywcNQGJCLy_dkSI5xvofD4xW0rLbjTRhuFmi_J18Ub72hGxad6PWQWGOr7PzRroleeFf6cnY5298UlwVq_9NGTQlervkWhi-XFTs66-F_OmLzLyjeuNKjBjQL-zaa6x4b5LBrAzHN6J-flFSRz3F7en5y5Y9rQ3m_gc0fEy"/>
 <div class="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all flex flex-col justify-end p-6 opacity-0 group-hover:opacity-100">
 <p class="text-white font-label-caps">Hand-Blown Carafe — $120</p>
 </div>
 </div>
 <div class="aspect-[3/4] overflow-hidden bg-slate-surface relative group">
-<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" data-alt="Tech-Knit Sneaker" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBgdoKi7xjemUQh5y-_z8QEo5LnFJgjzY6MNHWHMhFn4JWrpz9eYQtaZSOtOKhiuai7QyBo_urJdbsRCaoZ3y1TupjXTf2BLzzMrnxxA0wtqmGAn2cLJxDNoJYeH69iwl41IdmIQ2qDQ90BUEA7XG0CaOAWG3I06gXilriUhfTNB8WMI0jGiacEVoMiOGh8CicZ9eZvQeZMsZNw67Z9J31BMAk10JcKu608Kq-IIMjt6ON81X71KSjYmSXapck6vZdFJzX7KZ8WB7RZ"/>
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" data-alt="A pair of architectural sneakers in stark monochrome white. They are presented as art objects, suspended by invisible wires in a vast, empty warehouse space. Strong overhead spotlighting creates high contrast and deep shadows, emphasizing the complex geometric construction of the footwear. The aesthetic is futuristic, clean, and aggressively minimal." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBgdoKi7xjemUQh5y-_z8QEo5LnFJgjzY6MNHWHMhFn4JWrpz9eYQtaZSOtOKhiuai7QyBo_urJdbsRCaoZ3y1TupjXTf2BLzzMrnxxA0wtqmGAn2cLJxDNoJYeH69iwl41IdmIQ2qDQ90BUEA7XG0CaOAWG3I06gXilriUhfTNB8WMI0jGiacEVoMiOGh8CicZ9eZvQeZMsZNw67Z9J31BMAk10JcKu608Kq-IIMjt6ON81X71KSjYmSXapck6vZdFJzX7KZ8WB7RZ"/>
 <div class="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all flex flex-col justify-end p-6 opacity-0 group-hover:opacity-100">
 <p class="text-white font-label-caps">Tech-Knit Sneaker — $340</p>
 </div>
 </div>
 <div class="aspect-[3/4] overflow-hidden bg-slate-surface relative group mt-12">
-<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" data-alt="Series X Timepiece" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBI9mh5Y--w3-NdUGfeqxsesPKbVb1JAoa08g2BMvxywWQOiQQ-Qfp1gOGv9xMhT1mCVhwphn1BmBuNWms1OR1MDIzZk1-vo0mCl39QEXi-oLpNESvDLEenPpHybgr0GJi1tre2-p-I-P5nrQk80HLf1PYGVDxb5gf4HatDNZ8Bp-0YNChCvFJL3FwffOOufJteSMCDQV611Fd45_VywGsScuCJX8W4FCMF3HfLvKnJSQC-DpT-gvdH_N5n-zgIOXiI-0vKsfriMl7A"/>
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" data-alt="A sleek, designer smartwatch with a brushed titanium finish and a black Milanese loop band. It is photographed on a dark, reflective surface that mimics a still pool of water. The display shows a minimalist, typographic watch face. The lighting is low-key and dramatic, creating a premium, luxury-tech ambiance with subtle highlights on the metallic edges." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBI9mh5Y--w3-NdUGfeqxsesPKbVb1JAoa08g2BMvxywWQOiQQ-Qfp1gOGv9xMhT1mCVhwphn1BmBuNWms1OR1MDIzZk1-vo0mCl39QEXi-oLpNESvDLEenPpHybgr0GJi1tre2-p-I-P5nrQk80HLf1PYGVDxb5gf4HatDNZ8Bp-0YNChCvFJL3FwffOOufJteSMCDQV611Fd45_VywGsScuCJX8W4FCMF3HfLvKnJSQC-DpT-gvdH_N5n-zgIOXiI-0vKsfriMl7A"/>
 <div class="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all flex flex-col justify-end p-6 opacity-0 group-hover:opacity-100">
 <p class="text-white font-label-caps">Series X Timepiece — $1,100</p>
 </div>
@@ -268,6 +280,7 @@
 </div>
 </section>
 </main>
+<!-- Footer -->
 <footer class="w-full pt-section-gap pb-gutter bg-deep-navy">
 <div class="grid grid-cols-1 md:grid-cols-4 gap-gutter px-gutter max-w-container-max-width mx-auto">
 <div class="md:col-span-1">
@@ -302,9 +315,9 @@
 <div class="max-w-container-max-width mx-auto px-gutter mt-24 flex flex-col md:flex-row justify-between items-center gap-8 border-t border-surface/10 pt-8">
 <p class="font-label-caps text-label-caps text-outline-variant">© 2024 MODERN ÉDITION. ALL RIGHTS RESERVED.</p>
 <div class="flex gap-8 text-outline-variant">
-<a class="hover:text-surface transition-colors" href="#"><span class="material-symbols-outlined">social_leaderboard</span></a>
-<a class="hover:text-surface transition-colors" href="#"><span class="material-symbols-outlined">retweet</span></a>
-<a class="hover:text-surface transition-colors" href="#"><span class="material-symbols-outlined">public</span></a>
+<a class="hover:text-surface transition-colors" href="#"><span class="material-symbols-outlined" data-icon="facebook">social_leaderboard</span></a>
+<a class="hover:text-surface transition-colors" href="#"><span class="material-symbols-outlined" data-icon="instagram">retweet</span></a>
+<a class="hover:text-surface transition-colors" href="#"><span class="material-symbols-outlined" data-icon="public">public</span></a>
 </div>
 </div>
 </footer>
@@ -315,12 +328,15 @@
             let current = parseInt(span.innerText);
             current = Math.max(1, current + delta);
             span.innerText = current.toString().padStart(2, '0');
+            
+            // Subtle feedback animation
             span.classList.add('scale-110', 'text-accent-gold');
             setTimeout(() => {
                 span.classList.remove('scale-110', 'text-accent-gold');
             }, 200);
         }
 
+        // Intersection Observer for scroll reveal effects
         const observerOptions = {
             threshold: 0.1
         };

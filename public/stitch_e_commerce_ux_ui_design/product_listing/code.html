@@ -1,515 +1,328 @@
 <!DOCTYPE html>
-
-<html class="dark" lang="en"><head>
+<html class="light" lang="en"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Shop All - LUMINA</title>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com" rel="preconnect"/>
-<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&amp;display=swap" rel="stylesheet"/>
+<title>LUXE GOURMET | Culinary Menu</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&amp;family=Manrope:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<style>
-    @keyframes shimmer {
-        0% { background-position: -1000px 0; }
-        100% { background-position: 1000px 0; }
-    }
-    .skeleton {
-        background: linear-gradient(90deg, #1e293b 25%, #334155 50%, #1e293b 75%);
-        background-size: 1000px 100%;
-        animation: shimmer 2s infinite linear;
-    }
-    .product-card-entrance {
-        opacity: 0;
-        transform: translateY(30px);
-        animation: entrance 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-    }
-    @keyframes entrance {
-        to { opacity: 1; transform: translateY(0); }
-    }
-    .cart-drawer-overlay {
-        transition: opacity 0.4s ease;
-    }
-    .cart-drawer {
-        transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    .cart-drawer-open .cart-drawer {
-        transform: translateX(0);
-    }
-    .cart-drawer-open .cart-drawer-overlay {
-        opacity: 1;
-        pointer-events: auto;
-    }
-    
-    /* Liquid Interface / Soft scrollbar */
-    ::-webkit-scrollbar {
-        width: 8px;
-    }
-    ::-webkit-scrollbar-track {
-        background: #0f172a; 
-    }
-    ::-webkit-scrollbar-thumb {
-        background: #334155; 
-        border-radius: 8px;
-    }
-    ::-webkit-scrollbar-thumb:hover {
-        background: #475569; 
-    }
-</style>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    "colors": {
-                        "surface-dim": "#cbdbf5",
-                        "outline": "#76777d",
-                        "surface-container": "#e5eeff",
-                        "secondary": "#0051d5",
-                        "tertiary": "#000000",
-                        "secondary-fixed": "#dbe1ff",
-                        "secondary-container": "#316bf3",
-                        "surface-container-lowest": "#ffffff",
-                        "error-container": "#ffdad6",
-                        "surface-container-high": "#dce9ff",
-                        "primary-fixed-dim": "#bec6e0",
-                        "primary": "#000000",
-                        "on-tertiary-container": "#009668",
-                        "primary-container": "#131b2e",
-                        "tertiary-container": "#002113",
-                        "surface-variant": "#d3e4fe",
-                        "error": "#ba1a1a",
-                        "inverse-primary": "#bec6e0",
-                        "inverse-on-surface": "#eaf1ff",
-                        "on-surface": "#0b1c30",
-                        "on-background": "#0b1c30",
-                        "on-primary": "#ffffff",
-                        "on-primary-fixed-variant": "#3f465c",
-                        "surface": "#f8f9ff",
-                        "primary-fixed": "#dae2fd",
-                        "on-secondary-fixed-variant": "#003ea8",
-                        "outline-variant": "#c6c6cd",
-                        "on-error-container": "#93000a",
-                        "on-error": "#ffffff",
-                        "on-primary-container": "#7c839b",
-                        "surface-tint": "#565e74",
-                        "on-tertiary-fixed": "#002113",
-                        "tertiary-fixed-dim": "#4edea3",
-                        "surface-container-low": "#eff4ff",
-                        "on-tertiary-fixed-variant": "#005236",
-                        "background": "#f8f9ff",
-                        "surface-container-highest": "#d3e4fe",
-                        "surface-bright": "#f8f9ff",
-                        "on-secondary-fixed": "#00174b",
-                        "secondary-fixed-dim": "#b4c5ff",
-                        "on-tertiary": "#ffffff",
-                        "inverse-surface": "#213145",
-                        "on-surface-variant": "#45464d",
-                        "on-secondary": "#ffffff",
-                        "tertiary-fixed": "#6ffbbe",
-                        "on-secondary-container": "#fefcff",
-                        "on-primary-fixed": "#131b2e"
-                    },
-                    "borderRadius": {
-                        "DEFAULT": "0.5rem",
-                        "lg": "0.5rem",
-                        "xl": "0.75rem",
-                        "full": "9999px"
-                    },
-                    "spacing": {
-                        "lg": "48px",
-                        "container-max": "1280px",
-                        "base": "8px",
-                        "sm": "12px",
-                        "md": "24px",
-                        "xs": "4px",
-                        "gutter": "32px",
-                        "xl": "80px"
-                    },
-                    "fontFamily": {
-                        "h1": ["Manrope"],
-                        "label-md": ["Manrope"],
-                        "body-lg": ["Manrope"],
-                        "h3": ["Manrope"],
-                        "body-sm": ["Manrope"],
-                        "body-md": ["Manrope"],
-                        "display": ["Manrope"],
-                        "label-sm": ["Manrope"],
-                        "h2": ["Manrope"]
-                    },
-                    "fontSize": {
-                        "h1": ["32px", {"lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "700"}],
-                        "label-md": ["14px", {"lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600"}],
-                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
-                        "h3": ["20px", {"lineHeight": "1.4", "fontWeight": "600"}],
-                        "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
-                        "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
-                        "display": ["48px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "800"}],
-                        "label-sm": ["12px", {"lineHeight": "1.2", "fontWeight": "600"}],
-                        "h2": ["24px", {"lineHeight": "1.4", "letterSpacing": "-0.01em", "fontWeight": "700"}]
-                    }
-                }
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-variant": "#e2e2e2",
+                    "slate-text": "#334155",
+                    "on-error": "#ffffff",
+                    "organic-green": "#2D4B41",
+                    "tertiary": "#000000",
+                    "on-background": "#1a1c1c",
+                    "secondary-container": "#e0e3e5",
+                    "on-tertiary-fixed": "#410000",
+                    "on-tertiary-fixed-variant": "#930000",
+                    "surface-tint": "#5f5e5e",
+                    "surface-container-lowest": "#ffffff",
+                    "on-secondary-container": "#626567",
+                    "secondary": "#5c5f61",
+                    "inverse-primary": "#c8c6c5",
+                    "surface-container-highest": "#e2e2e2",
+                    "primary-fixed-dim": "#c8c6c5",
+                    "on-tertiary-container": "#f93625",
+                    "on-surface-variant": "#444748",
+                    "surface-container-low": "#f3f3f4",
+                    "on-primary-fixed-variant": "#474646",
+                    "on-secondary-fixed-variant": "#444749",
+                    "outline": "#747878",
+                    "secondary-fixed-dim": "#c4c7c9",
+                    "cream-bg": "#FFF9F1",
+                    "secondary-fixed": "#e0e3e5",
+                    "on-primary": "#ffffff",
+                    "surface-container": "#eeeeee",
+                    "surface-dim": "#dadada",
+                    "inverse-surface": "#2f3131",
+                    "error-container": "#ffdad6",
+                    "gourmet-gold": "#FFB606",
+                    "on-surface": "#1a1c1c",
+                    "on-secondary-fixed": "#191c1e",
+                    "error": "#ba1a1a",
+                    "surface-bright": "#f9f9f9",
+                    "tertiary-fixed": "#ffdad4",
+                    "surface": "#f9f9f9",
+                    "surface-container-high": "#e8e8e8",
+                    "tertiary-container": "#410000",
+                    "background": "#f9f9f9",
+                    "primary-container": "#1c1b1b",
+                    "on-primary-fixed": "#1c1b1b",
+                    "on-tertiary": "#ffffff",
+                    "on-primary-container": "#858383",
+                    "primary-fixed": "#e5e2e1",
+                    "on-error-container": "#93000a",
+                    "inverse-on-surface": "#f0f1f1",
+                    "on-secondary": "#ffffff",
+                    "outline-variant": "#c4c7c7",
+                    "primary": "#000000",
+                    "tertiary-fixed-dim": "#ffb4a8"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "8px",
+                    "xl": "12px",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "margin-desktop": "64px",
+                    "stack-xl": "120px",
+                    "stack-md": "48px",
+                    "stack-lg": "80px",
+                    "gutter": "32px",
+                    "margin-mobile": "20px",
+                    "container-max": "1280px"
+            },
+            "fontFamily": {
+                    "headline-sm": ["Playfair Display"],
+                    "label-md": ["Manrope"],
+                    "headline-md": ["Playfair Display"],
+                    "label-sm": ["Manrope"],
+                    "body-md": ["Manrope"],
+                    "headline-lg": ["Playfair Display"],
+                    "body-lg": ["Manrope"],
+                    "headline-xl": ["Playfair Display"],
+                    "headline-xl-mobile": ["Playfair Display"]
+            },
+            "fontSize": {
+                    "headline-sm": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "headline-md": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.1em", "fontWeight": "700"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-lg": ["48px", {"lineHeight": "56px", "fontWeight": "700"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "headline-xl": ["64px", {"lineHeight": "72px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "headline-xl-mobile": ["40px", {"lineHeight": "48px", "fontWeight": "700"}]
             }
-        }
+          },
+        },
+      }
     </script>
+<style>
+        .soft-shadow {
+            box-shadow: 0px 20px 40px rgba(15, 23, 42, 0.05);
+        }
+        .shimmer {
+            background: linear-gradient(90deg, #f3f3f4 25%, #e8e8e8 50%, #f3f3f4 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+        .stagger-item:nth-child(even) {
+            margin-top: 48px;
+        }
+        .image-zoom:hover img {
+            transform: scale(1.05);
+        }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #e2e2e2; border-radius: 10px; }
+    </style>
 </head>
-<body class="bg-slate-950 text-slate-100 font-body-md antialiased min-h-screen flex flex-col pt-24 overflow-x-hidden selection:bg-slate-700 selection:text-white">
-<!-- Cart Drawer -->
-<div class="fixed inset-0 z-[100] pointer-events-none" id="cart-drawer-container">
-<div class="cart-drawer-overlay absolute inset-0 bg-slate-950/60 backdrop-blur-md opacity-0 transition-opacity cursor-pointer" onclick="toggleCart()"></div>
-<div class="cart-drawer absolute right-0 top-0 h-full w-full max-w-md bg-slate-900 shadow-[rgba(0,0,0,0.5)_0px_0px_50px] translate-x-full flex flex-col pointer-events-auto">
-<div class="p-md flex justify-between items-center bg-slate-800/20">
-<h2 class="font-h2 text-h2 text-white">Shopping Bag (2)</h2>
-<button class="p-2 hover:bg-slate-800 transition-colors rounded-full text-slate-400 hover:text-white" onclick="toggleCart()">
-<span class="material-symbols-outlined">close</span>
+<body class="bg-background text-on-background font-body-md selection:bg-gourmet-gold selection:text-primary">
+<nav class="fixed top-0 w-full z-50 bg-white/70 backdrop-blur-xl shadow-sm">
+<div class="flex justify-between items-center max-w-container-max mx-auto px-margin-desktop py-4">
+<div class="font-headline-sm text-headline-sm font-bold tracking-tighter text-primary">
+                LUXE GOURMET
+            </div>
+<div class="hidden md:flex gap-8 items-center">
+<a class="font-label-md text-label-md text-primary font-bold border-b-2 border-primary pb-1" href="#">The Menu</a>
+<a class="font-label-md text-label-md text-secondary hover:text-primary transition-colors" href="#">Our Story</a>
+<a class="font-label-md text-label-md text-secondary hover:text-primary transition-colors" href="#">Culinary Studio</a>
+<a class="font-label-md text-label-md text-secondary hover:text-primary transition-colors" href="#">Reservations</a>
+</div>
+<div class="flex items-center gap-6">
+<button class="hover:opacity-80 transition-opacity active:scale-95 duration-200">
+<span class="material-symbols-outlined text-primary">search</span>
+</button>
+<button class="hover:opacity-80 transition-opacity active:scale-95 duration-200 relative">
+<span class="material-symbols-outlined text-primary">shopping_bag</span>
+<span class="absolute -top-1 -right-1 w-2 h-2 bg-gourmet-gold rounded-full"></span>
 </button>
 </div>
-<div class="flex-grow overflow-y-auto p-md space-y-md">
-<div class="flex gap-4 p-2 rounded-lg hover:bg-slate-800/30 transition-colors">
-<div class="w-20 h-24 bg-slate-800 rounded-lg overflow-hidden flex-shrink-0 shadow-inner">
-<img alt="Cart item" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBzn5oudAXVPaFXLvfLKzBsQYmhW_8djEQhdClSsF_KPyAmQYIZHZAk35sCyuD-7ffzJ8xXpP5Em4ZtmY_7qsJv82DYMX3kBF0-HnQ7Wkmsh_Y6nR7m0OFED1yxbCuP4se_F1CZLgCqjurFv5bp3we2AyeGp23aIJtCnlOU4zkVOPTzdF86oxqN3d3BiJfuCE_FGsqbgbVxMPqgW2nPGIfTaLmE_AukFkw5xMqbByVjroblcGLwB7QYisLvGGu2XEi8ZU0H9tr8ivhG"/>
 </div>
-<div class="flex-grow">
-<div class="flex justify-between">
-<h4 class="font-label-md text-slate-100">The Architect Coat</h4>
-<span class="font-label-md text-slate-300">$345</span>
-</div>
-<p class="text-xs text-slate-400 mt-1">Charcoal / M</p>
-<div class="flex items-center justify-between mt-4">
-<div class="flex items-center bg-slate-800/50 rounded-lg">
-<button class="px-3 py-1 text-slate-400 hover:text-white transition-colors">-</button>
-<span class="px-3 text-sm text-slate-200">1</span>
-<button class="px-3 py-1 text-slate-400 hover:text-white transition-colors">+</button>
-</div>
-<button class="text-xs text-slate-400 hover:text-white transition-colors">Remove</button>
-</div>
-</div>
-</div>
-<div class="flex gap-4 p-2 rounded-lg hover:bg-slate-800/30 transition-colors">
-<div class="w-20 h-24 bg-slate-800 rounded-lg overflow-hidden flex-shrink-0 shadow-inner">
-<img alt="Cart item" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCUiLiB2KX4kLrJXDnFQ7bEeTRHjX8y8NDFQJX5PqVh6UjO3Sv6jXG_nSW0yZO13LU38qFyQRo5803KwL5ehQXZC6BnvdQEf5BQ-XNoArJqWv86ALVjfq485cObIau_NC-rSF52RkfVZ4H9IZ23iTax1_wAYoIm_nkjY9KDe8cZCr1hmKghVS79GY5BnbdAeDNXZV8HkfQ1nuJJBoh1d1pA3njB0thZ8LI3GzyTGuDiPjhTeNbQ3Am2TgohLxycVSRJgV3TNUEO3bxz"/>
-</div>
-<div class="flex-grow">
-<div class="flex justify-between">
-<h4 class="font-label-md text-slate-100">Alpaca Blend Crew</h4>
-<span class="font-label-md text-slate-300">$210</span>
-</div>
-<p class="text-xs text-slate-400 mt-1">Oatmeal / M</p>
-<div class="flex items-center justify-between mt-4">
-<div class="flex items-center bg-slate-800/50 rounded-lg">
-<button class="px-3 py-1 text-slate-400 hover:text-white transition-colors">-</button>
-<span class="px-3 text-sm text-slate-200">1</span>
-<button class="px-3 py-1 text-slate-400 hover:text-white transition-colors">+</button>
-</div>
-<button class="text-xs text-slate-400 hover:text-white transition-colors">Remove</button>
-</div>
-</div>
-</div>
-</div>
-<div class="p-md bg-slate-800/30 space-y-4">
-<div class="flex justify-between font-label-md text-slate-100">
-<span>Subtotal</span>
-<span>$555</span>
-</div>
-<p class="text-[10px] text-slate-400 uppercase tracking-widest text-center">Shipping &amp; taxes calculated at checkout</p>
-<button class="w-full bg-slate-100 text-slate-900 py-4 rounded-lg font-label-md uppercase tracking-widest hover:bg-white transition-colors shadow-lg active:scale-[0.98]">
-                Checkout Now
-            </button>
-</div>
-</div>
-</div>
-<header class="fixed top-0 w-full z-50 bg-slate-950/80 backdrop-blur-xl shadow-sm transition-all duration-300">
-<div class="flex justify-between items-center w-full px-8 md:px-12 py-5 max-w-[1280px] mx-auto">
-<a class="text-2xl font-black tracking-tighter text-white" href="#">LUMINA</a>
-<nav class="hidden md:flex items-center gap-8">
-<a class="font-['Manrope'] text-xs font-semibold tracking-[0.1em] uppercase text-white relative after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-full after:h-[2px] after:bg-white after:rounded-full" href="#">Shop All</a>
-<a class="font-['Manrope'] text-xs font-semibold tracking-[0.1em] uppercase text-slate-400 hover:text-white transition-colors" href="#">New Arrivals</a>
-<a class="font-['Manrope'] text-xs font-semibold tracking-[0.1em] uppercase text-slate-400 hover:text-white transition-colors" href="#">Collections</a>
-<a class="font-['Manrope'] text-xs font-semibold tracking-[0.1em] uppercase text-slate-400 hover:text-white transition-colors" href="#">Sustainability</a>
-<a class="font-['Manrope'] text-xs font-semibold tracking-[0.1em] uppercase text-slate-400 hover:text-white transition-colors" href="#">Journal</a>
 </nav>
-<div class="flex items-center gap-5 text-slate-300">
-<button aria-label="Search" class="hover:text-white transition-colors duration-200">
-<span class="material-symbols-outlined">search</span>
-</button>
-<button aria-label="Shopping Cart" class="hover:text-white transition-colors duration-200 relative group" onclick="toggleCart()">
-<span class="material-symbols-outlined group-hover:scale-110 transition-transform">shopping_cart</span>
-<span class="absolute -top-1.5 -right-1.5 bg-slate-100 text-slate-900 text-[10px] font-bold h-4 w-4 rounded-full flex items-center justify-center shadow-lg">2</span>
-</button>
-<button aria-label="Profile" class="hover:text-white transition-colors duration-200 hidden md:block">
-<span class="material-symbols-outlined">person</span>
-</button>
-</div>
-</div>
-</header>
-<main class="flex-grow w-full max-w-[1280px] mx-auto px-8 md:px-12 py-xl grid grid-cols-1 md:grid-cols-12 gap-gutter">
-<div class="md:col-span-12 flex flex-col md:flex-row justify-between items-start md:items-end mb-10 pb-6">
+<main class="max-w-container-max mx-auto px-margin-desktop pt-stack-xl pb-stack-xl flex gap-gutter">
+<aside class="hidden md:block w-64 h-fit sticky top-24 shrink-0">
+<div class="bg-white/40 backdrop-blur-xl rounded-xl p-6 soft-shadow flex flex-col gap-6">
 <div>
-<h1 class="font-display text-display text-white mb-2 tracking-tight">Shop All</h1>
-<p class="font-body-lg text-body-lg text-slate-400 font-light">Discover our curated collection of premium essentials.</p>
+<h2 class="font-headline-sm text-headline-sm text-primary mb-1">Dietary Needs</h2>
+<p class="font-label-sm text-label-sm text-secondary uppercase tracking-widest">Refine your selection</p>
 </div>
-<div class="mt-8 md:mt-0 flex items-center gap-4">
-<label class="font-label-md text-label-md text-slate-400 hidden md:block tracking-wide uppercase text-xs" for="sort">Sort by</label>
-<div class="relative">
-<select class="appearance-none bg-slate-900/50 backdrop-blur shadow-sm rounded-lg px-5 py-3 pr-12 font-body-sm text-body-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-slate-700 transition-all cursor-pointer hover:bg-slate-800/50" id="sort">
-<option value="featured">Featured</option>
-<option value="newest">Newest Arrivals</option>
-<option value="price-low">Price: Low to High</option>
-<option value="price-high">Price: High to Low</option>
-</select>
-<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">expand_more</span>
+<div class="flex flex-col gap-2">
+<div class="flex items-center gap-3 p-3 rounded-lg bg-surface-container-low text-primary font-bold cursor-pointer transition-all hover:bg-surface-container-high">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="font-label-sm text-label-sm uppercase">Gluten-Free</span>
 </div>
+<div class="flex items-center gap-3 p-3 rounded-lg text-secondary hover:text-primary hover:bg-surface-container-high cursor-pointer transition-all">
+<span class="material-symbols-outlined">eco</span>
+<span class="font-label-sm text-label-sm uppercase">Vegan</span>
 </div>
-</div>
-<aside class="hidden md:block md:col-span-3 pr-md">
-<div class="sticky top-32 space-y-8 bg-slate-900/30 backdrop-blur-xl p-6 rounded-lg shadow-[0_8px_30px_rgb(0,0,0,0.12)] ring-1 ring-white/5">
-<div class="pb-6 relative after:absolute after:bottom-0 after:left-0 after:w-full after:h-px after:bg-gradient-to-r after:from-white/10 after:to-transparent">
-<h3 class="font-label-md text-label-md text-slate-200 uppercase tracking-widest mb-4 text-xs">Category</h3>
-<ul class="space-y-3">
-<li>
-<label class="flex items-center gap-3 cursor-pointer group">
-<div class="relative flex items-center justify-center w-5 h-5 rounded bg-slate-800 ring-1 ring-white/10 group-hover:ring-white/30 transition-all">
-<input checked="" class="peer opacity-0 absolute w-full h-full cursor-pointer" type="checkbox"/>
-<div class="w-3 h-3 bg-slate-200 rounded-sm opacity-100 scale-100 transition-all peer-checked:opacity-100 peer-checked:scale-100"></div>
-</div>
-<span class="font-body-sm text-body-sm text-slate-400 group-hover:text-slate-200 transition-colors">All Clothing</span>
-</label>
-</li>
-<li>
-<label class="flex items-center gap-3 cursor-pointer group">
-<div class="relative flex items-center justify-center w-5 h-5 rounded bg-slate-800 ring-1 ring-white/10 group-hover:ring-white/30 transition-all">
-<input class="peer opacity-0 absolute w-full h-full cursor-pointer" type="checkbox"/>
-<div class="w-3 h-3 bg-slate-200 rounded-sm opacity-0 scale-0 transition-all peer-checked:opacity-100 peer-checked:scale-100"></div>
-</div>
-<span class="font-body-sm text-body-sm text-slate-400 group-hover:text-slate-200 transition-colors">Outerwear</span>
-</label>
-</li>
-<li>
-<label class="flex items-center gap-3 cursor-pointer group">
-<div class="relative flex items-center justify-center w-5 h-5 rounded bg-slate-800 ring-1 ring-white/10 group-hover:ring-white/30 transition-all">
-<input class="peer opacity-0 absolute w-full h-full cursor-pointer" type="checkbox"/>
-<div class="w-3 h-3 bg-slate-200 rounded-sm opacity-0 scale-0 transition-all peer-checked:opacity-100 peer-checked:scale-100"></div>
-</div>
-<span class="font-body-sm text-body-sm text-slate-400 group-hover:text-slate-200 transition-colors">Knitwear</span>
-</label>
-</li>
-<li>
-<label class="flex items-center gap-3 cursor-pointer group">
-<div class="relative flex items-center justify-center w-5 h-5 rounded bg-slate-800 ring-1 ring-white/10 group-hover:ring-white/30 transition-all">
-<input class="peer opacity-0 absolute w-full h-full cursor-pointer" type="checkbox"/>
-<div class="w-3 h-3 bg-slate-200 rounded-sm opacity-0 scale-0 transition-all peer-checked:opacity-100 peer-checked:scale-100"></div>
-</div>
-<span class="font-body-sm text-body-sm text-slate-400 group-hover:text-slate-200 transition-colors">Bottoms</span>
-</label>
-</li>
-</ul>
-</div>
-<div class="pb-6 relative after:absolute after:bottom-0 after:left-0 after:w-full after:h-px after:bg-gradient-to-r after:from-white/10 after:to-transparent">
-<h3 class="font-label-md text-label-md text-slate-200 uppercase tracking-widest mb-4 text-xs">Price</h3>
-<div class="space-y-4">
-<div class="flex items-center gap-3">
-<div class="relative w-full">
-<span class="absolute left-3 top-1/2 -translate-y-1/2 font-body-sm text-slate-500">$</span>
-<input class="w-full bg-slate-800/50 rounded-lg pl-7 py-2.5 font-body-sm text-body-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-slate-600 transition-all placeholder:text-slate-600" placeholder="Min" type="number"/>
-</div>
-<span class="text-slate-600">-</span>
-<div class="relative w-full">
-<span class="absolute left-3 top-1/2 -translate-y-1/2 font-body-sm text-slate-500">$</span>
-<input class="w-full bg-slate-800/50 rounded-lg pl-7 py-2.5 font-body-sm text-body-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-slate-600 transition-all placeholder:text-slate-600" placeholder="Max" type="number"/>
+<div class="flex items-center gap-3 p-3 rounded-lg text-secondary hover:text-primary hover:bg-surface-container-high cursor-pointer transition-all">
+<span class="material-symbols-outlined">nature_people</span>
+<span class="font-label-sm text-label-sm uppercase">Organic</span>
 </div>
 </div>
-</div>
-</div>
-<div class="pb-6 relative after:absolute after:bottom-0 after:left-0 after:w-full after:h-px after:bg-gradient-to-r after:from-white/10 after:to-transparent">
-<h3 class="font-label-md text-label-md text-slate-200 uppercase tracking-widest mb-4 text-xs">Color</h3>
-<div class="flex flex-wrap gap-3">
-<button aria-label="Black" class="w-7 h-7 rounded-full bg-black shadow-inner ring-2 ring-offset-2 ring-offset-slate-900 ring-slate-400 transition-all hover:scale-110"></button>
-<button aria-label="White" class="w-7 h-7 rounded-full bg-slate-100 shadow-inner ring-1 ring-white/10 transition-all hover:scale-110"></button>
-<button aria-label="Grey" class="w-7 h-7 rounded-full bg-slate-600 shadow-inner ring-1 ring-white/10 transition-all hover:scale-110"></button>
-<button aria-label="Brown" class="w-7 h-7 rounded-full bg-amber-900 shadow-inner ring-1 ring-white/10 transition-all hover:scale-110"></button>
-<button aria-label="Navy" class="w-7 h-7 rounded-full bg-blue-950 shadow-inner ring-1 ring-white/10 transition-all hover:scale-110"></button>
-<button aria-label="Green" class="w-7 h-7 rounded-full bg-emerald-900 shadow-inner ring-1 ring-white/10 transition-all hover:scale-110"></button>
-</div>
-</div>
-<div>
-<h3 class="font-label-md text-label-md text-slate-200 uppercase tracking-widest mb-4 text-xs">Size</h3>
-<div class="grid grid-cols-3 gap-3">
-<button class="bg-slate-800/50 rounded-lg py-2 font-body-sm text-body-sm text-slate-400 hover:bg-slate-700 hover:text-white transition-all">XS</button>
-<button class="bg-slate-800/50 rounded-lg py-2 font-body-sm text-body-sm text-slate-400 hover:bg-slate-700 hover:text-white transition-all">S</button>
-<button class="bg-slate-200 rounded-lg py-2 font-body-sm text-body-sm text-slate-900 font-medium shadow-md">M</button>
-<button class="bg-slate-800/50 rounded-lg py-2 font-body-sm text-body-sm text-slate-400 hover:bg-slate-700 hover:text-white transition-all">L</button>
-<button class="bg-slate-800/50 rounded-lg py-2 font-body-sm text-body-sm text-slate-400 hover:bg-slate-700 hover:text-white transition-all">XL</button>
+<div class="pt-6 border-t border-surface-variant/30">
+<p class="font-label-sm text-label-sm text-secondary uppercase tracking-widest mb-4">Cuisine Type</p>
+<div class="flex flex-wrap gap-2">
+<span class="px-3 py-1 bg-surface-container-low text-secondary font-label-sm text-[10px] rounded-full uppercase">Italian</span>
+<span class="px-3 py-1 bg-surface-container-low text-secondary font-label-sm text-[10px] rounded-full uppercase">French</span>
+<span class="px-3 py-1 bg-surface-container-low text-secondary font-label-sm text-[10px] rounded-full uppercase">Asian Fusion</span>
 </div>
 </div>
 </div>
 </aside>
-<div class="md:hidden col-span-1 mb-md">
-<button class="w-full flex items-center justify-center gap-2 bg-slate-900/50 rounded-lg py-4 font-label-md text-label-md text-slate-200 backdrop-blur shadow-sm">
-<span class="material-symbols-outlined">tune</span>
-Filters &amp; Sort
+<section class="flex-1">
+<header class="mb-stack-md">
+<h1 class="font-headline-xl text-headline-xl text-primary mb-2">The Autumn Collection</h1>
+<p class="font-body-lg text-body-lg text-secondary max-w-2xl">A curated selection of seasonal delicacies, prepared with avant-garde techniques and the world's rarest ingredients.</p>
+</header>
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-x-gutter gap-y-16 items-start">
+<article class="stagger-item flex flex-col gap-6 group">
+<div class="relative overflow-hidden rounded-xl aspect-[4/5] bg-surface-container-low soft-shadow image-zoom transition-all">
+<div class="shimmer absolute inset-0 z-0"></div>
+<img alt="Truffle Tagliatelle" class="w-full h-full object-cover relative z-10 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAWltawjUgYD28l3_8iKB_iPTciaWy_mWA4F8yPBGyN1to8Rv1EKXFGLiw6czSMg8aMrDtAp-zXbKlXwea1RMSeU2O7wGFs0j97QSrkyV1AwxxN9gJxsrVDqR6NYXnVOT5K7qBtTBEIpmL9CeE05yHS8OkFxFzhw6kWbLgs1PvORKeBMGJP0xyZ8SyxKuYcvWlQ4RwxicPcYXEadSQOMNLTc-9OS9XFlaC8rWuLJcCHCYOMoRnzmOK5vEMG34DvtG0bzL6cqeQeCfks"/>
+<div class="absolute top-4 left-4 z-20">
+<span class="px-3 py-1 bg-white/80 backdrop-blur-md text-primary font-label-sm text-[10px] rounded-full uppercase tracking-tighter">Chef's Signature</span>
+</div>
+</div>
+<div class="px-2">
+<div class="flex justify-between items-start mb-2">
+<h3 class="font-headline-md text-headline-md text-primary">Truffle Tagliatelle</h3>
+<span class="font-label-md text-label-md text-primary">$42</span>
+</div>
+<p class="font-body-md text-body-md text-secondary mb-4">Hand-rolled pasta infused with 24-month aged Parmigiano-Reggiano and freshly shaved Perigord black truffles.</p>
+<button class="flex items-center gap-2 font-label-sm text-label-sm uppercase tracking-widest text-primary border-b border-primary/20 pb-1 hover:border-primary transition-all">
+                            View Details <span class="material-symbols-outlined text-[18px]">east</span>
 </button>
-</div>
-<div class="col-span-1 md:col-span-9 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-8 gap-y-12" id="product-grid">
-<!-- Skeletal Loading State (Initial) -->
-<div class="skeleton-wrapper space-y-4">
-<div class="skeleton aspect-[3/4] w-full rounded-lg"></div>
-<div class="skeleton h-5 w-3/4 rounded-md"></div>
-<div class="skeleton h-4 w-1/2 rounded-md opacity-70"></div>
-<div class="skeleton h-6 w-1/4 rounded-md mt-4"></div>
-</div>
-<div class="skeleton-wrapper space-y-4">
-<div class="skeleton aspect-[3/4] w-full rounded-lg"></div>
-<div class="skeleton h-5 w-3/4 rounded-md"></div>
-<div class="skeleton h-4 w-1/2 rounded-md opacity-70"></div>
-<div class="skeleton h-6 w-1/4 rounded-md mt-4"></div>
-</div>
-<div class="skeleton-wrapper space-y-4">
-<div class="skeleton aspect-[3/4] w-full rounded-lg"></div>
-<div class="skeleton h-5 w-3/4 rounded-md"></div>
-<div class="skeleton h-4 w-1/2 rounded-md opacity-70"></div>
-<div class="skeleton h-6 w-1/4 rounded-md mt-4"></div>
-</div>
-<div class="skeleton-wrapper space-y-4">
-<div class="skeleton aspect-[3/4] w-full rounded-lg"></div>
-<div class="skeleton h-5 w-3/4 rounded-md"></div>
-<div class="skeleton h-4 w-1/2 rounded-md opacity-70"></div>
-<div class="skeleton h-6 w-1/4 rounded-md mt-4"></div>
-</div>
-<div class="skeleton-wrapper space-y-4">
-<div class="skeleton aspect-[3/4] w-full rounded-lg"></div>
-<div class="skeleton h-5 w-3/4 rounded-md"></div>
-<div class="skeleton h-4 w-1/2 rounded-md opacity-70"></div>
-<div class="skeleton h-6 w-1/4 rounded-md mt-4"></div>
-</div>
-<div class="skeleton-wrapper space-y-4">
-<div class="skeleton aspect-[3/4] w-full rounded-lg"></div>
-<div class="skeleton h-5 w-3/4 rounded-md"></div>
-<div class="skeleton h-4 w-1/2 rounded-md opacity-70"></div>
-<div class="skeleton h-6 w-1/4 rounded-md mt-4"></div>
-</div>
-<!-- Real Content Template (Hidden initially) -->
-<template id="product-card-template">
-<article class="product-card group flex flex-col relative product-card-entrance">
-<div class="relative aspect-[3/4] mb-4 overflow-hidden rounded-lg bg-slate-900 shadow-sm group-hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.5)] transition-all duration-700">
-<img alt="" class="product-image object-cover w-full h-full transition-transform duration-1000 group-hover:scale-105 opacity-90 group-hover:opacity-100 mix-blend-luminosity hover:mix-blend-normal" src=""/>
-<div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-<div class="badge-container absolute top-3 left-3 flex flex-col gap-2"></div>
-<div class="absolute bottom-0 left-0 w-full p-4 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 delay-75 z-10">
-<button class="w-full bg-slate-100/90 backdrop-blur-sm text-slate-900 font-label-md text-label-md py-3 rounded-lg hover:bg-white transition-colors flex items-center justify-center gap-2 shadow-xl active:scale-95" onclick="toggleCart()">
-<span class="material-symbols-outlined" style="font-size: 18px;">add_shopping_cart</span>
-Add to Cart
-</button>
-</div>
-</div>
-<div class="flex flex-col flex-grow justify-between px-1">
-<div>
-<h3 class="product-name font-h3 text-h3 text-slate-100 truncate group-hover:text-white transition-colors duration-300 tracking-tight"></h3>
-<p class="product-desc font-body-sm text-body-sm text-slate-400 mt-1.5 font-light"></p>
-</div>
-<div class="mt-3">
-<span class="product-price font-body-lg text-body-lg font-medium text-slate-200"></span>
-</div>
 </div>
 </article>
-</template>
+<article class="stagger-item flex flex-col gap-6 group">
+<div class="relative overflow-hidden rounded-xl aspect-[4/5] bg-surface-container-low soft-shadow image-zoom transition-all">
+<div class="shimmer absolute inset-0 z-0"></div>
+<img alt="Saffron Scallops" class="w-full h-full object-cover relative z-10 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAwmtXF976Q8FOKSRAMVT3Jo9UMuq35N91S7gcWFQx23uxHvuMiqZF9908e6sSHBnda22LgfVld_jWMV-lykDOl_AnWxxb_DQfLi0QC1DC_7wm6EBbrCWrPGscFndJ-iod-uLrtDJFQO3ufl1ecm_HunOFbt5KWohv_7EPVHCr9FVtZothRmssr3RoKkoXsuTEocD9l6kJd1UdftGNHP74nsG1tBfH3xi1DzsnGRinkkpQfBqtnk1pc82sQs_OMXWyFPTqw7MIhhWCr"/>
 </div>
+<div class="px-2">
+<div class="flex justify-between items-start mb-2">
+<h3 class="font-headline-md text-headline-md text-primary">Saffron Scallops</h3>
+<span class="font-label-md text-label-md text-primary">$38</span>
+</div>
+<p class="font-body-md text-body-md text-secondary mb-4">Hokkaido scallops pan-seared in brown butter, served over an ethereal saffron emulsion and crisp sea asparagus.</p>
+<button class="flex items-center gap-2 font-label-sm text-label-sm uppercase tracking-widest text-primary border-b border-primary/20 pb-1 hover:border-primary transition-all">
+                            View Details <span class="material-symbols-outlined text-[18px]">east</span>
+</button>
+</div>
+</article>
+<article class="stagger-item flex flex-col gap-6 group">
+<div class="relative overflow-hidden rounded-xl aspect-[4/5] bg-surface-container-low soft-shadow image-zoom transition-all">
+<div class="shimmer absolute inset-0 z-0"></div>
+<img alt="Glazed Duck Breast" class="w-full h-full object-cover relative z-10 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA5gP9Mj7mK8A_AlQwHwiUAS_omf-rwmWS-V-j-gRpvSOmH4NaFuBaUZLhGgk5MEQ1an7DIVsO1NhK6CtU9jZ_U9gYPesVxZp_FhK9LG0w0xerqBq1YcZ9wWbYVOhW4PzLUgWIfetnQtEffyrEgnb8dA5xNOqUB7_FIxEPsPbxdX8GOPB_BgN6JIErSfoVeX9wyCD8NwyiuyDDRvr74qbokPKHPacqIojJ5XbU0eFR8_p7caaMmPsdHHx269cnhgdQbI9J38-vgMs3C"/>
+<div class="absolute top-4 left-4 z-20">
+<span class="px-3 py-1 bg-white/80 backdrop-blur-md text-primary font-label-sm text-[10px] rounded-full uppercase tracking-tighter">Seasonal Special</span>
+</div>
+</div>
+<div class="px-2">
+<div class="flex justify-between items-start mb-2">
+<h3 class="font-headline-md text-headline-md text-primary">Glazed Duck Breast</h3>
+<span class="font-label-md text-label-md text-primary">$46</span>
+</div>
+<p class="font-body-md text-body-md text-secondary mb-4">Aged Muscovy duck roasted with wild honey and star anise, accompanied by a reduction of black cherries.</p>
+<button class="flex items-center gap-2 font-label-sm text-label-sm uppercase tracking-widest text-primary border-b border-primary/20 pb-1 hover:border-primary transition-all">
+                            View Details <span class="material-symbols-outlined text-[18px]">east</span>
+</button>
+</div>
+</article>
+<article class="stagger-item flex flex-col gap-6 group">
+<div class="relative overflow-hidden rounded-xl aspect-[4/5] bg-surface-container-low soft-shadow image-zoom transition-all">
+<div class="shimmer absolute inset-0 z-0"></div>
+<img alt="Wagyu Carpaccio" class="w-full h-full object-cover relative z-10 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB2v7Csld9SDZh7htS9Vlci76fcKMas8hCkIKf7WJVMdMx-t_7jct_OhmhabRMitJdTlksnY961KyeKJfKCZXCBHp7ylSKDYjnaFCZbWNU3FvuY3nrZiVGX5ZgNEof-NWhIZmddKVAR9oHAOJlAsQ3QFExC6xGhVHhIp82gRNNHZL1oMgb1Icv7HUYAHzThK4uiwiqT45xB8qIgU6EnY4N1C9bWtqTwck6Ry0YhA45gHWluGYEzKWPTY81gWuwRMSDRTDVTJZU6Fltq"/>
+</div>
+<div class="px-2">
+<div class="flex justify-between items-start mb-2">
+<h3 class="font-headline-md text-headline-md text-primary">Wagyu Carpaccio</h3>
+<span class="font-label-md text-label-md text-primary">$55</span>
+</div>
+<p class="font-body-md text-body-md text-secondary mb-4">A5 Miyazaki Wagyu thinly sliced, dressed with white truffle oil, caper berries, and 30-month aged Grana Padano.</p>
+<button class="flex items-center gap-2 font-label-sm text-label-sm uppercase tracking-widest text-primary border-b border-primary/20 pb-1 hover:border-primary transition-all">
+                            View Details <span class="material-symbols-outlined text-[18px]">east</span>
+</button>
+</div>
+</article>
+</div>
+</section>
 </main>
-<footer class="w-full bg-slate-950 mt-xl pb-8 relative after:absolute after:top-0 after:left-0 after:w-full after:h-px after:bg-gradient-to-r after:from-transparent after:via-slate-800 after:to-transparent">
-<div class="flex flex-col md:flex-row justify-between items-center w-full px-8 md:px-20 py-16 max-w-[1280px] mx-auto">
-<div class="mb-10 md:mb-0 text-center md:text-left">
-<span class="text-2xl font-black tracking-tighter text-white">LUMINA</span>
-<p class="font-['Manrope'] text-xs font-light tracking-[0.2em] uppercase mt-3 text-slate-500">© 2024 LUMINA. ALL RIGHTS RESERVED.</p>
+<footer class="w-full py-stack-lg bg-surface-container-lowest border-t border-surface-variant/20">
+<div class="max-w-container-max mx-auto px-margin-desktop grid grid-cols-1 md:grid-cols-4 gap-gutter">
+<div class="col-span-1 md:col-span-1">
+<div class="font-headline-md text-headline-md text-primary mb-4">LUXE GOURMET</div>
+<p class="font-body-md text-body-md text-secondary">The intersection of culinary mastery and digital elegance.</p>
 </div>
-<nav class="flex flex-wrap justify-center md:justify-end gap-8 md:gap-10">
-<a class="font-['Manrope'] text-xs font-light tracking-[0.15em] uppercase text-slate-500 hover:text-white transition-colors" href="#">Privacy Policy</a>
-<a class="font-['Manrope'] text-xs font-light tracking-[0.15em] uppercase text-slate-500 hover:text-white transition-colors" href="#">Terms of Service</a>
-<a class="font-['Manrope'] text-xs font-light tracking-[0.15em] uppercase text-slate-500 hover:text-white transition-colors" href="#">Shipping &amp; Returns</a>
-<a class="font-['Manrope'] text-xs font-light tracking-[0.15em] uppercase text-slate-500 hover:text-white transition-colors" href="#">Contact Us</a>
-<a class="font-['Manrope'] text-xs font-light tracking-[0.15em] uppercase text-slate-500 hover:text-white transition-colors" href="#">Store Locator</a>
-</nav>
+<div class="flex flex-col gap-4">
+<p class="font-label-sm text-label-sm text-primary uppercase tracking-widest">Experience</p>
+<a class="font-body-md text-body-md text-secondary hover:text-primary hover:underline underline-offset-4 transition-all" href="#">Gourmet Selections</a>
+<a class="font-body-md text-body-md text-secondary hover:text-primary hover:underline underline-offset-4 transition-all" href="#">Our Philosophy</a>
+</div>
+<div class="flex flex-col gap-4">
+<p class="font-label-sm text-label-sm text-primary uppercase tracking-widest">Support</p>
+<a class="font-body-md text-body-md text-secondary hover:text-primary hover:underline underline-offset-4 transition-all" href="#">Concierge Support</a>
+<a class="font-body-md text-body-md text-secondary hover:text-primary hover:underline underline-offset-4 transition-all" href="#">Join the Inner Circle</a>
+</div>
+<div class="flex flex-col gap-4">
+<p class="font-label-sm text-label-sm text-primary uppercase tracking-widest">Newsletter</p>
+<div class="relative">
+<input class="w-full bg-transparent border-0 border-b border-outline-variant py-2 focus:ring-0 focus:border-primary transition-colors text-body-md" placeholder="Email Address" type="email"/>
+<button class="absolute right-0 top-1/2 -translate-y-1/2 text-primary font-bold">
+<span class="material-symbols-outlined">north_east</span>
+</button>
+</div>
+</div>
+</div>
+<div class="max-w-container-max mx-auto px-margin-desktop mt-16 pt-8 border-t border-surface-variant/10 text-center md:text-left">
+<p class="font-label-sm text-label-sm text-secondary">© 2024 Luxe Gourmet. All Rights Reserved.</p>
 </div>
 </footer>
 <script>
-    const products = [
-        {
-            name: "The Architect Coat",
-            desc: "Charcoal Heavyweight Wool",
-            price: "$345",
-            badge: "New In",
-            img: "https://lh3.googleusercontent.com/aida-public/AB6AXuBzn5oudAXVPaFXLvfLKzBsQYmhW_8djEQhdClSsF_KPyAmQYIZHZAk35sCyuD-7ffzJ8xXpP5Em4ZtmY_7qsJv82DYMX3kBF0-HnQ7Wkmsh_Y6nR7m0OFED1yxbCuP4se_F1CZLgCqjurFv5bp3we2AyeGp23aIJtCnlOU4zkVOPTzdF86oxqN3d3BiJfuCE_FGsqbgbVxMPqgW2nPGIfTaLmE_AukFkw5xMqbByVjroblcGLwB7QYisLvGGu2XEi8ZU0H9tr8ivhG"
-        },
-        {
-            name: "Oversized Poplin Shirt",
-            desc: "Optic White Cotton",
-            price: "$120",
-            badge: null,
-            img: "https://lh3.googleusercontent.com/aida-public/AB6AXuDrrrSiuPvnWdaWYPcA0QWacYJDnmFuWAPd1cdnNDlHXSIWIFJr0o8z-Hfp0XbsM75CEG96x6XW9V4ifgarQc6p9ym9RrsJ3sHki41rBgN9mw-Hgpv2Ac-DV9qR7xwzK0ji9OWzDSI-Azbkb8IAy9JD5e5CK3M8tMs3sVIQhVWZOakZ--JCausRTrGcE1zvVvEipGZl7cMFyAIBbltzIKjN1Ffa7EuQzN6yU2xB62T2beaZdFl5HZmhSkRRQXhJyM41XtnT-JywOhDS"
-        },
-        {
-            name: "Heritage Straight Denim",
-            desc: "Vintage Wash Selvedge",
-            price: "$185",
-            badge: null,
-            img: "https://lh3.googleusercontent.com/aida-public/AB6AXuDkmgMzMFdMAw5FKbqxOtNgwpMK1_1FS7x-d_SMDMvMbl3wiCDwOh3u9n1WWCS9oeFxTwjRStk2VLSrjyyTrzbVC1hFOeL256BxXtmhl5_s0Y7NIClkoi_zKJhhRfDY11WMs6xNMOYIeOMRYjnZD3HV_MjEZzx-lzr6D-CjSM6HKZomrQ-lsaAgfYS_z2AUmCyfi1FSqw1G37Vftc7tK3OyNZeOjX3wtmG45K5Puc8LVYqVvgUaTT4gfXAhW8Ke3PKjwu0mYv1Z3wVN"
-        },
-        {
-            name: "Alpaca Blend Crew",
-            desc: "Oatmeal Heather",
-            price: "$210",
-            badge: "Bestseller",
-            img: "https://lh3.googleusercontent.com/aida-public/AB6AXuCUiLiB2KX4kLrJXDnFQ7bEeTRHjX8y8NDFQJX5PqVh6UjO3Sv6jXG_nSW0yZO13LU38qFyQRo5803KwL5ehQXZC6BnvdQEf5BQ-XNoArJqWv86ALVjfq485cObIau_NC-rSF52RkfVZ4H9IZ23iTax1_wAYoIm_nkjY9KDe8cZCr1hmKghVS79GY5BnbdAeDNXZV8HkfQ1nuJJBoh1d1pA3njB0thZ8LI3GzyTGuDiPjhTeNbQ3Am2TgohLxycVSRJgV3TNUEO3bxz"
-        },
-        {
-            name: "Ribbed Merino Turtleneck",
-            desc: "Midnight Black",
-            price: "$145",
-            badge: null,
-            img: "https://lh3.googleusercontent.com/aida-public/AB6AXuAmCB6PfUlbLTkixsY2sMjHzzUCN80c4y07r8ztUCPA6yIbISWsfAQ6I2YlaX8d3eq0QZzRvUYntZuzeSeViIncZiKYyzKz4FI4YSa18iCBvY8fagU2Hm5aBbuvRII5ceR8Nmd-en1tQoPjO3hlDsuwPZzIMuS20Hrf-02Ap1GR0__xeqMN88p27zVrkqEELvoWArasCyXVd5QrZ2OPJ9zL0uPE9F3t2tWYS8EH70S-y94Dxr2KuGX2eoFfSq-zHrlHe_Fso_gmFG7M"
-        },
-        {
-            name: "Fluid Drape Trousers",
-            desc: "Camel Twill",
-            price: "$195",
-            badge: null,
-            img: "https://lh3.googleusercontent.com/aida-public/AB6AXuC8B_I_P-9xFRJSXx5_PMnN0g01lKJjB-1ccIVDwG1OBCunKtkGD_Cf-e-h9D-FoD1iJJq6Nk5COu6BrY2WqGBW8C9sruZwwzudwa19yoNbEnBctDOAoOz2asPAbqQj_nhIF6UxhuxU2W1U04uiYBkmQPhzD01-sB5mbrYCjAKylQ2si-87tkzIDIWY2Uy5VrMgfObtme-wvTI40iraaEbuS3hEAU4O32g1R2cZTymr6p13skasLrI277BZTEwX53po28OJ9g2eOgls"
-        }
-    ];
-
-    function toggleCart() {
-        document.body.classList.toggle('cart-drawer-open');
-        document.body.classList.toggle('overflow-hidden');
-    }
-
-    function resolveProducts() {
-        const grid = document.getElementById('product-grid');
-        const template = document.getElementById('product-card-template');
-        
-        // Simulating network delay for skeletal effect
-        setTimeout(() => {
-            grid.innerHTML = '';
-            products.forEach((product, index) => {
-                const clone = template.content.cloneNode(true);
-                const article = clone.querySelector('article');
-                
-                article.style.animationDelay = `${index * 120}ms`;
-                clone.querySelector('.product-name').textContent = product.name;
-                clone.querySelector('.product-desc').textContent = product.desc;
-                clone.querySelector('.product-price').textContent = product.price;
-                clone.querySelector('.product-image').src = product.img;
-                clone.querySelector('.product-image').alt = product.name;
-                
-                if (product.badge) {
-                    const badge = document.createElement('span');
-                    badge.className = "bg-slate-100/90 backdrop-blur-md px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-slate-900 rounded-lg shadow-sm";
-                    badge.textContent = product.badge;
-                    clone.querySelector('.badge-container').appendChild(badge);
+        window.addEventListener('load', () => {
+            const images = document.querySelectorAll('img');
+            images.forEach(img => {
+                if (img.complete) {
+                    const shimmer = img.parentElement.querySelector('.shimmer');
+                    if (shimmer) shimmer.style.opacity = '0';
+                    img.style.opacity = '1';
                 }
-                
-                grid.appendChild(clone);
+                img.addEventListener('load', () => {
+                    const shimmer = img.parentElement.querySelector('.shimmer');
+                    if (shimmer) shimmer.style.opacity = '0';
+                    img.style.opacity = '1';
+                });
             });
-        }, 1500);
-    }
+        });
 
-    document.addEventListener('DOMContentLoaded', resolveProducts);
-</script>
+        const filterItems = document.querySelectorAll('aside .flex-col > div');
+        filterItems.forEach(item => {
+            item.addEventListener('click', () => {
+                filterItems.forEach(i => {
+                    i.classList.remove('bg-surface-container-low', 'text-primary', 'font-bold');
+                    i.classList.add('text-secondary');
+                    const icon = i.querySelector('.material-symbols-outlined');
+                    if(icon) icon.style.fontVariationSettings = "'FILL' 0";
+                });
+                item.classList.add('bg-surface-container-low', 'text-primary', 'font-bold');
+                item.classList.remove('text-secondary');
+                const icon = item.querySelector('.material-symbols-outlined');
+                if(icon) icon.style.fontVariationSettings = "'FILL' 1";
+            });
+        });
+    </script>
 </body></html>

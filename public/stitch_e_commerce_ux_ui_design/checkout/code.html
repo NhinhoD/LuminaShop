@@ -3,8 +3,11 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Checkout | MODERN ÉDITION</title>
+<!-- Fonts & Icons -->
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&amp;family=Manrope:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind -->
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <script id="tailwind-config">
       tailwind.config = {
@@ -103,9 +106,18 @@
       }
     </script>
 <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #0F172A; }
+        
         .step-inactive { opacity: 0.3; transition: all 0.5s ease; }
         .step-active { opacity: 1; transform: translateY(0); transition: all 0.5s ease; }
+        .bg-glass { backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
         
+        input:focus { outline: none; border: none; ring: 0; }
         .input-focus-line { position: relative; }
         .input-focus-line::after {
             content: '';
@@ -124,6 +136,7 @@
     </style>
 </head>
 <body class="bg-surface text-primary font-body-md overflow-x-hidden selection:bg-deep-navy selection:text-surface">
+<!-- TopNavBar (Suppressed for focused Checkout) -->
 <nav class="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-md transition-colors duration-500 ease-in-out">
 <div class="flex justify-between items-center px-gutter py-8 max-w-container-max-width mx-auto">
 <a class="font-headline-md text-headline-md font-bold tracking-tighter text-primary" href="#">MODERN_ÉDITION</a>
@@ -139,6 +152,7 @@
 </div>
 </nav>
 <main class="mt-32 mb-section-gap px-gutter max-w-container-max-width mx-auto">
+<!-- Progress Tracker -->
 <div class="mb-24 flex items-center justify-start gap-12">
 <div class="flex items-center gap-4 step-active">
 <span class="font-label-caps text-label-caps text-deep-navy">01</span>
@@ -156,11 +170,13 @@
 </div>
 </div>
 <div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-start">
+<!-- Checkout Left Canvas -->
 <div class="lg:col-span-7 space-y-16">
 <header>
 <h1 class="font-headline-xl text-headline-xl text-primary mb-4">Secure Checkout</h1>
 <p class="font-body-lg text-body-lg text-on-surface-variant max-w-xl">Each piece is meticulously crafted and handled with the utmost care for your collection.</p>
 </header>
+<!-- Shipping Form Section -->
 <section class="space-y-12">
 <h2 class="font-headline-md text-headline-md italic">Shipping Intelligence</h2>
 <form class="space-y-8">
@@ -207,13 +223,15 @@
 </form>
 </section>
 </div>
+<!-- Summary Panel -->
 <aside class="lg:col-span-5 lg:sticky lg:top-40">
 <div class="bg-white p-10 shadow-[0px_20px_40px_rgba(15,23,42,0.05)] space-y-12">
 <h3 class="font-headline-md text-headline-md">Curated Selection</h3>
 <div class="space-y-8">
+<!-- Item 1 -->
 <div class="flex gap-6 items-center group">
 <div class="w-24 h-32 bg-slate-surface flex-shrink-0 overflow-hidden">
-<img alt="Curated Item" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD8t5jKG34C0faRzyXVogbJTrxy5Dt_DDDfuG2g3axitxQDfDWrAEH0MIXSR4MMWNpzjdLPaKA_ZemoKYMtcpDzbAk1Azqp926C_OYGwHdasubtwO13xr0oaSa4Zc0ulricAqnesCnKWrDFfcI1oABlF9x0-GjqO2KRJIcBacoK3To_Ig6Tsh-35V_Z5TYqlxbswfOwKWzpjTQsqbzf_ANowjnQe79_YG1-ZwtSK5rFGhoNnMWzS_O22jvh4_nPe8BL1pQjbv1nA-sx"/>
+<img alt="Curated Item" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700" data-alt="A macro photograph of an architectural marble sculpture in a minimalist gallery. The lighting is soft and directional, highlighting the smooth textures and subtle grey veining of the stone. The style is highly editorial, following a luxurious and quiet aesthetic with high-key whites and deep shadows." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD8t5jKG34C0faRzyXVogbJTrxy5Dt_DDDfuG2g3axitxQDfDWrAEH0MIXSR4MMWNpzjdLPaKA_ZemoKYMtcpDzbAk1Azqp926C_OYGwHdasubtwO13xr0oaSa4Zc0ulricAqnesCnKWrDFfcI1oABlF9x0-GjqO2KRJIcBacoK3To_Ig6Tsh-35V_Z5TYqlxbswfOwKWzpjTQsqbzf_ANowjnQe79_YG1-ZwtSK5rFGhoNnMWzS_O22jvh4_nPe8BL1pQjbv1nA-sx"/>
 </div>
 <div class="flex-grow">
 <p class="font-label-caps text-label-caps uppercase text-on-surface-variant mb-1">Edition 01/50</p>
@@ -224,9 +242,10 @@
 </div>
 </div>
 </div>
+<!-- Item 2 -->
 <div class="flex gap-6 items-center group">
 <div class="w-24 h-32 bg-slate-surface flex-shrink-0 overflow-hidden">
-<img alt="Curated Item" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDRztEHxWO2yk_wHwh1fwqlBTv7KhYoZ0LJ6LgRuCxoBw-Pje5NhW5ls90dey4fMFQ-5hUylSSyRnPDgUqVtBCcnwloJIrbfMgcxNXxdc-fcTJY01aDHKh1A_9LAGj-BCBuPGuUEruzPvPprW9k95lLxQDOOq6ooAIIXUeVBdcKQ5Z6dmMigElJZTOZkgVhppYcb54lytoyT4sKqESBP2i88Cw4o-dX4OPGxK1LicnSaaBiUoDc6Wp6YXBKb205dCRCwyO3sSs5TS_O"/>
+<img alt="Curated Item" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700" data-alt="An abstract ink painting on textured heavy-weight paper featuring organic black flow lines. The setting is a bright, white-walled studio with natural sunlight casting long, soft shadows. The overall mood is sophisticated and artistic, aligning with a high-end luxury minimalist brand identity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDRztEHxWO2yk_wHwh1fwqlBTv7KhYoZ0LJ6LgRuCxoBw-Pje5NhW5ls90dey4fMFQ-5hUylSSyRnPDgUqVtBCcnwloJIrbfMgcxNXxdc-fcTJY01aDHKh1A_9LAGj-BCBuPGuUEruzPvPprW9k95lLxQDOOq6ooAIIXUeVBdcKQ5Z6dmMigElJZTOZkgVhppYcb54lytoyT4sKqESBP2i88Cw4o-dX4OPGxK1LicnSaaBiUoDc6Wp6YXBKb205dCRCwyO3sSs5TS_O"/>
 </div>
 <div class="flex-grow">
 <p class="font-label-caps text-label-caps uppercase text-on-surface-variant mb-1">Signed Lithograph</p>
@@ -238,6 +257,7 @@
 </div>
 </div>
 </div>
+<!-- Financials -->
 <div class="pt-8 border-t border-slate-surface space-y-4">
 <div class="flex justify-between font-body-md text-on-surface-variant">
 <span>Subtotal</span>
@@ -252,6 +272,7 @@
 <span>€3,385.00</span>
 </div>
 </div>
+<!-- Security Note -->
 <div class="flex items-start gap-4 p-6 bg-slate-surface">
 <span class="material-symbols-outlined text-deep-navy">verified_user</span>
 <div>
@@ -263,6 +284,7 @@
 </aside>
 </div>
 </main>
+<!-- Editorial Callout Section -->
 <section class="bg-deep-navy py-32 text-surface overflow-hidden">
 <div class="max-w-container-max-width mx-auto px-gutter text-center">
 <span class="font-label-caps text-label-caps text-accent-gold uppercase tracking-[0.3em] mb-12 block">The MODERN ÉDITION Promise</span>
@@ -285,6 +307,7 @@
 </div>
 </div>
 </section>
+<!-- Footer -->
 <footer class="bg-deep-navy dark:bg-black w-full pt-section-gap pb-gutter shadow-2xl">
 <div class="grid grid-cols-1 md:grid-cols-4 gap-gutter px-gutter max-w-container-max-width mx-auto">
 <div class="col-span-1 md:col-span-1">
@@ -319,8 +342,10 @@
             </p>
 </div>
 </footer>
+<!-- Micro-interactions JS -->
 <script>
         document.addEventListener('DOMContentLoaded', () => {
+            // Scroll reveal for elements
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
@@ -335,6 +360,7 @@
                 observer.observe(el);
             });
 
+            // Smooth header shrinkage
             window.addEventListener('scroll', () => {
                 const nav = document.querySelector('nav');
                 if (window.scrollY > 50) {

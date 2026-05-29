@@ -1,428 +1,504 @@
 <!DOCTYPE html>
-
-<html class="light scroll-smooth" lang="en"><head>
+<html class="scroll-smooth" lang="en"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>LUMINA - E-commerce Homepage</title>
+<title>Sarab | Homepage</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&amp;family=Playfair+Display:ital,wght@0,600;0,700;1,600&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <script id="tailwind-config">
-  tailwind.config = {
-    darkMode: "class",
-    theme: {
-      extend: {
-        "colors": {
-                "on-primary": "#ffffff",
-                "surface-bright": "#f8f9ff",
-                "background": "#f8f9ff",
-                "secondary-container": "#316bf3",
-                "on-tertiary-container": "#009668",
-                "tertiary": "#000000",
-                "surface-dim": "#cbdbf5",
-                "on-surface-variant": "#45464d",
-                "on-secondary-container": "#fefcff",
-                "tertiary-fixed": "#6ffbbe",
-                "primary": "#000000",
-                "on-secondary-fixed-variant": "#003ea8",
-                "on-error-container": "#93000a",
-                "on-background": "#0b1c30",
-                "surface-variant": "#d3e4fe",
-                "error": "#ba1a1a",
-                "primary-fixed-dim": "#bec6e0",
-                "on-secondary-fixed": "#00174b",
-                "inverse-on-surface": "#eaf1ff",
-                "surface-container-highest": "#d3e4fe",
-                "on-surface": "#0b1c30",
-                "on-primary-container": "#7c839b",
-                "surface-tint": "#565e74",
-                "error-container": "#ffdad6",
-                "on-error": "#ffffff",
-                "outline": "#76777d",
-                "inverse-primary": "#bec6e0",
-                "tertiary-container": "#002113",
-                "surface": "#f8f9ff",
-                "primary-fixed": "#dae2fd",
-                "secondary-fixed": "#dbe1ff",
-                "on-tertiary": "#ffffff",
-                "on-primary-fixed": "#131b2e",
-                "surface-container-low": "#eff4ff",
-                "secondary-fixed-dim": "#b4c5ff",
-                "primary-container": "#131b2e",
-                "on-primary-fixed-variant": "#3f465c",
-                "surface-container": "#e5eeff",
-                "on-tertiary-fixed-variant": "#005236",
-                "secondary": "#0051d5",
-                "on-secondary": "#ffffff",
-                "tertiary-fixed-dim": "#4edea3",
-                "on-tertiary-fixed": "#002113",
-                "outline-variant": "#c6c6cd",
-                "surface-container-high": "#dce9ff",
-                "surface-container-lowest": "#ffffff",
-                "inverse-surface": "#213145"
-        },
-        "borderRadius": {
-                "DEFAULT": "0.25rem",
-                "lg": "0.5rem",
-                "xl": "0.75rem",
-                "full": "9999px"
-        },
-        "spacing": {
-                "xl": "120px",
-                "sm": "12px",
-                "xs": "4px",
-                "base": "8px",
-                "lg": "64px",
-                "container-max": "1440px",
-                "gutter": "32px",
-                "md": "32px"
-        },
-        "fontFamily": {
-                "display": ["Manrope"],
-                "body-sm": ["Manrope"],
-                "body-lg": ["Manrope"],
-                "label-md": ["Manrope"],
-                "body-md": ["Manrope"],
-                "h2": ["Manrope"],
-                "h3": ["Manrope"],
-                "h1": ["Manrope"],
-                "label-sm": ["Manrope"]
-        },
-        "fontSize": {
-                "display": ["56px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "300"}],
-                "body-sm": ["14px", {"lineHeight": "1.6", "fontWeight": "400"}],
-                "body-lg": ["18px", {"lineHeight": "1.8", "fontWeight": "300"}],
-                "label-md": ["13px", {"lineHeight": "1.2", "letterSpacing": "0.1em", "fontWeight": "500", "textTransform": "uppercase"}],
-                "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
-                "h2": ["32px", {"lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "400"}],
-                "h3": ["20px", {"lineHeight": "1.4", "fontWeight": "400"}],
-                "h1": ["40px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "300"}],
-                "label-sm": ["11px", {"lineHeight": "1.2", "letterSpacing": "0.15em", "fontWeight": "600", "textTransform": "uppercase"}]
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-tertiary-fixed": "#410000",
+                      "surface-container-high": "#e6e8ea",
+                      "surface": "#f7f9fb",
+                      "secondary-container": "#d5e0f8",
+                      "on-error": "#ffffff",
+                      "primary-container": "#131b2e",
+                      "outline": "#76777d",
+                      "paper-white": "#FEF9F2",
+                      "on-primary": "#ffffff",
+                      "surface-tint": "#565e74",
+                      "accent-red": "#E8281A",
+                      "on-secondary-fixed": "#111c2d",
+                      "on-tertiary-fixed-variant": "#930000",
+                      "on-secondary": "#ffffff",
+                      "surface-container-highest": "#e0e3e5",
+                      "error-container": "#ffdad6",
+                      "error": "#ba1a1a",
+                      "inverse-on-surface": "#eff1f3",
+                      "on-primary-container": "#7c839b",
+                      "slate-surface": "#F1F5F9",
+                      "tertiary-fixed-dim": "#ffb4a8",
+                      "inverse-surface": "#2d3133",
+                      "outline-variant": "#c6c6cd",
+                      "on-error-container": "#93000a",
+                      "primary": "#000000",
+                      "secondary": "#545f73",
+                      "tertiary-fixed": "#ffdad4",
+                      "surface-container-low": "#f2f4f6",
+                      "on-tertiary": "#ffffff",
+                      "on-background": "#191c1e",
+                      "surface-variant": "#e0e3e5",
+                      "background": "#f7f9fb",
+                      "on-secondary-container": "#586377",
+                      "inverse-primary": "#bec6e0",
+                      "on-surface": "#191c1e",
+                      "deep-navy": "#0F172A",
+                      "on-tertiary-container": "#f93625",
+                      "tertiary-container": "#410000",
+                      "secondary-fixed": "#d8e3fb",
+                      "primary-fixed": "#dae2fd",
+                      "on-primary-fixed": "#131b2e",
+                      "surface-container-lowest": "#ffffff",
+                      "surface-dim": "#d8dadc",
+                      "tertiary": "#000000",
+                      "surface-bright": "#f7f9fb",
+                      "secondary-fixed-dim": "#bcc7de",
+                      "on-primary-fixed-variant": "#3f465c",
+                      "surface-container": "#eceef0",
+                      "accent-gold": "#F6A621",
+                      "on-secondary-fixed-variant": "#3c475a",
+                      "primary-fixed-dim": "#bec6e0",
+                      "on-surface-variant": "#45464d"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "spacing": {
+                      "gutter": "32px",
+                      "margin-mobile": "24px",
+                      "container-max-width": "1280px",
+                      "section-gap": "120px",
+                      "unit": "8px"
+              },
+              "fontFamily": {
+                      "body-md": [
+                              "Manrope"
+                      ],
+                      "button": [
+                              "Manrope"
+                      ],
+                      "headline-md": [
+                              "Playfair Display"
+                      ],
+                      "headline-xl-mobile": [
+                              "Playfair Display"
+                      ],
+                      "headline-lg": [
+                              "Playfair Display"
+                      ],
+                      "headline-xl": [
+                              "Playfair Display"
+                      ],
+                      "label-caps": [
+                              "Manrope"
+                      ],
+                      "body-lg": [
+                              "Manrope"
+                      ]
+              },
+              "fontSize": {
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "button": [
+                              "14px",
+                              {
+                                      "lineHeight": "1",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-md": [
+                              "32px",
+                              {
+                                      "lineHeight": "1.3",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-xl-mobile": [
+                              "40px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "headline-lg": [
+                              "48px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-xl": [
+                              "64px",
+                              {
+                                      "lineHeight": "1.1",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "label-caps": [
+                              "12px",
+                              {
+                                      "lineHeight": "1",
+                                      "letterSpacing": "0.1em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "fontWeight": "400"
+                              }
+                      ]
+              }
+      },
+          },
         }
-      }
-    }
-  }
-</script>
+      </script>
 <style>
-        html { scroll-behavior: smooth; }
-        body { background-color: #fafafa; }
-        
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.6);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+        .material-symbols-outlined {
+          font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined.filled {
+            font-variation-settings: 'FILL' 1;
         }
         
-        .image-overlay {
-            background: linear-gradient(to top, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0) 100%);
+        /* Smooth scrolling for carousel */
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
         }
-        
-        /* Parallax Layer Styles */
-        .parallax-container {
-            perspective: 1000px;
-            overflow: hidden;
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
         }
-        .parallax-layer {
-            will-change: transform;
-        }
-        
-        /* Asymmetric Masonry Style */
-        .masonry-grid {
-            column-count: 1;
-            column-gap: 32px;
-        }
-        @media (min-width: 768px) {
-            .masonry-grid { column-count: 2; }
-        }
-        @media (min-width: 1024px) {
-            .masonry-grid { column-count: 3; }
-        }
-        
-        .masonry-item {
-            break-inside: avoid;
-            margin-bottom: 32px;
+
+        /* Reveal on scroll animations */
+        .reveal {
             opacity: 0;
             transform: translateY(40px);
-            transition: opacity 1s cubic-bezier(0.16, 1, 0.3, 1), transform 1s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
         }
-        .masonry-item.reveal {
+        .reveal.active {
             opacity: 1;
             transform: translateY(0);
         }
-
-        /* Staggered Heights for Asymmetry */
-        .h-tall { height: 600px; }
-        .h-medium { height: 450px; }
-        .h-short { height: 350px; }
-        
-        /* Sticky Header Transition */
-        header {
-            transition: background-color 0.5s ease, backdrop-filter 0.5s ease, padding 0.5s ease;
-        }
-        header.scrolled {
-            padding-top: 1rem;
-            padding-bottom: 1rem;
-            background-color: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03);
-        }
-
-        /* Subtle Image Hover */
-        .img-hover-zoom {
-            transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .group:hover .img-hover-zoom {
-            transform: scale(1.03);
-        }
-    </style>
+      </style>
 </head>
-<body class="text-primary font-body-md text-body-md antialiased selection:bg-primary selection:text-on-primary">
-<!-- Sticky smooth-scrolling header -->
-<header class="fixed top-0 w-full z-50 bg-transparent py-6" id="main-header">
-<div class="flex justify-between items-center w-full px-8 md:px-12 max-w-container-max mx-auto">
-<nav class="hidden md:flex gap-8 items-center">
-<a class="font-label-md text-primary/70 hover:text-primary transition-colors" href="#">Shop All</a>
-<a class="font-label-md text-primary/70 hover:text-primary transition-colors" href="#">New Arrivals</a>
-<a class="font-label-md text-primary/70 hover:text-primary transition-colors" href="#">Collections</a>
+<body class="bg-surface text-on-surface antialiased selection:bg-slate-surface selection:text-deep-navy overflow-x-hidden">
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 bg-surface/80 dark:bg-deep-navy/80 backdrop-blur-md bg-transparent transition-colors duration-500 ease-in-out shadow-[0px_20px_40px_rgba(15,23,42,0.05)]">
+<div class="flex justify-between items-center px-gutter py-6 max-w-container-max-width mx-auto">
+<!-- Navigation Links (Hidden on Mobile) -->
+<div class="hidden md:flex gap-8 items-center">
+<a class="font-body-md text-body-md tracking-widest uppercase text-primary dark:text-surface font-bold border-b-2 border-primary dark:border-surface pb-1 hover:opacity-70 transition-opacity duration-300" href="#">Collections</a>
+<a class="font-body-md text-body-md tracking-widest uppercase text-on-surface-variant dark:text-outline-variant hover:text-primary dark:hover:text-surface transition-colors hover:opacity-70 transition-opacity duration-300" href="#">Stories</a>
+<a class="font-body-md text-body-md tracking-widest uppercase text-on-surface-variant dark:text-outline-variant hover:text-primary dark:hover:text-surface transition-colors hover:opacity-70 transition-opacity duration-300" href="#">Archives</a>
+<a class="font-body-md text-body-md tracking-widest uppercase text-on-surface-variant dark:text-outline-variant hover:text-primary dark:hover:text-surface transition-colors hover:opacity-70 transition-opacity duration-300" href="#">Studio</a>
+</div>
+<!-- Brand Logo -->
+<a class="font-headline-md text-headline-md font-bold tracking-tighter text-primary dark:text-surface absolute left-1/2 -translate-x-1/2" href="#">
+                MODERN_ÉDITION
+            </a>
+<!-- Trailing Actions -->
+<div class="flex gap-6 items-center">
+<a class="hidden md:block font-body-md text-body-md tracking-widest uppercase text-on-surface-variant dark:text-outline-variant hover:text-primary dark:hover:text-surface transition-colors" href="#">Search</a>
+<button aria-label="shopping_bag" class="hover:opacity-70 transition-opacity duration-300">
+<span class="material-symbols-outlined" data-icon="shopping_bag">shopping_bag</span>
+</button>
+<!-- Mobile Menu Toggle (Visible only on Mobile) -->
+<button aria-label="menu" class="md:hidden hover:opacity-70 transition-opacity duration-300">
+<span class="material-symbols-outlined">menu</span>
+</button>
+</div>
+</div>
 </nav>
-<button class="md:hidden text-primary">
-<span class="material-symbols-outlined" data-icon="menu">menu</span>
-</button>
-<div class="absolute left-1/2 -translate-x-1/2">
-<a class="text-3xl font-display tracking-widest text-primary uppercase" href="#">LUMINA</a>
+<!-- Main Content -->
+<main>
+<!-- Hero Banner (Parallax) -->
+<section class="relative h-screen min-h-[800px] w-full flex items-center justify-center overflow-hidden">
+<!-- Parallax Background Image -->
+<div class="absolute inset-0 w-full h-full transform scale-110 will-change-transform" id="parallax-bg">
+<div class="w-full h-full bg-slate-200 bg-cover bg-center bg-no-repeat" data-alt="A wide architectural shot of a modern, minimalist living room with vast floor-to-ceiling windows letting in soft natural light. The room features high-end designer furniture in neutral tones, including a sleek modular sofa and a low marble coffee table. The overall aesthetic is luxurious, airy, and editorial, perfectly aligned with a light-mode, minimalist design style." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAWPxuVwMnt7FM3ojOzpdCbN2gw-yxANnlguFA6fgwxUKBxBOGOioFmE6j9R86-03iiOXSb6dIzlVpudvZlvs3sqdUWVf__hyWev0JO97NIGNUSEl6rnemiUqEIST0ksfx0nhOUSUFCwtaO3xQdeOTnnhewkHBOwAb80-1dVNC_cMe-g6mGfu0cN71e5fpA4N2LWjwBAiQVHsfNRFL9QTEbgaDbRrP_O9CjPXmlZBLD8_ubtD5QeHkfpRXWJBHF2NTmesbdolwUQTRW');"></div>
+<!-- Subtle Dark Overlay for Text Legibility -->
+<div class="absolute inset-0 bg-deep-navy/30 mix-blend-multiply"></div>
 </div>
-<div class="flex gap-6 items-center text-primary">
-<button class="hover:opacity-60 transition-opacity duration-300">
-<span class="material-symbols-outlined font-light" data-icon="search">search</span>
-</button>
-<button class="hover:opacity-60 transition-opacity duration-300 relative">
-<span class="material-symbols-outlined font-light" data-icon="shopping_cart">shopping_cart</span>
-<span class="absolute -top-1 -right-1 bg-primary text-on-primary text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center">2</span>
-</button>
+<!-- Hero Content -->
+<div class="relative z-10 text-center px-margin-mobile md:px-gutter w-full max-w-container-max-width mx-auto flex flex-col items-center mt-20 will-change-transform" id="parallax-content">
+<p class="font-label-caps text-label-caps text-paper-white tracking-[0.2em] mb-6 uppercase opacity-90 reveal">Curated Living</p>
+<h1 class="font-headline-xl-mobile md:font-headline-xl text-headline-xl-mobile md:text-headline-xl text-white mb-8 max-w-4xl text-balance drop-shadow-lg reveal delay-100">
+                    The Art of <br class="hidden md:block"/><span class="italic font-light">Elevated</span> Spaces.
+                </h1>
+<div class="h-px w-24 bg-white/50 mb-8 reveal delay-200"></div>
+<p class="font-body-lg text-body-lg text-white/90 max-w-2xl mb-12 drop-shadow-md reveal delay-300">
+                    Discover objects of profound simplicity. Designed with intentionality, crafted for permanence.
+                </p>
+<div class="reveal delay-500">
+<a class="inline-flex items-center justify-center bg-deep-navy text-white px-8 py-4 font-button text-button uppercase tracking-wider hover:bg-white hover:text-deep-navy transition-colors duration-500 min-w-[200px]" href="#">
+                    Explore the Archive
+                </a>
 </div>
 </div>
-</header>
-<main class="">
-<!-- Multi-layered parallax hero -->
-<section class="w-full h-screen relative parallax-container mb-xl overflow-hidden" id="parallax-scene">
-<!-- Layer 1: Background -->
-<div class="parallax-layer absolute inset-0 z-0" data-speed="0.3">
-<img alt="Background Layer" class="w-full h-full object-cover scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuABPQZDdL10rfSPF6U6Zc_69c9jeDKoUTIHI7buYyX2DcnG-lucxXtErY1w-JDfT9g01dJd9U7oAhnqAFlXj8Nk2QnGyEIwuaFnis70TLOvr2RPGt-eDb9uIZfP5RUH_JJrutQyuVI04huaYNkVTZZiCs8HsIOYxoFRykirOaUaUEGObUyksNxQBPuUgWSt0XdwJJ_UXmkL0_mVL_LF8ZHdwSqA92N1AW7Flr3I7uiEog7WQfTh9F_KLdGN8uVnjy0kyzZJbNH-x5vs"/>
-<div class="absolute inset-0 bg-black/20 mix-blend-multiply"></div>
-</div>
-<!-- Layer 2: Midground (Content) -->
-<div class="parallax-layer absolute inset-0 z-10 flex flex-col justify-center items-center text-center p-lg w-full mt-24" data-speed="0.6">
-<span class="inline-block px-4 py-2 bg-white/10 backdrop-blur-md text-white font-label-sm rounded-full mb-8 tracking-widest uppercase shadow-[0_4px_30px_rgba(0,0,0,0.1)] border border-white/20">SS24 Collection</span>
-<h1 class="font-display text-display text-white mb-6 drop-shadow-lg">The Essence of<br/>Modernity.</h1>
-<p class="font-body-lg text-white/90 mb-12 max-w-xl mx-auto drop-shadow-md">Discover our new line of essential pieces designed for effortless elegance and everyday versatility.</p>
-<button class="bg-white text-primary font-label-md px-10 py-4 hover:bg-white/90 transition-all duration-300 flex items-center gap-3 rounded-full shadow-lg hover:shadow-xl hover:-translate-y-1">
-    Explore the Collection
-    <span class="material-symbols-outlined text-sm font-light" data-icon="east">east</span>
-</button>
-</div>
-<!-- Layer 3: Foreground (Product floating) -->
-<div class="parallax-layer absolute inset-0 z-20 pointer-events-none flex justify-center items-end pb-12" data-speed="0.9">
-<!-- Subtle foreground elements could go here, like blurred out-of-focus products if available -->
+<!-- Scroll Indicator -->
+<div class="absolute bottom-12 left-1/2 -translate-x-1/2 text-white/70 animate-bounce flex flex-col items-center gap-2 reveal delay-700">
+<span class="font-label-caps text-[10px] tracking-[0.2em] uppercase">Scroll</span>
+<span class="material-symbols-outlined text-sm">arrow_downward</span>
 </div>
 </section>
-<!-- Dynamic asymmetric masonry (Shop by Category) -->
-<section class="max-w-container-max mx-auto px-6 md:px-12 mb-xl">
+<!-- Masonry Category Grid -->
+<section class="py-section-gap px-margin-mobile md:px-gutter max-w-container-max-width mx-auto reveal">
 <div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
-<h2 class="font-h1 text-h1 text-primary">Curated Collections</h2>
-<a class="font-label-md text-primary/60 hover:text-primary transition-colors flex items-center gap-2 uppercase tracking-widest pb-2 border-b border-transparent hover:border-primary" href="#">
-    View All Categories <span class="material-symbols-outlined text-sm" data-icon="east">east</span>
+<div class="max-w-xl">
+<h2 class="font-headline-lg text-headline-lg text-deep-navy mb-4">Objects of <span class="italic">Desire</span></h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Explore our curated selections, where form meets function in a symphony of minimalist design.</p>
+</div>
+<a class="font-button text-button uppercase text-deep-navy hover:text-outline transition-colors inline-flex items-center gap-2 group" href="#">
+                    View All Categories
+                    <span class="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
 </a>
 </div>
-<div class="masonry-grid" id="category-masonry">
-<!-- Category 1 - Tall -->
-<a class="masonry-item block group relative h-tall overflow-hidden bg-surface rounded-sm shadow-[0_10px_40px_-10px_rgba(0,0,0,0.05)]" href="#">
-<img alt="Apparel" class="w-full h-full object-cover img-hover-zoom" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD3h50e_Gc3j8AajRynQ3ZC3oCbydv-QcWdKlGvJ0kqFSTVDOtvwja3XLuQa857kaPesmtaFlSnRViidGNaW16gW3c79C4jO9K5VXk5gWeHX5jrTOUXEzFfZ8UOGlhki-DsTUOW7qno1Hm57Iet8-JGz8vwEqry2QqU0cA0-osb8-8LbAk-881eiGALYa3c_hsZA806_244FDDihkg_m-2Buh82sJ1Z8edxXeSIUDY__0ZfQitsSq04ZtiXVMMllm7tYQ6rrmwnUvA6"/>
-<div class="absolute bottom-6 left-6 right-6 p-6 flex justify-between items-end bg-gradient-to-t from-black/60 to-transparent">
-<h3 class="font-h2 text-white">Apparel</h3>
-<div class="w-10 h-10 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white transform translate-x-4 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-500">
-<span class="material-symbols-outlined font-light" data-icon="east">east</span>
+<!-- Asymmetric Grid -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-gutter auto-rows-[300px]">
+<!-- Large Item (Col Span 8, Row Span 2) -->
+<a class="group relative overflow-hidden bg-slate-surface rounded-none md:col-span-8 md:row-span-2 block shadow-[0px_20px_40px_rgba(15,23,42,0.05)] hover:shadow-[0px_30px_60px_rgba(15,23,42,0.12)] hover:scale-[1.03] transition-all duration-500 will-change-transform border-none" href="#">
+<div class="absolute inset-0 w-full h-full bg-cover bg-center transition-transform duration-1000 group-hover:scale-105" data-alt="A close-up shot of an elegant minimalist ceramic vase sitting on a light oak wooden table. Soft, diffused lighting casts gentle shadows, highlighting the matte texture of the vase. The background is a clean, slightly warm white wall. The scene evokes a sense of calm and sophisticated craftsmanship, typical of high-end editorial lifestyle photography." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBdG_0IT2JZJx7InP8X_9_j3HQJKcj3kmGReatvVLhflnVlIjcibXMrK3wpDN371claG2928iq0yD4dXPYhiK_oPfPgLCz4Jy-m5swmFeg9yCxn_CplGYYgWF5ahcwDXE38xlhJ_Thzh0YPpZnsoNHOkIGOtlM_OkUgswWN5Pw93LDgimFA3GZEj-iR1zgrTayHBGEw09_Fkb8TC3auis0evbP_OM0s_6PcXKnG0gOfpq8YW53SUwxFVf8Q7U70kHpt2G2dsdbKDXoE');"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-deep-navy/80 via-transparent to-transparent opacity-60 transition-opacity duration-500 group-hover:opacity-80"></div>
+<div class="absolute bottom-0 left-0 p-8 w-full flex justify-between items-end">
+<div>
+<span class="font-label-caps text-label-caps text-white/80 mb-2 block tracking-widest uppercase">Signature Collection</span>
+<h3 class="font-headline-md text-headline-md text-white">Ceramics</h3>
 </div>
-</div>
-</a>
-<!-- Category 2 - Short -->
-<a class="masonry-item block group relative h-short overflow-hidden bg-surface rounded-sm shadow-[0_10px_40px_-10px_rgba(0,0,0,0.05)]" href="#">
-<img alt="Footwear" class="w-full h-full object-cover img-hover-zoom" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD_6HxL1oBR2zSF2WkQp5wJ6zHR451G2yo2UgijYUWKpakwwn_Ru94UGff9uTEjIiSvENc1FuVrH21hTKXo9WHfsU5liw6iu7lnocRjTOAq4A3v4m9WflWbHnkz-wa4bEOJCqrAvA7ooTwIapF_41V7gDhMX91AkhMC9fXmhFTGMfcYJ-FQpB77E82xhslRer4otxWQ-dmwiXA3nmg7Bq_zbmHMRPxDZPd33PXjxl9OTkTrmSTxATYu2XqDc9V9VZnM-7rSErq5fKvQ"/>
-<div class="absolute bottom-6 left-6 right-6 p-6 flex justify-between items-end bg-gradient-to-t from-black/60 to-transparent">
-<h3 class="font-h2 text-white">Footwear</h3>
-<div class="w-10 h-10 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white transform translate-x-4 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-500">
-<span class="material-symbols-outlined font-light" data-icon="east">east</span>
-</div>
-</div>
-</a>
-<!-- Category 3 - Medium -->
-<a class="masonry-item block group relative h-medium overflow-hidden bg-surface rounded-sm shadow-[0_10px_40px_-10px_rgba(0,0,0,0.05)]" href="#">
-<img alt="Home Decor" class="w-full h-full object-cover img-hover-zoom" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDQOrIVaEVxTCAH-ckbH7VzfUzzm5lzUDDDF185sa102041EZWKOrG4CHcsWPIstUY0m7-ofsOIjB8svntxoyPwI0rGm__YLUw13N5_fucuF9SLe2R-DMI8KRNvYdce8pr36jJs1cM-z7gLt5OOw2rUKSmbylAUdiP4lxT5CG0zIlJYZBTrVpPHx7j5U1yPAnkMoK0ky2v_E84V2BJ0Bk0nt-qgvFN5KVo52sLmdVqCLoMl367ukFoUwE6Pu8IC8211Fyzt49NMdM88"/>
-<div class="absolute bottom-6 left-6 right-6 p-6 flex justify-between items-end bg-gradient-to-t from-black/60 to-transparent">
-<h3 class="font-h2 text-white">Home Objects</h3>
-<div class="w-10 h-10 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white transform translate-x-4 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-500">
-<span class="material-symbols-outlined font-light" data-icon="east">east</span>
+<div class="w-10 h-10 bg-white/10 backdrop-blur-sm flex items-center justify-center rounded-full text-white opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-4 group-hover:translate-y-0">
+<span class="material-symbols-outlined">arrow_outward</span>
 </div>
 </div>
 </a>
-<!-- Category 4 - Lifestyle -->
-<a class="masonry-item block group relative h-tall overflow-hidden bg-slate-100 rounded-sm flex flex-col justify-center items-center p-12 text-center hover:bg-slate-200 transition-colors duration-700" href="#">
-<span class="font-label-sm text-primary/50 tracking-widest uppercase mb-4">Editorial</span>
-<h3 class="font-display text-4xl text-primary mb-6">The Art of<br/>Living Well</h3>
-<span class="font-label-md flex items-center gap-2 border-b border-primary pb-1">
-    Read Story <span class="material-symbols-outlined text-sm font-light" data-icon="east">east</span>
-</span>
+<!-- Small Item Top Right (Col Span 4) -->
+<a class="group relative overflow-hidden bg-surface-container-high rounded-none md:col-span-4 block shadow-[0px_20px_40px_rgba(15,23,42,0.03)] hover:shadow-[0px_30px_60px_rgba(15,23,42,0.12)] hover:scale-[1.03] transition-all duration-500 will-change-transform border-none flex flex-col justify-end p-8 hover:bg-slate-surface" href="#">
+<div class="absolute top-8 right-8 w-16 h-16 opacity-20 group-hover:opacity-100 transition-opacity duration-500">
+<img alt="Small abstract shape" class="w-full h-full object-cover rounded-full mix-blend-multiply" data-alt="A small, abstract sculptural object cast in light grey concrete, sitting isolated on a pristine white background. The lighting is crisp, casting a defined shadow. The object represents modern, minimalist decor accessories." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD5x8Mx71QUNn7HlEejoyFlcb6EOhwff_XGOlrhIWcbpYln-FE_SinD682Xkp0VpM39uxXK_JJg3gFb3feEhEKluO8bYbNV4Xl3b4uT3eEKIuu4gis0sWtcKjSouL-cXyndNQf6hCX3Lbl-opUtmZVku-tv-1Lnpuq3MLUoFaK_zdujSap-7ygNK_jlqBowJKbFy3Kb2hNcEeJqLkh5-OcXyH_s7GnFI8cY0CoivXwkhJ3Sr0oZ3FXgW3Z1Cn4_V0_VpXRB0dtJYlsg"/>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-deep-navy mb-2">Lighting</h3>
+<p class="font-body-md text-body-md text-on-surface-variant line-clamp-2">Illuminating spaces with pure, geometric forms.</p>
+</div>
+</a>
+<!-- Small Item Bottom Right (Col Span 4) -->
+<a class="group relative overflow-hidden bg-slate-surface rounded-none md:col-span-4 block shadow-[0px_20px_40px_rgba(15,23,42,0.03)] hover:shadow-[0px_30px_60px_rgba(15,23,42,0.12)] hover:scale-[1.03] transition-all duration-500 will-change-transform border-none" href="#">
+<div class="absolute inset-0 w-full h-full bg-cover bg-center transition-transform duration-1000 group-hover:scale-105" data-alt="A curated arrangement of minimalist modern furniture pieces, focusing on a sleek wooden lounge chair with leather upholstery. The background is a soft, muted grey wall, and the floor is polished concrete. The aesthetic is highly architectural and stripped back, relying on the beauty of materials and clean lines." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuA2gK9lYMIkRVi90tkoAsO6fQBrykShhvUejSIh9ruTOZvpe9IvDK__sMLZlGUP4SMrUZO_vIPuOCshfhliCPsMwvXTa9O1M2CNIejl9Y9UO1Nab5X7cZdtikWcnnX1r4JBEaXU8PEpx2FXjZ023qaBxXlEXPOc7J42N02BCN8tUJg9zSGUbtQC99AnJoDNwfr7tg4XgknyBGOy8TWyTMeIXsaniQm8WrKufX6ceb-8SonvKlQ-KjbUnQIbPmDfqxE7_SNbdkCBgyK_');"></div>
+<div class="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors duration-500"></div>
+<div class="absolute inset-0 p-8 flex flex-col justify-end">
+<h3 class="font-headline-md text-[24px] text-white">Furniture</h3>
+</div>
 </a>
 </div>
 </section>
-<!-- Featured Products with spacious layout -->
-<section class="max-w-container-max mx-auto px-6 md:px-12 mb-xl">
-<div class="text-center mb-16">
-<h2 class="font-h1 text-h1 text-primary mb-4">Signature Pieces</h2>
-<p class="font-body-lg text-primary/60 max-w-2xl mx-auto">Meticulously crafted essentials for the modern wardrobe.</p>
+<!-- Limited Offer Countdown -->
+<section class="py-24 px-margin-mobile md:px-gutter bg-surface-container-high reveal">
+<div class="max-w-3xl mx-auto text-center">
+<span class="font-label-caps text-label-caps tracking-[0.2em] mb-4 uppercase block text-deep-navy/60">Limited Offer</span>
+<h2 class="font-headline-lg text-headline-lg text-deep-navy mb-8">The Vault Release</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mb-12">Exclusive access to archived designs for a highly limited window. Do not miss this rare opportunity to acquire pieces of modern history.</p>
+<div class="flex justify-center items-center gap-6 font-headline-xl text-deep-navy">
+<div class="flex flex-col items-center">
+<span id="countdown-hours">24</span>
+<span class="font-label-caps text-[12px] tracking-widest uppercase mt-2 opacity-60">Hours</span>
 </div>
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-16" id="product-grid">
-<!-- Product 1 -->
-<div class="group masonry-item cursor-pointer">
-<div class="relative bg-white aspect-[3/4] mb-6 overflow-hidden shadow-[0_20px_50px_-20px_rgba(0,0,0,0.05)]">
-<img alt="Classic White Tee" class="w-full h-full object-cover img-hover-zoom mix-blend-multiply" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA2_RmVpvo_FKnnPNrCXHhOyj69G-IHwUJlgeQC4ryxei8mWzfF-PXLt6vIFnM5y4pHoDtLi-qBK2Lv8bKE9htkiir9U0Kc7Sr7898MsiI85qoz3haMDXjCZxqOM0lmiL4PQamW4qKG6t6-DWDQIyuvsc6e-3dWfKWNACTM0XLlmOpCrcc9-chkNsPJ3ivPBo1exZ0Hng-3JBrNoAMRTWdBhJvC_s_XcWRCJAYgNcFJ_XzwmFFIZxb_WpZ6IGBYwwBx6m_C24ghrnuG"/>
-<div class="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-500"></div>
-<button class="absolute bottom-6 left-1/2 -translate-x-1/2 bg-primary text-white font-label-md px-6 py-3 opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-500 min-w-[160px]">
-    Quick Add
-</button>
+<span class="opacity-30 pb-6">:</span>
+<div class="flex flex-col items-center">
+<span id="countdown-minutes">00</span>
+<span class="font-label-caps text-[12px] tracking-widest uppercase mt-2 opacity-60">Mins</span>
 </div>
-<div class="text-center">
-<h3 class="font-h3 text-primary mb-2">Essential Cotton Tee</h3>
-<p class="font-body-md text-primary/60">$45.00</p>
-</div>
-</div>
-<!-- Product 2 -->
-<div class="group masonry-item cursor-pointer" style="transition-delay: 100ms;">
-<div class="relative bg-white aspect-[3/4] mb-6 overflow-hidden shadow-[0_20px_50px_-20px_rgba(0,0,0,0.05)]">
-<img alt="Leather Jacket" class="w-full h-full object-cover img-hover-zoom mix-blend-multiply" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA2RhiETHj7c38NJEDxR3f3mQHWn-QlQhTFmzpc6tNQMW4pWDa9KwNShM24Doa6l-b41wc4rjpIzq_GYQyG7OxesP3IXZUehD3MwEUKmzW9rItNU68ud7JQomin3rJkBX4GzSN9dZOlmhdcEiOIbcjdeQ8R-7aK-gBab4uN26jorjlibbM7lA_hCW9WnRyvf3uxA2qF1E3bESXKfawEAfXxkzlcZPnVPkh5TBjsSD5pf94mToxknlYxygFQ-GR6tYZRmo3zpXA1wEPW"/>
-<div class="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-500"></div>
-<button class="absolute bottom-6 left-1/2 -translate-x-1/2 bg-primary text-white font-label-md px-6 py-3 opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-500 min-w-[160px]">
-    Quick Add
-</button>
-</div>
-<div class="text-center">
-<h3 class="font-h3 text-primary mb-2">Structured Leather Jacket</h3>
-<p class="font-body-md text-primary/60">$450.00</p>
-</div>
-</div>
-<!-- Product 3 -->
-<div class="group masonry-item cursor-pointer" style="transition-delay: 200ms;">
-<div class="relative bg-white aspect-[3/4] mb-6 overflow-hidden shadow-[0_20px_50px_-20px_rgba(0,0,0,0.05)]">
-<img alt="Wool Sweater" class="w-full h-full object-cover img-hover-zoom mix-blend-multiply" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB8VA4iWSU-YdrwJzNlTiHl8vlZ4nkJW0WlCxDxutRmw8c_iUqPZ-31HoJy7PBdCL0NC-dszIegAFFjwJLV_2x1IxB4FcIXxVpS5XelcNKaQ1hviEj-hZ6mvJoc8pfEvAfZ5Sod_JxkxSiiARtP4ar82eFeorn9HQr5F2oPDU3xuMjCIZ54T-bxvjQnntzqKd1YmLjXBJ6pPreR3Sfy2cCtZgPcID4BnETdTfDynD_Hvzj34Wfu7wqK_vvriTsjidK8-GzxKGwe-rn2"/>
-<div class="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-500"></div>
-<button class="absolute bottom-6 left-1/2 -translate-x-1/2 bg-primary text-white font-label-md px-6 py-3 opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-500 min-w-[160px]">
-    Quick Add
-</button>
-</div>
-<div class="text-center">
-<h3 class="font-h3 text-primary mb-2">Merino Wool Knit</h3>
-<p class="font-body-md text-primary/60">$185.00</p>
-</div>
-</div>
-<!-- Product 4 -->
-<div class="group masonry-item cursor-pointer" style="transition-delay: 300ms;">
-<div class="relative bg-white aspect-[3/4] mb-6 overflow-hidden shadow-[0_20px_50px_-20px_rgba(0,0,0,0.05)]">
-<img alt="Canvas Tote" class="w-full h-full object-cover img-hover-zoom mix-blend-multiply" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBVIqiaJz8abxW7PQOsxn5tqMoTR-bC3HjKDDVxx6jko3Q0WpVU4atL0IUsCJGP3h9f6byOTAiTPiwk_nX_60u_IVXPwiseCJ-AhA1f_tlwUieqt-VpNm1cFgyjTMA0IACxMoUaMkJe9NSbLvUfnNKPmkqISw-iEZw4nHPAlkR6UdvkKJF9L0Bf8TJKJOKMkk03UOnTwhlPnrhhgIPOFoDti_8klGPnTMgCx7Uqkr5-5C4F0B8wMUmLCamI6l28S8Ra2TUkILACv_Bs"/>
-<div class="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-500"></div>
-<button class="absolute bottom-6 left-1/2 -translate-x-1/2 bg-primary text-white font-label-md px-6 py-3 opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-500 min-w-[160px]">
-    Quick Add
-</button>
-</div>
-<div class="text-center">
-<h3 class="font-h3 text-primary mb-2">Everyday Canvas Tote</h3>
-<p class="font-body-md text-primary/60">$85.00</p>
+<span class="opacity-30 pb-6">:</span>
+<div class="flex flex-col items-center">
+<span id="countdown-seconds">00</span>
+<span class="font-label-caps text-[12px] tracking-widest uppercase mt-2 opacity-60">Secs</span>
 </div>
 </div>
 </div>
 </section>
-<!-- Luxury Newsletter -->
-<section class="max-w-container-max mx-auto px-6 md:px-12 mb-xl">
-<div class="bg-surface-bright/50 p-12 md:p-24 flex flex-col md:flex-row items-center justify-between gap-16 masonry-item">
-<div class="md:w-5/12 text-center md:text-left">
-<span class="font-label-sm text-primary/50 tracking-widest uppercase mb-6 block">Privilege</span>
-<h2 class="font-display text-4xl text-primary mb-6">Join the Inner Circle</h2>
-<p class="font-body-lg text-primary/70">Subscribe for early access to new collections, exclusive events, and a complimentary gift on your first acquisition.</p>
+<!-- Timeline Carousel -->
+<section class="py-section-gap px-margin-mobile md:px-gutter max-w-container-max-width mx-auto reveal overflow-hidden">
+<div class="flex justify-between items-end mb-12">
+<div class="max-w-xl">
+<h2 class="font-headline-lg text-headline-lg text-deep-navy mb-4">Design Timeline</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">A retrospective of our evolving design language over the decades.</p>
 </div>
-<div class="md:w-6/12 w-full">
-<form class="flex flex-col sm:flex-row gap-0 border-b border-primary/20 pb-2 focus-within:border-primary transition-colors">
-<input class="w-full bg-transparent border-none focus:ring-0 px-0 py-4 font-body-lg text-primary placeholder:text-primary/30" placeholder="Enter your email address" type="email"/>
-<button class="text-primary font-label-md px-8 py-4 hover:text-primary/60 transition-colors uppercase tracking-widest whitespace-nowrap" type="submit">Subscribe</button>
-</form>
+<div class="hidden md:flex gap-4">
+<button class="w-12 h-12 flex items-center justify-center bg-surface-container-high text-deep-navy hover:bg-slate-surface transition-colors duration-300" id="scroll-prev">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<button class="w-12 h-12 flex items-center justify-center bg-deep-navy text-white hover:opacity-80 transition-opacity duration-300" id="scroll-next">
+<span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</div>
+</div>
+<div class="flex gap-8 overflow-x-auto snap-x snap-mandatory hide-scrollbar pb-8 -mx-margin-mobile px-margin-mobile md:mx-0 md:px-0 scroll-smooth" id="timeline-container">
+<div class="snap-start shrink-0 w-[85vw] md:w-[400px] group cursor-pointer">
+<div class="w-full aspect-[4/5] bg-surface-container-high mb-6 bg-cover bg-center overflow-hidden">
+<div class="w-full h-full bg-cover bg-center transition-transform duration-700 group-hover:scale-105" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuA2gK9lYMIkRVi90tkoAsO6fQBrykShhvUejSIh9ruTOZvpe9IvDK__sMLZlGUP4SMrUZO_vIPuOCshfhliCPsMwvXTa9O1M2CNIejl9Y9UO1Nab5X7cZdtikWcnnX1r4JBEaXU8PEpx2FXjZ023qaBxXlEXPOc7J42N02BCN8tUJg9zSGUbtQC99AnJoDNwfr7tg4XgknyBGOy8TWyTMeIXsaniQm8WrKufX6ceb-8SonvKlQ-KjbUnQIbPmDfqxE7_SNbdkCBgyK_')"></div>
+</div>
+<span class="font-label-caps text-label-caps text-on-surface-variant tracking-widest block mb-2 opacity-60">1998</span>
+<h4 class="font-headline-md text-2xl text-deep-navy group-hover:text-outline transition-colors">The Origin Series</h4>
+</div>
+<div class="snap-start shrink-0 w-[85vw] md:w-[400px] group cursor-pointer">
+<div class="w-full aspect-[4/5] bg-surface-container-high mb-6 bg-cover bg-center overflow-hidden">
+<div class="w-full h-full bg-cover bg-center transition-transform duration-700 group-hover:scale-105" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBdG_0IT2JZJx7InP8X_9_j3HQJKcj3kmGReatvVLhflnVlIjcibXMrK3wpDN371claG2928iq0yD4dXPYhiK_oPfPgLCz4Jy-m5swmFeg9yCxn_CplGYYgWF5ahcwDXE38xlhJ_Thzh0YPpZnsoNHOkIGOtlM_OkUgswWN5Pw93LDgimFA3GZEj-iR1zgrTayHBGEw09_Fkb8TC3auis0evbP_OM0s_6PcXKnG0gOfpq8YW53SUwxFVf8Q7U70kHpt2G2dsdbKDXoE')"></div>
+</div>
+<span class="font-label-caps text-label-caps text-on-surface-variant tracking-widest block mb-2 opacity-60">2005</span>
+<h4 class="font-headline-md text-2xl text-deep-navy group-hover:text-outline transition-colors">Vessel Studies</h4>
+</div>
+<div class="snap-start shrink-0 w-[85vw] md:w-[400px] group cursor-pointer">
+<div class="w-full aspect-[4/5] bg-surface-container-high mb-6 bg-cover bg-center overflow-hidden">
+<div class="w-full h-full bg-cover bg-center transition-transform duration-700 group-hover:scale-105" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAWPxuVwMnt7FM3ojOzpdCbN2gw-yxANnlguFA6fgwxUKBxBOGOioFmE6j9R86-03iiOXSb6dIzlVpudvZlvs3sqdUWVf__hyWev0JO97NIGNUSEl6rnemiUqEIST0ksfx0nhOUSUFCwtaO3xQdeOTnnhewkHBOwAb80-1dVNC_cMe-g6mGfu0cN71e5fpA4N2LWjwBAiQVHsfNRFL9QTEbgaDbRrP_O9CjPXmlZBLD8_ubtD5QeHkfpRXWJBHF2NTmesbdolwUQTRW')"></div>
+</div>
+<span class="font-label-caps text-label-caps text-on-surface-variant tracking-widest block mb-2 opacity-60">2012</span>
+<h4 class="font-headline-md text-2xl text-deep-navy group-hover:text-outline transition-colors">Spatial Expansion</h4>
+</div>
+<div class="snap-start shrink-0 w-[85vw] md:w-[400px] group cursor-pointer">
+<div class="w-full aspect-[4/5] bg-surface-container-high mb-6 overflow-hidden flex items-center justify-center p-8 bg-slate-surface">
+<img alt="Sculpture" class="w-full h-full object-cover mix-blend-multiply opacity-80 transition-transform duration-700 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD5x8Mx71QUNn7HlEejoyFlcb6EOhwff_XGOlrhIWcbpYln-FE_SinD682Xkp0VpM39uxXK_JJg3gFb3feEhEKluO8bYbNV4Xl3b4uT3eEKIuu4gis0sWtcKjSouL-cXyndNQf6hCX3Lbl-opUtmZVku-tv-1Lnpuq3MLUoFaK_zdujSap-7ygNK_jlqBowJKbFy3Kb2hNcEeJqLkh5-OcXyH_s7GnFI8cY0CoivXwkhJ3Sr0oZ3FXgW3Z1Cn4_V0_VpXRB0dtJYlsg"/>
+</div>
+<span class="font-label-caps text-label-caps text-on-surface-variant tracking-widest block mb-2 opacity-60">2023</span>
+<h4 class="font-headline-md text-2xl text-deep-navy group-hover:text-outline transition-colors">Abstract Forms</h4>
 </div>
 </div>
 </section>
 </main>
-<footer class="bg-white w-full pt-24 pb-12">
-<div class="flex flex-col md:flex-row justify-between items-center w-full px-8 md:px-12 max-w-container-max mx-auto">
-<div class="flex flex-col items-center md:items-start mb-12 md:mb-0">
-<span class="text-2xl font-display tracking-widest uppercase text-primary mb-4">LUMINA</span>
-<span class="font-label-sm text-primary/40 tracking-widest">© 2024 LUMINA. ALL RIGHTS RESERVED.</span>
+<!-- Footer -->
+<footer class="bg-deep-navy dark:bg-black w-full pt-section-gap pb-gutter shadow-2xl reveal">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-gutter px-gutter max-w-container-max-width mx-auto">
+<!-- Brand Column -->
+<div class="md:col-span-1 flex flex-col justify-between h-full min-h-[200px]">
+<span class="font-headline-lg text-headline-lg italic text-surface block mb-8">
+                    MODERN_ÉDITION
+                </span>
+<p class="font-body-sm text-label-caps text-surface dark:text-surface-variant opacity-50 mt-auto">
+                    © 2024 MODERN ÉDITION. ALL RIGHTS RESERVED.
+                </p>
 </div>
-<nav class="flex flex-wrap justify-center gap-x-12 gap-y-6">
-<a class="font-label-sm text-primary/60 hover:text-primary transition-colors" href="#">Privacy Policy</a>
-<a class="font-label-sm text-primary/60 hover:text-primary transition-colors" href="#">Terms of Service</a>
-<a class="font-label-sm text-primary/60 hover:text-primary transition-colors" href="#">Contact Us</a>
-</nav>
+<!-- Links Columns -->
+<div class="md:col-span-3 grid grid-cols-2 md:grid-cols-4 gap-8">
+<!-- Example Link Column -->
+<div class="flex flex-col gap-4">
+<h4 class="font-label-caps text-label-caps text-surface opacity-50 mb-2">Explore</h4>
+<a class="font-body-sm text-label-caps text-outline-variant hover:text-surface transition-colors hover:text-accent-gold duration-300" href="#">Sustainability</a>
+<a class="font-body-sm text-label-caps text-outline-variant hover:text-surface transition-colors hover:text-accent-gold duration-300" href="#">Shipping</a>
+<a class="font-body-sm text-label-caps text-outline-variant hover:text-surface transition-colors hover:text-accent-gold duration-300" href="#">Terms</a>
+<a class="font-body-sm text-label-caps text-outline-variant hover:text-surface transition-colors hover:text-accent-gold duration-300" href="#">Contact</a>
+</div>
+<!-- Adding placeholders to fill the grid -->
+<div class="flex flex-col gap-4">
+<h4 class="font-label-caps text-label-caps text-surface opacity-50 mb-2">Journal</h4>
+<a class="font-body-sm text-label-caps text-outline-variant hover:text-surface transition-colors hover:text-accent-gold duration-300" href="#">Latest Editorials</a>
+<a class="font-body-sm text-label-caps text-outline-variant hover:text-surface transition-colors hover:text-accent-gold duration-300" href="#">Designer Interviews</a>
+</div>
+</div>
 </div>
 </footer>
 <script>
-    // Multi-layered parallax header effect
-    window.addEventListener('scroll', () => {
-        const layers = document.querySelectorAll('.parallax-layer');
-        const scrollY = window.pageYOffset;
-        
-        layers.forEach(layer => {
-            const speed = layer.getAttribute('data-speed');
-            const yPos = -(scrollY * speed);
-            layer.style.transform = `translate3d(0, ${yPos}px, 0)`;
+        // Simple script to handle top nav background opacity on scroll
+        window.addEventListener('scroll', () => {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 50) {
+                nav.classList.replace('bg-transparent', 'bg-surface/90');
+                nav.classList.add('shadow-md');
+            } else {
+                nav.classList.replace('bg-surface/90', 'bg-transparent');
+                nav.classList.remove('shadow-md');
+            }
         });
 
-        // Sticky header scroll transition
-        const header = document.getElementById('main-header');
-        if (scrollY > 50) {
-            header.classList.add('scrolled');
-        } else {
-            header.classList.remove('scrolled');
+        // 1. Parallax Hero Effect
+        window.addEventListener('scroll', () => {
+            const scrollY = window.scrollY;
+            const hero = document.querySelector('section');
+            if(scrollY <= hero.offsetHeight) {
+                const bg = document.getElementById('parallax-bg');
+                const content = document.getElementById('parallax-content');
+                // Background moves slower (depth)
+                bg.style.transform = `translateY(${scrollY * 0.4}px) scale(1.1)`;
+                // Content moves slightly faster
+                content.style.transform = `translateY(${scrollY * 0.2}px)`;
+            }
+        });
+
+        // 3. Limited Offer Countdown
+        let totalSeconds = 24 * 60 * 60; // 24 hours
+        const hoursEl = document.getElementById('countdown-hours');
+        const minsEl = document.getElementById('countdown-minutes');
+        const secsEl = document.getElementById('countdown-seconds');
+
+        setInterval(() => {
+            if(totalSeconds > 0) totalSeconds--;
+            const h = Math.floor(totalSeconds / 3600);
+            const m = Math.floor((totalSeconds % 3600) / 60);
+            const s = totalSeconds % 60;
+
+            if(hoursEl) hoursEl.textContent = h.toString().padStart(2, '0');
+            if(minsEl) minsEl.textContent = m.toString().padStart(2, '0');
+            if(secsEl) secsEl.textContent = s.toString().padStart(2, '0');
+        }, 1000);
+
+        // 4. Timeline Carousel JS controls
+        const timeline = document.getElementById('timeline-container');
+        const scrollPrev = document.getElementById('scroll-prev');
+        const scrollNext = document.getElementById('scroll-next');
+
+        if(scrollPrev && scrollNext && timeline) {
+            const scrollAmount = 432; // item width + gap
+            scrollPrev.addEventListener('click', () => {
+                timeline.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+            });
+            scrollNext.addEventListener('click', () => {
+                timeline.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+            });
         }
-    });
 
-    // Staggered reveal for all items
-    const observerOptions = {
-        threshold: 0.1,
-        rootMargin: '0px 0px -100px 0px'
-    };
+        // 5. Global Motion Reveal on Scroll
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.15
+        };
 
-    const revealObserver = new IntersectionObserver((entries, observer) => {
-        entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('reveal');
-                observer.unobserve(entry.target);
-            }
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.reveal').forEach((el) => {
+            observer.observe(el);
         });
-    }, observerOptions);
 
-    document.querySelectorAll('.masonry-item').forEach(item => {
-        revealObserver.observe(item);
-    });
+        // Trigger active for elements already in view on load
+        setTimeout(() => {
+            document.querySelectorAll('.reveal').forEach((el) => {
+                const rect = el.getBoundingClientRect();
+                if(rect.top < window.innerHeight) {
+                    el.classList.add('active');
+                }
+            });
+        }, 100);
 
-    // Global smooth scroll handling
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-            e.preventDefault();
-            const target = document.querySelector(this.getAttribute('href'));
-            if (target && this.getAttribute('href') !== '#') {
-                target.scrollIntoView({
-                    behavior: 'smooth'
-                });
-            }
-        });
-    });
-</script>
+    </script>
 </body></html>

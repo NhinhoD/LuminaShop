@@ -13,28 +13,29 @@ interface ShopProductGridProps {
 }
 
 export default function ShopProductGrid({ initialProducts }: ShopProductGridProps) {
-  const [selectedCategory, setSelectedCategory] = useState<string>("All Pieces");
-  const [selectedMaterials, setSelectedMaterials] = useState<readonly string[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<string>("All Dishes");
+  const [selectedDietary, setSelectedDietary] = useState<readonly string[]>([]);
   const [maxPrice, setMaxPrice] = useState<number>(10000000); // 10M VND
   const [isLoading, setIsLoading] = useState(false);
   const gridRef = useRef<HTMLDivElement>(null);
   
-  // Category mapping
+  // Category mapping for F&B
   const categoryMap: Record<string, string> = {
-    "Outerwear": "outerwear",
-    "Knitwear": "knitwear",
-    "Accessories": "accessories",
-    "Home": "home"
+    "Appetizers": "appetizer",
+    "Main Courses": "main",
+    "Desserts": "dessert",
+    "Mocktails": "mocktail"
   };
 
   // Filter products
   const filteredProducts = useMemo(() => {
     return initialProducts.filter((product) => {
       // Category Filter
-      if (selectedCategory !== "All Pieces") {
+      if (selectedCategory !== "All Dishes") {
         const mappedCat = categoryMap[selectedCategory];
         if (product.categoryId?.toLowerCase() !== mappedCat && 
-            !product.title.toLowerCase().includes(mappedCat)) {
+            !product.title.toLowerCase().includes(mappedCat) &&
+            !product.description?.toLowerCase().includes(mappedCat)) {
           return false;
         }
       }
@@ -44,17 +45,18 @@ export default function ShopProductGrid({ initialProducts }: ShopProductGridProp
         return false;
       }
       
-      // Material Filter
-      if (selectedMaterials.length > 0) {
-        const descriptionMatch = selectedMaterials.some((mat) => 
-          product.description?.toLowerCase().includes(mat.toLowerCase())
+      // Dietary / Profile Filter
+      if (selectedDietary.length > 0) {
+        const match = selectedDietary.some((diet) => 
+          product.description?.toLowerCase().includes(diet.toLowerCase()) ||
+          product.title.toLowerCase().includes(diet.toLowerCase())
         );
-        if (!descriptionMatch) return false;
+        if (!match) return false;
       }
 
       return true;
     });
-  }, [initialProducts, selectedCategory, selectedMaterials, maxPrice]);
+  }, [initialProducts, selectedCategory, selectedDietary, maxPrice]);
 
   // Handle category toggle
   const handleCategorySelect = (category: string) => {
@@ -65,11 +67,11 @@ export default function ShopProductGrid({ initialProducts }: ShopProductGridProp
     }, 450); // Premium skeletal loading delay
   };
 
-  // Handle material toggle
-  const toggleMaterial = (material: string) => {
+  // Handle dietary preference toggle
+  const toggleDietary = (diet: string) => {
     setIsLoading(true);
-    setSelectedMaterials((prev) => 
-      prev.includes(material) ? prev.filter((m) => m !== material) : [...prev, material]
+    setSelectedDietary((prev) => 
+      prev.includes(diet) ? prev.filter((d) => d !== diet) : [...prev, diet]
     );
     setTimeout(() => {
       setIsLoading(false);
@@ -112,9 +114,9 @@ export default function ShopProductGrid({ initialProducts }: ShopProductGridProp
       {/* Filters Sidebar */}
       <aside className="lg:col-span-3 space-y-12">
         <div>
-          <h3 className="font-label-caps text-[10px] text-slate-400 uppercase tracking-[0.25em] mb-6">Categories</h3>
+          <h3 className="font-label-caps text-[10px] text-slate-400 uppercase tracking-[0.25em] mb-6">Culinary Categories</h3>
           <ul className="space-y-4">
-            {["All Pieces", "Outerwear", "Knitwear", "Accessories", "Home"].map((cat) => (
+            {["All Dishes", "Appetizers", "Main Courses", "Desserts", "Mocktails"].map((cat) => (
               <li key={cat}>
                 <button
                   onClick={() => handleCategorySelect(cat)}
@@ -135,7 +137,7 @@ export default function ShopProductGrid({ initialProducts }: ShopProductGridProp
         </div>
 
         <div>
-          <h3 className="font-label-caps text-[10px] text-slate-400 uppercase tracking-[0.25em] mb-6">Price Limit</h3>
+          <h3 className="font-label-caps text-[10px] text-slate-400 uppercase tracking-[0.25em] mb-6">Price Ceiling</h3>
           <div className="px-2">
             <input 
               type="range" 
@@ -158,21 +160,21 @@ export default function ShopProductGrid({ initialProducts }: ShopProductGridProp
         </div>
 
         <div>
-          <h3 className="font-label-caps text-[10px] text-slate-400 uppercase tracking-[0.25em] mb-6">Material</h3>
+          <h3 className="font-label-caps text-[10px] text-slate-400 uppercase tracking-[0.25em] mb-6">Dietary Profile</h3>
           <div className="flex flex-wrap gap-2">
-            {["Cotton", "Wool", "Nylon", "Silk"].map((mat) => {
-              const isSelected = selectedMaterials.includes(mat);
+            {["Organic", "Gluten-Free", "Vegan", "Chef Special"].map((diet) => {
+              const isSelected = selectedDietary.includes(diet);
               return (
                 <button 
-                  key={mat}
-                  onClick={() => toggleMaterial(mat)}
+                  key={diet}
+                  onClick={() => toggleDietary(diet)}
                   className={`px-4 py-2 text-[10px] font-bold transition-all uppercase tracking-wider cursor-pointer rounded-none font-manrope ${
                     isSelected 
                       ? "bg-slate-950 text-white shadow-sm" 
                       : "bg-[#F1F5F9] text-slate-500 hover:bg-slate-200 hover:text-slate-900"
                   }`}
                 >
-                  {mat}
+                  {diet}
                 </button>
               );
             })}
@@ -199,8 +201,8 @@ export default function ShopProductGrid({ initialProducts }: ShopProductGridProp
             <span className="material-symbols-outlined text-[48px] text-slate-350 mb-4">
               search_off
             </span>
-            <p className="font-headline-md text-lg text-slate-800 mb-2">No items found</p>
-            <p className="text-slate-400 text-xs font-manrope">Please alter your filtering attributes.</p>
+            <p className="font-headline-md text-lg text-slate-800 mb-2">No selections found</p>
+            <p className="text-slate-400 text-xs font-manrope">Please alter your culinary attributes or preferences.</p>
           </div>
         ) : (
           /* Asymmetric Masonry product grids without borders */
@@ -234,7 +236,7 @@ export default function ShopProductGrid({ initialProducts }: ShopProductGridProp
                     )}
                     <div className="absolute top-4 left-4">
                       <span className="bg-slate-950 text-white text-[9px] font-label-caps px-2.5 py-1.5 uppercase tracking-widest">
-                        New In
+                        Fresh
                       </span>
                     </div>
                     <QuickAddButton 
@@ -255,7 +257,7 @@ export default function ShopProductGrid({ initialProducts }: ShopProductGridProp
                       {product.title}
                     </h3>
                     <p className="text-slate-400 text-[10px] uppercase tracking-widest font-bold font-manrope">
-                      Premium Collection
+                      Gourmet Offering
                     </p>
                     <p className="font-bold text-slate-950 text-sm mt-3 font-manrope">
                       {formatCurrency(product.price)}

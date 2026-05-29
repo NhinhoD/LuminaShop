@@ -27,7 +27,7 @@ export default function HomePageClient({ featuredProducts }: HomePageClientProps
   const countdownSectionRef = useRef<HTMLElement>(null);
   const carouselContainerRef = useRef<HTMLDivElement>(null);
 
-  // Time remaining for Limited Offer countdown
+  // Time remaining for Chef's Special Reserve Release countdown
   const [timeLeft, setTimeLeft] = useState({ hours: 14, minutes: 32, seconds: 45 });
 
   // Ticking countdown effect
@@ -188,30 +188,30 @@ export default function HomePageClient({ featuredProducts }: HomePageClientProps
     };
   }, []);
 
-  const lookbookTimeline = [
+  const culinaryTimeline = [
     { 
       year: "1998", 
-      title: "Minimalist Genesis", 
-      description: "The birth of architectural structure in modern drapery.", 
-      image: "https://lh3.googleusercontent.com/aida-public/AB6AXuBeThSi3q-n2c8uuViyam1b2_2pJAgJlHuNIIgjEmCyPwG5XpcajjcWm-5FGiLliZNL_gshSTBtxWDzDKPNHOva9Ph-GJeDXnpdDn7tQSgKwBDZadnCeuQxqS09E-Wf4BPt-ftlB9QdobtniTQCyxavZMXrid606Nl3YZfJEelerGPzGLHIhq8f4WofWGLm5fwm8B9_dnUq3Tb-Io-NFovt-sTT34MmJX6iApgvJJ9BzK8llQShaPrkAUlJ8_1XoA8zalMw3Qr5ngq6" 
+      title: "The Founding Bistro", 
+      description: "Our humble origins as an organic farm-to-table culinary workshop.", 
+      image: "https://lh3.googleusercontent.com/aida-public/AB6AXuAWPxuVwMnt7FM3ojOzpdCbN2gw-yxANnlguFA6fgwxUKBxBOGOioFmE6j9R86-03iiOXSb6dIzlVpudvZlvs3sqdUWVf__hyWev0JO97NIGNUSEl6rnemiUqEIST0ksfx0nhOUSUFCwtaO3xQdeOTnnhewkHBOwAb80-1dVNC_cMe-g6mGfu0cN71e5fpA4N2LWjwBAiQVHsfNRFL9QTEbgaDbRrP_O9CjPXmlZBLD8_ubtD5QeHkfpRXWJBHF2NTmesbdolwUQTRW" 
     },
     { 
       year: "2012", 
-      title: "Monochrome Obsidian", 
-      description: "Exploring raw materials and textured volcanic finishes.", 
-      image: "https://lh3.googleusercontent.com/aida-public/AB6AXuAd6_odzYx0FDTRx4M7o1lMezeCU3fa461FqM3CpA4vMYlqTrfE7H5dBIHyLtWfj0UanxhbQSUh9Xt1-Z7kjMu-NRUPH42dy2__X6mSew9u5PxMMftl4l2vGqK7xUnCJIyLAFvLNKbeDWPxsNGuZNKz6IN1gFzXzu4NjSCZfOpJWAfW4xCwJJ2UMMJPOmbks--wy_O2eHF-fLG4Msf7lmyMKiUlOFsfhwszbCnZrYYQ49qvXlc-hvLV9IXkYJ3nkppraGNbP7qjp4Iy" 
+      title: "Botanical Mocktails", 
+      description: "Pioneering premium low-abv elixir pairings and custom cold brews.", 
+      image: "https://lh3.googleusercontent.com/aida-public/AB6AXuAdG_0IT2JZJx7InP8X_9_j3HQJKcj3kmGReatvVLhflnVlIjcibXMrK3wpDN371claG2928iq0yD4dXPYhiK_oPfPgLCz4Jy-m5swmFeg9yCxn_CplGYYgWF5ahcwDXE38xlhJ_Thzh0YPpZnsoNHOkIGOtlM_OkUgswWN5Pw93LDgimFA3GZEj-iR1zgrTayHBGEw09_Fkb8TC3auis0evbP_OM0s_6PcXKnG0gOfpq8YW53SUwxFVf8Q7U70kHpt2G2dsdbKDXoE" 
     },
     { 
       year: "2020", 
-      title: "Bespoke Void", 
-      description: "Embracing negative space as a luxury styling standard.", 
-      image: "https://lh3.googleusercontent.com/aida-public/AB6AXuD8t5jKG34C0faRzyXVogbJTrxy5Dt_DDDfuG2g3axitxQDfDWrAEH0MIXSR4MMWNpzjdLPaKA_ZemoKYMtcpDzbAk1Azqp926C_OYGwHdasubtwO13xr0oaSa4Zc0ulricAqnesCnKWrDFfcI1oABlF9x0-GjqO2KRJIcBacoK3To_Ig6Tsh-35V_Z5TYqlxbswfOwKWzpjTQsqbzf_ANowjnQe79_YG1-ZwtSK5rFGhoNnMWzS_O22jvh4_nPe8BL1pQjbv1nA-sx" 
+      title: "Michelin Star Accolade", 
+      description: "Recognized globally for culinary authenticity, structural elegance, and clean flavors.", 
+      image: "https://lh3.googleusercontent.com/aida-public/AB6AXuD5x8Mx71QUNn7HlEejoyFlcb6EOhwff_XGOlrhIWcbpYln-FE_SinD682Xkp0VpM39uxXK_JJg3gFb3feEhEKluO8bYbNV4Xl3b4uT3eEKIuu4gis0sWtcKjSouL-cXyndNQf6hCX3Lbl-opUtmZVku-tv-1Lnpuq3MLUoFaK_zdujSap-7ygNK_jlqBowJKbFy3Kb2hNcEeJqLkh5-OcXyH_s7GnFI8cY0CoivXwkhJ3Sr0oZ3FXgW3Z1Cn4_V0_VpXRB0dtJYlsg" 
     },
     { 
       year: "2026", 
-      title: "The Modern Édition", 
-      description: "Lumina's definitive contemporary design release.", 
-      image: "https://lh3.googleusercontent.com/aida-public/AB6AXuBpwGh8511sfWTVEwz8_bMYjr2UvHxxcO3dGctXQovDDsz_Dei6SkscusGq51JffTE6UF4lPTnJvVuFto4zAXwH5FdzLFIag4cnPCd1j6v1eWwq76mgSLQTaM_QRocQmAtSfhepzLsP6xkBzmrpHtrI2xzuZECHBwcNgjUYt_uD5QqQOMsnxFISP6mD8AxvqmBgsMIXChjITpfQS0UpS52aGsFGz2oYBgvbW-HaF-SDt-Jpn0woD729drMlHhXxB_Ufo1vX7t9JJNdZ" 
+      title: "Luxe Gourmet Online", 
+      description: "Bringing signature epicurean dishes directly to your premium dining table.", 
+      image: "https://lh3.googleusercontent.com/aida-public/AB6AXuA2gK9lYMIkRVi90tkoAsO6fQBrykShhvUejSIh9ruTOZvpe9IvDK__sMLZlGUP4SMrUZO_vIPuOCshfhliCPsMwvXTa9O1M2CNIejl9Y9UO1Nab5X7cZdtikWcnnX1r4JBEaXU8PEpx2FXjZ023qaBxXlEXPOc7J42N02BCN8tUJg9zSGUbtQC99AnJoDNwfr7tg4XgknyBGOy8TWyTMeIXsaniQm8WrKufX6ceb-8SonvKlQ-KjbUnQIbPmDfqxE7_SNbdkCBgyK_" 
     }
   ];
 
@@ -229,9 +229,9 @@ export default function HomePageClient({ featuredProducts }: HomePageClientProps
         {/* Layer 2: Parallax Image */}
         <img 
           ref={heroImgRef}
-          alt="Lumina Luxury Collection" 
-          className="absolute inset-0 w-full h-full object-cover opacity-50 z-0 scale-105" 
-          src="https://lh3.googleusercontent.com/aida-public/AB6AXuABPQZDdL10rfSPF6U6Zc_69c9jeDKoUTIHI7buYyX2DcnG-lucxXtErY1w-JDfT9g01dJd9U7oAhnqAFlXj8Nk2QnGyEIwuaFnis70TLOvr2RPGt-eDb9uIZfP5RUH_JJrutQyuVI04huaYNkVTZZiCs8HsIOYxoFRykirOaUaUEGObUyksNxQBPuUgWSt0XdwJJ_UXmkL0_mVL_LF8ZHdwSqA92N1AW7Flr3I7uiEog7WQfTh9F_KLdGN8uVnjy0kyzZJbNH-x5vs"
+          alt="Sarab Gourmet Delicacies" 
+          className="absolute inset-0 w-full h-full object-cover opacity-60 z-0 scale-105" 
+          src="https://lh3.googleusercontent.com/aida-public/AB6AXuAWPxuVwMnt7FM3ojOzpdCbN2gw-yxANnlguFA6fgwxUKBxBOGOioFmE6j9R86-03iiOXSb6dIzlVpudvZlvs3sqdUWVf__hyWev0JO97NIGNUSEl6rnemiUqEIST0ksfx0nhOUSUFCwtaO3xQdeOTnnhewkHBOwAb80-1dVNC_cMe-g6mGfu0cN71e5fpA4N2LWjwBAiQVHsfNRFL9QTEbgaDbRrP_O9CjPXmlZBLD8_ubtD5QeHkfpRXWJBHF2NTmesbdolwUQTRW"
         />
         
         {/* Subtle Vignette overlay */}
@@ -244,19 +244,19 @@ export default function HomePageClient({ featuredProducts }: HomePageClientProps
         >
           <div className="max-w-2xl text-left">
             <span className="inline-block font-label-caps text-[10px] text-accent-gold uppercase tracking-[0.3em] mb-6">
-              SS26 MODERN ÉDITION
+              SARAB LUXE GOURMET
             </span>
             <h1 className="text-5xl md:text-8xl font-bold font-playfair text-white mb-8 leading-[1.1] tracking-tight">
-              The Art of <br /> <span className="italic font-normal">Silence.</span>
+              The Art of <br /> <span className="italic font-normal">Taste.</span>
             </h1>
-            <p className="text-base md:text-lg text-slate-350 mb-12 leading-relaxed max-w-md font-light text-slate-300">
-              Curated minimal statements made for the discerning eye. No borders, no noise—only pure form and structural design.
+            <p className="text-base md:text-lg text-slate-300 mb-12 leading-relaxed max-w-md font-light">
+              Discover signature gourmet selections designed for the ultimate epicurean. Borderless containers, pure taste—timeless culinary art.
             </p>
             <Link 
               href={ROUTES.SHOP}
               className="inline-flex items-center justify-center gap-4 bg-[#FFFFFF] text-slate-950 font-button text-button px-10 py-6 hover:bg-[#F1F5F9] transition-all duration-300 shadow-xl shadow-white/5 uppercase tracking-widest active:scale-98"
             >
-              <span>View Collection</span>
+              <span>View Menu Board</span>
               <span className="material-symbols-outlined text-[16px]">east</span>
             </Link>
           </div>
@@ -267,32 +267,32 @@ export default function HomePageClient({ featuredProducts }: HomePageClientProps
       <section ref={categoriesRef} className="max-w-[1280px] mx-auto px-gutter py-32">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-20 gap-6">
           <div>
-            <span className="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-[0.2em]">Bespoke Layouts</span>
-            <h2 className="text-3xl md:text-5xl font-playfair font-bold text-slate-950 mt-3">Selected Galleries</h2>
+            <span className="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-[0.2em]">Signature Galleries</span>
+            <h2 className="text-3xl md:text-5xl font-playfair font-bold text-slate-950 mt-3">Selected Departments</h2>
           </div>
           <Link className="font-button text-button text-slate-950 flex items-center gap-3 hover:opacity-70 transition-opacity uppercase tracking-widest" href={ROUTES.SHOP}>
-            Explore All <span className="material-symbols-outlined text-[16px]">east</span>
+            Explore Menu <span className="material-symbols-outlined text-[16px]">east</span>
           </Link>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {[
             { 
-              name: "Apparel", 
-              count: "32 pieces", 
+              name: "Appetizers", 
+              count: "12 curated starters", 
               img: "https://lh3.googleusercontent.com/aida-public/AB6AXuD3h50e_Gc3j8AajRynQ3ZC3oCbydv-QcWdKlGvJ0kqFSTVDOtvwja3XLuQa857kaPesmtaFlSnRViidGNaW16gW3c79C4jO9K5VXk5gWeHX5jrTOUXEzFfZ8UOGlhki-DsTUOW7qno1Hm57Iet8-JGz8vwEqry2QqU0cA0-osb8-8LbAk-881eiGALYa3c_hsZA806_244FDDihkg_m-2Buh82sJ1Z8edxXeSIUDY__0ZfQitsSq04ZtiXVMMllm7tYQ6rrmwnUvA6",
               heightClass: "min-h-[460px]"
             },
             { 
-              name: "Footwear", 
-              count: "18 pieces", 
-              img: "https://lh3.googleusercontent.com/aida-public/AB6AXuD_6HxL1oBR2zSF2WkQp5wJ6zHR451G2yo2UgijYUWKpakwwn_Ru94UGff9uTEjIiSvENc1FuVrH21hTKXo9WHfsU5liw6iu7lnocRjTOAq4A3v4m9WflWbHnkz-wa4bEOJCqrAvA7ooTwIapF_41V7gDhMX91AkhMC9fXmhFTGMfcYJ-FQpB77E82xhslRer4otxWQ-dmwiXA3nmg7Bq_zbmHMRPxDZPd33PXjxl9OTkTrmSTxATYu2XqDc9V9VZnM-7rSErq5fKvQ",
+              name: "Main Courses", 
+              count: "8 signature mains", 
+              img: "https://lh3.googleusercontent.com/aida-public/AB6AXuD8t5jKG34C0faRzyXVogbJTrxy5Dt_DDDfuG2g3axitxQDfDWrAEH0MIXSR4MMWNpzjdLPaKA_ZemoKYMtcpDzbAk1Azqp926C_OYGwHdasubtwO13xr0oaSa4Zc0ulricAqnesCnKWrDFfcI1oABlF9x0-GjqO2KRJIcBacoK3To_Ig6Tsh-35V_Z5TYqlxbswfOwKWzpjTQsqbzf_ANowjnQe79_YG1-ZwtSK5rFGhoNnMWzS_O22jvh4_nPe8BL1pQjbv1nA-sx",
               heightClass: "min-h-[520px] md:translate-y-8"
             },
             { 
-              name: "Home Gallery", 
-              count: "24 pieces", 
-              img: "https://lh3.googleusercontent.com/aida-public/AB6AXuDQOrIVaEVxTCAH-ckbH7VzfUzzm5lzUDDDF185sa102041EZWKOrG4CHcsWPIstUY0m7-ofsOIjB8svntxoyPwI0rGm__YLUw13N5_fucuF9SLe2R-DMI8KRNvYdce8pr36jJs1cM-z7gLt5OOw2rUKSmbylAUdiP4lxT5CG0zIlJYZBTrVpPHx7j5U1yPAnkMoK0ky2v_E84V2BJ0Bk0nt-qgvFN5KVo52sLmdVqCLoMl367ukFoUwE6Pu8IC8211Fyzt49NMdM88",
+              name: "Mocktails", 
+              count: "14 artisan pairings", 
+              img: "https://lh3.googleusercontent.com/aida-public/AB6AXuAdG_0IT2JZJx7InP8X_9_j3HQJKcj3kmGReatvVLhflnVlIjcibXMrK3wpDN371claG2928iq0yD4dXPYhiK_oPfPgLCz4Jy-m5swmFeg9yCxn_CplGYYgWF5ahcwDXE38xlhJ_Thzh0YPpZnsoNHOkIGOtlM_OkUgswWN5Pw93LDgimFA3GZEj-iR1zgrTayHBGEw09_Fkb8TC3auis0evbP_OM0s_6PcXKnG0gOfpq8YW53SUwxFVf8Q7U70kHpt2G2dsdbKDXoE",
               heightClass: "min-h-[460px]"
             }
           ].map((cat) => (
@@ -331,20 +331,20 @@ export default function HomePageClient({ featuredProducts }: HomePageClientProps
         <div className="max-w-[1280px] w-full mx-auto px-gutter flex flex-col lg:flex-row items-center justify-between gap-16">
           <div className="max-w-xl text-center lg:text-left">
             <span className="font-label-caps text-[10px] text-accent-gold uppercase tracking-[0.25em] mb-4 block countdown-title">
-              Limited Archive Release
+              Chef&apos;s Special Reserve Release
             </span>
             <h2 className="text-3xl md:text-5xl font-playfair font-bold mb-6 leading-tight">
-              Curated Obsidian Set <br /> <span className="italic font-normal">Special Premium pricing.</span>
+              Culinary Vault Tasting Set <br /> <span className="italic font-normal">Special Epicurean Reserve pricing.</span>
             </h2>
             <p className="text-slate-400 font-light leading-relaxed max-w-md">
-              A carefully matched selection of three bespoke home elements. Only available for a highly constrained period of time.
+              A meticulously paired flight of our signature courses and botanical pairings. Extremely limited release from the Chef&apos;s personal laboratory.
             </p>
             <div className="mt-8">
               <Link 
                 href={ROUTES.SHOP} 
                 className="inline-flex items-center gap-3 text-white font-button text-button uppercase tracking-widest border-b border-white/20 pb-2 hover:border-accent-gold transition-colors"
               >
-                Claim This Set <span className="material-symbols-outlined text-[16px]">east</span>
+                Reserve Your Flight <span className="material-symbols-outlined text-[16px]">east</span>
               </Link>
             </div>
           </div>
@@ -369,16 +369,16 @@ export default function HomePageClient({ featuredProducts }: HomePageClientProps
         <div className="max-w-[1280px] mx-auto px-gutter">
           <div className="mb-20 text-center lg:text-left flex flex-col lg:flex-row lg:justify-between lg:items-end gap-6">
             <div>
-              <span className="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-[0.25em]">Design Evolution</span>
-              <h2 className="text-3xl md:text-5xl font-playfair font-bold text-slate-950 mt-3">The Lookbook Timeline</h2>
+              <span className="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-[0.25em]">Our Story</span>
+              <h2 className="text-3xl md:text-5xl font-playfair font-bold text-slate-950 mt-3">Culinary Chronology</h2>
             </div>
             <p className="text-slate-400 font-light text-sm max-w-sm">
-              Tracing the signature silhouette transitions and material milestones of LuminaÉdition.
+              Tracing the signature gastronomic transitions and ingredient milestones of Sarab Luxe Gourmet.
             </p>
           </div>
           
           <div ref={carouselContainerRef} className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            {lookbookTimeline.map((item, idx) => (
+            {culinaryTimeline.map((item, idx) => (
               <div 
                 key={item.year}
                 className="timeline-card bg-white p-8 soft-elevation flex flex-col justify-between transition-all duration-500 hover:scale-[1.02] min-h-[460px] relative"
@@ -386,7 +386,7 @@ export default function HomePageClient({ featuredProducts }: HomePageClientProps
                 <div>
                   <div className="flex justify-between items-baseline mb-6 border-b border-slate-50 pb-4">
                     <span className="text-4xl font-playfair font-bold text-slate-950">{item.year}</span>
-                    <span className="font-label-caps text-[9px] text-accent-gold uppercase tracking-wider">Phase {idx + 1}</span>
+                    <span className="font-label-caps text-[9px] text-accent-gold uppercase tracking-wider">Epoch {idx + 1}</span>
                   </div>
                   <div className="w-full aspect-[4/3] bg-slate-50 overflow-hidden mb-6">
                     <img 
@@ -400,7 +400,7 @@ export default function HomePageClient({ featuredProducts }: HomePageClientProps
                 </div>
                 
                 <div className="mt-8 pt-4 border-t border-slate-50 flex justify-between items-center text-slate-400">
-                  <span className="font-label-caps text-[10px] tracking-widest uppercase">Lumina Archives</span>
+                  <span className="font-label-caps text-[10px] tracking-widest uppercase">Sarab Archives</span>
                   <span className="material-symbols-outlined text-sm">auto_awesome</span>
                 </div>
               </div>
@@ -414,9 +414,9 @@ export default function HomePageClient({ featuredProducts }: HomePageClientProps
         <div className="max-w-[1280px] mx-auto px-gutter">
           
           <div className="text-center mb-24">
-            <span className="font-label-caps text-[10px] text-slate-400 uppercase tracking-[0.25em]">Curated Spotlight</span>
-            <h2 className="text-4xl md:text-5xl font-playfair font-bold text-slate-950 mt-3">Featured Pieces</h2>
-            <p className="text-slate-500 text-sm mt-4 font-light max-w-sm mx-auto">Distinct items crafted with timeless, architectural precision.</p>
+            <span className="font-label-caps text-[10px] text-slate-400 uppercase tracking-[0.25em]">Chef&apos;s Specials</span>
+            <h2 className="text-4xl md:text-5xl font-playfair font-bold text-slate-950 mt-3">Signature Dishes</h2>
+            <p className="text-slate-500 text-sm mt-4 font-light max-w-sm mx-auto">Distinct flavor palettes crafted with absolute epicurean precision.</p>
           </div>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -444,13 +444,13 @@ export default function HomePageClient({ featuredProducts }: HomePageClientProps
                     )}
                     <div className="absolute top-4 left-4">
                       <span className="bg-slate-950 text-white text-[9px] font-label-caps px-3 py-1.5 uppercase tracking-widest">
-                        New In
+                        Fresh Release
                       </span>
                     </div>
                   </div>
                   <div className="px-2">
                     <h3 className="font-bold text-slate-900 text-base mb-1 truncate group-hover:text-slate-950 transition-colors">{product.title}</h3>
-                    <p className="text-slate-400 text-[10px] mb-3 uppercase tracking-widest font-bold font-manrope">Premium Collection</p>
+                    <p className="text-slate-400 text-[10px] mb-3 uppercase tracking-widest font-bold font-manrope">Gourmet Selection</p>
                     <p className="font-bold text-slate-950 text-[15px] font-manrope">{formatCurrency(product.price)}</p>
                   </div>
                 </Link>
@@ -464,10 +464,10 @@ export default function HomePageClient({ featuredProducts }: HomePageClientProps
       <section className="max-w-[1280px] mx-auto px-gutter py-32">
         <div className="bg-white rounded-none p-12 md:p-24 flex flex-col lg:flex-row items-center justify-between gap-16 soft-elevation">
           <div className="max-w-xl text-center lg:text-left">
-            <span className="font-label-caps text-[10px] text-slate-400 uppercase tracking-[0.25em] mb-4 block">Newsletter</span>
-            <h2 className="text-3xl md:text-5xl font-playfair font-bold text-slate-950 mb-6 leading-tight">Join the Studio List</h2>
+            <span className="font-label-caps text-[10px] text-slate-400 uppercase tracking-[0.25em] mb-4 block">Mailing List</span>
+            <h2 className="text-3xl md:text-5xl font-playfair font-bold text-slate-950 mb-6 leading-tight">Join the Culinary Circle</h2>
             <p className="text-sm md:text-base text-slate-600 leading-relaxed font-light">
-              Subscribe to receive early access to new collections, exclusive lookbooks, and design stories from our studio.
+              Subscribe to receive priority reservation codes, private tasting invites, and ingredient stories from our master kitchen.
             </p>
           </div>
           <div className="w-full lg:w-auto flex-1 max-w-md">
