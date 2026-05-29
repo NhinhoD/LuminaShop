@@ -21,9 +21,9 @@ When starting ANY new session, always do this first — no exceptions:
 5. Read @src/infrastructure/supabase — understand DB layer
 6. Read @src/presentation — understand UI layer
 7. Read @public/stitch_e_commerce_ux_ui_design — UI design references
-8. Read @.agents/skills/supabase — Supabase patterns
-9. Read @.agents/skills/supabase-postgres-best-practices — DB best practices
-10. Read @.agents/skills/stitch-design — UI/UX & Stitch patterns
+8. Read @.agents/skills/supabase/supabase — Supabase patterns
+9. Read @.agents/skills/supabase/supabase-postgres-best-practices — DB best practices
+10. Read @.agents/skills/stitch/stitch-design — UI/UX & Stitch patterns
 11. Read @.agents/skills/react-components — React & Tailwind patterns
 
 After reading, report to user:
@@ -137,6 +137,10 @@ domain/ → application/ → infrastructure/ → presentation/
 4. Supabase migration via MCP Supabase
 5. Server action
 6. UI component (reference Stitch design)
+
+### 🌪️ GSAP & Framer Motion Animation Rules
+- **Performance First**: Always read `@.agents/skills/gsap/gsap-performance` before writing scroll-driven animations. Use `will-change` CSS properties judicially and kill/cleanup active timelines in React `useEffect` unmount hooks to prevent memory leaks.
+- **Micro-interactions**: Utilize GSAP QuickTo for mouse-follow effects and Framer Motion layoutId for seamless fluid layout morphing between listing and detail frames.
 
 ---
 
