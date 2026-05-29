@@ -39,7 +39,7 @@ export default function ShopProductGrid({ initialProducts }: ShopProductGridProp
         }
       }
       
-      // Price Filter (in VND, converting $ range to VND or matching directly)
+      // Price Filter
       if (product.price > maxPrice) {
         return false;
       }
@@ -62,7 +62,7 @@ export default function ShopProductGrid({ initialProducts }: ShopProductGridProp
     setSelectedCategory(category);
     setTimeout(() => {
       setIsLoading(false);
-    }, 450); // Simulate skeletal loading delay for premium feel
+    }, 450); // Premium skeletal loading delay
   };
 
   // Handle material toggle
@@ -82,18 +82,17 @@ export default function ShopProductGrid({ initialProducts }: ShopProductGridProp
     if (!isLoading && currentGrid) {
       const items = currentGrid.querySelectorAll(".product-card-anim");
       if (items.length > 0) {
-        // Kill active tweens on these elements to prevent overlaps
         gsap.killTweensOf(items);
         
         gsap.fromTo(items,
-          { opacity: 0, y: 30, scale: 0.95 },
+          { opacity: 0, y: 30, scale: 0.98 },
           { 
             opacity: 1, 
             y: 0, 
             scale: 1, 
-            duration: 0.6, 
+            duration: 0.7, 
             ease: "power3.out", 
-            stagger: 0.08,
+            stagger: 0.06,
             overwrite: "auto"
           }
         );
@@ -108,27 +107,27 @@ export default function ShopProductGrid({ initialProducts }: ShopProductGridProp
   }, [isLoading, filteredProducts]);
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 bg-[#F8FAFC] p-8 md:p-12 soft-elevation">
       
       {/* Filters Sidebar */}
-      <aside className="lg:col-span-3 space-y-10">
+      <aside className="lg:col-span-3 space-y-12">
         <div>
-          <h3 className="text-[11px] font-bold text-slate-950 uppercase tracking-[0.2em] mb-6">Categories</h3>
+          <h3 className="font-label-caps text-[10px] text-slate-400 uppercase tracking-[0.25em] mb-6">Categories</h3>
           <ul className="space-y-4">
             {["All Pieces", "Outerwear", "Knitwear", "Accessories", "Home"].map((cat) => (
               <li key={cat}>
                 <button
                   onClick={() => handleCategorySelect(cat)}
-                  className={`text-sm transition-all duration-300 relative py-1 focus:outline-none cursor-pointer ${
+                  className={`font-manrope text-sm transition-all duration-300 relative py-1 focus:outline-none cursor-pointer flex items-center ${
                     selectedCategory === cat 
                       ? "text-slate-950 font-bold translate-x-1" 
                       : "text-slate-500 hover:text-slate-950"
                   }`}
                 >
-                  {cat}
                   {selectedCategory === cat && (
-                    <span className="absolute left-[-10px] top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-[#2563eb]" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-accent-gold mr-2.5 animate-pulse" />
                   )}
+                  {cat}
                 </button>
               </li>
             ))}
@@ -136,7 +135,7 @@ export default function ShopProductGrid({ initialProducts }: ShopProductGridProp
         </div>
 
         <div>
-          <h3 className="text-[11px] font-bold text-slate-950 uppercase tracking-[0.2em] mb-6">Price Limit</h3>
+          <h3 className="font-label-caps text-[10px] text-slate-400 uppercase tracking-[0.25em] mb-6">Price Limit</h3>
           <div className="px-2">
             <input 
               type="range" 
@@ -149,9 +148,9 @@ export default function ShopProductGrid({ initialProducts }: ShopProductGridProp
                 setMaxPrice(Number(e.target.value));
                 setTimeout(() => setIsLoading(false), 300);
               }}
-              className="w-full h-1 bg-slate-100 rounded-lg appearance-none cursor-pointer accent-slate-950" 
+              className="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-slate-950" 
             />
-            <div className="flex justify-between mt-4 text-[10px] font-bold text-slate-500 uppercase">
+            <div className="flex justify-between mt-4 text-[10px] font-bold text-slate-400 uppercase font-manrope">
               <span>Min</span>
               <span className="text-slate-900 font-bold">Max: VND {maxPrice.toLocaleString()}</span>
             </div>
@@ -159,7 +158,7 @@ export default function ShopProductGrid({ initialProducts }: ShopProductGridProp
         </div>
 
         <div>
-          <h3 className="text-[11px] font-bold text-slate-950 uppercase tracking-[0.2em] mb-6">Material</h3>
+          <h3 className="font-label-caps text-[10px] text-slate-400 uppercase tracking-[0.25em] mb-6">Material</h3>
           <div className="flex flex-wrap gap-2">
             {["Cotton", "Wool", "Nylon", "Silk"].map((mat) => {
               const isSelected = selectedMaterials.includes(mat);
@@ -167,10 +166,10 @@ export default function ShopProductGrid({ initialProducts }: ShopProductGridProp
                 <button 
                   key={mat}
                   onClick={() => toggleMaterial(mat)}
-                  className={`px-3.5 py-2 border rounded-full text-[10px] font-bold transition-all uppercase tracking-wider cursor-pointer ${
+                  className={`px-4 py-2 text-[10px] font-bold transition-all uppercase tracking-wider cursor-pointer rounded-none font-manrope ${
                     isSelected 
-                      ? "bg-slate-950 border-slate-950 text-white shadow-md scale-105" 
-                      : "border-slate-100 text-slate-500 hover:border-slate-900 hover:text-slate-900"
+                      ? "bg-slate-950 text-white shadow-sm" 
+                      : "bg-[#F1F5F9] text-slate-500 hover:bg-slate-200 hover:text-slate-900"
                   }`}
                 >
                   {mat}
@@ -184,33 +183,32 @@ export default function ShopProductGrid({ initialProducts }: ShopProductGridProp
       {/* Product Grid Area */}
       <div className="lg:col-span-9">
         {isLoading ? (
-          // Shimmering Skeletal loader layout
+          // Premium skeletal shimmers
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-x-8 gap-y-16">
             {[1, 2, 3, 4, 5, 6].map((i) => (
               <div key={i} className="flex flex-col space-y-4 animate-pulse">
-                <div className="relative aspect-[3/4] bg-slate-100 rounded-lg overflow-hidden Shimmer" />
-                <div className="h-4 bg-slate-100 rounded w-3/4" />
-                <div className="h-3 bg-slate-100 rounded w-1/2" />
-                <div className="h-4 bg-slate-100 rounded w-1/4" />
+                <div className="relative aspect-[3/4] bg-slate-200 rounded-none overflow-hidden" />
+                <div className="h-4 bg-slate-200 w-3/4" />
+                <div className="h-3 bg-slate-200 w-1/2" />
+                <div className="h-4 bg-slate-200 w-1/4" />
               </div>
             ))}
           </div>
         ) : filteredProducts.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20 text-center">
-            <span className="material-symbols-outlined text-[48px] text-slate-300 mb-4">
+          <div className="flex flex-col items-center justify-center py-24 text-center bg-white soft-elevation p-12">
+            <span className="material-symbols-outlined text-[48px] text-slate-350 mb-4">
               search_off
             </span>
-            <p className="font-bold text-slate-800 uppercase tracking-widest text-sm mb-1">No products found</p>
-            <p className="text-slate-400 text-xs">Try selecting a different filter combination</p>
+            <p className="font-headline-md text-lg text-slate-800 mb-2">No items found</p>
+            <p className="text-slate-400 text-xs font-manrope">Please alter your filtering attributes.</p>
           </div>
         ) : (
-          /* Masonry-Style Asymmetric Grid: Alternating heights using margins or column spacing */
+          /* Asymmetric Masonry product grids without borders */
           <div 
             ref={gridRef}
             className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-x-8 gap-y-16"
           >
             {filteredProducts.map((product: Product, index: number) => {
-              // Creating a Masonry/Asymmetric feel by adding offset padding to alternating elements
               const isEven = index % 2 === 0;
               const hasVariants = (product.variants?.length ?? 0) > 0;
               
@@ -218,15 +216,15 @@ export default function ShopProductGrid({ initialProducts }: ShopProductGridProp
                 <Link 
                   key={product.id} 
                   href={`${ROUTES.PRODUCT}/${product.id}`} 
-                  className={`group flex flex-col product-card-anim will-change-transform ${
+                  className={`group flex flex-col product-card-anim will-change-transform bg-white p-6 soft-elevation ${
                     isEven ? "mt-0" : "sm:mt-8"
                   }`}
                 >
-                  <div className="relative aspect-[3/4] rounded-lg overflow-hidden bg-slate-50 mb-6 shadow-sm group-hover:shadow-md transition-shadow duration-300">
+                  <div className="relative aspect-[3/4] overflow-hidden bg-[#F8FAFC] mb-6 rounded-none">
                     {product.imageUrl ? (
                       <img 
                         alt={product.title} 
-                        className="w-full h-full object-cover mix-blend-multiply opacity-90 transition-transform duration-1000 group-hover:scale-105" 
+                        className="w-full h-full object-cover grayscale-[10%] group-hover:grayscale-0 transition-transform duration-1000 group-hover:scale-105" 
                         src={product.imageUrl} 
                       />
                     ) : (
@@ -235,7 +233,7 @@ export default function ShopProductGrid({ initialProducts }: ShopProductGridProp
                       </div>
                     )}
                     <div className="absolute top-4 left-4">
-                      <span className="bg-white/95 text-slate-900 text-[9px] font-black px-2 py-1 rounded-sm uppercase tracking-widest border border-slate-100/50">
+                      <span className="bg-slate-950 text-white text-[9px] font-label-caps px-2.5 py-1.5 uppercase tracking-widest">
                         New In
                       </span>
                     </div>
@@ -253,13 +251,13 @@ export default function ShopProductGrid({ initialProducts }: ShopProductGridProp
                   </div>
                   
                   <div className="space-y-1 py-1">
-                    <h3 className="font-bold text-slate-900 text-sm group-hover:text-[#2563eb] transition-colors line-clamp-1">
+                    <h3 className="font-playfair font-bold text-slate-900 text-base group-hover:text-accent-gold transition-colors line-clamp-1">
                       {product.title}
                     </h3>
-                    <p className="text-slate-400 text-[10px] uppercase tracking-widest font-black">
+                    <p className="text-slate-400 text-[10px] uppercase tracking-widest font-bold font-manrope">
                       Premium Collection
                     </p>
-                    <p className="font-bold text-slate-900 text-sm mt-2">
+                    <p className="font-bold text-slate-950 text-sm mt-3 font-manrope">
                       {formatCurrency(product.price)}
                     </p>
                   </div>

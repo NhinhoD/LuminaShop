@@ -1,302 +1,350 @@
 <!DOCTYPE html>
-
 <html class="light" lang="en"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Checkout - LuminaCommerce</title>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<title>Checkout | MODERN ÉDITION</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&amp;family=Manrope:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <script id="tailwind-config">
-        tailwind.config = {
-          darkMode: "class",
-          theme: {
-            extend: {
-              "colors": {
-                      "error-container": "#ffdad6",
-                      "surface-container-highest": "#d3e4fe",
-                      "secondary": "#0051d5",
-                      "surface-container-low": "#eff4ff",
-                      "on-surface": "#0b1c30",
-                      "outline": "#76777d",
-                      "primary-fixed": "#dae2fd",
-                      "on-background": "#0b1c30",
-                      "surface-variant": "#d3e4fe",
-                      "surface-tint": "#565e74",
-                      "on-secondary-fixed": "#00174b",
-                      "background": "#f8f9ff",
-                      "error": "#ba1a1a",
-                      "secondary-fixed-dim": "#b4c5ff",
-                      "tertiary": "#000000",
-                      "tertiary-container": "#002113",
-                      "on-secondary-container": "#fefcff",
-                      "on-primary-fixed-variant": "#3f465c",
-                      "on-primary-container": "#7c839b",
-                      "surface-container-high": "#dce9ff",
-                      "surface-container": "#e5eeff",
-                      "on-tertiary-container": "#009668",
-                      "inverse-on-surface": "#eaf1ff",
-                      "on-primary-fixed": "#131b2e",
-                      "primary-fixed-dim": "#bec6e0",
-                      "primary-container": "#131b2e",
-                      "on-error-container": "#93000a",
-                      "on-tertiary-fixed": "#002113",
-                      "surface-dim": "#cbdbf5",
-                      "surface": "#f8f9ff",
-                      "secondary-container": "#316bf3",
-                      "on-tertiary": "#ffffff",
-                      "on-tertiary-fixed-variant": "#005236",
-                      "on-secondary": "#ffffff",
-                      "outline-variant": "#c6c6cd",
-                      "surface-container-lowest": "#ffffff",
-                      "primary": "#000000",
-                      "on-primary": "#ffffff",
-                      "inverse-primary": "#bec6e0",
-                      "surface-bright": "#f8f9ff",
-                      "on-secondary-fixed-variant": "#003ea8",
-                      "tertiary-fixed": "#6ffbbe",
-                      "on-surface-variant": "#45464d",
-                      "on-error": "#ffffff",
-                      "secondary-fixed": "#dbe1ff",
-                      "tertiary-fixed-dim": "#4edea3",
-                      "inverse-surface": "#213145"
-              },
-              "borderRadius": {
-                      "DEFAULT": "0.25rem",
-                      "lg": "0.5rem",
-                      "xl": "0.75rem",
-                      "full": "9999px"
-              },
-              "spacing": {
-                      "md": "24px",
-                      "container-max": "1280px",
-                      "lg": "48px",
-                      "gutter": "24px",
-                      "xs": "4px",
-                      "sm": "12px",
-                      "base": "8px",
-                      "xl": "80px"
-              },
-              "fontFamily": {
-                      "h1": ["Manrope"],
-                      "label-sm": ["Manrope"],
-                      "h2": ["Manrope"],
-                      "body-lg": ["Manrope"],
-                      "body-md": ["Manrope"],
-                      "display": ["Manrope"],
-                      "h3": ["Manrope"],
-                      "label-md": ["Manrope"],
-                      "body-sm": ["Manrope"]
-              },
-              "fontSize": {
-                      "h1": ["32px", {"lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "700"}],
-                      "label-sm": ["12px", {"lineHeight": "1.2", "fontWeight": "600"}],
-                      "h2": ["24px", {"lineHeight": "1.4", "letterSpacing": "-0.01em", "fontWeight": "700"}],
-                      "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
-                      "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
-                      "display": ["48px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "800"}],
-                      "h3": ["20px", {"lineHeight": "1.4", "fontWeight": "600"}],
-                      "label-md": ["14px", {"lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600"}],
-                      "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}]
-              }
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-variant": "#e0e3e5",
+                    "inverse-primary": "#bec6e0",
+                    "outline-variant": "#c6c6cd",
+                    "surface-container-low": "#f2f4f6",
+                    "primary-container": "#131b2e",
+                    "on-secondary": "#ffffff",
+                    "on-primary-fixed-variant": "#3f465c",
+                    "surface-container": "#eceef0",
+                    "surface-dim": "#d8dadc",
+                    "error": "#ba1a1a",
+                    "tertiary-container": "#410000",
+                    "surface-container-high": "#e6e8ea",
+                    "surface-container-lowest": "#ffffff",
+                    "outline": "#76777d",
+                    "on-tertiary-container": "#f93625",
+                    "paper-white": "#FEF9F2",
+                    "deep-navy": "#0F172A",
+                    "accent-gold": "#F6A621",
+                    "on-secondary-container": "#586377",
+                    "surface": "#f7f9fb",
+                    "on-tertiary-fixed": "#410000",
+                    "surface-bright": "#f7f9fb",
+                    "on-surface-variant": "#45464d",
+                    "secondary-fixed": "#d8e3fb",
+                    "primary": "#000000",
+                    "secondary-container": "#d5e0f8",
+                    "on-background": "#191c1e",
+                    "on-tertiary": "#ffffff",
+                    "background": "#f7f9fb",
+                    "primary-fixed": "#dae2fd",
+                    "on-tertiary-fixed-variant": "#930000",
+                    "primary-fixed-dim": "#bec6e0",
+                    "inverse-on-surface": "#eff1f3",
+                    "surface-container-highest": "#e0e3e5",
+                    "error-container": "#ffdad6",
+                    "on-surface": "#191c1e",
+                    "secondary": "#545f73",
+                    "on-error": "#ffffff",
+                    "tertiary-fixed-dim": "#ffb4a8",
+                    "tertiary": "#000000",
+                    "on-error-container": "#93000a",
+                    "accent-red": "#E8281A",
+                    "surface-tint": "#565e74",
+                    "secondary-fixed-dim": "#bcc7de",
+                    "on-secondary-fixed": "#111c2d",
+                    "on-primary-fixed": "#131b2e",
+                    "inverse-surface": "#2d3133",
+                    "tertiary-fixed": "#ffdad4",
+                    "slate-surface": "#F1F5F9",
+                    "on-primary": "#ffffff",
+                    "on-secondary-fixed-variant": "#3c475a",
+                    "on-primary-container": "#7c839b"
             },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "section-gap": "120px",
+                    "unit": "8px",
+                    "gutter": "32px",
+                    "margin-mobile": "24px",
+                    "container-max-width": "1280px"
+            },
+            "fontFamily": {
+                    "headline-xl-mobile": ["Playfair Display"],
+                    "headline-md": ["Playfair Display"],
+                    "headline-lg": ["Playfair Display"],
+                    "label-caps": ["Manrope"],
+                    "headline-xl": ["Playfair Display"],
+                    "button": ["Manrope"],
+                    "body-md": ["Manrope"],
+                    "body-lg": ["Manrope"]
+            },
+            "fontSize": {
+                    "headline-xl-mobile": ["40px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                    "headline-md": ["32px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                    "headline-lg": ["48px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                    "label-caps": ["12px", {"lineHeight": "1", "letterSpacing": "0.1em", "fontWeight": "700"}],
+                    "headline-xl": ["64px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "button": ["14px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}]
+            }
           },
-        }
+        },
+      }
     </script>
 <style>
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        .step-inactive { opacity: 0.3; transition: all 0.5s ease; }
+        .step-active { opacity: 1; transform: translateY(0); transition: all 0.5s ease; }
+        
+        .input-focus-line { position: relative; }
+        .input-focus-line::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 1px;
+            background: #0F172A;
+            transition: all 0.3s ease;
         }
-        .step-active { color: theme('colors.secondary'); border-color: theme('colors.secondary'); }
-        .step-complete { color: theme('colors.on-surface'); border-color: theme('colors.secondary'); background-color: theme('colors.surface-container'); }
-        .form-section { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .input-focus-line:focus-within::after {
+            width: 100%;
+            left: 0;
+        }
     </style>
 </head>
-<body class="bg-background text-on-background min-h-screen flex flex-col font-body-md">
-<!-- Minimalist Checkout Header -->
-<header class="w-full border-b border-outline-variant bg-surface-container-lowest py-sm px-8">
-<div class="max-w-container-max mx-auto flex justify-between items-center">
-<a class="font-h2 text-h2 text-primary" href="#">LuminaCommerce</a>
-<div class="flex items-center gap-xs text-outline">
-<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">lock</span>
-<span class="font-label-sm text-label-sm">Secure Checkout</span>
+<body class="bg-surface text-primary font-body-md overflow-x-hidden selection:bg-deep-navy selection:text-surface">
+<nav class="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-md transition-colors duration-500 ease-in-out">
+<div class="flex justify-between items-center px-gutter py-8 max-w-container-max-width mx-auto">
+<a class="font-headline-md text-headline-md font-bold tracking-tighter text-primary" href="#">MODERN_ÉDITION</a>
+<div class="hidden md:flex gap-12 font-body-md text-body-md tracking-widest uppercase">
+<span class="text-on-surface-variant hover:text-primary transition-colors cursor-pointer">Collections</span>
+<span class="text-on-surface-variant hover:text-primary transition-colors cursor-pointer">Stories</span>
+<span class="text-on-surface-variant hover:text-primary transition-colors cursor-pointer">Archives</span>
+<span class="text-on-surface-variant hover:text-primary transition-colors cursor-pointer">Studio</span>
+</div>
+<div class="flex items-center gap-6">
+<span class="material-symbols-outlined text-primary cursor-pointer">shopping_bag</span>
 </div>
 </div>
+</nav>
+<main class="mt-32 mb-section-gap px-gutter max-w-container-max-width mx-auto">
+<div class="mb-24 flex items-center justify-start gap-12">
+<div class="flex items-center gap-4 step-active">
+<span class="font-label-caps text-label-caps text-deep-navy">01</span>
+<span class="font-label-caps text-label-caps uppercase tracking-widest text-deep-navy">Shipping</span>
+</div>
+<div class="h-[1px] w-12 bg-outline-variant"></div>
+<div class="flex items-center gap-4 step-inactive">
+<span class="font-label-caps text-label-caps text-on-surface-variant">02</span>
+<span class="font-label-caps text-label-caps uppercase tracking-widest text-on-surface-variant">Payment</span>
+</div>
+<div class="h-[1px] w-12 bg-outline-variant"></div>
+<div class="flex items-center gap-4 step-inactive">
+<span class="font-label-caps text-label-caps text-on-surface-variant">03</span>
+<span class="font-label-caps text-label-caps uppercase tracking-widest text-on-surface-variant">Confirm</span>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-start">
+<div class="lg:col-span-7 space-y-16">
+<header>
+<h1 class="font-headline-xl text-headline-xl text-primary mb-4">Secure Checkout</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-xl">Each piece is meticulously crafted and handled with the utmost care for your collection.</p>
 </header>
-<main class="flex-grow max-w-container-max w-full mx-auto px-8 py-lg">
-<!-- Multi-stage Progress Indicator -->
-<div class="mb-xl max-w-2xl mx-auto">
-<div class="relative flex justify-between items-center">
-<!-- Progress Line -->
-<div class="absolute top-1/2 left-0 w-full h-0.5 bg-surface-container-high -translate-y-1/2 -z-10"></div>
-<div class="absolute top-1/2 left-0 w-1/4 h-0.5 bg-secondary -translate-y-1/2 -z-10 transition-all duration-500"></div>
-<!-- Steps -->
-<div class="flex flex-col items-center gap-2 bg-background px-4">
-<div class="w-10 h-10 rounded-full border-2 flex items-center justify-center bg-surface-container-lowest step-active">
-<span class="font-label-md">1</span>
+<section class="space-y-12">
+<h2 class="font-headline-md text-headline-md italic">Shipping Intelligence</h2>
+<form class="space-y-8">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<div class="input-focus-line">
+<label class="font-label-caps text-label-caps text-on-surface-variant uppercase mb-2 block">First Name</label>
+<input class="w-full bg-slate-surface border-none py-4 px-6 font-body-md placeholder:text-outline focus:ring-0 transition-all duration-300" placeholder="Julian" type="text"/>
 </div>
-<span class="font-label-sm text-primary">Information</span>
-</div>
-<div class="flex flex-col items-center gap-2 bg-background px-4">
-<div class="w-10 h-10 rounded-full border-2 flex items-center justify-center bg-surface-container-lowest border-outline-variant text-outline">
-<span class="font-label-md">2</span>
-</div>
-<span class="font-label-sm text-outline">Shipping</span>
-</div>
-<div class="flex flex-col items-center gap-2 bg-background px-4">
-<div class="w-10 h-10 rounded-full border-2 flex items-center justify-center bg-surface-container-lowest border-outline-variant text-outline">
-<span class="font-label-md">3</span>
-</div>
-<span class="font-label-sm text-outline">Payment</span>
+<div class="input-focus-line">
+<label class="font-label-caps text-label-caps text-on-surface-variant uppercase mb-2 block">Last Name</label>
+<input class="w-full bg-slate-surface border-none py-4 px-6 font-body-md placeholder:text-outline focus:ring-0 transition-all duration-300" placeholder="Beauchamp" type="text"/>
 </div>
 </div>
+<div class="input-focus-line">
+<label class="font-label-caps text-label-caps text-on-surface-variant uppercase mb-2 block">Street Address</label>
+<input class="w-full bg-slate-surface border-none py-4 px-6 font-body-md placeholder:text-outline focus:ring-0 transition-all duration-300" placeholder="12 Rue de l'Odéon" type="text"/>
 </div>
-<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
-<!-- Left Column: Checkout Flow -->
-<div class="lg:col-span-7 flex flex-col gap-md">
-<!-- Section 1: Contact & Shipping -->
-<section class="form-section bg-surface-container-lowest rounded-lg p-md border border-outline-variant shadow-[0_4px_20px_rgb(0,0,0,0.05)]">
-<div class="flex justify-between items-center mb-md pb-sm border-b border-outline-variant">
-<h2 class="font-h3 text-h3 text-primary">Shipping Information</h2>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<div class="input-focus-line">
+<label class="font-label-caps text-label-caps text-on-surface-variant uppercase mb-2 block">City</label>
+<input class="w-full bg-slate-surface border-none py-4 px-6 font-body-md placeholder:text-outline focus:ring-0 transition-all duration-300" placeholder="Paris" type="text"/>
 </div>
-<form class="flex flex-col gap-sm">
-<h3 class="font-label-sm text-label-sm text-on-surface-variant mt-sm">Contact</h3>
-<div class="grid grid-cols-1 gap-1">
-<input class="w-full border-error rounded-DEFAULT py-sm px-md focus:border-error focus:ring-1 focus:ring-error text-on-surface bg-surface-bright placeholder:text-outline transition-colors font-body-sm text-body-sm" placeholder="Email address" type="email" value="invalid-email"/>
-<span class="text-error font-label-sm text-[11px] px-1">Please enter a valid email address.</span>
+<div class="input-focus-line">
+<label class="font-label-caps text-label-caps text-on-surface-variant uppercase mb-2 block">Postal Code</label>
+<input class="w-full bg-slate-surface border-none py-4 px-6 font-body-md placeholder:text-outline focus:ring-0 transition-all duration-300" placeholder="75006" type="text"/>
 </div>
-<h3 class="font-label-sm text-label-sm text-on-surface-variant mt-md">Shipping Address</h3>
-<div class="grid grid-cols-1 md:grid-cols-2 gap-sm">
-<div class="grid grid-cols-1 gap-1">
-<input class="w-full border-error rounded-DEFAULT py-sm px-md focus:border-error focus:ring-1 focus:ring-error text-on-surface bg-surface-bright placeholder:text-outline transition-colors font-body-sm text-body-sm" placeholder="First name" type="text"/>
-<span class="text-error font-label-sm text-[11px] px-1">First name is required.</span>
-</div>
-<div class="grid grid-cols-1 gap-1">
-<input class="w-full border-outline-variant rounded-DEFAULT py-sm px-md focus:border-secondary focus:ring-1 focus:ring-secondary text-on-surface bg-surface-bright placeholder:text-outline transition-colors font-body-sm text-body-sm" placeholder="Last name" type="text"/>
-</div>
-</div>
-<div class="grid grid-cols-1 gap-sm">
-<input class="w-full border-outline-variant rounded-DEFAULT py-sm px-md focus:border-secondary focus:ring-1 focus:ring-secondary text-on-surface bg-surface-bright placeholder:text-outline transition-colors font-body-sm text-body-sm" placeholder="Address" type="text"/>
-<input class="w-full border-outline-variant rounded-DEFAULT py-sm px-md focus:border-secondary focus:ring-1 focus:ring-secondary text-on-surface bg-surface-bright placeholder:text-outline transition-colors font-body-sm text-body-sm" placeholder="Apartment, suite, etc. (optional)" type="text"/>
-</div>
-<div class="grid grid-cols-1 md:grid-cols-3 gap-sm">
-<input class="w-full border-outline-variant rounded-DEFAULT py-sm px-md focus:border-secondary focus:ring-1 focus:ring-secondary text-on-surface bg-surface-bright placeholder:text-outline transition-colors font-body-sm text-body-sm" placeholder="City" type="text"/>
-<select class="w-full border-outline-variant rounded-DEFAULT py-sm px-md focus:border-secondary focus:ring-1 focus:ring-secondary text-on-surface bg-surface-bright font-body-sm text-body-sm appearance-none">
-<option value="">State / Province</option>
-<option value="NY">New York</option>
-<option value="CA">California</option>
+<div class="input-focus-line">
+<label class="font-label-caps text-label-caps text-on-surface-variant uppercase mb-2 block">Country</label>
+<select class="w-full bg-slate-surface border-none py-4 px-6 font-body-md text-primary focus:ring-0 transition-all duration-300 appearance-none">
+<option>France</option>
+<option>United Kingdom</option>
+<option>United States</option>
+<option>Japan</option>
 </select>
-<input class="w-full border-outline-variant rounded-DEFAULT py-sm px-md focus:border-secondary focus:ring-1 focus:ring-secondary text-on-surface bg-surface-bright placeholder:text-outline transition-colors font-body-sm text-body-sm" placeholder="ZIP code" type="text"/>
 </div>
-<label class="flex items-center gap-sm mt-xs cursor-pointer group">
-<input class="rounded border-outline-variant text-secondary focus:ring-secondary w-5 h-5" type="checkbox"/>
-<span class="font-body-sm text-body-sm text-on-surface group-hover:text-primary transition-colors">Save this information for next time</span>
-</label>
+</div>
+<div class="pt-8">
+<button class="group relative flex items-center justify-between w-full md:w-auto md:min-w-[280px] bg-deep-navy py-6 px-10 text-surface font-button text-button uppercase tracking-widest hover:bg-primary transition-all duration-500 overflow-hidden" type="button">
+<span class="relative z-10">Proceed to Payment</span>
+<span class="material-symbols-outlined relative z-10 group-hover:translate-x-2 transition-transform">arrow_forward</span>
+<div class="absolute inset-0 bg-gradient-to-r from-accent-gold/0 via-accent-gold/10 to-accent-gold/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+</button>
+</div>
 </form>
 </section>
-<!-- Section 2: Shipping Method (Collapsed visual state) -->
-<section class="form-section bg-surface-container-lowest rounded-lg p-md border border-outline-variant shadow-[0_2px_10px_rgb(0,0,0,0.02)] opacity-60 hover:opacity-100 cursor-pointer">
-<div class="flex justify-between items-center">
-<h2 class="font-h3 text-h3 text-outline">Shipping Method</h2>
-<span class="material-symbols-outlined text-outline">expand_more</span>
 </div>
-</section>
-<!-- Section 3: Payment (Collapsed visual state) -->
-<section class="form-section bg-surface-container-lowest rounded-lg p-md border border-outline-variant shadow-[0_2px_10px_rgb(0,0,0,0.02)] opacity-60 hover:opacity-100 cursor-pointer">
-<div class="flex justify-between items-center">
-<h2 class="font-h3 text-h3 text-outline">Payment</h2>
-<span class="material-symbols-outlined text-outline">expand_more</span>
-</div>
-</section>
-<div class="mt-sm flex justify-end">
-<button class="bg-secondary text-on-secondary font-label-md text-label-md py-sm px-lg rounded-DEFAULT hover:bg-on-secondary-fixed-variant transition-all active:scale-95 duration-150 min-h-[48px] flex items-center justify-center">
-                        Continue to Shipping
-                    </button>
-</div>
-</div>
-<!-- Right Column: Order Summary -->
-<div class="lg:col-span-5 relative">
-<div class="sticky top-lg bg-surface-container-low rounded-lg p-md border border-outline-variant shadow-[0_4px_20px_rgb(0,0,0,0.03)]">
-<h2 class="font-h3 text-h3 text-primary mb-md border-b border-outline-variant pb-sm">Order Summary</h2>
-<!-- Items List -->
-<div class="flex flex-col gap-md mb-md max-h-[300px] overflow-y-auto pr-xs">
-<!-- Item 1 -->
-<div class="flex gap-sm items-center">
-<div class="w-16 h-16 rounded bg-surface-container overflow-hidden flex-shrink-0 relative border border-outline-variant">
-<img alt="red nike sneaker on dark background with dramatic lighting" class="w-full h-full object-cover" data-alt="red nike sneaker on dark background with dramatic lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAIrCpfjk6SmYVROkF3_yafcYaVFPx4n-LH3AmFug26DKse66YRqktJb-jQmEk8Cfxo9cMWF8aopj8f_Z17m6Q33oeiVv3B9xTf7bJNQ8JpBr85MV5uFAP3drGbMFGLhEN3mnWQQRwKxLPkrQcbLB3wpKaaV1qh3PH0QFNxdiLI2iJjO8Kf2Ao9s7sFmhoDep9NqTOZQ2TRO4YRGytoaQJI3K8lAmaTGO7sYQTfzApcOV1soqj-Ty5yA382TLkq8Rg44q3LYPfrJCQV"/>
-<div class="absolute -top-2 -right-2 bg-secondary text-on-secondary w-5 h-5 rounded-full flex items-center justify-center font-label-sm text-[10px]">1</div>
+<aside class="lg:col-span-5 lg:sticky lg:top-40">
+<div class="bg-white p-10 shadow-[0px_20px_40px_rgba(15,23,42,0.05)] space-y-12">
+<h3 class="font-headline-md text-headline-md">Curated Selection</h3>
+<div class="space-y-8">
+<div class="flex gap-6 items-center group">
+<div class="w-24 h-32 bg-slate-surface flex-shrink-0 overflow-hidden">
+<img alt="Curated Item" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD8t5jKG34C0faRzyXVogbJTrxy5Dt_DDDfuG2g3axitxQDfDWrAEH0MIXSR4MMWNpzjdLPaKA_ZemoKYMtcpDzbAk1Azqp926C_OYGwHdasubtwO13xr0oaSa4Zc0ulricAqnesCnKWrDFfcI1oABlF9x0-GjqO2KRJIcBacoK3To_Ig6Tsh-35V_Z5TYqlxbswfOwKWzpjTQsqbzf_ANowjnQe79_YG1-ZwtSK5rFGhoNnMWzS_O22jvh4_nPe8BL1pQjbv1nA-sx"/>
 </div>
 <div class="flex-grow">
-<h4 class="font-body-md text-body-md text-primary font-medium">Aero Glide Runners</h4>
-<p class="font-body-sm text-body-sm text-on-surface-variant">Crimson Red / Size 10</p>
+<p class="font-label-caps text-label-caps uppercase text-on-surface-variant mb-1">Edition 01/50</p>
+<h4 class="font-headline-md text-body-lg text-primary leading-tight">Monomeric Void Sculpture</h4>
+<div class="flex justify-between items-end mt-4">
+<span class="font-body-md text-on-surface-variant">Qty: 1</span>
+<span class="font-body-md font-bold">€2,450.00</span>
 </div>
-<div class="font-body-md text-body-md text-primary font-semibold whitespace-nowrap">$145.00</div>
 </div>
-<!-- Item 2 -->
-<div class="flex gap-sm items-center">
-<div class="w-16 h-16 rounded bg-surface-container overflow-hidden flex-shrink-0 relative border border-outline-variant">
-<img alt="minimalist black t-shirt folded neatly on white background" class="w-full h-full object-cover" data-alt="minimalist black t-shirt folded neatly on white background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCLjyLLXGxaMpYc2XV51J-w_gW5ICfR3aUFCc0CEtRY4_iCYy45Ezm5GL543zB91NfkQ_SraFZb4zLtzId51HeEG0glIZreg8ML2Tl-T56pMw1qDfYRmG43nxTVdWrxH3FUM9hUeedPPkLduInw4Fqbl_cbSUGqtYlwgRVBucpTi4trRJXrd9eZoDEudduq-hdNxd6jaTmUT78m1KPlJw3_oeZOrxBvKegliw-WzLldeNskYg5vfSTaF-7VWmprMF13MBL9KOt8cP4S"/>
-<div class="absolute -top-2 -right-2 bg-secondary text-on-secondary w-5 h-5 rounded-full flex items-center justify-center font-label-sm text-[10px]">2</div>
+</div>
+<div class="flex gap-6 items-center group">
+<div class="w-24 h-32 bg-slate-surface flex-shrink-0 overflow-hidden">
+<img alt="Curated Item" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDRztEHxWO2yk_wHwh1fwqlBTv7KhYoZ0LJ6LgRuCxoBw-Pje5NhW5ls90dey4fMFQ-5hUylSSyRnPDgUqVtBCcnwloJIrbfMgcxNXxdc-fcTJY01aDHKh1A_9LAGj-BCBuPGuUEruzPvPprW9k95lLxQDOOq6ooAIIXUeVBdcKQ5Z6dmMigElJZTOZkgVhppYcb54lytoyT4sKqESBP2i88Cw4o-dX4OPGxK1LicnSaaBiUoDc6Wp6YXBKb205dCRCwyO3sSs5TS_O"/>
 </div>
 <div class="flex-grow">
-<h4 class="font-body-md text-body-md text-primary font-medium">Essential Basic Tee</h4>
-<p class="font-body-sm text-body-sm text-on-surface-variant">Midnight Black / M</p>
+<p class="font-label-caps text-label-caps uppercase text-on-surface-variant mb-1">Signed Lithograph</p>
+<h4 class="font-headline-md text-body-lg text-primary leading-tight">Obsidian Rhythms III</h4>
+<div class="flex justify-between items-end mt-4">
+<span class="font-body-md text-on-surface-variant">Qty: 1</span>
+<span class="font-body-md font-bold">€890.00</span>
 </div>
-<div class="font-body-md text-body-md text-primary font-semibold whitespace-nowrap">$50.00</div>
 </div>
 </div>
-<!-- Discount Code -->
-<div class="flex gap-sm mb-md py-md border-y border-outline-variant">
-<input class="flex-grow border-outline-variant rounded-DEFAULT py-sm px-md focus:border-secondary focus:ring-1 focus:ring-secondary text-on-surface bg-surface-bright placeholder:text-outline font-body-sm text-body-sm" placeholder="Gift card or discount code" type="text"/>
-<button class="bg-surface-container-high text-on-surface font-label-md text-label-md py-sm px-md rounded-DEFAULT hover:bg-surface-dim transition-colors border border-outline-variant">
-                            Apply
-                        </button>
 </div>
-<!-- Totals -->
-<div class="flex flex-col gap-sm mb-md">
-<div class="flex justify-between items-center font-body-sm text-body-sm text-on-surface-variant">
+<div class="pt-8 border-t border-slate-surface space-y-4">
+<div class="flex justify-between font-body-md text-on-surface-variant">
 <span>Subtotal</span>
-<span class="text-primary font-medium">$195.00</span>
+<span>€3,340.00</span>
 </div>
-<div class="flex justify-between items-center font-body-sm text-body-sm text-on-surface-variant">
-<span>Shipping</span>
-<span class="text-outline italic">Calculated next step</span>
+<div class="flex justify-between font-body-md text-on-surface-variant">
+<span>Shipping (Insured)</span>
+<span>€45.00</span>
 </div>
-<div class="flex justify-between items-center font-body-sm text-body-sm text-on-surface-variant">
-<span>Taxes</span>
-<span class="text-primary font-medium">$15.60</span>
-</div>
-</div>
-<div class="flex justify-between items-end border-t border-outline-variant pt-md">
-<span class="font-h3 text-h3 text-primary">Total</span>
-<div class="flex items-baseline gap-xs">
-<span class="font-label-sm text-label-sm text-outline">USD</span>
-<span class="font-h2 text-h2 text-primary">$210.60</span>
+<div class="flex justify-between font-headline-md text-headline-md pt-6">
+<span>Total</span>
+<span>€3,385.00</span>
 </div>
 </div>
+<div class="flex items-start gap-4 p-6 bg-slate-surface">
+<span class="material-symbols-outlined text-deep-navy">verified_user</span>
+<div>
+<p class="font-label-caps text-[10px] uppercase tracking-widest text-deep-navy mb-1">Encrypted Transaction</p>
+<p class="font-body-md text-[12px] leading-relaxed text-on-surface-variant">Your payment data is processed using military-grade AES-256 encryption. We never store full credit card details on our servers.</p>
 </div>
 </div>
+</div>
+</aside>
 </div>
 </main>
-<!-- Footer -->
-<footer class="w-full border-t mt-auto border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-500 dark:text-slate-400 font-manrope text-sm">
-<div class="grid grid-cols-1 md:grid-cols-4 gap-12 py-16 px-8 max-w-[1280px] mx-auto">
-<div>
-<div class="text-lg font-bold text-slate-900 dark:text-white mb-4">LuminaCommerce</div>
-<p>© 2024 LuminaCommerce. Built for excellence.</p>
+<section class="bg-deep-navy py-32 text-surface overflow-hidden">
+<div class="max-w-container-max-width mx-auto px-gutter text-center">
+<span class="font-label-caps text-label-caps text-accent-gold uppercase tracking-[0.3em] mb-12 block">The MODERN ÉDITION Promise</span>
+<blockquote class="font-headline-xl text-headline-xl italic leading-tight max-w-4xl mx-auto mb-16">
+                “Luxury is the absence of noise. Every object we ship is a testament to the pursuit of perfection.”
+            </blockquote>
+<div class="flex justify-center gap-24">
+<div class="text-center">
+<span class="block font-headline-md text-headline-md mb-2">24h</span>
+<span class="font-label-caps text-[10px] tracking-widest uppercase text-outline-variant">Dispatch</span>
 </div>
-<div class="flex flex-col gap-2">
-<a class="hover:text-blue-600 dark:hover:text-blue-400 hover:underline transition-all" href="#">Sustainability</a>
-<a class="hover:text-blue-600 dark:hover:text-blue-400 hover:underline transition-all" href="#">Track Order</a>
+<div class="text-center">
+<span class="block font-headline-md text-headline-md mb-2">Global</span>
+<span class="font-label-caps text-[10px] tracking-widest uppercase text-outline-variant">Shipping</span>
 </div>
-<div class="flex flex-col gap-2">
-<a class="hover:text-blue-600 dark:hover:text-blue-400 hover:underline transition-all" href="#">Returns &amp; Exchanges</a>
-<a class="hover:text-blue-600 dark:hover:text-blue-400 hover:underline transition-all" href="#">Size Guide</a>
+<div class="text-center">
+<span class="block font-headline-md text-headline-md mb-2">100%</span>
+<span class="font-label-caps text-[10px] tracking-widest uppercase text-outline-variant">Insured</span>
 </div>
-<div class="flex flex-col gap-2">
-<a class="hover:text-blue-600 dark:hover:text-blue-400 hover:underline transition-all" href="#">Privacy Policy</a>
-<a class="hover:text-blue-600 dark:hover:text-blue-400 hover:underline transition-all" href="#">Terms of Service</a>
 </div>
+</div>
+</section>
+<footer class="bg-deep-navy dark:bg-black w-full pt-section-gap pb-gutter shadow-2xl">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-gutter px-gutter max-w-container-max-width mx-auto">
+<div class="col-span-1 md:col-span-1">
+<span class="font-headline-lg text-headline-lg italic text-surface block mb-8">MÉ.</span>
+<p class="font-label-caps text-label-caps text-outline-variant leading-loose uppercase">
+                    Curating the future <br/> of living art.
+                </p>
+</div>
+<div class="space-y-4">
+<h5 class="font-label-caps text-label-caps text-surface uppercase mb-6">Support</h5>
+<a class="block font-body-sm text-label-caps text-outline-variant hover:text-surface transition-colors" href="#">Shipping</a>
+<a class="block font-body-sm text-label-caps text-outline-variant hover:text-surface transition-colors" href="#">Returns</a>
+<a class="block font-body-sm text-label-caps text-outline-variant hover:text-surface transition-colors" href="#">Contact</a>
+</div>
+<div class="space-y-4">
+<h5 class="font-label-caps text-label-caps text-surface uppercase mb-6">Company</h5>
+<a class="block font-body-sm text-label-caps text-outline-variant hover:text-surface transition-colors" href="#">Sustainability</a>
+<a class="block font-body-sm text-label-caps text-outline-variant hover:text-surface transition-colors" href="#">Terms</a>
+<a class="block font-body-sm text-label-caps text-outline-variant hover:text-surface transition-colors" href="#">Privacy</a>
+</div>
+<div class="space-y-4">
+<h5 class="font-label-caps text-label-caps text-surface uppercase mb-6">Newsletter</h5>
+<div class="flex items-center bg-white/5 p-4 rounded-none">
+<input class="bg-transparent border-none text-surface focus:ring-0 w-full placeholder:text-outline-variant" placeholder="Email address" type="email"/>
+<span class="material-symbols-outlined text-surface cursor-pointer">chevron_right</span>
+</div>
+</div>
+</div>
+<div class="max-w-container-max-width mx-auto px-gutter mt-32">
+<p class="font-label-caps text-label-caps text-outline-variant uppercase text-[10px] tracking-[0.2em]">
+                © 2024 MODERN ÉDITION. ALL RIGHTS RESERVED.
+            </p>
 </div>
 </footer>
+<script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('opacity-100', 'translate-y-0');
+                        entry.target.classList.remove('opacity-0', 'translate-y-10');
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            document.querySelectorAll('section, aside').forEach(el => {
+                el.classList.add('transition-all', 'duration-1000', 'opacity-0', 'translate-y-10');
+                observer.observe(el);
+            });
+
+            window.addEventListener('scroll', () => {
+                const nav = document.querySelector('nav');
+                if (window.scrollY > 50) {
+                    nav.classList.add('py-4', 'shadow-sm');
+                    nav.classList.remove('py-8');
+                } else {
+                    nav.classList.remove('py-4', 'shadow-sm');
+                    nav.classList.add('py-8');
+                }
+            });
+        });
+    </script>
 </body></html>

@@ -50,6 +50,7 @@
   --color-surface-container-lowest: #ffffff;
 
   --font-manrope: "Manrope", sans-serif;
+  --font-playfair: "Playfair Display", serif;
   
   --spacing-gutter: 24px;
 }
@@ -63,7 +64,7 @@
   }
   
   h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-manrope);
+    font-family: var(--font-playfair);
     @apply font-bold tracking-tight;
   }
 }
@@ -75,3 +76,8 @@
 .image-overlay {
     background: linear-gradient(to top, rgba(11, 28, 48, 0.8) 0%, rgba(11, 28, 48, 0) 100%);
 }
+
+.soft-elevation {
+    box-shadow: 0px 20px 40px rgba(15, 23, 42, 0.05);
+}
+
