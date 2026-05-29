@@ -78,8 +78,9 @@ export default function ShopProductGrid({ initialProducts }: ShopProductGridProp
 
   // GSAP Grid animation when loading resolves or items change
   useEffect(() => {
-    if (!isLoading && gridRef.current) {
-      const items = gridRef.current.querySelectorAll(".product-card-anim");
+    const currentGrid = gridRef.current;
+    if (!isLoading && currentGrid) {
+      const items = currentGrid.querySelectorAll(".product-card-anim");
       if (items.length > 0) {
         // Kill active tweens on these elements to prevent overlaps
         gsap.killTweensOf(items);
@@ -98,6 +99,12 @@ export default function ShopProductGrid({ initialProducts }: ShopProductGridProp
         );
       }
     }
+    return () => {
+      if (currentGrid) {
+        const items = currentGrid.querySelectorAll(".product-card-anim");
+        gsap.killTweensOf(items);
+      }
+    };
   }, [isLoading, filteredProducts]);
 
   return (
