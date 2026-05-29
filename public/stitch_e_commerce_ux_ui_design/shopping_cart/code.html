@@ -9,11 +9,29 @@
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <style>
         .material-symbols-outlined {
             font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
         }
+
+        @keyframes slideUpFade {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fade-in-up {
+            animation: slideUpFade 0.6s ease-out forwards;
+        }
+
+        .stagger-1 { animation-delay: 0.1s; opacity: 0; }
+        .stagger-2 { animation-delay: 0.2s; opacity: 0; }
+        .stagger-3 { animation-delay: 0.3s; opacity: 0; }
     </style>
 <script id="tailwind-config">
         tailwind.config = {
@@ -114,7 +132,7 @@
 </head>
 <body class="bg-background text-on-background font-body-md antialiased flex flex-col min-h-screen">
 <!-- TopNavBar -->
-<header class="fixed top-0 w-full z-50 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md shadow-sm border-slate-200 dark:border-slate-800">
+<header class="fixed top-0 w-full z-50 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md shadow-sm border-b border-slate-200 dark:border-slate-800">
 <div class="flex justify-between items-center h-20 px-8 max-w-[1280px] mx-auto">
 <div class="text-xl font-bold tracking-tighter text-slate-900 dark:text-white">LuminaCommerce</div>
 <nav class="hidden md:flex items-center gap-8">
@@ -137,9 +155,35 @@
 </div>
 </div>
 </header>
+<!-- Progress Indicator -->
+<div class="mt-20 border-b border-outline-variant/30 bg-surface-container-lowest/50">
+<div class="max-w-container-max mx-auto px-lg py-6">
+<nav class="flex items-center justify-center gap-4 sm:gap-12">
+<div class="flex items-center gap-3 group">
+<span class="flex items-center justify-center w-8 h-8 rounded-full bg-secondary text-on-secondary text-label-sm font-bold shadow-sm">1</span>
+<span class="font-label-md text-on-surface">Cart</span>
+</div>
+<div class="w-8 h-px bg-outline-variant/50"></div>
+<div class="flex items-center gap-3 text-on-surface-variant/60">
+<span class="flex items-center justify-center w-8 h-8 rounded-full bg-surface-container text-on-surface-variant text-label-sm font-bold">2</span>
+<span class="font-label-md">Information</span>
+</div>
+<div class="hidden sm:block w-8 h-px bg-outline-variant/50"></div>
+<div class="hidden sm:flex items-center gap-3 text-on-surface-variant/60">
+<span class="flex items-center justify-center w-8 h-8 rounded-full bg-surface-container text-on-surface-variant text-label-sm font-bold">3</span>
+<span class="font-label-md">Shipping</span>
+</div>
+<div class="hidden sm:block w-8 h-px bg-outline-variant/50"></div>
+<div class="hidden sm:flex items-center gap-3 text-on-surface-variant/60">
+<span class="flex items-center justify-center w-8 h-8 rounded-full bg-surface-container text-on-surface-variant text-label-sm font-bold">4</span>
+<span class="font-label-md">Payment</span>
+</div>
+</nav>
+</div>
+</div>
 <!-- Main Cart Canvas -->
-<main class="flex-grow pt-[120px] pb-xl px-lg max-w-container-max mx-auto w-full">
-<header class="mb-lg">
+<main class="flex-grow pt-lg pb-xl px-lg max-w-container-max mx-auto w-full">
+<header class="mb-lg animate-fade-in-up">
 <h1 class="font-h1 text-h1 text-on-surface">Your Cart</h1>
 <p class="font-body-md text-body-md text-on-surface-variant mt-xs">2 items selected</p>
 </header>
@@ -147,9 +191,9 @@
 <!-- Cart Items List -->
 <div class="lg:col-span-8 flex flex-col gap-md">
 <!-- Item 1 -->
-<div class="flex flex-col sm:flex-row gap-md p-md bg-surface-container-lowest rounded-lg shadow-sm border border-outline-variant/30 relative group">
+<div class="animate-fade-in-up stagger-1 flex flex-col sm:flex-row gap-md p-md bg-surface-container-lowest rounded-lg shadow-sm border border-outline-variant/30 relative group transition-all duration-300 hover:shadow-md">
 <div class="w-full sm:w-[160px] h-[200px] sm:h-[160px] bg-surface-variant rounded flex-shrink-0 overflow-hidden relative">
-<img alt="Minimalist Scandinavian lounge chair in soft beige fabric with light oak wood legs, placed in a bright airy room with soft natural lighting." class="w-full h-full object-cover mix-blend-multiply" data-alt="Minimalist Scandinavian lounge chair in soft beige fabric with light oak wood legs, placed in a bright airy room with soft natural lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAUtNem0u0z17VzakmlHioX-l0FvNbtInRUpfugWP-drF_SS4D13AgGjXctvX6JSQ8UDX462wJvCIgdEQoXZ5O15jwLx0qGJ6Fveb0KYkvhNFFWs-RNQkaMK8Ne0jfAL-4EGfR5F7T_PXaZzI5k7Dvmm1PF55E_OM_UC5RoAEOlDlKGy7m7dLxzpBuEvXVFhQS2hsVT_izfMs8iPTA6SGpkQ3khnSlkBuNbv4-DDgUB4d8lj64rQQSRQ1p4aswQvwyrpx5qyd7kGE_4"/>
+<img alt="Minimalist Scandinavian lounge chair in soft beige fabric with light oak wood legs, placed in a bright airy room with soft natural lighting." class="w-full h-full object-cover mix-blend-multiply transition-transform duration-500 group-hover:scale-105" data-alt="Minimalist Scandinavian lounge chair in soft beige fabric with light oak wood legs, placed in a bright airy room with soft natural lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAUtNem0u0z17VzakmlHioX-l0FvNbtInRUpfugWP-drF_SS4D13AgGjXctvX6JSQ8UDX462wJvCIgdEQoXZ5O15jwLx0qGJ6Fveb0KYkvhNFFWs-RNQkaMK8Ne0jfAL-4EGfR5F7T_PXaZzI5k7Dvmm1PF55E_OM_UC5RoAEOlDlKGy7m7dLxzpBuEvXVFhQS2hsVT_izfMs8iPTA6SGpkQ3khnSlkBuNbv4-DDgUB4d8lj64rQQSRQ1p4aswQvwyrpx5qyd7kGE_4"/>
 </div>
 <div class="flex flex-col flex-grow justify-between py-xs">
 <div>
@@ -162,26 +206,26 @@
 </div>
 </div>
 <div class="flex justify-between items-center mt-md">
-<div class="flex items-center border border-outline-variant rounded-DEFAULT h-[40px]">
-<button class="px-sm text-on-surface-variant hover:text-on-surface transition-colors flex items-center justify-center h-full">
+<div class="flex items-center border border-outline-variant rounded-DEFAULT h-[40px] overflow-hidden">
+<button class="px-sm text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors flex items-center justify-center h-full">
 <span class="material-symbols-outlined text-[18px]">remove</span>
 </button>
 <span class="font-body-md text-body-md text-on-surface px-sm min-w-[40px] text-center">1</span>
-<button class="px-sm text-on-surface-variant hover:text-on-surface transition-colors flex items-center justify-center h-full">
+<button class="px-sm text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors flex items-center justify-center h-full">
 <span class="material-symbols-outlined text-[18px]">add</span>
 </button>
 </div>
-<button class="flex items-center gap-1 text-outline hover:text-error transition-colors">
-<span class="material-symbols-outlined text-[20px]">delete</span>
+<button class="flex items-center gap-1 text-outline hover:text-error transition-colors group/del">
+<span class="material-symbols-outlined text-[20px] transition-transform group-hover/del:scale-110">delete</span>
 <span class="font-label-sm text-label-sm uppercase tracking-wider">Remove</span>
 </button>
 </div>
 </div>
 </div>
 <!-- Item 2 -->
-<div class="flex flex-col sm:flex-row gap-md p-md bg-surface-container-lowest rounded-lg shadow-sm border border-outline-variant/30 relative group">
+<div class="animate-fade-in-up stagger-2 flex flex-col sm:flex-row gap-md p-md bg-surface-container-lowest rounded-lg shadow-sm border border-outline-variant/30 relative group transition-all duration-300 hover:shadow-md">
 <div class="w-full sm:w-[160px] h-[200px] sm:h-[160px] bg-surface-variant rounded flex-shrink-0 overflow-hidden relative">
-<img alt="Handcrafted matte black ceramic vase with subtle texture, sitting on a polished white marble surface with dramatic side lighting." class="w-full h-full object-cover mix-blend-multiply" data-alt="Handcrafted matte black ceramic vase with subtle texture, sitting on a polished white marble surface with dramatic side lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBR327bRy-_ohXu0cbzdkqrzrA4ZPNzcMJszfBxJsehcFWTPRmZLSiqMXiEMt5TZGyvMvJcpiGmAfBaZivJ6teRLnhWHX0UVeh7wEnTqR_zDFGRqo_vfJclnLR3_rdEMsgtfaly8Pe6yljqfyCGu8K5NvYE84QwHl80-IpmaoUG0prjO0Fif8qlJFsUNzciqAoZh1wZYher_e7DbzzAseDgB7CJqCkAWQj3I89LujrfTxEtCdJTNM0phawqsqBjPFJR-WDYZMwDurU0"/>
+<img alt="Handcrafted matte black ceramic vase with subtle texture, sitting on a polished white marble surface with dramatic side lighting." class="w-full h-full object-cover mix-blend-multiply transition-transform duration-500 group-hover:scale-105" data-alt="Handcrafted matte black ceramic vase with subtle texture, sitting on a polished white marble surface with dramatic side lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBR327bRy-_ohXu0cbzdkqrzrA4ZPNzcMJszfBxJsehcFWTPRmZLSiqMXiEMt5TZGyvMvJcpiGmAfBaZivJ6teRLnhWHX0UVeh7wEnTqR_zDFGRqo_vfJclnLR3_rdEMsgtfaly8Pe6yljqfyCGu8K5NvYE84QwHl80-IpmaoUG0prjO0Fif8qlJFsUNzciqAoZh1wZYher_e7DbzzAseDgB7CJqCkAWQj3I89LujrfTxEtCdJTNM0phawqsqBjPFJR-WDYZMwDurU0"/>
 </div>
 <div class="flex flex-col flex-grow justify-between py-xs">
 <div>
@@ -194,17 +238,17 @@
 </div>
 </div>
 <div class="flex justify-between items-center mt-md">
-<div class="flex items-center border border-outline-variant rounded-DEFAULT h-[40px]">
-<button class="px-sm text-on-surface-variant hover:text-on-surface transition-colors flex items-center justify-center h-full">
+<div class="flex items-center border border-outline-variant rounded-DEFAULT h-[40px] overflow-hidden">
+<button class="px-sm text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors flex items-center justify-center h-full">
 <span class="material-symbols-outlined text-[18px]">remove</span>
 </button>
 <span class="font-body-md text-body-md text-on-surface px-sm min-w-[40px] text-center">2</span>
-<button class="px-sm text-on-surface-variant hover:text-on-surface transition-colors flex items-center justify-center h-full">
+<button class="px-sm text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors flex items-center justify-center h-full">
 <span class="material-symbols-outlined text-[18px]">add</span>
 </button>
 </div>
-<button class="flex items-center gap-1 text-outline hover:text-error transition-colors">
-<span class="material-symbols-outlined text-[20px]">delete</span>
+<button class="flex items-center gap-1 text-outline hover:text-error transition-colors group/del">
+<span class="material-symbols-outlined text-[20px] transition-transform group-hover/del:scale-110">delete</span>
 <span class="font-label-sm text-label-sm uppercase tracking-wider">Remove</span>
 </button>
 </div>
@@ -212,7 +256,7 @@
 </div>
 </div>
 <!-- Order Summary Sidebar -->
-<div class="lg:col-span-4 sticky top-[120px]">
+<div class="lg:col-span-4 sticky top-[120px] animate-fade-in-up stagger-3">
 <div class="bg-surface-container-lowest p-lg rounded-lg shadow-sm border border-outline-variant/30 flex flex-col gap-md">
 <h2 class="font-h2 text-h2 text-on-surface mb-xs">Order Summary</h2>
 <div class="flex justify-between items-center py-sm border-b border-surface-container-high">
@@ -231,11 +275,11 @@
 <span class="font-h3 text-h3 text-on-surface">Total</span>
 <span class="font-h2 text-h2 text-on-surface">$1,279.80</span>
 </div>
-<button class="w-full bg-secondary text-on-secondary font-label-md text-label-md py-[16px] rounded flex items-center justify-center gap-2 hover:bg-secondary-container hover:text-on-secondary-container transition-all shadow-sm hover:shadow-md mt-sm">
+<button class="w-full bg-secondary text-on-secondary font-label-md text-label-md py-[16px] rounded flex items-center justify-center gap-2 hover:bg-secondary-container hover:text-on-secondary-container transition-all shadow-sm hover:shadow-md mt-sm active:scale-[0.98]">
 <span class="material-symbols-outlined text-[20px]">lock</span>
                         Proceed to Checkout
                     </button>
-<div class="mt-sm flex items-center justify-center gap-4 text-outline">
+<div class="mt-sm flex items-center justify-center gap-4 text-outline/50">
 <span class="material-symbols-outlined text-[24px]">local_shipping</span>
 <span class="material-symbols-outlined text-[24px]">verified_user</span>
 <span class="material-symbols-outlined text-[24px]">credit_card</span>

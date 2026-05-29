@@ -41,6 +41,14 @@ const shippingSchema = z.object({
 
 type ShippingFormData = z.infer<typeof shippingSchema>;
 
+const shakeVariants = {
+  shake: {
+    x: [0, -6, 6, -6, 6, -3, 3, 0],
+    transition: { duration: 0.4 }
+  },
+  default: { x: 0 }
+};
+
 export default function CheckoutPage() {
   const { items, subtotal, clearCart, isLoading: cartLoading } = useCart();
   const router = useRouter();
@@ -271,9 +279,10 @@ export default function CheckoutPage() {
         {/* Premium Progress Steps Tracker */}
         <div className="relative mb-14 max-w-xl mx-auto px-4">
           <div className="absolute top-1/2 left-4 right-4 h-[3px] bg-slate-200 -translate-y-1/2 rounded-full -z-10" />
-          <div 
-            className="absolute top-1/2 left-4 h-[3px] bg-slate-900 -translate-y-1/2 rounded-full -z-10 transition-all duration-500 ease-in-out" 
-            style={{ width: `${(step - 1) * 46.5}%` }}
+          <motion.div 
+            className="absolute top-1/2 left-4 h-[3px] bg-slate-900 -translate-y-1/2 rounded-full -z-10" 
+            animate={{ width: `${(step - 1) * 46.5}%` }}
+            transition={{ type: "spring", stiffness: 150, damping: 22 }}
           />
           
           <div className="relative flex justify-between z-10">
@@ -295,16 +304,23 @@ export default function CheckoutPage() {
                     }}
                     disabled={s.id >= step}
                     className={`
-                      flex items-center justify-center w-12 h-12 rounded-2xl border-2 transition-all duration-300 shadow-md cursor-pointer disabled:cursor-default
+                      relative flex items-center justify-center w-12 h-12 rounded-2xl border-2 transition-all duration-300 shadow-md cursor-pointer disabled:cursor-default overflow-hidden
                       ${isCurrent 
-                        ? 'bg-slate-900 border-slate-900 text-white scale-110 ring-4 ring-slate-900/10' 
+                        ? 'border-slate-900 text-white scale-110 ring-4 ring-slate-900/10' 
                         : isActive 
                           ? 'bg-white border-slate-900 text-slate-900 hover:bg-slate-50' 
                           : 'bg-white border-slate-200 text-slate-300'
                       }
                     `}
                   >
-                    <Icon className="w-5 h-5" />
+                    {isCurrent && (
+                      <motion.div
+                        layoutId="activeStepBg"
+                        className="absolute inset-0 bg-slate-900 rounded-2xl -z-10"
+                        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                      />
+                    )}
+                    <Icon className="w-5 h-5 relative z-10" />
                   </button>
                   <span 
                     className={`
@@ -432,7 +448,11 @@ export default function CheckoutPage() {
                     </h2>
                     
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                      <div className="space-y-2">
+                      <motion.div 
+                        animate={validationErrors.fullName ? "shake" : "default"} 
+                        variants={shakeVariants} 
+                        className="space-y-2"
+                      >
                         <label className="text-[13px] font-bold text-slate-700">Họ và tên *</label>
                         <div className="relative group">
                           <span className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-slate-800 transition-colors duration-200">
@@ -451,9 +471,13 @@ export default function CheckoutPage() {
                             <Info className="w-3.5 h-3.5" /> {validationErrors.fullName}
                           </p>
                         )}
-                      </div>
+                      </motion.div>
                       
-                      <div className="space-y-2">
+                      <motion.div 
+                        animate={validationErrors.phone ? "shake" : "default"} 
+                        variants={shakeVariants} 
+                        className="space-y-2"
+                      >
                         <label className="text-[13px] font-bold text-slate-700">Số điện thoại *</label>
                         <div className="relative group">
                           <span className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-slate-800 transition-colors duration-200">
@@ -472,14 +496,18 @@ export default function CheckoutPage() {
                             <Info className="w-3.5 h-3.5" /> {validationErrors.phone}
                           </p>
                         )}
-                      </div>
+                      </motion.div>
                     </div>
                     
                     {/* Simplified 2-tier Dropdowns (Province and Ward) */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                       
                       {/* Province Dropdown */}
-                      <div className="space-y-2">
+                      <motion.div 
+                        animate={validationErrors.city ? "shake" : "default"} 
+                        variants={shakeVariants} 
+                        className="space-y-2"
+                      >
                         <label className="text-[13px] font-bold text-slate-700">Tỉnh/Thành phố *</label>
                         <div className="relative group">
                           <span className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-slate-800 transition-colors duration-200">
@@ -505,10 +533,14 @@ export default function CheckoutPage() {
                             <Info className="w-3.5 h-3.5" /> {validationErrors.city}
                           </p>
                         )}
-                      </div>
+                      </motion.div>
                       
                       {/* Ward Dropdown */}
-                      <div className="space-y-2">
+                      <motion.div 
+                        animate={validationErrors.ward ? "shake" : "default"} 
+                        variants={shakeVariants} 
+                        className="space-y-2"
+                      >
                         <label className="text-[13px] font-bold text-slate-700">Phường/Xã *</label>
                         <div className="relative group">
                           <span className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-slate-800 transition-colors duration-200">
@@ -539,11 +571,15 @@ export default function CheckoutPage() {
                             <Info className="w-3.5 h-3.5" /> {validationErrors.ward}
                           </p>
                         )}
-                      </div>
+                      </motion.div>
                     </div>
                     
                     {/* Detailed Street Input */}
-                    <div className="space-y-2">
+                    <motion.div 
+                      animate={validationErrors.street ? "shake" : "default"} 
+                      variants={shakeVariants} 
+                      className="space-y-2"
+                    >
                       <label className="text-[13px] font-bold text-slate-700">Địa chỉ cụ thể (Số nhà, tên đường) *</label>
                       <div className="relative group">
                         <span className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-slate-800 transition-colors duration-200">
@@ -562,7 +598,7 @@ export default function CheckoutPage() {
                           <Info className="w-3.5 h-3.5" /> {validationErrors.street}
                         </p>
                       )}
-                    </div>
+                    </motion.div>
 
                     {/* Order Notes */}
                     <div className="space-y-2">

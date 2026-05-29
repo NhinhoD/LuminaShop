@@ -9,7 +9,38 @@
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+    @keyframes shimmer {
+        0% { background-position: -1000px 0; }
+        100% { background-position: 1000px 0; }
+    }
+    .skeleton {
+        background: linear-gradient(90deg, #f0f4f8 25%, #e2e8f0 50%, #f0f4f8 75%);
+        background-size: 1000px 100%;
+        animation: shimmer 2s infinite linear;
+    }
+    .product-card-entrance {
+        opacity: 0;
+        transform: translateY(20px);
+        animation: entrance 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+    @keyframes entrance {
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .cart-drawer-overlay {
+        transition: opacity 0.3s ease;
+    }
+    .cart-drawer {
+        transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .cart-drawer-open .cart-drawer {
+        transform: translateX(0);
+    }
+    .cart-drawer-open .cart-drawer-overlay {
+        opacity: 1;
+        pointer-events: auto;
+    }
+</style>
 <script id="tailwind-config">
         tailwind.config = {
             darkMode: "class",
@@ -107,13 +138,74 @@
         }
     </script>
 </head>
-<body class="bg-background text-on-background font-body-md antialiased min-h-screen flex flex-col pt-24">
-<!-- TopNavBar -->
+<body class="bg-background text-on-background font-body-md antialiased min-h-screen flex flex-col pt-24 overflow-x-hidden">
+<!-- Cart Drawer -->
+<div class="fixed inset-0 z-[100] pointer-events-none" id="cart-drawer-container">
+<div class="cart-drawer-overlay absolute inset-0 bg-on-background/20 backdrop-blur-sm opacity-0 transition-opacity cursor-pointer" onclick="toggleCart()"></div>
+<div class="cart-drawer absolute right-0 top-0 h-full w-full max-w-md bg-white shadow-2xl translate-x-full flex flex-col pointer-events-auto">
+<div class="p-md flex justify-between items-center border-b border-outline-variant">
+<h2 class="font-h2 text-h2">Shopping Bag (2)</h2>
+<button class="p-2 hover:bg-surface-container transition-colors rounded-full" onclick="toggleCart()">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<div class="flex-grow overflow-y-auto p-md space-y-md">
+<div class="flex gap-4">
+<div class="w-20 h-24 bg-surface-container-low rounded overflow-hidden flex-shrink-0">
+<img alt="Cart item" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBzn5oudAXVPaFXLvfLKzBsQYmhW_8djEQhdClSsF_KPyAmQYIZHZAk35sCyuD-7ffzJ8xXpP5Em4ZtmY_7qsJv82DYMX3kBF0-HnQ7Wkmsh_Y6nR7m0OFED1yxbCuP4se_F1CZLgCqjurFv5bp3we2AyeGp23aIJtCnlOU4zkVOPTzdF86oxqN3d3BiJfuCE_FGsqbgbVxMPqgW2nPGIfTaLmE_AukFkw5xMqbByVjroblcGLwB7QYisLvGGu2XEi8ZU0H9tr8ivhG"/>
+</div>
+<div class="flex-grow">
+<div class="flex justify-between">
+<h4 class="font-label-md text-on-background">The Architect Coat</h4>
+<span class="font-label-md">$345</span>
+</div>
+<p class="text-xs text-on-surface-variant mt-1">Charcoal / M</p>
+<div class="flex items-center justify-between mt-4">
+<div class="flex items-center border border-outline-variant rounded">
+<button class="px-2 py-1 text-on-surface-variant">-</button>
+<span class="px-3 text-sm">1</span>
+<button class="px-2 py-1 text-on-surface-variant">+</button>
+</div>
+<button class="text-xs underline text-on-surface-variant">Remove</button>
+</div>
+</div>
+</div>
+<div class="flex gap-4">
+<div class="w-20 h-24 bg-surface-container-low rounded overflow-hidden flex-shrink-0">
+<img alt="Cart item" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCUiLiB2KX4kLrJXDnFQ7bEeTRHjX8y8NDFQJX5PqVh6UjO3Sv6jXG_nSW0yZO13LU38qFyQRo5803KwL5ehQXZC6BnvdQEf5BQ-XNoArJqWv86ALVjfq485cObIau_NC-rSF52RkfVZ4H9IZ23iTax1_wAYoIm_nkjY9KDe8cZCr1hmKghVS79GY5BnbdAeDNXZV8HkfQ1nuJJBoh1d1pA3njB0thZ8LI3GzyTGuDiPjhTeNbQ3Am2TgohLxycVSRJgV3TNUEO3bxz"/>
+</div>
+<div class="flex-grow">
+<div class="flex justify-between">
+<h4 class="font-label-md text-on-background">Alpaca Blend Crew</h4>
+<span class="font-label-md">$210</span>
+</div>
+<p class="text-xs text-on-surface-variant mt-1">Oatmeal / M</p>
+<div class="flex items-center justify-between mt-4">
+<div class="flex items-center border border-outline-variant rounded">
+<button class="px-2 py-1 text-on-surface-variant">-</button>
+<span class="px-3 text-sm">1</span>
+<button class="px-2 py-1 text-on-surface-variant">+</button>
+</div>
+<button class="text-xs underline text-on-surface-variant">Remove</button>
+</div>
+</div>
+</div>
+</div>
+<div class="p-md border-t border-outline-variant bg-slate-50 space-y-4">
+<div class="flex justify-between font-label-md text-on-background">
+<span>Subtotal</span>
+<span>$555</span>
+</div>
+<p class="text-[10px] text-on-surface-variant uppercase tracking-widest text-center">Shipping &amp; taxes calculated at checkout</p>
+<button class="w-full bg-primary text-on-primary py-4 rounded font-label-md uppercase tracking-widest hover:bg-on-background transition-colors shadow-lg active:scale-[0.98]">
+                Checkout Now
+            </button>
+</div>
+</div>
+</div>
 <header class="fixed top-0 w-full z-50 bg-white/90 backdrop-blur-md border-b border-slate-100 shadow-sm">
 <div class="flex justify-between items-center w-full px-8 md:px-12 py-4 max-w-[1280px] mx-auto">
-<!-- Brand Logo -->
 <a class="text-2xl font-black tracking-tighter text-slate-900" href="#">LUMINA</a>
-<!-- Desktop Navigation -->
 <nav class="hidden md:flex items-center gap-6">
 <a class="font-['Manrope'] text-sm font-medium tracking-wide uppercase text-slate-900 border-b-2 border-slate-900 pb-1" href="#">Shop All</a>
 <a class="font-['Manrope'] text-sm font-medium tracking-wide uppercase text-slate-500 hover:text-slate-900 transition-colors" href="#">New Arrivals</a>
@@ -121,14 +213,13 @@
 <a class="font-['Manrope'] text-sm font-medium tracking-wide uppercase text-slate-500 hover:text-slate-900 transition-colors" href="#">Sustainability</a>
 <a class="font-['Manrope'] text-sm font-medium tracking-wide uppercase text-slate-500 hover:text-slate-900 transition-colors" href="#">Journal</a>
 </nav>
-<!-- Trailing Icons -->
 <div class="flex items-center gap-4 text-slate-900">
 <button aria-label="Search" class="hover:opacity-70 transition-opacity duration-200">
 <span class="material-symbols-outlined">search</span>
 </button>
-<button aria-label="Shopping Cart" class="hover:opacity-70 transition-opacity duration-200 relative">
-<span class="material-symbols-outlined">shopping_cart</span>
-<span class="absolute -top-1 -right-1 bg-secondary text-white text-[10px] font-bold h-4 w-4 rounded-full flex items-center justify-center">2</span>
+<button aria-label="Shopping Cart" class="hover:opacity-70 transition-opacity duration-200 relative group" onclick="toggleCart()">
+<span class="material-symbols-outlined group-hover:scale-110 transition-transform">shopping_cart</span>
+<span class="absolute -top-1 -right-1 bg-secondary text-white text-[10px] font-bold h-4 w-4 rounded-full flex items-center justify-center animate-bounce">2</span>
 </button>
 <button aria-label="Profile" class="hover:opacity-70 transition-opacity duration-200 hidden md:block">
 <span class="material-symbols-outlined">person</span>
@@ -136,9 +227,7 @@
 </div>
 </div>
 </header>
-<!-- Main Content Area -->
 <main class="flex-grow w-full max-w-[1280px] mx-auto px-8 md:px-12 py-xl grid grid-cols-1 md:grid-cols-12 gap-gutter">
-<!-- Page Header & Sorting -->
 <div class="md:col-span-12 flex flex-col md:flex-row justify-between items-start md:items-end mb-lg border-b border-outline-variant pb-sm">
 <div>
 <h1 class="font-display text-display text-on-background mb-xs">Shop All</h1>
@@ -157,10 +246,8 @@
 </div>
 </div>
 </div>
-<!-- Sidebar Filters (Desktop) / Hidden Mobile Drawer Trigger -->
 <aside class="hidden md:block md:col-span-3 pr-md">
 <div class="sticky top-32 space-y-md">
-<!-- Category Filter -->
 <div class="border-b border-outline-variant pb-md">
 <h3 class="font-label-md text-label-md text-on-background uppercase mb-sm">Category</h3>
 <ul class="space-y-sm">
@@ -190,7 +277,6 @@
 </li>
 </ul>
 </div>
-<!-- Price Range Filter -->
 <div class="border-b border-outline-variant pb-md">
 <h3 class="font-label-md text-label-md text-on-background uppercase mb-sm">Price</h3>
 <div class="space-y-4">
@@ -207,7 +293,6 @@
 </div>
 </div>
 </div>
-<!-- Color Filter -->
 <div class="border-b border-outline-variant pb-md">
 <h3 class="font-label-md text-label-md text-on-background uppercase mb-sm">Color</h3>
 <div class="flex flex-wrap gap-2">
@@ -219,7 +304,6 @@
 <button aria-label="Green" class="w-6 h-6 rounded-full bg-emerald-800"></button>
 </div>
 </div>
-<!-- Size Filter -->
 <div>
 <h3 class="font-label-md text-label-md text-on-background uppercase mb-sm">Size</h3>
 <div class="grid grid-cols-3 gap-2">
@@ -232,152 +316,64 @@
 </div>
 </div>
 </aside>
-<!-- Mobile Filter Button -->
 <div class="md:hidden col-span-1 mb-md">
 <button class="w-full flex items-center justify-center gap-2 border border-outline-variant rounded py-3 font-label-md text-label-md text-on-background bg-surface">
 <span class="material-symbols-outlined">tune</span>
-                Filters &amp; Sort
-            </button>
+Filters &amp; Sort
+</button>
 </div>
-<!-- Product Grid -->
-<div class="col-span-1 md:col-span-9 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-gutter gap-y-xl">
-<!-- Product Card 1 -->
-<article class="group flex flex-col relative">
-<div class="relative aspect-[3/4] mb-sm overflow-hidden rounded bg-surface-container-low">
-<img alt="Model wearing a structured minimalist wool coat in charcoal grey against a studio background" class="object-cover w-full h-full transition-transform duration-700 group-hover:scale-105" data-alt="Model wearing a structured minimalist wool coat in charcoal grey against a studio background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBzn5oudAXVPaFXLvfLKzBsQYmhW_8djEQhdClSsF_KPyAmQYIZHZAk35sCyuD-7ffzJ8xXpP5Em4ZtmY_7qsJv82DYMX3kBF0-HnQ7Wkmsh_Y6nR7m0OFED1yxbCuP4se_F1CZLgCqjurFv5bp3we2AyeGp23aIJtCnlOU4zkVOPTzdF86oxqN3d3BiJfuCE_FGsqbgbVxMPqgW2nPGIfTaLmE_AukFkw5xMqbByVjroblcGLwB7QYisLvGGu2XEi8ZU0H9tr8ivhG"/>
-<!-- Badges -->
-<div class="absolute top-2 left-2 flex flex-col gap-1">
-<span class="bg-surface-container/90 backdrop-blur px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-on-background rounded-sm">New In</span>
+<div class="col-span-1 md:col-span-9 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-gutter gap-y-xl" id="product-grid">
+<!-- Skeletal Loading State (Initial) -->
+<div class="skeleton-wrapper space-y-sm">
+<div class="skeleton aspect-[3/4] w-full rounded"></div>
+<div class="skeleton h-5 w-3/4 rounded"></div>
+<div class="skeleton h-4 w-1/2 rounded"></div>
+<div class="skeleton h-6 w-1/4 rounded mt-4"></div>
 </div>
-<!-- Quick Add Hover Overlay -->
-<div class="absolute bottom-0 left-0 w-full p-4 translate-y-full opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
-<button class="w-full bg-primary text-on-primary font-label-md text-label-md py-3 rounded hover:bg-on-background transition-colors flex items-center justify-center gap-2">
+<div class="skeleton-wrapper space-y-sm">
+<div class="skeleton aspect-[3/4] w-full rounded"></div>
+<div class="skeleton h-5 w-3/4 rounded"></div>
+<div class="skeleton h-4 w-1/2 rounded"></div>
+<div class="skeleton h-6 w-1/4 rounded mt-4"></div>
+</div>
+<div class="skeleton-wrapper space-y-sm">
+<div class="skeleton aspect-[3/4] w-full rounded"></div>
+<div class="skeleton h-5 w-3/4 rounded"></div>
+<div class="skeleton h-4 w-1/2 rounded"></div>
+<div class="skeleton h-6 w-1/4 rounded mt-4"></div>
+</div>
+<div class="skeleton-wrapper space-y-sm">
+<div class="skeleton aspect-[3/4] w-full rounded"></div>
+<div class="skeleton h-5 w-3/4 rounded"></div>
+<div class="skeleton h-4 w-1/2 rounded"></div>
+<div class="skeleton h-6 w-1/4 rounded mt-4"></div>
+</div>
+<!-- Real Content Template (Hidden initially) -->
+<template id="product-card-template">
+<article class="product-card group flex flex-col relative product-card-entrance">
+<div class="relative aspect-[3/4] mb-sm overflow-hidden rounded bg-surface-container-low shadow-sm group-hover:shadow-lg transition-shadow duration-500">
+<img alt="" class="product-image object-cover w-full h-full transition-transform duration-1000 group-hover:scale-110" src=""/>
+<div class="badge-container absolute top-2 left-2 flex flex-col gap-1"></div>
+<div class="absolute bottom-0 left-0 w-full p-4 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 delay-75">
+<button class="w-full bg-primary text-on-primary font-label-md text-label-md py-3 rounded hover:bg-on-background transition-colors flex items-center justify-center gap-2 shadow-xl active:scale-95" onclick="toggleCart()">
 <span class="material-symbols-outlined" style="font-size: 18px;">add_shopping_cart</span>
-                            Add to Cart
-                        </button>
+Add to Cart
+</button>
 </div>
 </div>
-<div class="flex flex-col flex-grow justify-between">
+<div class="flex flex-col flex-grow justify-between px-1">
 <div>
-<h3 class="font-h3 text-h3 text-on-background truncate">The Architect Coat</h3>
-<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Charcoal Heavyweight Wool</p>
+<h3 class="product-name font-h3 text-h3 text-on-background truncate group-hover:text-secondary transition-colors duration-300"></h3>
+<p class="product-desc font-body-sm text-body-sm text-on-surface-variant mt-1"></p>
 </div>
 <div class="mt-2">
-<span class="font-body-lg text-body-lg font-bold text-on-background">$345</span>
+<span class="product-price font-body-lg text-body-lg font-bold text-on-background"></span>
 </div>
 </div>
 </article>
-<!-- Product Card 2 -->
-<article class="group flex flex-col relative">
-<div class="relative aspect-[3/4] mb-sm overflow-hidden rounded bg-surface-container-low">
-<img alt="Crisp white oversized cotton button-down shirt neatly folded on a minimal surface with soft directional light" class="object-cover w-full h-full transition-transform duration-700 group-hover:scale-105" data-alt="Crisp white oversized cotton button-down shirt neatly folded on a minimal surface with soft directional light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDrrrSiuPvnWdaWYPcA0QWacYJDnmFuWAPd1cdnNDlHXSIWIFJr0o8z-Hfp0XbsM75CEG96x6XW9V4ifgarQc6p9ym9RrsJ3sHki41rBgN9mw-Hgpv2Ac-DV9qR7xwzK0ji9OWzDSI-Azbkb8IAy9JD5e5CK3M8tMs3sVIQhVWZOakZ--JCausRTrGcE1zvVvEipGZl7cMFyAIBbltzIKjN1Ffa7EuQzN6yU2xB62T2beaZdFl5HZmhSkRRQXhJyM41XtnT-JywOhDS"/>
-<div class="absolute bottom-0 left-0 w-full p-4 translate-y-full opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
-<button class="w-full bg-primary text-on-primary font-label-md text-label-md py-3 rounded hover:bg-on-background transition-colors flex items-center justify-center gap-2">
-<span class="material-symbols-outlined" style="font-size: 18px;">add_shopping_cart</span>
-                            Add to Cart
-                        </button>
-</div>
-</div>
-<div class="flex flex-col flex-grow justify-between">
-<div>
-<h3 class="font-h3 text-h3 text-on-background truncate">Oversized Poplin Shirt</h3>
-<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Optic White Cotton</p>
-</div>
-<div class="mt-2">
-<span class="font-body-lg text-body-lg font-bold text-on-background">$120</span>
-</div>
-</div>
-</article>
-<!-- Product Card 3 -->
-<article class="group flex flex-col relative">
-<div class="relative aspect-[3/4] mb-sm overflow-hidden rounded bg-surface-container-low">
-<img alt="Straight leg classic blue denim jeans laid flat against a clean off-white background" class="object-cover w-full h-full transition-transform duration-700 group-hover:scale-105" data-alt="Straight leg classic blue denim jeans laid flat against a clean off-white background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDkmgMzMFdMAw5FKbqxOtNgwpMK1_1FS7x-d_SMDMvMbl3wiCDwOh3u9n1WWCS9oeFxTwjRStk2VLSrjyyTrzbVC1hFOeL256BxXtmhl5_s0Y7NIClkoi_zKJhhRfDY11WMs6xNMOYIeOMRYjnZD3HV_MjEZzx-lzr6D-CjSM6HKZomrQ-lsaAgfYS_z2AUmCyfi1FSqw1G37Vftc7tK3OyNZeOjX3wtmG45K5Puc8LVYqVvgUaTT4gfXAhW8Ke3PKjwu0mYv1Z3wVN"/>
-<div class="absolute bottom-0 left-0 w-full p-4 translate-y-full opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
-<button class="w-full bg-primary text-on-primary font-label-md text-label-md py-3 rounded hover:bg-on-background transition-colors flex items-center justify-center gap-2">
-<span class="material-symbols-outlined" style="font-size: 18px;">add_shopping_cart</span>
-                            Add to Cart
-                        </button>
-</div>
-</div>
-<div class="flex flex-col flex-grow justify-between">
-<div>
-<h3 class="font-h3 text-h3 text-on-background truncate">Heritage Straight Denim</h3>
-<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Vintage Wash Selvedge</p>
-</div>
-<div class="mt-2">
-<span class="font-body-lg text-body-lg font-bold text-on-background">$185</span>
-</div>
-</div>
-</article>
-<!-- Product Card 4 -->
-<article class="group flex flex-col relative">
-<div class="relative aspect-[3/4] mb-sm overflow-hidden rounded bg-surface-container-low">
-<img alt="Chunky knit crewneck sweater in warm oatmeal color, draped softly to show texture" class="object-cover w-full h-full transition-transform duration-700 group-hover:scale-105" data-alt="Chunky knit crewneck sweater in warm oatmeal color, draped softly to show texture" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCUiLiB2KX4kLrJXDnFQ7bEeTRHjX8y8NDFQJX5PqVh6UjO3Sv6jXG_nSW0yZO13LU38qFyQRo5803KwL5ehQXZC6BnvdQEf5BQ-XNoArJqWv86ALVjfq485cObIau_NC-rSF52RkfVZ4H9IZ23iTax1_wAYoIm_nkjY9KDe8cZCr1hmKghVS79GY5BnbdAeDNXZV8HkfQ1nuJJBoh1d1pA3njB0thZ8LI3GzyTGuDiPjhTeNbQ3Am2TgohLxycVSRJgV3TNUEO3bxz"/>
-<div class="absolute top-2 left-2 flex flex-col gap-1">
-<span class="bg-surface-container/90 backdrop-blur px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-on-background rounded-sm">Bestseller</span>
-</div>
-<div class="absolute bottom-0 left-0 w-full p-4 translate-y-full opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
-<button class="w-full bg-primary text-on-primary font-label-md text-label-md py-3 rounded hover:bg-on-background transition-colors flex items-center justify-center gap-2">
-<span class="material-symbols-outlined" style="font-size: 18px;">add_shopping_cart</span>
-                            Add to Cart
-                        </button>
-</div>
-</div>
-<div class="flex flex-col flex-grow justify-between">
-<div>
-<h3 class="font-h3 text-h3 text-on-background truncate">Alpaca Blend Crew</h3>
-<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Oatmeal Heather</p>
-</div>
-<div class="mt-2">
-<span class="font-body-lg text-body-lg font-bold text-on-background">$210</span>
-</div>
-</div>
-</article>
-<!-- Product Card 5 -->
-<article class="group flex flex-col relative">
-<div class="relative aspect-[3/4] mb-sm overflow-hidden rounded bg-surface-container-low">
-<img alt="Sleek black turtleneck long sleeve top with ribbed texture, shown in flat lay styling" class="object-cover w-full h-full transition-transform duration-700 group-hover:scale-105" data-alt="Sleek black turtleneck long sleeve top with ribbed texture, shown in flat lay styling" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAmCB6PfUlbLTkixsY2sMjHzzUCN80c4y07r8ztUCPA6yIbISWsfAQ6I2YlaX8d3eq0QZzRvUYntZuzeSeViIncZiKYyzKz4FI4YSa18iCBvY8fagU2Hm5aBbuvRII5ceR8Nmd-en1tQoPjO3hlDsuwPZzIMuS20Hrf-02Ap1GR0__xeqMN88p27zVrkqEELvoWArasCyXVd5QrZ2OPJ9zL0uPE9F3t2tWYS8EH70S-y94Dxr2KuGX2eoFfSq-zHrlHe_Fso_gmFG7M"/>
-<div class="absolute bottom-0 left-0 w-full p-4 translate-y-full opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
-<button class="w-full bg-primary text-on-primary font-label-md text-label-md py-3 rounded hover:bg-on-background transition-colors flex items-center justify-center gap-2">
-<span class="material-symbols-outlined" style="font-size: 18px;">add_shopping_cart</span>
-                            Add to Cart
-                        </button>
-</div>
-</div>
-<div class="flex flex-col flex-grow justify-between">
-<div>
-<h3 class="font-h3 text-h3 text-on-background truncate">Ribbed Merino Turtleneck</h3>
-<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Midnight Black</p>
-</div>
-<div class="mt-2">
-<span class="font-body-lg text-body-lg font-bold text-on-background">$145</span>
-</div>
-</div>
-</article>
-<!-- Product Card 6 -->
-<article class="group flex flex-col relative">
-<div class="relative aspect-[3/4] mb-sm overflow-hidden rounded bg-surface-container-low">
-<img alt="Wide leg tailored trousers in camel brown draped elegantly to emphasize the fluid fabric" class="object-cover w-full h-full transition-transform duration-700 group-hover:scale-105" data-alt="Wide leg tailored trousers in camel brown draped elegantly to emphasize the fluid fabric" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC8B_I_P-9xFRJSXx5_PMnN0g01lKJjB-1ccIVDwG1OBCunKtkGD_Cf-e-h9D-FoD1iJJq6Nk5COu6BrY2WqGBW8C9sruZwwzudwa19yoNbEnBctDOAoOz2asPAbqQj_nhIF6UxhuxU2W1U04uiYBkmQPhzD01-sB5mbrYCjAKylQ2si-87tkzIDIWY2Uy5VrMgfObtme-wvTI40iraaEbuS3hEAU4O32g1R2cZTymr6p13skasLrI277BZTEwX53po28OJ9g2eOgls"/>
-<div class="absolute bottom-0 left-0 w-full p-4 translate-y-full opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
-<button class="w-full bg-primary text-on-primary font-label-md text-label-md py-3 rounded hover:bg-on-background transition-colors flex items-center justify-center gap-2">
-<span class="material-symbols-outlined" style="font-size: 18px;">add_shopping_cart</span>
-                            Add to Cart
-                        </button>
-</div>
-</div>
-<div class="flex flex-col flex-grow justify-between">
-<div>
-<h3 class="font-h3 text-h3 text-on-background truncate">Fluid Drape Trousers</h3>
-<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Camel Twill</p>
-</div>
-<div class="mt-2">
-<span class="font-body-lg text-body-lg font-bold text-on-background">$195</span>
-</div>
-</div>
-</article>
+</template>
 </div>
 </main>
-<!-- Footer -->
 <footer class="w-full border-t border-slate-200 bg-slate-50 mt-xl">
 <div class="flex flex-col md:flex-row justify-between items-center w-full px-8 md:px-20 py-12 max-w-[1280px] mx-auto">
 <div class="mb-8 md:mb-0">
@@ -393,4 +389,87 @@
 </nav>
 </div>
 </footer>
+<script>
+    const products = [
+        {
+            name: "The Architect Coat",
+            desc: "Charcoal Heavyweight Wool",
+            price: "$345",
+            badge: "New In",
+            img: "https://lh3.googleusercontent.com/aida-public/AB6AXuBzn5oudAXVPaFXLvfLKzBsQYmhW_8djEQhdClSsF_KPyAmQYIZHZAk35sCyuD-7ffzJ8xXpP5Em4ZtmY_7qsJv82DYMX3kBF0-HnQ7Wkmsh_Y6nR7m0OFED1yxbCuP4se_F1CZLgCqjurFv5bp3we2AyeGp23aIJtCnlOU4zkVOPTzdF86oxqN3d3BiJfuCE_FGsqbgbVxMPqgW2nPGIfTaLmE_AukFkw5xMqbByVjroblcGLwB7QYisLvGGu2XEi8ZU0H9tr8ivhG"
+        },
+        {
+            name: "Oversized Poplin Shirt",
+            desc: "Optic White Cotton",
+            price: "$120",
+            badge: null,
+            img: "https://lh3.googleusercontent.com/aida-public/AB6AXuDrrrSiuPvnWdaWYPcA0QWacYJDnmFuWAPd1cdnNDlHXSIWIFJr0o8z-Hfp0XbsM75CEG96x6XW9V4ifgarQc6p9ym9RrsJ3sHki41rBgN9mw-Hgpv2Ac-DV9qR7xwzK0ji9OWzDSI-Azbkb8IAy9JD5e5CK3M8tMs3sVIQhVWZOakZ--JCausRTrGcE1zvVvEipGZl7cMFyAIBbltzIKjN1Ffa7EuQzN6yU2xB62T2beaZdFl5HZmhSkRRQXhJyM41XtnT-JywOhDS"
+        },
+        {
+            name: "Heritage Straight Denim",
+            desc: "Vintage Wash Selvedge",
+            price: "$185",
+            badge: null,
+            img: "https://lh3.googleusercontent.com/aida-public/AB6AXuDkmgMzMFdMAw5FKbqxOtNgwpMK1_1FS7x-d_SMDMvMbl3wiCDwOh3u9n1WWCS9oeFxTwjRStk2VLSrjyyTrzbVC1hFOeL256BxXtmhl5_s0Y7NIClkoi_zKJhhRfDY11WMs6xNMOYIeOMRYjnZD3HV_MjEZzx-lzr6D-CjSM6HKZomrQ-lsaAgfYS_z2AUmCyfi1FSqw1G37Vftc7tK3OyNZeOjX3wtmG45K5Puc8LVYqVvgUaTT4gfXAhW8Ke3PKjwu0mYv1Z3wVN"
+        },
+        {
+            name: "Alpaca Blend Crew",
+            desc: "Oatmeal Heather",
+            price: "$210",
+            badge: "Bestseller",
+            img: "https://lh3.googleusercontent.com/aida-public/AB6AXuCUiLiB2KX4kLrJXDnFQ7bEeTRHjX8y8NDFQJX5PqVh6UjO3Sv6jXG_nSW0yZO13LU38qFyQRo5803KwL5ehQXZC6BnvdQEf5BQ-XNoArJqWv86ALVjfq485cObIau_NC-rSF52RkfVZ4H9IZ23iTax1_wAYoIm_nkjY9KDe8cZCr1hmKghVS79GY5BnbdAeDNXZV8HkfQ1nuJJBoh1d1pA3njB0thZ8LI3GzyTGuDiPjhTeNbQ3Am2TgohLxycVSRJgV3TNUEO3bxz"
+        },
+        {
+            name: "Ribbed Merino Turtleneck",
+            desc: "Midnight Black",
+            price: "$145",
+            badge: null,
+            img: "https://lh3.googleusercontent.com/aida-public/AB6AXuAmCB6PfUlbLTkixsY2sMjHzzUCN80c4y07r8ztUCPA6yIbISWsfAQ6I2YlaX8d3eq0QZzRvUYntZuzeSeViIncZiKYyzKz4FI4YSa18iCBvY8fagU2Hm5aBbuvRII5ceR8Nmd-en1tQoPjO3hlDsuwPZzIMuS20Hrf-02Ap1GR0__xeqMN88p27zVrkqEELvoWArasCyXVd5QrZ2OPJ9zL0uPE9F3t2tWYS8EH70S-y94Dxr2KuGX2eoFfSq-zHrlHe_Fso_gmFG7M"
+        },
+        {
+            name: "Fluid Drape Trousers",
+            desc: "Camel Twill",
+            price: "$195",
+            badge: null,
+            img: "https://lh3.googleusercontent.com/aida-public/AB6AXuC8B_I_P-9xFRJSXx5_PMnN0g01lKJjB-1ccIVDwG1OBCunKtkGD_Cf-e-h9D-FoD1iJJq6Nk5COu6BrY2WqGBW8C9sruZwwzudwa19yoNbEnBctDOAoOz2asPAbqQj_nhIF6UxhuxU2W1U04uiYBkmQPhzD01-sB5mbrYCjAKylQ2si-87tkzIDIWY2Uy5VrMgfObtme-wvTI40iraaEbuS3hEAU4O32g1R2cZTymr6p13skasLrI277BZTEwX53po28OJ9g2eOgls"
+        }
+    ];
+
+    function toggleCart() {
+        document.body.classList.toggle('cart-drawer-open');
+        document.body.classList.toggle('overflow-hidden');
+    }
+
+    function resolveProducts() {
+        const grid = document.getElementById('product-grid');
+        const template = document.getElementById('product-card-template');
+        
+        // Simulating network delay
+        setTimeout(() => {
+            grid.innerHTML = '';
+            products.forEach((product, index) => {
+                const clone = template.content.cloneNode(true);
+                const article = clone.querySelector('article');
+                
+                article.style.animationDelay = `${index * 100}ms`;
+                clone.querySelector('.product-name').textContent = product.name;
+                clone.querySelector('.product-desc').textContent = product.desc;
+                clone.querySelector('.product-price').textContent = product.price;
+                clone.querySelector('.product-image').src = product.img;
+                clone.querySelector('.product-image').alt = product.name;
+                
+                if (product.badge) {
+                    const badge = document.createElement('span');
+                    badge.className = "bg-surface-container/90 backdrop-blur px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-on-background rounded-sm";
+                    badge.textContent = product.badge;
+                    clone.querySelector('.badge-container').appendChild(badge);
+                }
+                
+                grid.appendChild(clone);
+            });
+        }, 1200);
+    }
+
+    document.addEventListener('DOMContentLoaded', resolveProducts);
+</script>
 </body></html>

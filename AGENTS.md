@@ -21,10 +21,11 @@ When starting ANY new session, always do this first — no exceptions:
 5. Read @src/infrastructure/supabase — understand DB layer
 6. Read @src/presentation — understand UI layer
 7. Read @public/stitch_e_commerce_ux_ui_design — UI design references
-8. Read @.agents/skills/supabase/supabase — Supabase patterns
-9. Read @.agents/skills/supabase/supabase-postgres-best-practices — DB best practices
-10. Read @.agents/skills/stitch/stitch-design — UI/UX & Stitch patterns
-11. Read @.agents/skills/react-components — React & Tailwind patterns
+8. Read @.agents/skills/supabase/ — Supabase & Postgres best practices
+9. Read @.agents/skills/stitch/ — Stitch UX/UI design patterns
+10. Read @.agents/skills/gsap/ — GSAP core, timeline, and performance core competencies
+11. Read @.agents/skills/design/ — Design taste, layout morphing & prompt enhancements
+12. Read @.agents/skills/react-components — React & Tailwind 4 execution rules
 
 After reading, report to user:
 - ✅ What is DONE
@@ -292,13 +293,11 @@ chore: install supabase agent skills
 - **Cart Bug Fixes**: Corrected cart negative quantity decrement limit and added variant checks to QuickAddButton.
 
 ### 🔄 In Progress:
-- None
+- **Task 5 (UX/UI Evolution):** Overhauling the storefront visual experience using Tailwind CSS 4, Framer Motion layoutId morphing, and advanced GSAP ScrollTrigger orchestration based on new MCP Stitch prototypes.
 
 ### ⏳ Next Tasks (recommended order):
-1. **Task 3b** — VNPay / MoMo payment integration
-   *(requires merchant sandbox account first)*
-2. **Task 5** — Performance optimization
-   *(image optimization, edge caching, lazy loading)*
+1. **Task 3b** — Real-money payment integration (VietQR / PayOS Integration)
+2. **Task 5b** — Backend/Edge caching performance optimization
 
 ### ⚠️ Known Issues:
 - None currently
