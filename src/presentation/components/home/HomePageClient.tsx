@@ -174,7 +174,7 @@ export default function HomePageClient({ featuredProducts }: HomePageClientProps
         {/* Soft background light */}
         <div className="absolute top-0 right-0 w-[550px] h-[550px] rounded-full bg-[radial-gradient(circle,rgba(0,81,213,0.04),transparent_65%)] pointer-events-none" />
         <div className="absolute bottom-0 left-[10%] w-[380px] h-[380px] rounded-full bg-[radial-gradient(circle,rgba(245,158,11,0.04),transparent_65%)] pointer-events-none" />
-        
+
         {/* Editorial Watermark */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[18vw] font-extrabold font-playfair text-[rgba(0,0,0,0.015)] pointer-events-none whitespace-nowrap select-none">
           LUMINA
@@ -182,7 +182,7 @@ export default function HomePageClient({ featuredProducts }: HomePageClientProps
 
         <div className="max-w-[1440px] mx-auto px-8 md:px-12 w-full relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-            
+
             {/* Left Column: Text & Badges */}
             <div className="lg:col-span-7 space-y-6">
               <div className="hero-badge inline-flex items-center gap-2 bg-white rounded-full px-4 py-1.5 shadow-[0_4px_24px_rgba(0,0,0,0.03)] border border-slate-100/60">
@@ -234,7 +234,7 @@ export default function HomePageClient({ featuredProducts }: HomePageClientProps
             {/* Right Column: Visual Asymmetric Cards */}
             <div className="lg:col-span-5 relative hidden lg:block">
               <div className="relative w-full h-[500px] flex items-center justify-center">
-                
+
                 {/* Asymmetric Core Showcase Graphic */}
                 <div className="relative w-[340px] h-[440px] rounded-3xl overflow-hidden shadow-2xl shadow-slate-900/10 bg-white border border-slate-100 p-3 rotate-[-3deg] hover:rotate-0 transition-transform duration-500">
                   <Image
@@ -304,9 +304,9 @@ export default function HomePageClient({ featuredProducts }: HomePageClientProps
       {/* ══════════ ADVANTAGES SECTION ══════════ */}
       <section id="advantages" ref={advantagesRef} className="py-24 bg-white">
         <div className="max-w-[1440px] mx-auto px-8 md:px-12">
-          
+
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 items-center">
-            
+
             <div className="lg:col-span-1 space-y-4">
               <span className="text-[10px] font-black tracking-widest text-[#0051d5] uppercase block">ƯU ĐIỂM VƯỢT TRỘI</span>
               <h2 className="text-3xl font-bold font-playfair leading-tight text-slate-950">Tại sao nên chọn mã nguồn tại LuminaShop?</h2>
@@ -339,7 +339,7 @@ export default function HomePageClient({ featuredProducts }: HomePageClientProps
       {/* ══════════ CATEGORIES NAVIGATION & SHIELD ══════════ */}
       <section ref={categoriesRef} className="py-20 bg-[#fbfaf6] border-t border-slate-100">
         <div className="max-w-[1440px] mx-auto px-8 md:px-12">
-          
+
           <div className="text-center max-w-2xl mx-auto mb-16 space-y-3">
             <span className="text-[10px] font-black tracking-widest text-[#0051d5] uppercase block">BỘ SƯU TẬP TEMPLATE</span>
             <h2 className="text-3xl font-extrabold font-playfair text-slate-950">Tìm kiếm mẫu website phù hợp</h2>
@@ -356,17 +356,15 @@ export default function HomePageClient({ featuredProducts }: HomePageClientProps
                 <button
                   key={cat.filter}
                   onClick={() => setActiveCategory(cat.filter)}
-                  className={`cat-card text-left bg-white rounded-3xl p-6 border-2 transition-all duration-300 shadow-sm hover:scale-[1.03] group ${
-                    activeCategory === cat.filter 
-                      ? "border-[#0051d5] ring-4 ring-blue-50/50" 
-                      : "border-slate-100 hover:border-slate-300"
-                  }`}
+                  className={`cat-card text-left bg-white rounded-3xl p-6 border-2 transition-all duration-300 shadow-sm hover:scale-[1.03] group ${activeCategory === cat.filter
+                    ? "border-[#0051d5] ring-4 ring-blue-50/50"
+                    : "border-slate-100 hover:border-slate-300"
+                    }`}
                 >
-                  <div className={`w-10 h-10 rounded-2xl flex items-center justify-center transition-all ${
-                    activeCategory === cat.filter 
-                      ? "bg-[#0051d5] text-white" 
-                      : "bg-slate-100 text-slate-600 group-hover:bg-[#0051d5]/10 group-hover:text-[#0051d5]"
-                  } mb-4`}>
+                  <div className={`w-10 h-10 rounded-2xl flex items-center justify-center transition-all ${activeCategory === cat.filter
+                    ? "bg-[#0051d5] text-white"
+                    : "bg-slate-100 text-slate-600 group-hover:bg-[#0051d5]/10 group-hover:text-[#0051d5]"
+                    } mb-4`}>
                     <Icon size={18} />
                   </div>
                   <h3 className="font-extrabold text-slate-800 text-[15px] mb-1">{cat.name}</h3>
@@ -382,7 +380,7 @@ export default function HomePageClient({ featuredProducts }: HomePageClientProps
       {/* ══════════ SHOWCASE TEMPLATES GRID ══════════ */}
       <section ref={showcaseRef} className="py-24 bg-white">
         <div className="max-w-[1440px] mx-auto px-8 md:px-12">
-          
+
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 border-b border-slate-100 pb-8">
             <div className="space-y-2">
               <span className="text-[10px] font-black tracking-widest text-[#0051d5] uppercase block">DỰ ÁN NỔI BẬT</span>
@@ -401,15 +399,14 @@ export default function HomePageClient({ featuredProducts }: HomePageClientProps
                   key={product.id}
                   className="prod-card bg-white rounded-3xl border border-slate-100 overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 group flex flex-col h-full"
                 >
-                  
+
                   {/* Visual Frame */}
                   <div className="relative overflow-hidden aspect-[4/3] bg-[#fbfaf6]">
                     {product.imageUrl ? (
-                      <Image
+                      <img
                         src={product.imageUrl}
                         alt={product.title}
-                        fill
-                        className="object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+                        className="w-full h-full object-cover"
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-slate-300">
@@ -464,7 +461,7 @@ export default function HomePageClient({ featuredProducts }: HomePageClientProps
                           {isFree ? "MIỄN PHÍ" : formatCurrency(product.price)}
                         </div>
                       </div>
-                      
+
                       <div className="flex gap-2">
                         {product.demoUrl && (
                           <a
@@ -504,7 +501,7 @@ export default function HomePageClient({ featuredProducts }: HomePageClientProps
       {/* ══════════ SYSTEM TIMELINE JOURNEY ══════════ */}
       <section ref={journeyRef} className="py-24 bg-[#fbfaf6]">
         <div className="max-w-[1440px] mx-auto px-8 md:px-12">
-          
+
           <div className="text-center max-w-2xl mx-auto mb-16 space-y-3">
             <span className="text-[10px] font-black tracking-widest text-[#0051d5] uppercase block">QUY TRÌNH MUA HÀNG</span>
             <h2 className="text-3xl font-extrabold font-playfair text-slate-950">Nhận Source Code chỉ trong 3 bước</h2>
@@ -533,7 +530,7 @@ export default function HomePageClient({ featuredProducts }: HomePageClientProps
       <section className="relative py-24 overflow-hidden bg-[#0b1c30] border-t border-slate-800">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,81,213,0.12),transparent_75%)] pointer-events-none" />
         <div className="max-w-[1440px] mx-auto px-8 md:px-12 relative z-10">
-          
+
           <div className="bg-white/5 border border-slate-800 rounded-3xl p-10 md:p-16 text-center max-w-3xl mx-auto backdrop-blur-sm space-y-6">
             <span className="text-[10px] font-black tracking-widest text-blue-400 uppercase block">ĐĂNG KÝ BẢN TIN</span>
             <h2 className="text-white text-3xl font-extrabold font-playfair">

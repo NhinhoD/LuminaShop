@@ -35,6 +35,209 @@ function sanitizeName(title: string): string {
     .replace(/^-|-$/g, "");
 }
 
+interface FileToUpload {
+  file: File;
+  path: string;
+}
+
+interface MockFileSystemEntry {
+  name: string;
+  isFile: boolean;
+  isDirectory: boolean;
+}
+
+interface MockFileSystemFileEntry extends MockFileSystemEntry {
+  file: (successCallback: (file: File) => void, errorCallback: (err: unknown) => void) => void;
+}
+
+interface MockFileSystemDirectoryEntry extends MockFileSystemEntry {
+  createReader: () => MockFileSystemDirectoryReader;
+}
+
+interface MockFileSystemDirectoryReader {
+  readEntries: (successCallback: (entries: MockFileSystemEntry[]) => void, errorCallback: (err: unknown) => void) => void;
+}
+
+const getContentType = (fileName: string): string => {
+  const ext = fileName.split('.').pop()?.toLowerCase() || '';
+  switch (ext) {
+    case 'html': return 'text/html';
+    case 'css': return 'text/css';
+    case 'js': return 'application/javascript';
+    case 'png': return 'image/png';
+    case 'jpg':
+    case 'jpeg': return 'image/jpeg';
+    case 'webp': return 'image/webp';
+    case 'gif': return 'image/gif';
+    case 'svg': return 'image/svg+xml';
+    case 'woff': return 'font/woff';
+    case 'woff2': return 'font/woff2';
+    case 'ttf': return 'font/ttf';
+    case 'otf': return 'font/otf';
+    case 'json': return 'application/json';
+    default: return 'application/octet-stream';
+  }
+};
+
+const getFilesFromDirectoryEntry = async (entry: MockFileSystemEntry, currentPath = ""): Promise<FileToUpload[]> => {
+  const files: FileToUpload[] = [];
+  if (entry.isFile) {
+    const fileEntry = entry as unknown as MockFileSystemFileEntry;
+    const file = await new Promise<File>((resolve, reject) => {
+      fileEntry.file(resolve, reject);
+    });
+    files.push({ file, path: currentPath + entry.name });
+  } else if (entry.isDirectory) {
+    const dirEntry = entry as unknown as MockFileSystemDirectoryEntry;
+    const dirReader = dirEntry.createReader();
+    
+    const readAllEntries = async (): Promise<MockFileSystemEntry[]> => {
+      let allEntries: MockFileSystemEntry[] = [];
+      const readEntries = async (): Promise<MockFileSystemEntry[]> => {
+        return new Promise((resolve, reject) => {
+          dirReader.readEntries(resolve, reject);
+        });
+      };
+      let result = await readEntries();
+      while (result.length > 0) {
+        allEntries = allEntries.concat(result);
+        result = await readEntries();
+      }
+      return allEntries;
+    };
+
+    const entries = await readAllEntries();
+    for (const subEntry of entries) {
+      const subFiles = await getFilesFromDirectoryEntry(subEntry, currentPath + entry.name + "/");
+      files.push(...subFiles);
+    }
+  }
+  return files;
+};
+
+const getDroppedFiles = async (dataTransfer: DataTransfer): Promise<FileToUpload[]> => {
+  const files: FileToUpload[] = [];
+  const items = dataTransfer.items;
+  if (!items) {
+    for (let i = 0; i < dataTransfer.files.length; i++) {
+      const file = dataTransfer.files[i];
+      files.push({ file, path: file.name });
+    }
+    return files;
+  }
+
+  for (let i = 0; i < items.length; i++) {
+    const item = items[i];
+    if (item.kind === "file") {
+      const entry = item.webkitGetAsEntry() as unknown as MockFileSystemEntry;
+      if (entry) {
+        const subFiles = await getFilesFromDirectoryEntry(entry, "");
+        files.push(...subFiles);
+      }
+    }
+  }
+  return files;
+};
+
+const normalizePaths = (files: FileToUpload[]): FileToUpload[] => {
+  if (files.length === 0) return files;
+  const firstPath = files[0].path;
+  const parts = firstPath.split('/');
+  if (parts.length <= 1) return files;
+
+  const topLevel = parts[0];
+  const allShare = files.every(f => f.path.startsWith(topLevel + '/'));
+  if (allShare) {
+    return files.map(f => ({
+      file: f.file,
+      path: f.path.substring(topLevel.length + 1)
+    }));
+  }
+  return files;
+};
+
+const uploadPreviewFilesAsync = async (
+  filesToUpload: FileToUpload[],
+  title: string,
+  setFormData: React.Dispatch<React.SetStateAction<ProductFormData>>,
+  setPreviewFolderUploading: (v: boolean) => void,
+  setPreviewFolderUploadSuccess: (v: boolean) => void,
+  setError: (v: string | null) => void,
+  setPreviewFolderFileCount: (v: number) => void
+) => {
+  if (filesToUpload.length === 0) return;
+  setPreviewFolderUploading(true);
+  setPreviewFolderUploadSuccess(false);
+  setError(null);
+  setPreviewFolderFileCount(filesToUpload.length);
+
+  try {
+    const supabase = createClient();
+    const cleanTitle = sanitizeName(title || "preview");
+    const basePath = `previews/${cleanTitle}-${Date.now()}`;
+    
+    let indexFileUploaded = false;
+    let indexUrl = "";
+
+    for (const fileObj of filesToUpload) {
+      const filePath = `${basePath}/${fileObj.path}`;
+      const contentType = getContentType(fileObj.file.name);
+
+      const { error: uploadError } = await supabase.storage
+        .from('template-previews')
+        .upload(filePath, fileObj.file, {
+          upsert: true,
+          contentType: contentType,
+          cacheControl: '3600'
+        });
+
+      if (uploadError) {
+        throw new Error(`Lỗi upload file ${fileObj.path}: ${uploadError.message}`);
+      }
+
+      if (fileObj.path === "index.html") {
+        indexFileUploaded = true;
+        const { data: { publicUrl } } = supabase.storage
+          .from('template-previews')
+          .getPublicUrl(filePath);
+        indexUrl = publicUrl;
+      }
+    }
+
+    if (!indexFileUploaded) {
+      const rootHtml = filesToUpload.find(f => f.path.endsWith('.html') && !f.path.includes('/'));
+      if (rootHtml) {
+        const filePath = `${basePath}/${rootHtml.path}`;
+        const { data: { publicUrl } } = supabase.storage
+          .from('template-previews')
+          .getPublicUrl(filePath);
+        indexUrl = publicUrl;
+      } else {
+        const anyHtml = filesToUpload.find(f => f.path.endsWith('.html'));
+        if (anyHtml) {
+          const filePath = `${basePath}/${anyHtml.path}`;
+          const { data: { publicUrl } } = supabase.storage
+            .from('template-previews')
+            .getPublicUrl(filePath);
+            indexUrl = publicUrl;
+        }
+      }
+    }
+
+    if (indexUrl) {
+      setFormData(prev => ({ ...prev, demoUrl: indexUrl }));
+      setPreviewFolderUploadSuccess(true);
+    } else {
+      throw new Error("Không tìm thấy tệp tin HTML chính (index.html) trong thư mục tải lên.");
+    }
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : String(err);
+    setError(`Lỗi upload thư mục preview: ${msg}`);
+  } finally {
+    setPreviewFolderUploading(false);
+  }
+};
+
 export function ProductForm({ categories, initialData }: ProductFormProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -45,13 +248,75 @@ export function ProductForm({ categories, initialData }: ProductFormProps) {
   const [imageUploadSuccess, setImageUploadSuccess] = useState(false);
   const [zipUploading, setZipUploading] = useState(false);
   const [zipUploadSuccess, setZipUploadSuccess] = useState(false);
+  const [previewFolderUploading, setPreviewFolderUploading] = useState(false);
+  const [previewFolderUploadSuccess, setPreviewFolderUploadSuccess] = useState(false);
 
   // Dragging states
   const [isImageDragging, setIsImageDragging] = useState(false);
   const [isZipDragging, setIsZipDragging] = useState(false);
+  const [isPreviewFolderDragging, setIsPreviewFolderDragging] = useState(false);
+  const [previewFolderFileCount, setPreviewFolderFileCount] = useState(0);
 
   const imageInputRef = useRef<HTMLInputElement>(null);
   const zipInputRef = useRef<HTMLInputElement>(null);
+  const previewFolderInputRef = useRef<HTMLInputElement>(null);
+
+  const handlePreviewFolderDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsPreviewFolderDragging(true);
+  };
+
+  const handlePreviewFolderDragLeave = () => {
+    setIsPreviewFolderDragging(false);
+  };
+
+  const handlePreviewFolderDrop = async (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsPreviewFolderDragging(false);
+    try {
+      const files = await getDroppedFiles(e.dataTransfer);
+      const normalized = normalizePaths(files);
+      if (normalized.length > 0) {
+        await uploadPreviewFilesAsync(
+          normalized,
+          formData.title,
+          setFormData,
+          setPreviewFolderUploading,
+          setPreviewFolderUploadSuccess,
+          setError,
+          setPreviewFolderFileCount
+        );
+      } else {
+        setError("Thư mục trống hoặc không hợp lệ.");
+      }
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err);
+      setError(`Lỗi đọc tập tin: ${msg}`);
+    }
+  };
+
+  const handlePreviewFolderSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const fileList = e.target.files;
+    if (!fileList || fileList.length === 0) return;
+
+    const filesToUpload: FileToUpload[] = [];
+    for (let i = 0; i < fileList.length; i++) {
+      const file = fileList[i];
+      const path = file.webkitRelativePath || file.name;
+      filesToUpload.push({ file, path });
+    }
+
+    const normalized = normalizePaths(filesToUpload);
+    uploadPreviewFilesAsync(
+      normalized,
+      formData.title,
+      setFormData,
+      setPreviewFolderUploading,
+      setPreviewFolderUploadSuccess,
+      setError,
+      setPreviewFolderFileCount
+    );
+  };
 
   const handleImageDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -317,6 +582,49 @@ export function ProductForm({ categories, initialData }: ProductFormProps) {
             className="w-full px-4 py-3 border border-slate-200 focus:border-[#0051d5] rounded-xl outline-none text-xs font-semibold bg-white disabled:bg-slate-50 disabled:text-slate-400"
             placeholder="Ví dụ: https://demo.luminashop.vn/my-template hoặc link Stitch public preview"
           />
+        </div>
+
+        {/* Static Preview Folder Drag-and-Drop */}
+        <div className="space-y-2">
+          <label className="text-xs font-extrabold uppercase tracking-wider text-slate-700">Tải lên thư mục Preview tĩnh (HTML/CSS/JS) *</label>
+          <input
+            type="file"
+            ref={previewFolderInputRef}
+            multiple
+            className="hidden"
+            onChange={handlePreviewFolderSelect}
+            {...{ webkitdirectory: "true", directory: "" }}
+          />
+          <div
+            onClick={() => previewFolderInputRef.current?.click()}
+            onDragOver={handlePreviewFolderDragOver}
+            onDragLeave={handlePreviewFolderDragLeave}
+            onDrop={handlePreviewFolderDrop}
+            className={`border-2 border-dashed rounded-xl p-4 flex flex-col items-center justify-center cursor-pointer transition-colors min-h-[96px] text-center ${
+              isPreviewFolderDragging
+                ? "border-[#0051d5] bg-blue-50/50"
+                : "border-slate-200 hover:border-[#0051d5] bg-white"
+            }`}
+          >
+            {previewFolderUploading ? (
+              <div className="flex flex-col items-center gap-1">
+                <Loader2 className="h-6 w-6 text-[#0051d5] animate-spin" />
+                <span className="text-[10px] font-bold text-slate-500">Đang tải lên thư mục ({previewFolderFileCount} files)...</span>
+              </div>
+            ) : previewFolderUploadSuccess || formData.demoUrl ? (
+              <div className="flex flex-col items-center gap-1">
+                <CheckCircle className="h-6 w-6 text-emerald-500" />
+                <span className="text-[10px] font-bold text-slate-800">Thư mục preview đã tải lên</span>
+                <span className="text-[9px] text-[#999] break-all max-w-[200px] overflow-hidden whitespace-nowrap text-ellipsis">{formData.demoUrl}</span>
+              </div>
+            ) : (
+              <div className="flex flex-col items-center gap-1">
+                <UploadCloud className="h-6 w-6 text-slate-400" />
+                <span className="text-[10px] font-bold text-slate-600">Chọn hoặc kéo thả thư mục chứa index.html</span>
+                <span className="text-[9px] text-slate-400">Tự động cấu hình MIME-types tĩnh</span>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Source Code File Drag-and-Drop */}

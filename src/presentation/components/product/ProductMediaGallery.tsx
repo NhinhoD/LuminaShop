@@ -67,7 +67,11 @@ export default function ProductMediaGallery({ title, imageUrl, demoUrl }: Produc
       )}
 
       {/* Media Window Container */}
-      <div className="aspect-[4/3] sm:aspect-[16/10] bg-cream rounded-2xl overflow-hidden shadow-[0_8px_40px_rgba(0,0,0,0.06)] border border-[#ece9e6] relative">
+      <div className={`bg-cream rounded-2xl overflow-hidden shadow-[0_8px_40px_rgba(0,0,0,0.06)] border border-[#ece9e6] relative transition-all duration-500 ${
+        activeTab === "live" && demoUrl
+          ? "w-full h-[75vh] min-h-[500px]"
+          : "aspect-[4/3] sm:aspect-[16/10]"
+      }`}>
         {activeTab === "live" && demoUrl ? (
           <div className="w-full h-full relative bg-slate-950">
             {/* Top Browser Bar Mock */}
@@ -109,10 +113,10 @@ export default function ProductMediaGallery({ title, imageUrl, demoUrl }: Produc
                   </div>
                   <div className="flex flex-col items-center text-center">
                     <p className="text-xs font-semibold text-slate-200 uppercase tracking-widest font-poppins">
-                      Connecting to Stitch Canvas
+                      Loading Live Preview
                     </p>
                     <p className="text-[9px] text-slate-500 font-mono mt-1 select-none">
-                      loading interactive layouts & gsap animations...
+                      rendering high-fidelity template designs...
                     </p>
                   </div>
                 </motion.div>
