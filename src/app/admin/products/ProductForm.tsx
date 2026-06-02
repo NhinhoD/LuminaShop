@@ -196,7 +196,7 @@ const uploadPreviewFilesAsync = async (
         .from('template-previews')
         .upload(filePath, fileObj.file, {
           contentType: resolvedContentType,
-          cacheControl: '3600',
+          cacheControl: '0',
           upsert: true
         });
 

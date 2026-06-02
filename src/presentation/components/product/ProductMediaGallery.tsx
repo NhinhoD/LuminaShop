@@ -11,6 +11,18 @@ interface ProductMediaGalleryProps {
   demoUrl?: string;
 }
 
+/**
+ * Wraps Supabase Storage URLs through the local /api/preview proxy
+ * to bypass Supabase's forced text/plain Content-Type on HTML files.
+ * Non-Supabase URLs pass through unchanged.
+ */
+function getProxiedPreviewUrl(url: string): string {
+  if (url.includes("supabase.co/storage/")) {
+    return "/api/preview?url=" + encodeURIComponent(url);
+  }
+  return url;
+}
+
 export default function ProductMediaGallery({ title, imageUrl, demoUrl }: ProductMediaGalleryProps) {
   const [activeTab, setActiveTab] = useState<"image" | "live">(demoUrl ? "live" : "image");
   const [iframeLoading, setIframeLoading] = useState(true);
@@ -20,6 +32,8 @@ export default function ProductMediaGallery({ title, imageUrl, demoUrl }: Produc
     setPrevDemoUrl(demoUrl);
     setIframeLoading(true);
   }
+
+  const resolvedIframeSrc = demoUrl ? getProxiedPreviewUrl(demoUrl) : "";
 
   return (
     <div className="space-y-6">
@@ -88,7 +102,7 @@ export default function ProductMediaGallery({ title, imageUrl, demoUrl }: Produc
 
             {/* Embedded Live Iframe sandbox */}
             <iframe
-              src={demoUrl}
+              src={resolvedIframeSrc}
               title={`Live Preview of ${title}`}
               className="w-full h-[calc(100%-36px)] border-0 bg-white"
               sandbox="allow-scripts allow-same-origin allow-popups"
