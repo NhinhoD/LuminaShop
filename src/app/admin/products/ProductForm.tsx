@@ -181,14 +181,25 @@ const uploadPreviewFilesAsync = async (
 
     for (const fileObj of filesToUpload) {
       const filePath = `${basePath}/${fileObj.path}`;
-      const contentType = getContentType(fileObj.file.name);
+      const ext = fileObj.file.name.split('.').pop()?.toLowerCase() || '';
+      
+      let contentType = 'application/octet-stream';
+      if (ext === 'html' || ext === 'htm') {
+        contentType = 'text/html';
+      } else if (ext === 'css') {
+        contentType = 'text/css';
+      } else if (ext === 'js') {
+        contentType = 'application/javascript';
+      } else {
+        contentType = getContentType(fileObj.file.name);
+      }
 
       const { error: uploadError } = await supabase.storage
         .from('template-previews')
         .upload(filePath, fileObj.file, {
-          upsert: true,
-          contentType: contentType,
-          cacheControl: '3600'
+          contentType,
+          cacheControl: '3600',
+          upsert: true
         });
 
       if (uploadError) {
