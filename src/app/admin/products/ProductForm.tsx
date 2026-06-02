@@ -58,26 +58,6 @@ interface MockFileSystemDirectoryReader {
   readEntries: (successCallback: (entries: MockFileSystemEntry[]) => void, errorCallback: (err: unknown) => void) => void;
 }
 
-const getContentType = (fileName: string): string => {
-  const ext = fileName.split('.').pop()?.toLowerCase() || '';
-  switch (ext) {
-    case 'html': return 'text/html';
-    case 'css': return 'text/css';
-    case 'js': return 'application/javascript';
-    case 'png': return 'image/png';
-    case 'jpg':
-    case 'jpeg': return 'image/jpeg';
-    case 'webp': return 'image/webp';
-    case 'gif': return 'image/gif';
-    case 'svg': return 'image/svg+xml';
-    case 'woff': return 'font/woff';
-    case 'woff2': return 'font/woff2';
-    case 'ttf': return 'font/ttf';
-    case 'otf': return 'font/otf';
-    case 'json': return 'application/json';
-    default: return 'application/octet-stream';
-  }
-};
 
 const getFilesFromDirectoryEntry = async (entry: MockFileSystemEntry, currentPath = ""): Promise<FileToUpload[]> => {
   const files: FileToUpload[] = [];
@@ -181,23 +161,41 @@ const uploadPreviewFilesAsync = async (
 
     for (const fileObj of filesToUpload) {
       const filePath = `${basePath}/${fileObj.path}`;
-      const ext = fileObj.file.name.split('.').pop()?.toLowerCase() || '';
-      
-      let contentType = 'application/octet-stream';
-      if (ext === 'html' || ext === 'htm') {
-        contentType = 'text/html';
-      } else if (ext === 'css') {
-        contentType = 'text/css';
-      } else if (ext === 'js') {
-        contentType = 'application/javascript';
-      } else {
-        contentType = getContentType(fileObj.file.name);
+      const fileNameLower = fileObj.file.name.toLowerCase();
+      let resolvedContentType = 'application/octet-stream';
+
+      if (fileNameLower.endsWith('.html') || fileNameLower.endsWith('.htm')) {
+        resolvedContentType = 'text/html';
+      } else if (fileNameLower.endsWith('.css')) {
+        resolvedContentType = 'text/css';
+      } else if (fileNameLower.endsWith('.js')) {
+        resolvedContentType = 'application/javascript';
+      } else if (fileNameLower.endsWith('.png')) {
+        resolvedContentType = 'image/png';
+      } else if (fileNameLower.endsWith('.jpg') || fileNameLower.endsWith('.jpeg')) {
+        resolvedContentType = 'image/jpeg';
+      } else if (fileNameLower.endsWith('.svg')) {
+        resolvedContentType = 'image/svg+xml';
+      } else if (fileNameLower.endsWith('.webp')) {
+        resolvedContentType = 'image/webp';
+      } else if (fileNameLower.endsWith('.gif')) {
+        resolvedContentType = 'image/gif';
+      } else if (fileNameLower.endsWith('.woff')) {
+        resolvedContentType = 'font/woff';
+      } else if (fileNameLower.endsWith('.woff2')) {
+        resolvedContentType = 'font/woff2';
+      } else if (fileNameLower.endsWith('.ttf')) {
+        resolvedContentType = 'font/ttf';
+      } else if (fileNameLower.endsWith('.otf')) {
+        resolvedContentType = 'font/otf';
+      } else if (fileNameLower.endsWith('.json')) {
+        resolvedContentType = 'application/json';
       }
 
       const { error: uploadError } = await supabase.storage
         .from('template-previews')
         .upload(filePath, fileObj.file, {
-          contentType,
+          contentType: resolvedContentType,
           cacheControl: '3600',
           upsert: true
         });
