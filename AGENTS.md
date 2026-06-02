@@ -279,29 +279,23 @@ chore: install supabase agent skills
 
 ## ─── PROJECT STATUS ───
 
+### 🎯 FINALIZED BUSINESS PIVOT:
+- LuminaShop is officially configured as a **Premium UX/UI Website Template Marketplace**. The platform hosts, previews, and licenses high-fidelity frontend templates (Free & Paid digital source codes) equipped with GSAP, Tailwind 4, and Framer Motion.
+
 ### ✅ Completed:
-- **Task 1 (Cart):** Zustand store, server actions, persistent state
-- **Task 2 (Checkout):** Multi-step form, Zod validation, order creation
-- **Task 3a (COD Payment):** CODPaymentGateway, payment flow, success/failure pages
-- **Task 4 (Admin Suite & Customer Dashboard):** Full order management, status tracking, and profile history
-- **Task 1b (Atomic Inventory):** Atomic stock deduction via SQL RPC, race-condition prevention
-- **Inventory Sync:** Auto-sync products.stock from variants via DB triggers
-- **Type Safety:** 100% — 0 `any` types in `src/`, 0 build/lint errors
-- **Git Workflow:** PR-based workflow enforced
-- **All Skills:** Consolidated in `.agents/skills/`
-- **MCP GitHub:** Connected and configured
-- **Cart Bug Fixes**: Corrected cart negative quantity decrement limit and added variant checks to QuickAddButton.
+- **Task 1 (Cart & Checkout framework)**: Baseline architecture built.
+- **Task 5 (UI Evolution)**: Successfully migrated the storefront into an elegant, high-contrast editorial look inspired by the Sarab Spec, configured via local assets.
+- **Digital Product Refactoring**: Transitioned core entities (`Product`, `Order`) from physical inventory tracking to digital download licensing models.
+- **Autonomous AI Template Pipeline**: Engineered native zippers, AI design blueprints (with GSAP scroll triggers and interactive mouse followers), server-side storage handlers, and admin auto-population dashboard interfaces.
 
 ### 🔄 In Progress:
-- **Task 5 (UX/UI Evolution):** Overhauling the storefront visual experience using Tailwind CSS 4, Framer Motion layoutId morphing, and advanced GSAP ScrollTrigger orchestration based on new MCP Stitch prototypes.
+- None currently
 
 ### ⏳ Next Tasks (recommended order):
-1. **Task 3b** — Real-money payment integration (VietQR / PayOS Integration)
-2. **Task 5b** — Backend/Edge caching performance optimization
+1. **Payment Gateway Integration**: Hook up a live VietQR/PayOS dynamic payment API so users can purchase these premium templates using real fiat money.
 
 ### ⚠️ Known Issues:
 - None currently
-
 ---
 
 ## ─── PR REVIEW PROMPT ───

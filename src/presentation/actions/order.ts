@@ -250,3 +250,32 @@ export async function cancelOrderAction(orderId: string): Promise<ActionResponse
     return { success: false, error: "Không thể hủy đơn hàng." };
   }
 }
+
+/**
+ * Approve manual bank transfer payment (Admin only)
+ */
+export async function approveManualPaymentAction(orderId: string): Promise<ActionResponse<Order>> {
+  const isAdmin = await isUserAdmin();
+  if (!isAdmin) return { success: false, error: "Access denied" };
+
+  try {
+    const { makeOrderRepository } = await import("@/infrastructure/supabase/container");
+    const orderRepo = await makeOrderRepository();
+    await orderRepo.updatePaymentStatus(orderId, 'paid');
+
+    const updatedOrder = await orderRepo.findById(orderId);
+    if (!updatedOrder) {
+      return { success: false, error: "Không tìm thấy đơn hàng sau cập nhật." };
+    }
+
+    revalidatePath("/admin/orders");
+    revalidatePath("/profile");
+    revalidatePath("/profile/orders");
+    revalidatePath(`/profile/orders/${orderId}`);
+
+    return { success: true, data: updatedOrder };
+  } catch (error: unknown) {
+    console.error('[Action Error] approveManualPaymentAction:', error);
+    return { success: false, error: "Không thể phê duyệt thanh toán." };
+  }
+}

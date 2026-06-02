@@ -17,9 +17,10 @@ export class AddToCartUseCase {
       );
 
       if (existingItem) {
-        await this.cartRepo.updateItem(existingItem.id, existingItem.quantity + item.quantity);
+        // Enforce strict limit of exactly 1 for digital templates
+        await this.cartRepo.updateItem(existingItem.id, 1);
       } else {
-        await this.cartRepo.addItem(cart.id, item);
+        await this.cartRepo.addItem(cart.id, { ...item, quantity: 1 });
       }
 
       return ok(undefined);

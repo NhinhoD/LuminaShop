@@ -1,9 +1,9 @@
 /**
- * Global Constants for LuminaShop
+ * Global Constants for LuminaShop (Sarab F&B Design)
  * Used to avoid hardcoding strings and values throughout the application.
  */
 
-export const BRAND_NAME = "LuminaCommerce";
+export const BRAND_NAME = "LuminaShop";
 
 export const ROUTES = {
   HOME: "/",
@@ -28,14 +28,17 @@ export const ROLES = {
 
 export const UI_CONFIG = {
   MAX_WIDTH: "1440px",
-  ACCENT_COLOR: "#000000",
-  NAVBAR_HEIGHT: "64px",
+  ACCENT_COLOR: "#e8281a",
+  NAVBAR_HEIGHT: "0px",
 } as const;
 
 export const CATEGORIES = {
-  MENS_OUTERWEAR: "Men's Outerwear",
-  NEW_ARRIVALS: "New Arrivals",
-  COLLECTIONS: "Collections",
+  BURGERS: "Burgers",
+  PIZZA: "Pizza",
+  CHICKEN: "Fried Chicken",
+  WRAPS: "Wraps",
+  PASTA: "Pasta",
+  DESSERTS: "Desserts",
 } as const;
 
 export const LAYOUT_CLASSES = {
@@ -44,12 +47,12 @@ export const LAYOUT_CLASSES = {
 } as const;
 
 export const UI_LABELS = {
-  SHOP_THE_COLLECTION: "Shop the Collection",
+  SHOP_THE_COLLECTION: "Explore Menu",
   CREATE_ACCOUNT: "Create Account",
   LOG_IN: "Log In",
   LOG_OUT: "Log Out",
   SAVE_CHANGES: "Save Changes",
-  VIEW_ALL: "View All",
+  VIEW_ALL: "View Full Menu",
   RECENT_ORDERS: "Recent Orders",
   PROFILE_INFO: "Profile Information",
   ORDER_HISTORY: "Order History",

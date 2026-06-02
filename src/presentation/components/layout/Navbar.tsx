@@ -7,11 +7,10 @@ export async function Navbar() {
   const { data: { user } } = await supabase.auth.getUser();
 
   const navLinks = [
-    { label: "SHOP ALL", href: ROUTES.SHOP },
-    { label: "NEW ARRIVALS", href: `${ROUTES.SHOP}?category=new` },
-    { label: "COLLECTIONS", href: `${ROUTES.SHOP}?collection=all` },
-    { label: "EDITORIAL", href: "#" },
-    { label: "SUPPORT", href: "#" },
+    { label: "Home", href: ROUTES.HOME },
+    { label: "Menu", href: ROUTES.SHOP },
+    { label: "About", href: "#about" },
+    { label: "Contact", href: "#contact" },
   ] as const;
 
   return (

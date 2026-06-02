@@ -2,7 +2,7 @@ import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { createClient } from '@/infrastructure/supabase/server';
 import { signout } from '@/presentation/actions/auth';
-import { ROUTES, UI_LABELS, PLACEHOLDERS } from '@/presentation/constants';
+import { ROUTES } from '@/presentation/constants';
 import { StatusBadge } from '@/presentation/components/orders/StatusBadge';
 
 export default async function ProfilePage() {
@@ -18,12 +18,12 @@ export default async function ProfilePage() {
   // Fetch recent orders
   const { getUserOrdersAction } = await import('@/presentation/actions/order');
   const response = await getUserOrdersAction();
-  const recentOrders = (response.data || []).slice(0, 2);
+  const recentOrders = (response.data || []).slice(0, 5);
 
   const { UserOrdersRealtimeTracker } = await import('@/presentation/components/orders/UserOrdersRealtimeTracker');
 
   return (
-    <main className="flex-grow pt-24 pb-24 bg-[#f8f9fa]">
+    <main className="flex-grow pt-24 pb-24 bg-[#fcfbf9] font-manrope">
       <UserOrdersRealtimeTracker userId={user.id} />
       <div className="max-w-[1440px] mx-auto px-8 md:px-12">
         
@@ -31,43 +31,35 @@ export default async function ProfilePage() {
           
           {/* Navigation Sidebar */}
           <aside className="lg:col-span-3 space-y-6">
-            <div className="bg-white rounded-xl border border-slate-100 p-8 shadow-sm">
+            <div className="bg-white rounded-3xl border border-slate-100 p-8 shadow-sm">
               {/* User Identity */}
               <div className="flex flex-col items-center text-center mb-10">
-                <div className="w-20 h-20 rounded-full overflow-hidden mb-4 border-2 border-slate-50">
+                <div className="w-20 h-20 rounded-full overflow-hidden mb-4 border-2 border-slate-50 shadow-sm">
                   <img 
                     alt="Profile" 
                     className="w-full h-full object-cover" 
-                    src={profile?.avatar_url || `https://ui-avatars.com/api/?name=${profile?.full_name || user.email}&background=0b1c30&color=fff&size=128`} 
+                    src={profile?.avatar_url || `https://ui-avatars.com/api/?name=${profile?.full_name || user.email}&background=0051d5&color=fff&size=128`} 
                   />
                 </div>
-                <h2 className="text-lg font-bold text-slate-900">{profile?.full_name || 'Jane Doe'}</h2>
-                <p className="text-slate-400 text-[11px] truncate w-full">{user.email}</p>
+                <h2 className="text-base font-extrabold text-slate-900 leading-snug">{profile?.full_name || 'Khách hàng Lumina'}</h2>
+                <p className="text-slate-400 text-[10px] truncate w-full font-bold mt-1 uppercase tracking-wider">{user.email}</p>
               </div>
 
               {/* Sidebar Navigation */}
               <nav className="space-y-1">
-                <Link href="/profile" className="flex items-center gap-4 px-4 py-3.5 bg-[#0b1c30] text-white rounded-lg font-semibold text-[13px] transition-all">
-                  <span className="material-symbols-outlined text-[20px]">person</span>
-                  {UI_LABELS.PROFILE_INFO}
+                <Link href="/profile" className="flex items-center gap-4 px-4 py-3 bg-[#0b1c30] text-white rounded-xl font-bold text-xs uppercase tracking-wider transition-all">
+                  <span className="material-symbols-outlined text-[18px]">person</span>
+                  Hồ sơ cá nhân
                 </Link>
-                <Link href="/profile/orders" className="flex items-center gap-4 px-4 py-3.5 text-slate-500 hover:bg-slate-50 hover:text-slate-900 rounded-lg font-semibold text-[13px] transition-all group">
-                  <span className="material-symbols-outlined text-[20px] text-slate-400 group-hover:text-slate-900">receipt_long</span>
-                  {UI_LABELS.ORDER_HISTORY}
-                </Link>
-                <Link href="/profile/wishlist" className="flex items-center gap-4 px-4 py-3.5 text-slate-500 hover:bg-slate-50 hover:text-slate-900 rounded-lg font-semibold text-[13px] transition-all group">
-                  <span className="material-symbols-outlined text-[20px] text-slate-400 group-hover:text-slate-900">favorite</span>
-                  {UI_LABELS.WISHLIST}
-                </Link>
-                <Link href="/profile/addresses" className="flex items-center gap-4 px-4 py-3.5 text-slate-500 hover:bg-slate-50 hover:text-slate-900 rounded-lg font-semibold text-[13px] transition-all group">
-                  <span className="material-symbols-outlined text-[20px] text-slate-400 group-hover:text-slate-900">home</span>
-                  {UI_LABELS.ADDRESSES}
+                <Link href="/profile/orders" className="flex items-center gap-4 px-4 py-3 text-slate-500 hover:bg-slate-50 hover:text-slate-900 rounded-xl font-bold text-xs uppercase tracking-wider transition-all group">
+                  <span className="material-symbols-outlined text-[18px] text-slate-400 group-hover:text-slate-900">download_for_offline</span>
+                  Mã nguồn của tôi
                 </Link>
                 
                 <form action={signout} className="pt-6">
-                  <button type="submit" className="w-full flex items-center gap-4 px-4 py-3.5 text-red-500 hover:bg-red-50 rounded-lg font-semibold text-[13px] transition-all group">
-                    <span className="material-symbols-outlined text-[20px] text-red-400">logout</span>
-                    {UI_LABELS.LOG_OUT}
+                  <button type="submit" className="w-full flex items-center gap-4 px-4 py-3 text-red-500 hover:bg-red-50 rounded-xl font-bold text-xs uppercase tracking-wider transition-all group cursor-pointer">
+                    <span className="material-symbols-outlined text-[18px] text-red-400">logout</span>
+                    Đăng xuất
                   </button>
                 </form>
               </nav>
@@ -78,95 +70,106 @@ export default async function ProfilePage() {
           <div className="lg:col-span-9 space-y-8">
             
             {/* Profile Information Section */}
-            <section className="bg-white rounded-xl border border-slate-100 p-10 shadow-sm">
+            <section className="bg-white rounded-3xl border border-slate-100 p-8 md:p-10 shadow-sm">
               <div className="mb-10">
-                <h1 className="text-2xl font-bold text-slate-900 mb-2">{UI_LABELS.PROFILE_INFO}</h1>
-                <p className="text-slate-500 text-[13px]">Manage your personal details and account settings.</p>
+                <span className="text-[10px] font-black tracking-widest text-[#0051d5] uppercase block mb-1">CÀI ĐẶT TÀI KHOẢN</span>
+                <h1 className="text-2xl font-bold text-slate-950 font-playfair">Thông tin hồ sơ</h1>
+                <div className="h-1 w-12 bg-[#0051d5] rounded-full mt-2" />
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
                 <div>
-                  <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-2">First Name</label>
+                  <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Họ & Tên lót</label>
                   <input 
                     type="text" 
-                    defaultValue={profile?.full_name?.split(' ')[0] || ''}
-                    className="w-full h-12 px-4 bg-white border border-slate-200 rounded-sm text-sm focus:border-[#0051d5] focus:ring-1 focus:ring-[#0051d5] outline-none transition-all"
-                    placeholder={PLACEHOLDERS.FIRST_NAME}
+                    defaultValue={profile?.full_name?.split(' ').slice(0, -1).join(' ') || ''}
+                    className="w-full h-11 px-4 bg-white border border-slate-200 rounded-xl text-xs font-semibold focus:border-[#0051d5] outline-none transition-all"
+                    placeholder="Nguyễn Văn"
                   />
                 </div>
                 <div>
-                  <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-2">Last Name</label>
+                  <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Tên</label>
                   <input 
                     type="text" 
-                    defaultValue={profile?.full_name?.split(' ').slice(1).join(' ') || ''}
-                    className="w-full h-12 px-4 bg-white border border-slate-200 rounded-sm text-sm focus:border-[#0051d5] focus:ring-1 focus:ring-[#0051d5] outline-none transition-all"
-                    placeholder={PLACEHOLDERS.LAST_NAME}
+                    defaultValue={profile?.full_name?.split(' ').slice(-1).join('') || ''}
+                    className="w-full h-11 px-4 bg-white border border-slate-200 rounded-xl text-xs font-semibold focus:border-[#0051d5] outline-none transition-all"
+                    placeholder="A"
                   />
                 </div>
                 <div className="md:col-span-2">
-                  <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-2">Email Address</label>
+                  <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Địa chỉ Email</label>
                   <input 
                     type="email" 
                     readOnly
                     defaultValue={user.email}
-                    className="w-full h-12 px-4 bg-slate-50 border border-slate-200 rounded-sm text-sm text-slate-500 outline-none cursor-not-allowed"
+                    className="w-full h-11 px-4 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-400 outline-none cursor-not-allowed"
                   />
                 </div>
                 <div className="md:col-span-2">
-                  <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-2">Phone Number</label>
+                  <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Số điện thoại liên hệ</label>
                   <input 
                     type="tel" 
                     defaultValue={profile?.phone || ''}
-                    placeholder="+1 (555) 123-4567"
-                    className="w-full h-12 px-4 bg-white border border-slate-200 rounded-sm text-sm focus:border-[#0051d5] focus:ring-1 focus:ring-[#0051d5] outline-none transition-all"
+                    placeholder="0912345678"
+                    className="w-full h-11 px-4 bg-white border border-slate-200 rounded-xl text-xs font-semibold focus:border-[#0051d5] outline-none transition-all"
                   />
                 </div>
               </div>
 
               <div className="flex justify-end mt-10">
-                <button className="bg-[#0051d5] text-white font-bold px-8 py-3.5 rounded-sm hover:bg-[#0041ac] transition-all shadow-md text-sm active:scale-95">
-                  {UI_LABELS.SAVE_CHANGES}
+                <button className="bg-[#0051d5] hover:bg-[#0041ac] text-white font-bold px-8 py-3 rounded-xl transition-all shadow-md shadow-blue-900/10 text-xs active:scale-95 uppercase tracking-wider cursor-pointer">
+                  Lưu thay đổi
                 </button>
               </div>
             </section>
 
             {/* Recent Orders Section */}
-            <section className="bg-white rounded-xl border border-slate-100 p-10 shadow-sm">
+            <section className="bg-white rounded-3xl border border-slate-100 p-8 md:p-10 shadow-sm">
               <div className="flex justify-between items-center mb-10">
-                <h2 className="text-xl font-bold text-slate-900">{UI_LABELS.RECENT_ORDERS}</h2>
-                <Link href="/profile/orders" className="text-[11px] font-bold text-[#0051d5] uppercase tracking-[0.1em] hover:underline underline-offset-4">{UI_LABELS.VIEW_ALL}</Link>
+                <div>
+                  <span className="text-[10px] font-black tracking-widest text-[#0051d5] uppercase block mb-1">GIAO DỊCH GẦN ĐÂY</span>
+                  <h2 className="text-xl font-bold text-slate-950 font-playfair">Lịch sử đơn hàng</h2>
+                </div>
+                <Link href="/profile/orders" className="text-[10px] font-extrabold text-[#0051d5] uppercase tracking-wider hover:underline underline-offset-4">Xem tất cả</Link>
               </div>
 
               <div className="space-y-4">
                 {recentOrders.length === 0 ? (
-                  <div className="py-8 text-center border border-dashed border-slate-200 rounded-xl">
-                    <p className="text-slate-400 text-sm">Bạn chưa có đơn hàng nào.</p>
+                  <div className="py-12 text-center border border-dashed border-slate-200 rounded-3xl">
+                    <p className="text-slate-400 text-sm font-semibold">Bạn chưa mua mẫu mã nguồn nào.</p>
                   </div>
                 ) : (
                   recentOrders.map((order) => (
                     <Link 
                       key={order.id}
                       href={`/profile/orders/${order.id}`}
-                      className="flex items-center gap-6 p-6 border border-slate-100 rounded-xl hover:border-slate-200 transition-colors group"
+                      className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 border border-slate-100 rounded-2xl hover:border-slate-200 hover:shadow-sm transition-all group"
                     >
-                      <div className="w-14 h-14 bg-blue-50 text-[#0051d5] rounded-lg flex items-center justify-center flex-shrink-0">
-                        <span className="material-symbols-outlined text-[28px]">
-                          {order.status === 'shipped' || order.status === 'delivered' ? 'local_shipping' : 'inventory_2'}
-                        </span>
+                      <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 bg-blue-50 text-[#0051d5] rounded-xl flex items-center justify-center flex-shrink-0 transition-transform group-hover:scale-105">
+                          <span className="material-symbols-outlined text-[24px]">
+                            {order.paymentStatus === 'paid' ? 'download_done' : 'payment'}
+                          </span>
+                        </div>
+                        <div>
+                          <h3 className="font-extrabold text-slate-800 text-sm mb-0.5 group-hover:text-[#0051d5] transition-colors">
+                            Đơn hàng #{order.id.slice(0, 8).toUpperCase()}
+                          </h3>
+                          <p className="text-slate-400 text-[10px] font-bold uppercase tracking-wider">
+                            Đặt ngày {new Date(order.createdAt).toLocaleDateString('vi-VN')}
+                          </p>
+                        </div>
                       </div>
-                      <div className="flex-grow">
-                        <h3 className="font-bold text-slate-900 text-sm mb-1 group-hover:text-[#0051d5] transition-colors">
-                          Order #{order.id.slice(0, 8).toUpperCase()}
-                        </h3>
-                        <p className="text-slate-400 text-[11px]">
-                          Placed on {new Date(order.createdAt).toLocaleDateString('vi-VN')}
-                        </p>
-                      </div>
-                      <div className="text-right">
-                        <span className="block font-black text-slate-900 text-lg mb-1">
-                          {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(order.totalAmount)}
-                        </span>
-                        <StatusBadge status={order.status} />
+                      <div className="flex items-center justify-between sm:justify-end gap-6 border-t sm:border-t-0 pt-3 sm:pt-0 border-slate-100">
+                        <div className="text-left sm:text-right">
+                          <span className="block font-black text-slate-900 text-base mb-0.5">
+                            {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(order.totalAmount)}
+                          </span>
+                          <span className="text-[10px] text-slate-400 font-bold block uppercase">
+                            {order.paymentMethod === 'cod' ? 'Chuyển khoản thủ công' : order.paymentMethod}
+                          </span>
+                        </div>
+                        <StatusBadge status={order.status} className="text-[10px] font-bold px-2.5 py-0.5" />
                       </div>
                     </Link>
                   ))

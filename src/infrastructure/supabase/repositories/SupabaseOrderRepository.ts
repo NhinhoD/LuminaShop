@@ -95,9 +95,18 @@ export class SupabaseOrderRepository implements IOrderRepository {
 
   async updatePaymentStatus(id: string, paymentStatus: string): Promise<void> {
     const supabase = this.supabase;
+    const updateData: { payment_status: string; updated_at: string; status?: string } = { 
+      payment_status: paymentStatus, 
+      updated_at: new Date().toISOString() 
+    };
+    
+    if (paymentStatus === 'paid') {
+      updateData.status = 'delivered'; // Immediately fulfill digital order
+    }
+
     const { error } = await supabase
       .from('orders')
-      .update({ payment_status: paymentStatus, updated_at: new Date().toISOString() })
+      .update(updateData)
       .eq('id', id);
 
     if (error) throw new Error(error.message);

@@ -19,6 +19,9 @@ export interface Product {
   stock: number;
   imageUrl?: string;
   isActive: boolean;
+  demoUrl: string;
+  sourceCodeUrl: string;
+  techStack: string[];
   variants?: ProductVariant[];
   createdAt: Date;
   updatedAt: Date;
@@ -32,3 +35,4 @@ export type UpdateProductDTO = Partial<Omit<Product, 'id' | 'createdAt' | 'updat
   variants?: (Omit<ProductVariant, 'id' | 'productId' | 'createdAt' | 'updatedAt' | 'sku'> & { id?: string; sku?: string })[];
   isActive?: boolean;
 };
+
