@@ -3,17 +3,23 @@
 import React, { useState, useMemo } from "react";
 import { Product, ProductVariant } from "@/domain/entities/Product";
 import { formatCurrency } from "@/lib/utils";
-import AddToCartButton from "./AddToCartButton";
-import { Heart } from "lucide-react";
+import { Heart, Download, CreditCard, Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { simulatePurchaseAction } from "@/presentation/actions/order";
+import { createClient } from "@/infrastructure/supabase/client";
 
 interface ProductSelectionProps {
   product: Product;
+  hasPurchased?: boolean;
 }
 
-export default function ProductSelection({ product }: ProductSelectionProps) {
+export default function ProductSelection({ product, hasPurchased }: ProductSelectionProps) {
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(
     product.variants && product.variants.length > 0 ? product.variants[0] : null
   );
+
+  const router = useRouter();
+  const [isProcessing, setIsProcessing] = useState(false);
 
   const currentPrice = useMemo(() => {
     if (!selectedVariant) return product.price;
@@ -26,6 +32,7 @@ export default function ProductSelection({ product }: ProductSelectionProps) {
   }, [product.stock, selectedVariant]);
 
   const isInStock = currentStock > 0;
+  const isFree = currentPrice === 0;
 
   return (
     <div className="space-y-8">
@@ -94,18 +101,50 @@ export default function ProductSelection({ product }: ProductSelectionProps) {
 
       {/* Add to Cart Actions */}
       <div className="space-y-3 pt-2">
-        <AddToCartButton
-          product={{
-            id: selectedVariant ? `${product.id}-${selectedVariant.id}` : product.id,
-            productId: product.id,
-            variantId: selectedVariant?.id,
-            variantName: selectedVariant?.name ?? undefined,
-            title: selectedVariant ? `${product.title} - ${selectedVariant.name}` : product.title,
-            price: currentPrice,
-            imageUrl: product.imageUrl || undefined,
-            quantity: 1,
+        <button
+          onClick={async () => {
+            if (isFree || hasPurchased) {
+              window.open(product.sourceCodeUrl, "_blank");
+              return;
+            }
+
+            setIsProcessing(true);
+            try {
+              const supabase = createClient();
+              const { data: { session } } = await supabase.auth.getSession();
+              if (!session) {
+                alert("Bạn cần đăng nhập để mua template này.");
+                router.push("/login");
+                return;
+              }
+
+              const res = await simulatePurchaseAction(product.id, currentPrice, product.title);
+              if (res.success) {
+                alert("Thanh toán thành công! Bạn đã có quyền tải xuống.");
+                router.refresh();
+              } else {
+                alert(res.error || "Lỗi thanh toán.");
+              }
+            } catch (err) {
+              console.error(err);
+              alert("Đã xảy ra lỗi hệ thống.");
+            } finally {
+              setIsProcessing(false);
+            }
           }}
-        />
+          disabled={isProcessing}
+          className="w-full py-4 rounded-full bg-[#0051d5] text-white font-bold text-sm uppercase tracking-wider hover:bg-[#0041ab] transition-all shadow-lg shadow-blue-900/20 cursor-pointer flex items-center justify-center gap-2 font-poppins disabled:opacity-70 disabled:cursor-not-allowed"
+        >
+          {isProcessing ? (
+            <Loader2 size={18} className="animate-spin" />
+          ) : isFree ? (
+            <><Download size={18} /> TẢI XUỐNG MIỄN PHÍ</>
+          ) : hasPurchased ? (
+            <><Download size={18} /> DOWNLOAD ZIP</>
+          ) : (
+            <><CreditCard size={18} /> PAY TO PURCHASE</>
+          )}
+        </button>
         <button className="w-full py-4 rounded-full border-2 border-dark text-dark font-bold text-sm uppercase tracking-wider hover:bg-dark hover:text-white transition-all cursor-pointer flex items-center justify-center gap-2 font-poppins">
           <Heart size={16} />
           Add to Wishlist

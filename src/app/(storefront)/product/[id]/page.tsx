@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { makeProductRepository } from "@/infrastructure/supabase/container";
+import { makeProductRepository, makeSupabaseClient } from "@/infrastructure/supabase/container";
 import { BreadcrumbSetter } from "@/presentation/components/common/BreadcrumbSetter";
 import { ROUTES } from "@/presentation/constants";
 import ProductSelection from "@/presentation/components/product/ProductSelection";
@@ -16,6 +16,24 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
 
   if (!product) {
     notFound();
+  }
+
+  const supabase = await makeSupabaseClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  let hasPurchased = false;
+
+  if (user) {
+    const { data: purchasedItems } = await supabase
+      .from('order_items')
+      .select('order_id, orders!inner(user_id, payment_status)')
+      .eq('product_id', product.id)
+      .eq('orders.user_id', user.id)
+      .eq('orders.payment_status', 'paid')
+      .limit(1);
+    
+    if (purchasedItems && purchasedItems.length > 0) {
+      hasPurchased = true;
+    }
   }
 
   return (
@@ -61,7 +79,7 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
               </p>
             </div>
 
-            <ProductSelection product={product} />
+            <ProductSelection product={product} hasPurchased={hasPurchased} />
 
             {/* Extra Info Accordions */}
             <div className="mt-12 space-y-0">

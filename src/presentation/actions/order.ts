@@ -279,3 +279,54 @@ export async function approveManualPaymentAction(orderId: string): Promise<Actio
     return { success: false, error: "Không thể phê duyệt thanh toán." };
   }
 }
+
+/**
+ * Simulate Direct Digital Purchase
+ */
+export async function simulatePurchaseAction(productId: string, price: number, title: string): Promise<ActionResponse<Order>> {
+  const user = await getCurrentUser();
+  if (!user) return { success: false, error: "Bạn cần đăng nhập để mua hàng." };
+
+  try {
+    const createOrderUseCase = await makeCreateOrderUseCase();
+    const result = await createOrderUseCase.execute({
+      userId: user.id,
+      paymentMethod: 'cod',
+      shippingAddress: {
+        fullName: "Digital Purchase",
+        phone: "0000000000",
+        street: "Digital",
+        district: "Digital",
+        city: "Digital"
+      },
+      cartItems: [
+        {
+          productId,
+          quantity: 1,
+          price: price,
+          title: title,
+        }
+      ]
+    });
+
+    if (!result.success) {
+      return { success: false, error: result.error.message };
+    }
+
+    // Auto-approve payment to unlock digital download
+    const { makeOrderRepository } = await import("@/infrastructure/supabase/container");
+    const orderRepo = await makeOrderRepository();
+    await orderRepo.updatePaymentStatus(result.data.id, 'paid');
+
+    const updatedOrder = await orderRepo.findById(result.data.id);
+    
+    revalidatePath("/profile");
+    revalidatePath("/profile/orders");
+    revalidatePath(`/product/${productId}`);
+    
+    return { success: true, data: updatedOrder! };
+  } catch (error: unknown) {
+    console.error('[Action Error] simulatePurchaseAction:', error);
+    return { success: false, error: "Lỗi trong quá trình mua hàng." };
+  }
+}

@@ -1,118 +1,107 @@
-import { getUserOrdersAction } from "@/presentation/actions/order";
-import { StatusBadge } from "@/presentation/components/orders/StatusBadge";
-import { formatPrice, formatDate } from "@/presentation/utils";
 import Link from "next/link";
-import { ChevronRight, Package, ShoppingBag } from "lucide-react";
+import { Download, Package, ShoppingBag } from "lucide-react";
 import { Metadata } from "next";
 import { createClient } from "@/infrastructure/supabase/server";
-import { UserOrdersRealtimeTracker } from "@/presentation/components/orders/UserOrdersRealtimeTracker";
-import { OrderItem } from "@/domain/entities/Order";
 
 export const metadata: Metadata = {
-  title: "Lịch sử đơn hàng | LuminaShop",
-  description: "Xem lại các đơn hàng bạn đã đặt tại LuminaShop",
+  title: "Kho giao diện đã mua | LuminaShop",
+  description: "Quản lý và tải xuống các giao diện bạn đã thanh toán",
 };
 
 export default async function OrderHistoryPage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  const response = await getUserOrdersAction();
 
-  if (!response.success) {
+  if (!user) {
     return (
       <div className="container mx-auto px-4 py-12">
-        <div className="bg-red-50 text-red-700 p-4 rounded-lg border border-red-200">
-          {response.error}
+        <div className="bg-red-50 text-red-700 p-4 rounded-lg border border-red-200 font-bold">
+          Bạn cần đăng nhập để xem kho giao diện.
         </div>
       </div>
     );
   }
 
-  const orders = response.data || [];
+  // Fetch all purchased items
+  const { data: purchasedItems, error } = await supabase
+    .from('order_items')
+    .select('product_id, price_at_purchase, products(title, source_code_url, image_url), orders!inner(created_at, payment_status)')
+    .eq('orders.user_id', user.id)
+    .eq('orders.payment_status', 'paid')
+    .order('orders(created_at)', { ascending: false });
 
-  // DEBUG: Show raw data if empty or query param debug=true
-  if (process.env.NODE_ENV === 'development' && orders.length === 0) {
-
+  if (error) {
+    console.error("Lỗi khi lấy danh sách giao diện đã mua:", error);
   }
 
+  const items = purchasedItems || [];
+
   return (
-    <div className="container mx-auto px-4 py-8 max-w-5xl">
-      {user && <UserOrdersRealtimeTracker userId={user.id} />}
+    <div className="container mx-auto px-4 py-8 max-w-5xl font-manrope">
       <div className="flex items-center gap-2 mb-8">
-        <Package className="w-6 h-6 text-primary" />
-        <h1 className="text-2xl font-bold">Lịch sử đơn hàng</h1>
+        <Package className="w-6 h-6 text-[#0051d5]" />
+        <h1 className="text-2xl font-bold font-playfair">Kho Giao Diện Của Tôi</h1>
       </div>
 
-      {orders.length === 0 ? (
-        <div className="text-center py-20 bg-white rounded-2xl shadow-sm border border-slate-100">
+      {items.length === 0 ? (
+        <div className="text-center py-20 bg-white rounded-3xl shadow-sm border border-slate-100">
           <ShoppingBag className="w-16 h-16 text-slate-200 mx-auto mb-4" />
-          <h2 className="text-xl font-medium text-slate-900 mb-2">Bạn chưa có đơn hàng nào</h2>
-          <p className="text-slate-500 mb-8">Hãy khám phá các sản phẩm tuyệt vời của chúng tôi!</p>
+          <h2 className="text-xl font-medium text-slate-900 mb-2">Bạn chưa mua giao diện nào</h2>
+          <p className="text-slate-500 mb-8">Hãy khám phá các mẫu template cao cấp của chúng tôi!</p>
           <Link
-            href="/products"
-            className="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-xl text-white bg-primary hover:bg-primary-hover transition-colors shadow-lg shadow-primary/20"
+            href="/shop"
+            className="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-bold rounded-xl text-white bg-[#0051d5] hover:bg-[#0041ab] transition-colors shadow-lg shadow-blue-900/20"
           >
             Mua sắm ngay
           </Link>
         </div>
       ) : (
-        <div className="space-y-4">
-          {orders.map((order) => (
-            <Link
-              key={order.id}
-              href={`/profile/orders/${order.id}`}
-              className="block bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md hover:border-primary/20 transition-all group"
-            >
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div className="space-y-1">
-                  <div className="flex items-center gap-3">
-                    <span className="font-semibold text-slate-900">
-                      Đơn hàng #{order.id.slice(0, 8).toUpperCase()}
-                    </span>
-                    <StatusBadge status={order.status} />
-                  </div>
-                  <div className="text-sm text-slate-500">
-                    Ngày đặt: {formatDate(order.createdAt)}
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-between md:justify-end gap-8">
-                  <div className="text-right">
-                    <div className="text-sm text-slate-500 mb-0.5">Tổng cộng</div>
-                    <div className="text-lg font-bold text-primary">
-                      {formatPrice(order.totalAmount)}
-                    </div>
-                  </div>
-                  <ChevronRight className="w-5 h-5 text-slate-300 group-hover:text-primary transition-colors" />
-                </div>
-              </div>
-
-              {/* Quick Summary of items */}
-              {order.items && order.items.length > 0 && (
-                <div className="mt-4 pt-4 border-t border-slate-50 flex items-center gap-2">
-                  <div className="flex -space-x-2 overflow-hidden">
-                    {order.items.slice(0, 3).map((item: OrderItem, idx: number) => (
-                      <div
-                        key={idx}
-                        className="inline-block h-8 w-8 rounded-full ring-2 ring-white bg-slate-100 flex items-center justify-center text-[10px] font-bold overflow-hidden"
-                      >
-                         {/* Placeholder for item image if available */}
-                         <Package className="w-4 h-4 text-slate-400" />
-                      </div>
-                    ))}
-                    {order.items.length > 3 && (
-                      <div className="inline-block h-8 w-8 rounded-full ring-2 ring-white bg-slate-50 flex items-center justify-center text-[10px] font-bold text-slate-400">
-                        +{order.items.length - 3}
-                      </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {items.map((item, idx) => {
+            const product = Array.isArray(item.products) ? item.products[0] : item.products;
+            if (!product) return null;
+            return (
+              <div
+                key={idx}
+                className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm flex flex-col gap-4"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="w-16 h-16 rounded-xl bg-slate-100 overflow-hidden shrink-0">
+                    {product.image_url ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={product.image_url} alt={product.title} className="w-full h-full object-cover" />
+                    ) : (
+                      <Package className="w-8 h-8 text-slate-300 m-auto mt-4" />
                     )}
                   </div>
-                  <span className="text-xs text-slate-500">
-                    {order.items.length} sản phẩm
-                  </span>
+                  <div>
+                    <h3 className="font-extrabold text-slate-900 text-base">{product.title}</h3>
+                    <p className="text-xs text-slate-500 font-bold mt-1">
+                      Giá mua: {item.price_at_purchase === 0 ? "MIỄN PHÍ" : `${item.price_at_purchase.toLocaleString('vi-VN')} ₫`}
+                    </p>
+                  </div>
                 </div>
-              )}
-            </Link>
-          ))}
+                
+                <div className="mt-auto pt-4 border-t border-slate-50 flex gap-3">
+                  <a
+                    href={product.source_code_url || "#"}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 flex items-center justify-center gap-2 bg-[#0051d5] text-white py-3 rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-[#0041ab] transition-colors shadow-md shadow-blue-900/20"
+                  >
+                    <Download size={16} />
+                    Tải mã nguồn
+                  </a>
+                  <Link
+                    href={`/product/${item.product_id}`}
+                    className="flex-1 flex items-center justify-center gap-2 bg-slate-100 text-slate-700 py-3 rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-slate-200 transition-colors"
+                  >
+                    Xem chi tiết
+                  </Link>
+                </div>
+              </div>
+            )
+          })}
         </div>
       )}
     </div>
