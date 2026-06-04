@@ -20,6 +20,7 @@
   --font-playfair: "Playfair Display", serif;
   --font-dancing: "Dancing Script", cursive;
   --font-manrope: "Manrope", sans-serif;
+  --font-bricolage: var(--font-bricolage, sans-serif);
 
   --spacing-gutter: 24px;
   --shadow-card: 0 8px 40px rgba(0, 0, 0, 0.1);
