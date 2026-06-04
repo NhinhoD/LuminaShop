@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Download, Package, ShoppingBag } from "lucide-react";
+import { Download, Package, ShoppingBag, ArrowRight } from "lucide-react";
 import { Metadata } from "next";
 import { createClient } from "@/infrastructure/supabase/server";
 import { PaginationControls } from "@/presentation/components/common/PaginationControls";
@@ -29,7 +29,7 @@ export default async function OrderHistoryPage({ searchParams }: OrderHistoryPag
 
   const params = await searchParams;
   const currentPage = parseInt(params.page || "1", 10);
-  const itemsPerPage = 10;
+  const itemsPerPage = 9; // 3x3 grid
   const offset = (currentPage - 1) * itemsPerPage;
 
   const { data: orderItemsData, error, count } = await supabase
@@ -43,7 +43,8 @@ export default async function OrderHistoryPage({ searchParams }: OrderHistoryPag
       products (*),
       orders!inner (
         status,
-        user_id
+        user_id,
+        created_at
       )
     `, { count: 'exact' })
     .eq('orders.user_id', user.id)
@@ -74,67 +75,91 @@ export default async function OrderHistoryPage({ searchParams }: OrderHistoryPag
   });
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-5xl font-manrope">
-      <div className="flex items-center gap-2 mb-8">
-        <Package className="w-6 h-6 text-[#0051d5]" />
-        <h1 className="text-2xl font-bold font-playfair">Kho Giao Diện Của Tôi</h1>
+    <div className="container mx-auto px-4 py-16 max-w-7xl font-manrope">
+      <div className="flex flex-col items-center justify-center text-center mb-16">
+        <span className="text-[10px] font-black tracking-widest text-[#0051d5] uppercase block mb-3">
+          TÀI SẢN KỸ THUẬT SỐ
+        </span>
+        <h1 className="text-4xl md:text-5xl font-extrabold text-slate-950 font-bricolage tracking-tight mb-4">
+          Kho Giao Diện
+        </h1>
+        <p className="text-slate-500 max-w-lg font-medium">
+          Quản lý và tải xuống toàn bộ mã nguồn các mẫu template mà bạn đã sở hữu bản quyền hợp lệ.
+        </p>
       </div>
 
       {items.length === 0 ? (
-        <div className="text-center py-20 bg-white rounded-3xl shadow-sm border border-slate-100">
-          <ShoppingBag className="w-16 h-16 text-slate-200 mx-auto mb-4" />
-          <h2 className="text-xl font-medium text-slate-900 mb-2">Bạn chưa mua giao diện nào</h2>
-          <p className="text-slate-500 mb-8">Hãy khám phá các mẫu template cao cấp của chúng tôi!</p>
+        <div className="text-center py-24 bg-white rounded-[32px] shadow-sm border border-slate-100 max-w-3xl mx-auto">
+          <ShoppingBag className="w-16 h-16 text-slate-200 mx-auto mb-6" />
+          <h2 className="text-2xl font-extrabold text-slate-900 font-bricolage mb-3">Kho lưu trữ trống</h2>
+          <p className="text-slate-500 mb-10 max-w-sm mx-auto">Bạn chưa sở hữu bản quyền template nào. Hãy khám phá thư viện cao cấp của chúng tôi ngay hôm nay.</p>
           <Link
             href="/shop"
-            className="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-bold rounded-xl text-white bg-[#0051d5] hover:bg-[#0041ab] transition-colors shadow-lg shadow-blue-900/20"
+            className="inline-flex items-center justify-center px-8 py-4 text-sm font-bold rounded-xl text-white bg-[#0051d5] hover:bg-[#0041ab] transition-all shadow-lg shadow-blue-900/20 active:scale-95 uppercase tracking-wider"
           >
-            Mua sắm ngay
+            Khám phá cửa hàng
           </Link>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {items.map((item, idx) => {
             const product = Array.isArray(item.products) ? item.products[0] : item.products;
             if (!product) return null;
             return (
               <div
                 key={idx}
-                className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm flex flex-col gap-4"
+                className="bg-white rounded-[24px] border border-slate-200/60 shadow-sm hover:shadow-xl hover:-translate-y-1 hover:border-slate-300 transition-all duration-300 flex flex-col overflow-hidden group"
               >
-                <div className="flex items-center gap-4">
-                  <div className="w-16 h-16 rounded-xl bg-slate-100 overflow-hidden shrink-0">
-                    {product.image_url ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img src={product.image_url} alt={product.title} className="w-full h-full object-cover" />
-                    ) : (
-                      <Package className="w-8 h-8 text-slate-300 m-auto mt-4" />
-                    )}
+                <Link href={`/product/${item.product_id}`} className="relative aspect-[4/3] bg-slate-50 overflow-hidden block">
+                  {product.image_url ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img 
+                      src={product.image_url} 
+                      alt={product.title} 
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <Package className="w-12 h-12 text-slate-300" />
+                    </div>
+                  )}
+                  <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-full shadow-sm">
+                    <span className="text-[9px] font-black text-slate-900 uppercase tracking-widest flex items-center gap-1.5">
+                      <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+                      Bản quyền
+                    </span>
                   </div>
-                  <div>
-                    <h3 className="font-extrabold text-slate-900 text-base">{product.title}</h3>
-                    <p className="text-xs text-slate-500 font-bold mt-1">
-                      Giá mua: {item.price_at_purchase === 0 ? "MIỄN PHÍ" : `${item.price_at_purchase.toLocaleString('vi-VN')} ₫`}
+                </Link>
+                
+                <div className="p-6 md:p-8 flex flex-col flex-grow">
+                  <div className="flex-grow">
+                    <Link href={`/product/${item.product_id}`}>
+                      <h3 className="font-extrabold text-slate-900 text-xl font-bricolage leading-snug mb-2 group-hover:text-[#0051d5] transition-colors line-clamp-2">
+                        {product.title}
+                      </h3>
+                    </Link>
+                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-6">
+                      Đã mua: {new Date(item.order_created_at).toLocaleDateString('vi-VN')}
                     </p>
                   </div>
-                </div>
-                
-                <div className="mt-auto pt-4 border-t border-slate-50 flex gap-3">
-                  <a
-                    href={product.source_code_url || "#"}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex-1 flex items-center justify-center gap-2 bg-[#0051d5] text-white py-3 rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-[#0041ab] transition-colors shadow-md shadow-blue-900/20"
-                  >
-                    <Download size={16} />
-                    Tải mã nguồn
-                  </a>
-                  <Link
-                    href={`/product/${item.product_id}`}
-                    className="flex-1 flex items-center justify-center gap-2 bg-slate-100 text-slate-700 py-3 rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-slate-200 transition-colors"
-                  >
-                    Xem chi tiết
-                  </Link>
+                  
+                  <div className="pt-6 border-t border-slate-100 flex gap-3">
+                    <a
+                      href={product.source_code_url || "#"}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex-1 flex items-center justify-center gap-2.5 bg-[#0b1c30] text-white py-3.5 rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-slate-900 transition-all active:scale-95 shadow-md shadow-slate-900/10"
+                    >
+                      <Download size={16} />
+                      Tải source code
+                    </a>
+                    <Link
+                      href={`/product/${item.product_id}`}
+                      className="flex items-center justify-center w-[52px] h-[52px] bg-slate-50 text-slate-600 rounded-xl hover:bg-slate-100 hover:text-slate-900 transition-all group-hover:bg-[#0051d5]/5 group-hover:text-[#0051d5]"
+                    >
+                      <ArrowRight size={18} />
+                    </Link>
+                  </div>
                 </div>
               </div>
             )
