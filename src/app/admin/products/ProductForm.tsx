@@ -192,9 +192,17 @@ const uploadPreviewFilesAsync = async (
         resolvedContentType = 'application/json';
       }
 
+      let uploadTarget: File | Blob = fileObj.file;
+
+      if (resolvedContentType === 'text/html') {
+        let textContent = await fileObj.file.text();
+        textContent += `<script>document.addEventListener('click', function(e) { const a = e.target.closest('a'); if(a) { e.preventDefault(); console.log('Mock link disabled in preview mode.'); } });</script>`;
+        uploadTarget = new Blob([textContent], { type: 'text/html' });
+      }
+
       const { error: uploadError } = await supabase.storage
         .from('template-previews')
-        .upload(filePath, fileObj.file, {
+        .upload(filePath, uploadTarget, {
           contentType: resolvedContentType,
           cacheControl: '0',
           upsert: true
