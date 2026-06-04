@@ -22,19 +22,37 @@ export default async function OrderHistoryPage() {
     );
   }
 
-  // Fetch all purchased items
-  const { data: purchasedItems, error } = await supabase
-    .from('order_items')
-    .select('product_id, price_at_purchase, products(title, source_code_url, image_url), orders!inner(created_at, payment_status)')
-    .eq('orders.user_id', user.id)
-    .eq('orders.payment_status', 'paid')
-    .order('orders(created_at)', { ascending: false });
+  const { data: purchasedOrders, error } = await supabase
+    .from('orders')
+    .select(`
+      id,
+      status,
+      created_at,
+      order_items (
+        id,
+        product_id,
+        price_at_purchase,
+        products (*)
+      )
+    `)
+    .eq('user_id', user.id)
+    .in('status', ['delivered', 'completed', 'shipped'])
+    .order('created_at', { ascending: false });
 
   if (error) {
     console.error("Lỗi khi lấy danh sách giao diện đã mua:", error);
   }
 
-  const items = purchasedItems || [];
+  const items = (purchasedOrders || []).flatMap(order => 
+    (order.order_items || []).map((item: unknown) => {
+      const typedItem = item as { id: string; product_id: string; price_at_purchase: number; products: unknown };
+      return {
+        ...typedItem,
+        order_id: order.id,
+        order_created_at: order.created_at
+      };
+    })
+  );
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-5xl font-manrope">
