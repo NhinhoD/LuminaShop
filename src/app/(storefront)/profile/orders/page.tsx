@@ -32,21 +32,22 @@ export default async function OrderHistoryPage({ searchParams }: OrderHistoryPag
   const itemsPerPage = 10;
   const offset = (currentPage - 1) * itemsPerPage;
 
-  const { data: purchasedOrders, error, count } = await supabase
-    .from('orders')
+  const { data: orderItemsData, error, count } = await supabase
+    .from('order_items')
     .select(`
       id,
-      status,
+      product_id,
+      price_at_purchase,
       created_at,
-      order_items (
-        id,
-        product_id,
-        price_at_purchase,
-        products (*)
+      order_id,
+      products (*),
+      orders!inner (
+        status,
+        user_id
       )
     `, { count: 'exact' })
-    .eq('user_id', user.id)
-    .in('status', ['delivered', 'completed', 'shipped'])
+    .eq('orders.user_id', user.id)
+    .in('orders.status', ['delivered', 'completed', 'shipped'])
     .order('created_at', { ascending: false })
     .range(offset, offset + itemsPerPage - 1);
 
@@ -56,16 +57,21 @@ export default async function OrderHistoryPage({ searchParams }: OrderHistoryPag
   
   const totalPages = Math.ceil((count || 0) / itemsPerPage);
 
-  const items = (purchasedOrders || []).flatMap(order => 
-    (order.order_items || []).map((item: unknown) => {
-      const typedItem = item as { id: string; product_id: string; price_at_purchase: number; products: unknown };
-      return {
-        ...typedItem,
-        order_id: order.id,
-        order_created_at: order.created_at
-      };
-    })
-  );
+  const items = (orderItemsData || []).map((item: unknown) => {
+    const typedItem = item as { 
+      id: string; 
+      product_id: string; 
+      price_at_purchase: number; 
+      created_at: string; 
+      order_id: string; 
+      products: unknown; 
+      orders: { created_at?: string } | null 
+    };
+    return {
+      ...typedItem,
+      order_created_at: typedItem.orders?.created_at || typedItem.created_at
+    };
+  });
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-5xl font-manrope">
