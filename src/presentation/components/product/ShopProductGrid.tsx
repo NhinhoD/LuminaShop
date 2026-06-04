@@ -107,7 +107,7 @@ export default function ShopProductGrid({ initialProducts }: ShopProductGridProp
 
   return (
     <div className="bg-[#fcfbf9] min-h-screen text-slate-800 font-manrope">
-      
+
       {/* Page Header */}
       <div className="bg-gradient-to-b from-[#f6f3ed] to-[#fcfbf9] py-16 border-b border-slate-100">
         <div className="max-w-[1200px] mx-auto px-4 text-center space-y-3">
@@ -127,11 +127,10 @@ export default function ShopProductGrid({ initialProducts }: ShopProductGridProp
             <button
               key={cat.value}
               onClick={() => handleCategorySelect(cat.value)}
-              className={`rounded-xl px-6 py-2.5 text-xs font-bold transition-all border cursor-pointer ${
-                selectedCategory === cat.value
+              className={`rounded-xl px-6 py-2.5 text-xs font-bold transition-all border cursor-pointer ${selectedCategory === cat.value
                   ? "bg-[#0051d5] border-[#0051d5] text-white shadow-lg shadow-blue-900/10"
                   : "bg-white border-slate-200 text-slate-600 hover:border-slate-400 hover:text-slate-800"
-              }`}
+                }`}
             >
               {cat.label}
             </button>
@@ -142,10 +141,10 @@ export default function ShopProductGrid({ initialProducts }: ShopProductGridProp
       {/* Main Content */}
       <div className="max-w-[1200px] mx-auto px-4 pb-20">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          
+
           {/* Sidebar Filters */}
           <aside className="lg:col-span-3 space-y-6">
-            
+
             {/* Price Filter */}
             <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm">
               <h3 className="flex items-center gap-2 text-xs font-black text-slate-900 mb-4 uppercase tracking-widest">
@@ -186,11 +185,10 @@ export default function ShopProductGrid({ initialProducts }: ShopProductGridProp
                     <button
                       key={tech}
                       onClick={() => toggleTech(tech)}
-                      className={`px-3 py-1.5 text-[10px] font-bold rounded-lg cursor-pointer transition-all ${
-                        isSelected
+                      className={`px-3 py-1.5 text-[10px] font-bold rounded-lg cursor-pointer transition-all ${isSelected
                           ? "bg-[#0051d5] text-white shadow-md shadow-blue-900/10"
                           : "bg-slate-50 border border-slate-200 text-slate-500 hover:bg-slate-100 hover:text-slate-800"
-                      }`}
+                        }`}
                     >
                       {tech}
                     </button>
@@ -237,11 +235,10 @@ export default function ShopProductGrid({ initialProducts }: ShopProductGridProp
                         {/* Visual Frame */}
                         <div className="relative overflow-hidden aspect-[4/3] bg-[#fbfaf6]">
                           {product.imageUrl ? (
-                            <Image
+                            <img
                               src={product.imageUrl}
                               alt={product.title}
-                              fill
-                              className="object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+                              className="w-full h-full object-cover"
                             />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center text-slate-300">
@@ -291,18 +288,30 @@ export default function ShopProductGrid({ initialProducts }: ShopProductGridProp
                               {isFree ? "MIỄN PHÍ" : formatCurrency(product.price)}
                             </div>
                           </div>
-                          
-                          <QuickAddButton
-                            product={{
-                              id: product.id,
-                              productId: product.id,
-                              title: product.title,
-                              price: Number(product.price),
-                              imageUrl: product.imageUrl || undefined,
-                              quantity: 1,
-                            }}
-                            hasVariants={false}
-                          />
+
+                          <div className="flex gap-2">
+                            {product.demoUrl && (
+                              <Link 
+                                href={`/demo/${product.id}`} 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="bg-slate-900 text-white text-[10px] font-bold px-4 py-2 rounded-lg hover:bg-slate-800 transition-colors flex items-center justify-center shadow-md"
+                              >
+                                Xem Demo
+                              </Link>
+                            )}
+                            <QuickAddButton
+                              product={{
+                                id: product.id,
+                                productId: product.id,
+                                title: product.title,
+                                price: Number(product.price),
+                                imageUrl: product.imageUrl || undefined,
+                                quantity: 1,
+                              }}
+                              hasVariants={false}
+                            />
+                          </div>
                         </div>
                       </div>
                     </div>

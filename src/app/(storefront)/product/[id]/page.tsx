@@ -30,6 +30,7 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
           {/* Left: Media Gallery & Interactive Sandbox */}
           <div className="lg:col-span-7">
             <ProductMediaGallery
+              productId={product.id}
               title={product.title}
               imageUrl={product.imageUrl}
               demoUrl={product.demoUrl}

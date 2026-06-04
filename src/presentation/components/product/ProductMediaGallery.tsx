@@ -3,9 +3,11 @@
 import { useState } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
-import { Monitor, Image as ImageIcon } from "lucide-react";
+import { Monitor, Image as ImageIcon, ExternalLink } from "lucide-react";
+import Link from "next/link";
 
 interface ProductMediaGalleryProps {
+  productId: string;
   title: string;
   imageUrl?: string;
   demoUrl?: string;
@@ -23,7 +25,7 @@ function getProxiedPreviewUrl(url: string): string {
   return url;
 }
 
-export default function ProductMediaGallery({ title, imageUrl, demoUrl }: ProductMediaGalleryProps) {
+export default function ProductMediaGallery({ productId, title, imageUrl, demoUrl }: ProductMediaGalleryProps) {
   const [activeTab, setActiveTab] = useState<"image" | "live">(demoUrl ? "live" : "image");
   const [iframeLoading, setIframeLoading] = useState(true);
   const [prevDemoUrl, setPrevDemoUrl] = useState(demoUrl);
@@ -39,53 +41,62 @@ export default function ProductMediaGallery({ title, imageUrl, demoUrl }: Produc
     <div className="space-y-6">
       {/* Tab Selectors (Only shown if demoUrl exists) */}
       {demoUrl && (
-        <div className="flex border-b border-[#f0f0f0] pb-2 gap-8 font-poppins">
-          <button
-            onClick={() => {
-              setActiveTab("live");
-              setIframeLoading(true);
-            }}
-            type="button"
-            className={`flex items-center gap-2 pb-3 text-xs font-bold uppercase tracking-wider relative cursor-pointer transition-colors ${
-              activeTab === "live" ? "text-primary" : "text-[#999] hover:text-dark"
-            }`}
+        <div className="flex items-center justify-between border-b border-[#f0f0f0] pb-2">
+          <div className="flex gap-8 font-poppins">
+            <button
+              onClick={() => {
+                setActiveTab("live");
+                setIframeLoading(true);
+              }}
+              type="button"
+              className={`flex items-center gap-2 pb-3 text-xs font-bold uppercase tracking-wider relative cursor-pointer transition-colors ${activeTab === "live" ? "text-primary" : "text-[#999] hover:text-dark"
+                }`}
+            >
+              <Monitor size={14} />
+              <span>Live Interactive Demo</span>
+              {activeTab === "live" && (
+                <motion.div
+                  layoutId="activeMediaTab"
+                  className="absolute bottom-0 left-0 right-0 h-[2px] bg-primary"
+                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                />
+              )}
+            </button>
+            <button
+              onClick={() => setActiveTab("image")}
+              type="button"
+              className={`flex items-center gap-2 pb-3 text-xs font-bold uppercase tracking-wider relative cursor-pointer transition-colors ${activeTab === "image" ? "text-primary" : "text-[#999] hover:text-dark"
+                }`}
+            >
+              <ImageIcon size={14} />
+              <span>Bản vẽ thiết kế</span>
+              {activeTab === "image" && (
+                <motion.div
+                  layoutId="activeMediaTab"
+                  className="absolute bottom-0 left-0 right-0 h-[2px] bg-primary"
+                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                />
+              )}
+            </button>
+          </div>
+
+          <Link
+            href={`/demo/${productId}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-1.5 bg-slate-900 hover:bg-black text-white px-4 py-2 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-colors shadow-md -mt-2"
           >
-            <Monitor size={14} />
-            <span>Live Interactive Demo</span>
-            {activeTab === "live" && (
-              <motion.div
-                layoutId="activeMediaTab"
-                className="absolute bottom-0 left-0 right-0 h-[2px] bg-primary"
-                transition={{ type: "spring", stiffness: 300, damping: 30 }}
-              />
-            )}
-          </button>
-          <button
-            onClick={() => setActiveTab("image")}
-            type="button"
-            className={`flex items-center gap-2 pb-3 text-xs font-bold uppercase tracking-wider relative cursor-pointer transition-colors ${
-              activeTab === "image" ? "text-primary" : "text-[#999] hover:text-dark"
-            }`}
-          >
-            <ImageIcon size={14} />
-            <span>Bản vẽ thiết kế</span>
-            {activeTab === "image" && (
-              <motion.div
-                layoutId="activeMediaTab"
-                className="absolute bottom-0 left-0 right-0 h-[2px] bg-primary"
-                transition={{ type: "spring", stiffness: 300, damping: 30 }}
-              />
-            )}
-          </button>
+            <span>Live Preview</span>
+            <ExternalLink size={14} />
+          </Link>
         </div>
       )}
 
       {/* Media Window Container */}
-      <div className={`bg-cream rounded-2xl overflow-hidden shadow-[0_8px_40px_rgba(0,0,0,0.06)] border border-[#ece9e6] relative transition-all duration-500 ${
-        activeTab === "live" && demoUrl
+      <div className={`bg-cream rounded-2xl overflow-hidden shadow-[0_8px_40px_rgba(0,0,0,0.06)] border border-[#ece9e6] relative transition-all duration-500 ${activeTab === "live" && demoUrl
           ? "w-full h-[75vh] min-h-[500px]"
           : "aspect-[4/3] sm:aspect-[16/10]"
-      }`}>
+        }`}>
         {activeTab === "live" && demoUrl ? (
           <div className="w-full h-full relative bg-slate-950">
             {/* Top Browser Bar Mock */}
@@ -140,13 +151,11 @@ export default function ProductMediaGallery({ title, imageUrl, demoUrl }: Produc
         ) : (
           <div className="w-full h-full relative">
             {imageUrl ? (
-              <Image
+              <img
                 alt={title}
-                className="w-full h-full object-cover transition-transform duration-1000 hover:scale-105"
+                className="w-full h-full object-cover"
                 src={imageUrl}
-                fill
-                sizes="(max-width: 1024px) 100vw, 700px"
-                priority
+
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center text-[#ccc] text-6xl">
