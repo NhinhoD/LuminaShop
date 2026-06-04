@@ -2,13 +2,18 @@ import Link from "next/link";
 import { Download, Package, ShoppingBag } from "lucide-react";
 import { Metadata } from "next";
 import { createClient } from "@/infrastructure/supabase/server";
+import { PaginationControls } from "@/presentation/components/common/PaginationControls";
 
 export const metadata: Metadata = {
   title: "Kho giao diện đã mua | LuminaShop",
   description: "Quản lý và tải xuống các giao diện bạn đã thanh toán",
 };
 
-export default async function OrderHistoryPage() {
+interface OrderHistoryPageProps {
+  searchParams: Promise<{ page?: string }>;
+}
+
+export default async function OrderHistoryPage({ searchParams }: OrderHistoryPageProps) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
@@ -22,7 +27,12 @@ export default async function OrderHistoryPage() {
     );
   }
 
-  const { data: purchasedOrders, error } = await supabase
+  const params = await searchParams;
+  const currentPage = parseInt(params.page || "1", 10);
+  const itemsPerPage = 10;
+  const offset = (currentPage - 1) * itemsPerPage;
+
+  const { data: purchasedOrders, error, count } = await supabase
     .from('orders')
     .select(`
       id,
@@ -34,14 +44,17 @@ export default async function OrderHistoryPage() {
         price_at_purchase,
         products (*)
       )
-    `)
+    `, { count: 'exact' })
     .eq('user_id', user.id)
     .in('status', ['delivered', 'completed', 'shipped'])
-    .order('created_at', { ascending: false });
+    .order('created_at', { ascending: false })
+    .range(offset, offset + itemsPerPage - 1);
 
   if (error) {
     console.error("Lỗi khi lấy danh sách giao diện đã mua:", error);
   }
+  
+  const totalPages = Math.ceil((count || 0) / itemsPerPage);
 
   const items = (purchasedOrders || []).flatMap(order => 
     (order.order_items || []).map((item: unknown) => {
@@ -122,6 +135,7 @@ export default async function OrderHistoryPage() {
           })}
         </div>
       )}
+      <PaginationControls currentPage={currentPage} totalPages={totalPages} />
     </div>
   );
 }

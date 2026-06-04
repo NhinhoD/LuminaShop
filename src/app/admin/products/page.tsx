@@ -2,6 +2,7 @@ import Link from "next/link";
 import { makeGetProductsUseCase } from "@/infrastructure/supabase/container";
 import { formatCurrency } from "@/lib/utils";
 import { ProductDeleteButton } from "@/app/admin/products/ProductDeleteButton";
+import { PaginationControls } from "@/presentation/components/common/PaginationControls";
 
 export default async function AdminProductsPage({
   searchParams,
@@ -136,38 +137,11 @@ export default async function AdminProductsPage({
         
         {/* Pagination Footer */}
         {totalPages > 1 && (
-          <div className="p-4 border-t border-outline-variant/30 flex items-center justify-between bg-surface-bright/50">
-            <div className="font-body-sm text-body-sm text-on-surface-variant">
+          <div className="p-4 border-t border-outline-variant/30 bg-surface-bright/50">
+            <div className="text-center mb-2 font-body-sm text-body-sm text-on-surface-variant">
               Hiển thị <span className="font-medium text-on-surface">{offset + 1}</span> đến <span className="font-medium text-on-surface">{Math.min(offset + limit, total)}</span> trong tổng số <span className="font-medium text-on-surface">{total}</span> kết quả
             </div>
-            <div className="flex items-center gap-1">
-              <Link 
-                href={`/admin/products?page=${page - 1}${search ? `&q=${search}` : ''}`}
-                className={`p-2 border border-outline-variant rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors ${page <= 1 ? 'pointer-events-none opacity-50' : ''}`}
-              >
-                <span className="material-symbols-outlined text-sm">chevron_left</span>
-              </Link>
-              {/* Simplistic pagination */}
-              {Array.from({ length: totalPages }).map((_, i) => (
-                <Link
-                  key={i}
-                  href={`/admin/products?page=${i + 1}${search ? `&q=${search}` : ''}`}
-                  className={`w-9 h-9 border flex items-center justify-center rounded-md font-label-md text-label-md transition-colors ${
-                    page === i + 1 
-                      ? "border-primary bg-primary text-on-primary" 
-                      : "border-outline-variant text-on-surface hover:bg-surface-container"
-                  }`}
-                >
-                  {i + 1}
-                </Link>
-              ))}
-              <Link 
-                href={`/admin/products?page=${page + 1}${search ? `&q=${search}` : ''}`}
-                className={`p-2 border border-outline-variant rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors ${page >= totalPages ? 'pointer-events-none opacity-50' : ''}`}
-              >
-                <span className="material-symbols-outlined text-sm">chevron_right</span>
-              </Link>
-            </div>
+            <PaginationControls currentPage={page} totalPages={totalPages} />
           </div>
         )}
       </div>

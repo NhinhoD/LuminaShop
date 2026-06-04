@@ -18,29 +18,48 @@ export class SupabaseOrderRepository implements IOrderRepository {
     return this.mapToEntity(data);
   }
 
-  async findByUserId(userId: string): Promise<Order[]> {
+  async findByUserId(userId: string, filters?: { limit?: number; offset?: number }): Promise<{ orders: Order[], total: number }> {
     const supabase = this.supabase;
-    const { data, error } = await supabase
+    let query = supabase
       .from('orders')
-      .select('*, items:order_items(*, product:products(title))')
-      .eq('user_id', userId)
-      .order('created_at', { ascending: false });
+      .select('*, items:order_items(*, product:products(title))', { count: 'exact' })
+      .eq('user_id', userId);
+
+    if (filters?.limit) {
+      const from = filters.offset || 0;
+      const to = from + filters.limit - 1;
+      query = query.range(from, to);
+    }
+
+    const { data, error, count } = await query.order('created_at', { ascending: false });
 
     if (error) throw new Error(error.message);
-    return (data as OrderRow[] || []).map((row) => this.mapToEntity(row));
+    return {
+      orders: (data as OrderRow[] || []).map((row) => this.mapToEntity(row)),
+      total: count || 0
+    };
   }
 
-  async findAll(filters?: { status?: OrderStatus }): Promise<Order[]> {
+  async findAll(filters?: { status?: OrderStatus; limit?: number; offset?: number }): Promise<{ orders: Order[], total: number }> {
     const supabase = this.supabase;
-    let query = supabase.from('orders').select('*, items:order_items(*, product:products(title))');
+    let query = supabase.from('orders').select('*, items:order_items(*, product:products(title))', { count: 'exact' });
     
     if (filters?.status) {
       query = query.eq('status', filters.status);
     }
 
-    const { data, error } = await query.order('created_at', { ascending: false });
+    if (filters?.limit) {
+      const from = filters.offset || 0;
+      const to = from + filters.limit - 1;
+      query = query.range(from, to);
+    }
+
+    const { data, error, count } = await query.order('created_at', { ascending: false });
     if (error) throw new Error(error.message);
-    return (data as OrderRow[] || []).map((row) => this.mapToEntity(row));
+    return {
+      orders: (data as OrderRow[] || []).map((row) => this.mapToEntity(row)),
+      total: count || 0
+    };
   }
 
   async create(order: Omit<Order, 'id' | 'createdAt' | 'updatedAt' | 'items'>, items: Omit<OrderItem, 'id' | 'orderId'>[]): Promise<Order> {

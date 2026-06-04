@@ -1,5 +1,6 @@
 import { getAllOrdersAction } from "@/presentation/actions/order";
 import { OrderList } from "@/presentation/components/admin/orders/OrderList";
+import { PaginationControls } from "@/presentation/components/common/PaginationControls";
 import { Package } from "lucide-react";
 import { Metadata } from "next";
 
@@ -7,10 +8,21 @@ export const metadata: Metadata = {
   title: "Quản lý đơn hàng | LuminaShop Admin",
 };
 
-export default async function AdminOrdersPage() {
-  const response = await getAllOrdersAction();
+interface AdminOrdersPageProps {
+  searchParams: Promise<{ page?: string }>;
+}
+
+export default async function AdminOrdersPage({ searchParams }: AdminOrdersPageProps) {
+  const params = await searchParams;
+  const currentPage = parseInt(params.page || "1", 10);
+  const itemsPerPage = 10;
+  const offset = (currentPage - 1) * itemsPerPage;
+
+  const response = await getAllOrdersAction(undefined, itemsPerPage, offset);
   
-  const orders = response.success ? response.data || [] : [];
+  const orders = response.success ? response.data?.orders || [] : [];
+  const total = response.success ? response.data?.total || 0 : 0;
+  const totalPages = Math.ceil(total / itemsPerPage);
 
   return (
     <div className="space-y-8">
@@ -21,7 +33,7 @@ export default async function AdminOrdersPage() {
             Quản lý đơn hàng
           </h1>
           <p className="text-slate-500 text-sm mt-1">
-            Theo dõi, xử lý và quản lý tất cả đơn hàng của LuminaShop.
+            Theo dõi, xử lý và quản lý tất cả đơn hàng của LuminaShop. (Tổng số {total} đơn)
           </p>
         </div>
       </div>
@@ -33,6 +45,12 @@ export default async function AdminOrdersPage() {
       )}
 
       <OrderList initialOrders={orders} />
+      
+      {totalPages > 1 && (
+        <div className="mt-8 flex justify-center">
+          <PaginationControls currentPage={currentPage} totalPages={totalPages} />
+        </div>
+      )}
     </div>
   );
 }

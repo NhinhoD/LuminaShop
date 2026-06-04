@@ -17,8 +17,8 @@ export default async function ProfilePage() {
   
   // Fetch recent orders
   const { getUserOrdersAction } = await import('@/presentation/actions/order');
-  const response = await getUserOrdersAction();
-  const recentOrders = (response.data || []).slice(0, 5);
+  const response = await getUserOrdersAction(5, 0);
+  const recentOrders = response.success ? response.data?.orders || [] : [];
 
   const { UserOrdersRealtimeTracker } = await import('@/presentation/components/orders/UserOrdersRealtimeTracker');
 

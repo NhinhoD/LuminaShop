@@ -117,15 +117,13 @@ export async function getOrderAction(id: string): Promise<ActionResponse<Order>>
 /**
  * Get current user's orders
  */
-export async function getUserOrdersAction(): Promise<ActionResponse<Order[]>> {
+export async function getUserOrdersAction(limit?: number, offset?: number): Promise<ActionResponse<{ orders: Order[], total: number }>> {
   const user = await getCurrentUser();
   if (!user) return { success: false, error: "Bạn cần đăng nhập để xem lịch sử đơn hàng." };
 
   try {
     const useCase = await makeGetUserOrdersUseCase();
-    const result = await useCase.execute({ userId: user.id });
-
-
+    const result = await useCase.execute({ userId: user.id, limit, offset });
 
     if (!result.success) {
       return { success: false, error: result.error.message };
@@ -141,7 +139,11 @@ export async function getUserOrdersAction(): Promise<ActionResponse<Order[]>> {
 /**
  * Get all orders (Admin only)
  */
-export async function getAllOrdersAction(status?: OrderStatus): Promise<ActionResponse<Order[]>> {
+export async function getAllOrdersAction(
+  status?: OrderStatus, 
+  limit?: number, 
+  offset?: number
+): Promise<ActionResponse<{ orders: Order[], total: number }>> {
   const isAdmin = await isUserAdmin();
   if (!isAdmin) return { success: false, error: "Access denied" };
 
@@ -152,7 +154,9 @@ export async function getAllOrdersAction(status?: OrderStatus): Promise<ActionRe
     const useCase = await makeGetAllOrdersUseCase();
     const result = await useCase.execute({ 
       status,
-      adminId: user.id
+      adminId: user.id,
+      limit,
+      offset
     });
 
     if (!result.success) {
