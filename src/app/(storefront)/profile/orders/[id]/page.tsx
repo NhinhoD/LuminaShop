@@ -1,5 +1,4 @@
 import { getOrderAction } from "@/presentation/actions/order";
-import { OrderTimeline } from "@/presentation/components/orders/OrderTimeline";
 import { OrderRealtimeTracker } from "@/presentation/components/orders/OrderRealtimeTracker";
 import { StatusBadge } from "@/presentation/components/orders/StatusBadge";
 import { CancelOrderButton } from "@/presentation/components/orders/CancelOrderButton";
@@ -106,7 +105,14 @@ export default async function OrderDetailPage({ params }: PageProps) {
               <StatusBadge status={order.status} className="text-xs px-3 py-1 font-bold rounded-lg" />
             </div>
 
-            <OrderTimeline currentStatus={order.status} />
+            {isOrderPaid && (
+              <div className="mt-6 bg-green-50 text-green-700 border border-green-200 rounded-xl p-4 flex items-center gap-3">
+                <div className="bg-green-100 rounded-full p-1 text-green-600">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
+                </div>
+                <span className="font-bold text-sm">Đơn hàng đã được kích hoạt bản quyền thành công</span>
+              </div>
+            )}
             
             {(order.status === OrderStatus.PENDING || order.status === OrderStatus.PROCESSING) && (
               <div className="mt-8 flex justify-end">
@@ -205,10 +211,6 @@ export default async function OrderDetailPage({ params }: PageProps) {
                 <span>Tạm tính</span>
                 <span className="text-slate-800">{formatPrice(order.totalAmount)}</span>
               </div>
-              <div className="flex justify-between text-xs font-bold text-slate-400 uppercase tracking-wider">
-                <span>Phí bàn giao</span>
-                <span className="text-green-600">Miễn phí</span>
-              </div>
               <div className="flex justify-between items-center pt-3 border-t border-slate-200">
                 <span className="font-extrabold text-slate-900 text-sm">Tổng cộng</span>
                 <span className="text-2xl font-black text-[#0051d5] font-playfair">
@@ -226,16 +228,16 @@ export default async function OrderDetailPage({ params }: PageProps) {
           <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
             <div className="flex items-center gap-2 mb-4">
               <MapPin className="w-5 h-5 text-[#0051d5]" />
-              <h2 className="font-extrabold text-slate-900 text-sm">Email bàn giao</h2>
+              <h2 className="font-extrabold text-slate-900 text-sm">Thông tin tài khoản nhận mã nguồn</h2>
             </div>
             <div className="space-y-3">
               <p className="font-bold text-slate-800 text-[13px]">{order.shippingAddress?.fullName}</p>
               <div className="p-3 bg-slate-50 rounded-xl border border-slate-100 text-xs">
-                <span className="text-slate-400 font-bold uppercase tracking-wider block mb-0.5">Địa chỉ nhận code</span>
+                <span className="text-slate-400 font-bold uppercase tracking-wider block mb-0.5">Môi trường triển khai</span>
                 <span className="font-extrabold text-slate-800 break-all">{order.shippingAddress?.street}</span>
               </div>
               <div className="text-[11px] text-slate-400 font-bold">
-                Kênh liên hệ Zalo/FB: {order.shippingAddress?.phone}
+                Kênh liên hệ hỗ trợ: {order.shippingAddress?.phone}
               </div>
             </div>
           </div>
