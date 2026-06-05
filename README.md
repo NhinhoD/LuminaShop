@@ -6,35 +6,6 @@ KhoUI is a high-performance, visually stunning marketplace specialized in provid
 
 ---
 
-## 📸 UI Showcase
-
-> _Preview of the KhoUI interface across different pages and viewports._
-
-### 🏠 Homepage & Storefront
-| Desktop | 
-|---------|
-| ![Homepage Desktop](https://raw.githubusercontent.com/NhinhoD/LuminaShop/main/public/stitch_e_commerce_ux_ui_design/homepage/screen.png) |
-
-### 🛍️ Product Listing & Detail
-| Product Listing | Product Detail |
-|----------------|----------------|
-| ![Product Listing](https://raw.githubusercontent.com/NhinhoD/LuminaShop/main/public/stitch_e_commerce_ux_ui_design/product_listing/screen.png) | ![Product Detail](https://raw.githubusercontent.com/NhinhoD/LuminaShop/main/public/stitch_e_commerce_ux_ui_design/product_detail/screen.png) |
-
-### 🛒 Cart & Checkout
-| Cart | Checkout |
-|------|----------|
-| ![Cart](https://raw.githubusercontent.com/NhinhoD/LuminaShop/main/public/stitch_e_commerce_ux_ui_design/shopping_cart/screen.png) | ![Checkout](https://raw.githubusercontent.com/NhinhoD/LuminaShop/main/public/stitch_e_commerce_ux_ui_design/checkout/screen.png) |
-
-### 👤 User Dashboard
-| Profile |
-|---------|
-| ![User Profile](https://raw.githubusercontent.com/NhinhoD/LuminaShop/main/public/stitch_e_commerce_ux_ui_design/user_profile/screen.png) |
-
-### 🔧 Admin Suite
-| Dashboard | Product Management |
-|-----------|--------------------|
-| ![Admin Dashboard](https://raw.githubusercontent.com/NhinhoD/LuminaShop/main/public/stitch_e_commerce_ux_ui_design/admin_dashboard/screen.png) | ![Product Management](https://raw.githubusercontent.com/NhinhoD/LuminaShop/main/public/stitch_e_commerce_ux_ui_design/product_management/screen.png) |
-
 ---
 
 ## 🚀 Features
