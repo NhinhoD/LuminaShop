@@ -1,4 +1,4 @@
-# LuminaShop — Agent Instructions
+# KhoUI — Agent Instructions
 
 <!-- BEGIN:nextjs-agent-rules -->
 ## ⚠️ IMPORTANT: This is NOT the Next.js you know
@@ -39,7 +39,7 @@ After reading, report to user:
 
 ## ─── PROJECT CONTEXT ───
 
-**Project:** LuminaShop — Modern E-Commerce Platform
+**Project:** KhoUI — Modern E-Commerce Platform
 **Purpose:** Learning project — exploring modern web technologies
 **Repository:** https://github.com/NhinhoD/LuminaShop
 
@@ -280,7 +280,7 @@ chore: install supabase agent skills
 ## ─── PROJECT STATUS ───
 
 ### 🎯 FINALIZED BUSINESS PIVOT:
-- LuminaShop is officially configured as a **Premium UX/UI Website Template Marketplace**. The platform hosts, previews, and licenses high-fidelity frontend templates (Free & Paid digital source codes) equipped with GSAP, Tailwind 4, and Framer Motion.
+- KhoUI is officially configured as a **Premium UX/UI Website Template Marketplace**. The platform hosts, previews, and licenses high-fidelity frontend templates (Free & Paid digital source codes) equipped with GSAP, Tailwind 4, and Framer Motion.
 
 ### ✅ Completed:
 - **Task 1 (Cart & Checkout framework)**: Baseline architecture built.
@@ -289,10 +289,13 @@ chore: install supabase agent skills
 - **Autonomous AI Template Pipeline**: Engineered native zippers, AI design blueprints (with GSAP scroll triggers and interactive mouse followers), server-side storage handlers, and admin auto-population dashboard interfaces.
 
 ### 🔄 In Progress:
-- None currently
+- **Multi-Language Localization**:
+  - ✅ Database: Created `languages` table in Supabase via MCP with 'vi' and 'en' records.
+  - ⏳ Next: Implement Domain, Infrastructure (SupabaseLanguageRepository), Application (Use Cases), and Presentation (Server Actions & UI Switcher) layers.
 
 ### ⏳ Next Tasks (recommended order):
-1. **Payment Gateway Integration**: Hook up a live VietQR/PayOS dynamic payment API so users can purchase these premium templates using real fiat money.
+1. **Multi-Language Localization (Continue)**: Finish the Clean Architecture layers for the newly created `languages` table.
+2. **Payment Gateway Integration**: Hook up a live VietQR/PayOS dynamic payment API so users can purchase these premium templates using real fiat money.
 
 ### ⚠️ Known Issues:
 - None currently

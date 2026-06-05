@@ -49,6 +49,7 @@ export class SupabaseProductRepository implements IProductRepository {
     isActive?: boolean;
     limit?: number;
     offset?: number;
+    sort?: 'newest' | 'price_asc' | 'price_desc' | 'popular';
   }): Promise<{ products: Product[]; total: number }> {
     const supabase = this.supabase;
     let query = supabase
@@ -66,7 +67,16 @@ export class SupabaseProductRepository implements IProductRepository {
       query = query.range(from, to);
     }
 
-    const { data, error, count } = await query.order('created_at', { ascending: false });
+    if (filters?.sort === 'price_asc') {
+      query = query.order('price', { ascending: true });
+    } else if (filters?.sort === 'price_desc') {
+      query = query.order('price', { ascending: false });
+    } else {
+      // newest or popular (defaulting to newest since we don't have view counts yet)
+      query = query.order('created_at', { ascending: false });
+    }
+
+    const { data, error, count } = await query;
     
     if (error) throw new Error(error.message);
     

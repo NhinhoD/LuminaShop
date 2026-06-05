@@ -10,7 +10,7 @@ import { OrderStatus } from "@/domain/entities/Order";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Chi tiết đơn hàng | LuminaShop",
+  title: "Chi tiết đơn hàng | KhoUI",
 };
 
 interface PageProps {

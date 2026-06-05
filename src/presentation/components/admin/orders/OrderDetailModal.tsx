@@ -138,18 +138,7 @@ export function OrderDetailModal({ orderId, onClose }: OrderDetailModalProps) {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {/* Customer Info */}
               <div className="space-y-6">
-                <section>
-                  <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-3 flex items-center gap-2">
-                    <MapPin className="w-4 h-4" /> Thông tin giao hàng
-                  </h3>
-                  <div className="bg-slate-50 p-4 rounded-2xl space-y-1">
-                    <p className="font-bold text-slate-900">{order.shippingAddress?.fullName}</p>
-                    <p className="text-sm text-slate-600">{order.shippingAddress?.phone}</p>
-                    <p className="text-sm text-slate-600 leading-relaxed">
-                      {order.shippingAddress?.street}, {order.shippingAddress?.ward ? `${order.shippingAddress.ward}, ` : ''}{order.shippingAddress?.district !== 'Khu vực trực thuộc' ? `${order.shippingAddress.district}, ` : ''}{order.shippingAddress?.city}
-                    </p>
-                  </div>
-                </section>
+
 
                 <section>
                   <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-3 flex items-center gap-2">

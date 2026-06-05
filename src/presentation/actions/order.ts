@@ -142,7 +142,8 @@ export async function getUserOrdersAction(limit?: number, offset?: number): Prom
 export async function getAllOrdersAction(
   status?: OrderStatus, 
   limit?: number, 
-  offset?: number
+  offset?: number,
+  search?: string
 ): Promise<ActionResponse<{ orders: Order[], total: number }>> {
   const isAdmin = await isUserAdmin();
   if (!isAdmin) return { success: false, error: "Access denied" };
@@ -156,7 +157,8 @@ export async function getAllOrdersAction(
       status,
       adminId: user.id,
       limit,
-      offset
+      offset,
+      search
     });
 
     if (!result.success) {

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
+import type { Dictionary } from "@/i18n/getDictionary";
 import { ROUTES } from "@/presentation/constants";
 import { formatCurrency } from "@/lib/utils";
 import gsap from "gsap";
@@ -29,6 +30,7 @@ if (typeof window !== "undefined") {
 
 interface HomePageClientProps {
   readonly featuredProducts: readonly Product[];
+  readonly dict: Dictionary['home'];
 }
 
 /* ─── Digital Marketplace Static Data ─── */
@@ -77,7 +79,7 @@ const JOURNEY_STEPS = [
   { year: "Bước 3", title: "Tải về & Triển khai", desc: "Tải ngay file .zip chứa toàn bộ code gốc, hướng dẫn cài đặt và sẵn sàng deploy chỉ trong 5 phút." },
 ];
 
-export default function HomePageClient({ featuredProducts }: HomePageClientProps) {
+export default function HomePageClient({ featuredProducts, dict }: HomePageClientProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const categoriesRef = useRef<HTMLDivElement>(null);
   const advantagesRef = useRef<HTMLElement>(null);
@@ -187,29 +189,29 @@ export default function HomePageClient({ featuredProducts }: HomePageClientProps
             <div className="lg:col-span-7 space-y-6">
               <div className="hero-badge inline-flex items-center gap-2 bg-white rounded-full px-4 py-1.5 shadow-[0_4px_24px_rgba(0,0,0,0.03)] border border-slate-100/60">
                 <span className="flex h-2 w-2 rounded-full bg-[#0051d5] animate-pulse" />
-                <span className="text-[11px] font-extrabold tracking-wider uppercase text-slate-700">Chợ Mua Bán Website Template Cao Cấp Việt Nam</span>
+                <span className="text-[11px] font-extrabold tracking-wider uppercase text-slate-700">{dict?.hero?.badge || 'Chợ Mua Bán Website Template Cao Cấp Việt Nam'}</span>
               </div>
 
               <h1 className="hero-title text-[clamp(2.4rem,5.5vw,4.2rem)] font-extrabold leading-[1.08] text-slate-950 font-playfair">
-                Xây dựng thương hiệu số <br />
+                {dict?.hero?.title1 || 'Xây dựng thương hiệu số'} <br />
                 <span className="text-[#0051d5] relative inline-block">
-                  Đẳng cấp & Mượt mà
+                  {dict?.hero?.title2 || 'Đẳng cấp & Mượt mà'}
                   <span className="absolute bottom-[3px] left-0 right-0 h-[6px] bg-blue-100 rounded z-[-1]" />
                 </span>
-                <br />chỉ trong 5 phút.
+                <br />{dict?.hero?.title3 || 'chỉ trong 5 phút.'}
               </h1>
 
               <p className="hero-desc text-base text-slate-500 leading-relaxed max-w-[540px]">
-                Sở hữu trọn bộ mã nguồn (Next.js 15, Tailwind v4, GSAP) chuẩn Clean Architecture được lập trình tối ưu bởi các lập trình viên kỳ cựu. Bàn giao nhanh chóng, an toàn, hỗ trợ deploy lên Vercel/Netlify miễn phí.
+                {dict?.hero?.desc || 'Sở hữu trọn bộ mã nguồn (Next.js 15, Tailwind v4, GSAP) chuẩn Clean Architecture được lập trình tối ưu bởi các lập trình viên kỳ cựu. Bàn giao nhanh chóng, an toàn, hỗ trợ deploy lên Vercel/Netlify miễn phí.'}
               </p>
 
               <div className="hero-cta flex flex-wrap gap-4 pt-2">
                 <Link href={ROUTES.SHOP} className="inline-flex items-center gap-2 bg-[#0051d5] hover:bg-[#0041ac] text-white px-8 py-4 rounded-xl font-bold transition-all shadow-lg shadow-blue-900/10 active:scale-95 group text-sm">
-                  <span>Khám phá Template</span>
+                  <span>{dict?.hero?.cta1 || 'Khám phá Template'}</span>
                   <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
                 </Link>
                 <a href="#advantages" className="inline-flex items-center gap-2 bg-white hover:bg-slate-50 text-slate-800 border border-slate-200 px-8 py-4 rounded-xl font-bold transition-all active:scale-95 text-sm">
-                  Tại sao chọn Lumina?
+                  {dict?.hero?.cta2 || 'Tại sao chọn Lumina?'}
                 </a>
               </div>
 
@@ -309,7 +311,7 @@ export default function HomePageClient({ featuredProducts }: HomePageClientProps
 
             <div className="lg:col-span-1 space-y-4">
               <span className="text-[10px] font-black tracking-widest text-[#0051d5] uppercase block">ƯU ĐIỂM VƯỢT TRỘI</span>
-              <h2 className="text-3xl font-bold font-playfair leading-tight text-slate-950">Tại sao nên chọn mã nguồn tại LuminaShop?</h2>
+              <h2 className="text-3xl font-bold font-playfair leading-tight text-slate-950">Tại sao nên chọn mã nguồn tại KhoUI?</h2>
               <div className="h-1.5 w-16 bg-[#0051d5] rounded-full" />
               <p className="text-slate-500 text-sm leading-relaxed">
                 Chúng tôi cung cấp các website template cao cấp với chất lượng tốt nhất trên thị trường Việt Nam, cấu hình dễ dàng và tích hợp sẵn đầy đủ hạ tầng hiện đại.
@@ -537,7 +539,7 @@ export default function HomePageClient({ featuredProducts }: HomePageClientProps
               Nhận thông báo khi có <span className="text-[#0051d5]">Template</span> mới
             </h2>
             <p className="text-slate-300 text-sm max-w-md mx-auto">
-              Đăng ký email để nhận thông tin về các template mới nhất, mã giảm giá đặc quyền và các bài chia sẻ công nghệ hữu ích từ LuminaShop.
+              Đăng ký email để nhận thông tin về các template mới nhất, mã giảm giá đặc quyền và các bài chia sẻ công nghệ hữu ích từ KhoUI.
             </p>
 
             <form

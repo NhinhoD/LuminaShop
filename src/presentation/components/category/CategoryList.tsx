@@ -1,49 +1,53 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { Category } from "@/domain/entities/Category";
-import { getCategoriesAction, deleteCategoryAction } from "@/presentation/actions/category";
+import { deleteCategoryAction } from "@/presentation/actions/category";
 import { CategoryForm } from "./CategoryForm";
 import { CategoryCard, AddCategoryPlaceholder } from "./CategoryCard";
+import { useDebouncedCallback } from "use-debounce";
 
-export function CategoryList() {
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [loading, setLoading] = useState(true);
+interface CategoryListProps {
+  initialCategories: Category[];
+  total: number;
+  currentPage: number;
+  totalPages: number;
+  search?: string;
+}
+
+export function CategoryList({ initialCategories, search }: CategoryListProps) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  
   const [showForm, setShowForm] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Category | undefined>(undefined);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState(search || "");
 
-  const fetchCategories = async (showLoading = true) => {
-    if (showLoading) setLoading(true);
-    const result = await getCategoriesAction();
-    if (result.data) {
-      setCategories(result.data);
+  const handleSearch = useDebouncedCallback((term: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (term) {
+      params.set('q', term);
+    } else {
+      params.delete('q');
     }
-    setLoading(false);
-  };
-
-  useEffect(() => {
-    Promise.resolve().then(() => fetchCategories(false));
-  }, []);
+    params.set('page', '1'); // Reset to first page on search
+    router.push(`${pathname}?${params.toString()}`);
+  }, 500);
 
   const handleDelete = async (id: string) => {
     if (confirm("Bạn có chắc chắn muốn xóa danh mục này?")) {
       const result = await deleteCategoryAction(id);
-      if (result.success) {
-        fetchCategories();
-      } else {
+      if (!result.success) {
         alert(result.error || "Không thể xóa danh mục.");
       }
+      // revalidatePath in action will refresh data automatically
     }
   };
 
-  const filteredCategories = categories.filter(c => 
-    c.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    c.slug.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
   return (
-    <div className="space-y-8 max-w-7xl mx-auto px-4 pb-12">
+    <div className="space-y-8 max-w-7xl mx-auto px-4 pb-4">
       {/* Header Section */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
@@ -57,7 +61,10 @@ export function CategoryList() {
               type="text"
               placeholder="Search categories..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+                handleSearch(e.target.value);
+              }}
               className="w-full pl-12 pr-4 py-3 bg-white border border-slate-200 rounded-2xl text-sm focus:ring-4 focus:ring-blue-500/10 focus:border-[#0051d5] outline-none transition-all shadow-sm"
             />
           </div>
@@ -81,7 +88,6 @@ export function CategoryList() {
               category={editingCategory}
               onSuccess={() => {
                 setShowForm(false);
-                fetchCategories();
               }}
               onCancel={() => setShowForm(false)}
             />
@@ -90,38 +96,30 @@ export function CategoryList() {
       )}
 
       {/* Grid Section */}
-      {loading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[1, 2, 3].map(i => (
-            <div key={i} className="bg-slate-100 animate-pulse h-[280px] rounded-2xl" />
-          ))}
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredCategories.map((category) => (
-            <CategoryCard
-              key={category.id}
-              category={category}
-              productCount={category.productCount}
-              onEdit={(c) => {
-                setEditingCategory(c);
-                setShowForm(true);
-              }}
-              onDelete={handleDelete}
-            />
-          ))}
-          
-          <AddCategoryPlaceholder 
-            onClick={() => {
-              setEditingCategory(undefined);
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {initialCategories.map((category) => (
+          <CategoryCard
+            key={category.id}
+            category={category}
+            productCount={category.productCount}
+            onEdit={(c) => {
+              setEditingCategory(c);
               setShowForm(true);
-            }} 
+            }}
+            onDelete={handleDelete}
           />
-        </div>
-      )}
+        ))}
+        
+        <AddCategoryPlaceholder 
+          onClick={() => {
+            setEditingCategory(undefined);
+            setShowForm(true);
+          }} 
+        />
+      </div>
       
-      {!loading && filteredCategories.length === 0 && searchTerm && (
-        <div className="text-center py-20 bg-slate-50 rounded-3xl border border-dashed border-slate-200">
+      {initialCategories.length === 0 && search && (
+        <div className="text-center py-20 bg-slate-50 rounded-3xl border border-dashed border-slate-200 col-span-full">
           <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm">
             <span className="material-symbols-outlined text-slate-300 text-3xl">search_off</span>
           </div>

@@ -2,18 +2,21 @@
 
 import Link from "next/link";
 import { useEffect, useState, useRef } from "react";
+import type { Dictionary } from "@/i18n/getDictionary";
 import { ROUTES } from "@/presentation/constants";
 import NavbarCartIcon from "./NavbarCartIcon";
 import gsap from "gsap";
 import { Menu, X, Search, User, ChevronDown } from "lucide-react";
+import { LanguageSwitcher } from "../common/LanguageSwitcher";
 
 interface NavbarClientProps {
   readonly user: unknown;
   readonly brandName: string;
   readonly navLinks: readonly { label: string; href: string }[];
+  readonly dict: Dictionary;
 }
 
-export default function NavbarClient({ user, navLinks }: NavbarClientProps) {
+export default function NavbarClient({ user, navLinks, dict }: NavbarClientProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const headerRef = useRef<HTMLElement>(null);
@@ -58,15 +61,15 @@ export default function NavbarClient({ user, navLinks }: NavbarClientProps) {
               <span className="text-secondary mr-1">📞</span>+1 (800) 123-4567
             </span>
             <span className="text-[#aaa]">
-              <span className="text-secondary mr-1">✉</span>hello@luminashop.com
+              <span className="text-secondary mr-1">✉</span>hello@lumina-ui.com
             </span>
             <span className="text-[#aaa]">
-              <span className="text-secondary mr-1">📍</span>42 Flavor Street, NY
+              <span className="text-secondary mr-1">📍</span>Tech Hub, San Francisco
             </span>
           </div>
           <div className="flex items-center gap-3">
             <span className="tag-badge">
-              🔥 Free Delivery Today!
+              🚀 Instant Digital Delivery!
             </span>
           </div>
         </div>
@@ -84,15 +87,15 @@ export default function NavbarClient({ user, navLinks }: NavbarClientProps) {
         <div className="max-w-[1200px] mx-auto px-4 flex justify-between items-center h-[68px]">
           {/* Logo */}
           <Link ref={logoRef} href={ROUTES.HOME} className="flex items-center gap-2.5 group">
-            <div className="w-[46px] h-[46px] rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white text-xl shadow-[0_4px_15px_rgba(232,40,26,0.35)]">
-              🍴
+            <div className="w-[46px] h-[46px] rounded-full bg-gradient-to-br from-[#0051d5] to-[#0041ab] flex items-center justify-center text-white text-xl shadow-[0_4px_15px_rgba(0,81,213,0.35)]">
+              ✨
             </div>
             <div>
-              <div className="font-playfair text-2xl font-black text-dark">
-                Lumina<span className="text-primary">Shop</span>
+              <div className="font-bricolage text-2xl font-black text-dark">
+                Lumina<span className="text-[#0051d5]">UI</span>
               </div>
               <div className="text-[0.62rem] uppercase tracking-[2px] text-[#aaa]">
-                Fast Food & Restaurant
+                Premium Templates
               </div>
             </div>
           </Link>
@@ -140,12 +143,16 @@ export default function NavbarClient({ user, navLinks }: NavbarClientProps) {
               <NavbarCartIcon />
             </div>
 
+            <div className="hidden sm:block ml-2">
+              <LanguageSwitcher />
+            </div>
+
             <Link
               href={ROUTES.SHOP}
-              className="hidden sm:inline-flex items-center gap-2 bg-gradient-to-br from-primary to-[#c01e12] text-white rounded-lg px-5 py-2.5 text-[0.84rem] font-semibold shadow-[0_4px_15px_rgba(232,40,26,0.3)] ml-1.5 hover:-translate-y-0.5 hover:shadow-[0_8px_22px_rgba(232,40,26,0.4)] transition-all"
+              className="hidden sm:inline-flex items-center gap-2 bg-[#0051d5] text-white rounded-lg px-5 py-2.5 text-[0.84rem] font-semibold shadow-[0_4px_15px_rgba(0,81,213,0.3)] ml-1.5 hover:-translate-y-0.5 hover:shadow-[0_8px_22px_rgba(0,81,213,0.4)] transition-all"
             >
               <ChevronDown size={14} />
-              Order Now
+              {dict?.nav?.explore || "Explore Themes"}
             </Link>
 
             {/* Mobile toggle */}
@@ -173,10 +180,10 @@ export default function NavbarClient({ user, navLinks }: NavbarClientProps) {
             ))}
             <Link
               href={ROUTES.SHOP}
-              className="btn-primary-sarab mt-2 justify-center text-center"
+              className="mt-2 justify-center text-center px-4 py-3 bg-[#0051d5] text-white rounded-lg font-bold hover:bg-[#0041ab]"
               onClick={() => setIsMobileMenuOpen(false)}
             >
-              🛒 Order Now
+              ✨ {dict?.nav?.explore || "Explore Themes"}
             </Link>
           </div>
         )}

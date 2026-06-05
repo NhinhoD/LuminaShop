@@ -1,6 +1,6 @@
-# LuminaShop - Premium Website Template & Theme Marketplace
+# KhoUI - Premium Website Template & Theme Marketplace
 
-LuminaShop is a high-performance, visually stunning marketplace specialized in providing premium website templates, UI kits, and digital themes. Built with **Next.js 15**, **Tailwind CSS v4**, **GSAP**, **Supabase**, and **TypeScript**, it delivers a state-of-the-art editorial design experience.
+KhoUI is a high-performance, visually stunning marketplace specialized in providing premium website templates, UI kits, and digital themes. Built with **Next.js 15**, **Tailwind CSS v4**, **GSAP**, **Supabase**, and **TypeScript**, it delivers a state-of-the-art editorial design experience.
 
 ## 🚀 Features
 
@@ -24,7 +24,7 @@ LuminaShop is a high-performance, visually stunning marketplace specialized in p
 ## 📦 Project Structure
 
 ```
-LuminaShop/
+KhoUI/
 ├── src/
 │   ├── app/                # Next.js App Router (Pages & Layouts)
 │   ├── application/        # Business Logic & Use Cases (Application Layer)
@@ -50,7 +50,7 @@ LuminaShop/
 1. **Clone the repository:**
    ```bash
    git clone https://github.com/NhinhoD/LuminaShop.git
-   cd LuminaShop
+   cd KhoUI
    ```
 
 2. **Install dependencies:**

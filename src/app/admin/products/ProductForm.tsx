@@ -597,7 +597,7 @@ export function ProductForm({ categories, initialData }: ProductFormProps) {
             value={formData.demoUrl}
             onChange={handleChange}
             className="w-full px-4 py-3 border border-slate-200 focus:border-[#0051d5] rounded-xl outline-none text-xs font-semibold bg-white disabled:bg-slate-50 disabled:text-slate-400"
-            placeholder="Ví dụ: https://demo.luminashop.vn/my-template hoặc link Stitch public preview"
+            placeholder="Ví dụ: https://demo.khoui.vn/my-template hoặc link Stitch public preview"
           />
         </div>
 

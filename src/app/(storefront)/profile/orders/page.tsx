@@ -3,14 +3,15 @@ import { Download, Package, ShoppingBag, ArrowRight } from "lucide-react";
 import { Metadata } from "next";
 import { createClient } from "@/infrastructure/supabase/server";
 import { PaginationControls } from "@/presentation/components/common/PaginationControls";
+import { ProfileOrderSearch } from "./ProfileOrderSearch";
 
 export const metadata: Metadata = {
-  title: "Kho giao diện đã mua | LuminaShop",
+  title: "Kho giao diện đã mua | KhoUI",
   description: "Quản lý và tải xuống các giao diện bạn đã thanh toán",
 };
 
 interface OrderHistoryPageProps {
-  searchParams: Promise<{ page?: string }>;
+  searchParams: Promise<{ page?: string; q?: string }>;
 }
 
 export default async function OrderHistoryPage({ searchParams }: OrderHistoryPageProps) {
@@ -31,8 +32,9 @@ export default async function OrderHistoryPage({ searchParams }: OrderHistoryPag
   const currentPage = parseInt(params.page || "1", 10);
   const itemsPerPage = 9; // 3x3 grid
   const offset = (currentPage - 1) * itemsPerPage;
+  const search = typeof params.q === 'string' ? params.q : undefined;
 
-  const { data: orderItemsData, error, count } = await supabase
+  let query = supabase
     .from('order_items')
     .select(`
       id,
@@ -40,7 +42,7 @@ export default async function OrderHistoryPage({ searchParams }: OrderHistoryPag
       price_at_purchase,
       created_at,
       order_id,
-      products (*),
+      products!inner (*),
       orders!inner (
         status,
         user_id,
@@ -48,7 +50,13 @@ export default async function OrderHistoryPage({ searchParams }: OrderHistoryPag
       )
     `, { count: 'exact' })
     .eq('orders.user_id', user.id)
-    .in('orders.status', ['delivered', 'completed', 'shipped'])
+    .in('orders.status', ['delivered', 'completed', 'shipped']);
+
+  if (search) {
+    query = query.ilike('products.title', `%${search}%`);
+  }
+
+  const { data: orderItemsData, error, count } = await query
     .order('created_at', { ascending: false })
     .range(offset, offset + itemsPerPage - 1);
 
@@ -76,7 +84,7 @@ export default async function OrderHistoryPage({ searchParams }: OrderHistoryPag
 
   return (
     <div className="container mx-auto px-4 py-16 max-w-7xl font-manrope">
-      <div className="flex flex-col items-center justify-center text-center mb-16">
+      <div className="flex flex-col items-center justify-center text-center mb-12">
         <span className="text-[10px] font-black tracking-widest text-[#0051d5] uppercase block mb-3">
           TÀI SẢN KỸ THUẬT SỐ
         </span>
@@ -88,11 +96,17 @@ export default async function OrderHistoryPage({ searchParams }: OrderHistoryPag
         </p>
       </div>
 
+      <div className="flex justify-between items-center mb-8">
+        <ProfileOrderSearch currentSearch={search || ""} />
+      </div>
+
       {items.length === 0 ? (
         <div className="text-center py-24 bg-white rounded-[32px] shadow-sm border border-slate-100 max-w-3xl mx-auto">
           <ShoppingBag className="w-16 h-16 text-slate-200 mx-auto mb-6" />
-          <h2 className="text-2xl font-extrabold text-slate-900 font-bricolage mb-3">Kho lưu trữ trống</h2>
-          <p className="text-slate-500 mb-10 max-w-sm mx-auto">Bạn chưa sở hữu bản quyền template nào. Hãy khám phá thư viện cao cấp của chúng tôi ngay hôm nay.</p>
+          <h2 className="text-2xl font-extrabold text-slate-900 font-bricolage mb-3">Không tìm thấy giao diện</h2>
+          <p className="text-slate-500 mb-10 max-w-sm mx-auto">
+            {search ? `Không có mẫu template nào khớp với từ khóa "${search}".` : "Bạn chưa sở hữu bản quyền template nào. Hãy khám phá thư viện cao cấp của chúng tôi ngay hôm nay."}
+          </p>
           <Link
             href="/shop"
             className="inline-flex items-center justify-center px-8 py-4 text-sm font-bold rounded-xl text-white bg-[#0051d5] hover:bg-[#0041ab] transition-all shadow-lg shadow-blue-900/20 active:scale-95 uppercase tracking-wider"
@@ -166,7 +180,12 @@ export default async function OrderHistoryPage({ searchParams }: OrderHistoryPag
           })}
         </div>
       )}
-      <PaginationControls currentPage={currentPage} totalPages={totalPages} />
+      
+      {totalPages > 1 && (
+        <div className="mt-12 flex justify-center">
+          <PaginationControls currentPage={currentPage} totalPages={totalPages} />
+        </div>
+      )}
     </div>
   );
 }

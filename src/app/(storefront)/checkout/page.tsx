@@ -106,7 +106,7 @@ export default function CheckoutPage() {
             street: formData.email, // Map email to street
             district: "Digital Deliveries",
             city: "Bản quyền Digital",
-            ward: "LuminaShop.vn"
+            ward: "KhoUI.vn"
           },
           paymentMethod: formData.paymentMethod,
           notes: formData.notes,

@@ -32,7 +32,7 @@ export default async function DemoPage({ params }: DemoPageProps) {
       <div className="h-[56px] w-full bg-[#1A1A1A] border-b border-white/10 flex items-center justify-between px-6 shrink-0">
         <div className="flex items-center">
           <Link href="/" className="text-white font-playfair font-bold text-xl tracking-wide hover:text-blue-400 transition-colors">
-            LuminaShop
+            KhoUI
           </Link>
         </div>
         

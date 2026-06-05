@@ -5,20 +5,34 @@ import ShopProductGrid from "@/presentation/components/product/ShopProductGrid";
 import { PaginationControls } from "@/presentation/components/common/PaginationControls";
 
 interface ShopPageProps {
-  searchParams: Promise<{ page?: string; limit?: string }>;
+  searchParams: Promise<{ page?: string; limit?: string; q?: string; sort?: string; category?: string }>;
 }
 
 export default async function ShopPage({ searchParams }: ShopPageProps) {
   const params = await searchParams;
   const currentPage = parseInt(params.page || "1", 10);
-  const itemsPerPage = parseInt(params.limit || "10", 10);
+  const itemsPerPage = parseInt(params.limit || "9", 10); // 3x3 grid
   const offset = (currentPage - 1) * itemsPerPage;
+  const search = typeof params.q === 'string' ? params.q : undefined;
+  const categoryId = typeof params.category === 'string' ? params.category : undefined;
+  
+  let sortType: 'newest' | 'price_asc' | 'price_desc' | 'popular' = 'newest';
+  if (
+    params.sort === 'price_asc' || 
+    params.sort === 'price_desc' || 
+    params.sort === 'popular'
+  ) {
+    sortType = params.sort as 'newest' | 'price_asc' | 'price_desc' | 'popular';
+  }
 
   const productRepository = await makeProductRepository();
   const { products, total } = await productRepository.findAll({ 
     limit: itemsPerPage, 
     offset, 
-    isActive: true 
+    isActive: true,
+    search,
+    categoryId,
+    sort: sortType
   });
   
   const totalPages = Math.ceil(total / itemsPerPage);
@@ -38,21 +52,20 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
             <h1 className="text-4xl font-bold text-slate-950 mb-2">Our Collection</h1>
             <p className="text-slate-500 text-sm">Discover pieces designed for modern life. ({total} templates)</p>
           </div>
-          
-          <div className="flex items-center gap-6 mt-6 md:mt-0">
-            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Sort By:</span>
-            <select className="bg-transparent text-sm font-bold text-slate-900 focus:outline-none cursor-pointer">
-              <option>Newest Arrivals</option>
-              <option>Price: Low to High</option>
-              <option>Price: High to Low</option>
-              <option>Most Popular</option>
-            </select>
-          </div>
         </div>
 
-        <ShopProductGrid initialProducts={products} />
+        <ShopProductGrid 
+          initialProducts={products} 
+          currentSearch={search || ""} 
+          currentSort={sortType} 
+          currentCategory={categoryId || "all"}
+        />
         
-        <PaginationControls currentPage={currentPage} totalPages={totalPages} />
+        {totalPages > 1 && (
+          <div className="mt-12 flex justify-center">
+            <PaginationControls currentPage={currentPage} totalPages={totalPages} />
+          </div>
+        )}
       </div>
     </main>
   );

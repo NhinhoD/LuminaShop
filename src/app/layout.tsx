@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "LuminaShop - Premium Food & Beverage",
-  description: "Delicious fast food crafted from premium ingredients. From crispy burgers to gourmet pizzas - every bite is an adventure worth savoring.",
+  title: "KhoUI - Premium UI Templates & Themes",
+  description: "Discover exclusive, high-quality website templates and themes. Built with Next.js, Tailwind CSS, and GSAP for modern web development.",
 };
 
 import { BreadcrumbProvider } from "@/presentation/components/common/BreadcrumbContext";
@@ -17,13 +17,18 @@ const bricolageGrotesque = Bricolage_Grotesque({
   display: 'swap',
 });
 
-export default function RootLayout({
+import { cookies } from "next/headers";
+
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const cookieStore = await cookies();
+  const locale = cookieStore.get("NEXT_LOCALE")?.value || "vi";
+
   return (
-    <html lang="en" className={`light ${bricolageGrotesque.variable}`}>
+    <html lang={locale} className={`light ${bricolageGrotesque.variable}`}>
       <head>
         <link href="https://fonts.googleapis.com" rel="preconnect" />
         <link crossOrigin="anonymous" href="https://fonts.gstatic.com" rel="preconnect" />

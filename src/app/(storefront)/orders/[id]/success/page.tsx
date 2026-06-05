@@ -22,7 +22,7 @@ export default async function OrderSuccessPage(props: { params: Promise<{ id: st
       
       <h1 className="text-display-sm font-bold mb-4">Đặt hàng thành công!</h1>
       <p className="text-on-surface-variant text-lg mb-8">
-        Cảm ơn bạn đã mua sắm tại LuminaShop. Mã đơn hàng của bạn là <strong>#{order.id.split("-")[0].toUpperCase()}</strong>
+        Cảm ơn bạn đã mua sắm tại KhoUI. Mã đơn hàng của bạn là <strong>#{order.id.split("-")[0].toUpperCase()}</strong>
       </p>
 
       <div className="bg-surface-container-lowest p-8 rounded-2xl border border-outline-variant/30 text-left mb-10 shadow-sm max-w-[500px] mx-auto">
@@ -46,12 +46,8 @@ export default async function OrderSuccessPage(props: { params: Promise<{ id: st
             <span className="font-bold uppercase">{order.paymentMethod}</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-on-surface-variant">Giao hàng đến:</span>
-            <span className="font-medium text-right max-w-[200px]">{order.shippingAddress?.fullName}</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="text-on-surface-variant">Thời gian giao hàng dự kiến:</span>
-            <span className="font-medium text-right text-success">3 - 5 ngày làm việc</span>
+            <span className="text-on-surface-variant">Tình trạng kích hoạt:</span>
+            <span className="font-medium text-right text-success">Tự động sau khi thanh toán</span>
           </div>
         </div>
 

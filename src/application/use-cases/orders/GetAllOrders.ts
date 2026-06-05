@@ -7,6 +7,7 @@ export interface GetAllOrdersDTO {
   adminId: string; // Ensure only admins can call this
   limit?: number;
   offset?: number;
+  search?: string;
 }
 
 export class GetAllOrdersUseCase {
@@ -14,7 +15,12 @@ export class GetAllOrdersUseCase {
 
   async execute(data: GetAllOrdersDTO): Promise<Result<{ orders: Order[], total: number }>> {
     try {
-      const result = await this.orderRepo.findAll({ status: data.status, limit: data.limit, offset: data.offset });
+      const result = await this.orderRepo.findAll({ 
+        status: data.status, 
+        limit: data.limit, 
+        offset: data.offset,
+        search: data.search
+      });
       return ok(result);
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : 'Failed to retrieve orders.';

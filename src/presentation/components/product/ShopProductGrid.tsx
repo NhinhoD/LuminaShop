@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState, useMemo } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import QuickAddButton from "./QuickAddButton";
 import { Product } from "@/domain/entities/Product";
@@ -9,15 +10,23 @@ import { ROUTES } from "@/presentation/constants";
 import { formatCurrency } from "@/lib/utils";
 import gsap from "gsap";
 import { Heart, Search, SlidersHorizontal, Monitor } from "lucide-react";
+import { useDebouncedCallback } from "use-debounce";
 
 interface ShopProductGridProps {
-  readonly initialProducts: readonly Product[];
+  initialProducts: readonly Product[];
+  currentSearch: string;
+  currentSort: string;
+  currentCategory: string;
 }
 
-export default function ShopProductGrid({ initialProducts }: ShopProductGridProps) {
-  const [selectedCategory, setSelectedCategory] = useState<string>("all");
-  const [selectedTech, setSelectedTech] = useState<readonly string[]>([]);
+export default function ShopProductGrid({ initialProducts, currentSearch, currentSort, currentCategory }: ShopProductGridProps) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  const [searchQuery, setSearchQuery] = useState(currentSearch);
   const [maxPrice, setMaxPrice] = useState<number>(10000000);
+  const [selectedTech, setSelectedTech] = useState<readonly string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const gridRef = useRef<HTMLDivElement>(null);
 
@@ -31,40 +40,40 @@ export default function ShopProductGrid({ initialProducts }: ShopProductGridProp
 
   const techFilters = ["Next.js 15", "Tailwind 4", "GSAP", "Framer Motion", "React 19"];
 
-  const filteredProducts = useMemo(() => {
-    return initialProducts.filter((product) => {
-      // 1. Filter by category (either matching product properties, title, description or category slug)
-      if (selectedCategory !== "all") {
-        const catMatch =
-          product.categoryId?.toLowerCase().includes(selectedCategory) ||
-          product.title.toLowerCase().includes(selectedCategory) ||
-          product.description?.toLowerCase().includes(selectedCategory);
-        if (!catMatch) return false;
-      }
+  const updateUrl = (updates: { q?: string; category?: string; sort?: string }) => {
+    setIsLoading(true);
+    const params = new URLSearchParams(searchParams.toString());
+    
+    if (updates.q !== undefined) {
+      if (updates.q) params.set("q", updates.q);
+      else params.delete("q");
+    }
+    
+    if (updates.category !== undefined) {
+      if (updates.category !== "all") params.set("category", updates.category);
+      else params.delete("category");
+    }
+    
+    if (updates.sort !== undefined) {
+      if (updates.sort !== "newest") params.set("sort", updates.sort);
+      else params.delete("sort");
+    }
 
-      // 2. Filter by max price
-      if (product.price > maxPrice) return false;
+    params.set("page", "1");
+    router.push(`${pathname}?${params.toString()}`);
+    setTimeout(() => setIsLoading(false), 500);
+  };
 
-      // 3. Filter by tech stack tags
-      if (selectedTech.length > 0) {
-        // Tech stack check: if product has techStack array, match it, otherwise check description/title
-        const match = selectedTech.some((tech) => {
-          const inStack = product.techStack?.some((t) => t.toLowerCase().includes(tech.toLowerCase()));
-          const inDesc = product.description?.toLowerCase().includes(tech.toLowerCase());
-          const inTitle = product.title.toLowerCase().includes(tech.toLowerCase());
-          return inStack || inDesc || inTitle;
-        });
-        if (!match) return false;
-      }
-
-      return true;
-    });
-  }, [initialProducts, selectedCategory, selectedTech, maxPrice]);
+  const handleSearch = useDebouncedCallback((term: string) => {
+    updateUrl({ q: term });
+  }, 500);
 
   const handleCategorySelect = (category: string) => {
-    setIsLoading(true);
-    setSelectedCategory(category);
-    setTimeout(() => setIsLoading(false), 300);
+    updateUrl({ category });
+  };
+
+  const handleSortSelect = (sort: string) => {
+    updateUrl({ sort });
   };
 
   const toggleTech = (tech: string) => {
@@ -74,6 +83,21 @@ export default function ShopProductGrid({ initialProducts }: ShopProductGridProp
     );
     setTimeout(() => setIsLoading(false), 300);
   };
+
+  // Local price & tech filters, applied on top of server results for immediate UX
+  const filteredProducts = initialProducts.filter(product => {
+    if (product.price > maxPrice) return false;
+    if (selectedTech.length > 0) {
+      const match = selectedTech.some((tech) => {
+        const inStack = product.techStack?.some((t) => t.toLowerCase().includes(tech.toLowerCase()));
+        const inDesc = product.description?.toLowerCase().includes(tech.toLowerCase());
+        const inTitle = product.title.toLowerCase().includes(tech.toLowerCase());
+        return inStack || inDesc || inTitle;
+      });
+      if (!match) return false;
+    }
+    return true;
+  });
 
   // GSAP animation triggered on product card change
   useEffect(() => {
@@ -103,31 +127,18 @@ export default function ShopProductGrid({ initialProducts }: ShopProductGridProp
         gsap.killTweensOf(items);
       }
     };
-  }, [isLoading, filteredProducts]);
+  }, [isLoading, filteredProducts, initialProducts]);
 
   return (
-    <div className="bg-[#fcfbf9] min-h-screen text-slate-800 font-manrope">
-
-      {/* Page Header */}
-      <div className="bg-gradient-to-b from-[#f6f3ed] to-[#fcfbf9] py-16 border-b border-slate-100">
-        <div className="max-w-[1200px] mx-auto px-4 text-center space-y-3">
-          <span className="text-[10px] font-black tracking-widest text-[#0051d5] uppercase block">LUMINA CATALOG</span>
-          <h1 className="text-4xl font-extrabold font-playfair text-slate-950">Kho Giao Diện Độc Quyền</h1>
-          <div className="h-1.5 w-16 bg-[#0051d5] mx-auto rounded-full" />
-          <p className="text-slate-500 text-sm max-w-md mx-auto">
-            Sở hữu trọn đời mã nguồn website chất lượng cao, chuẩn SEO, tích hợp sẵn GSAP & Tailwind v4.0.
-          </p>
-        </div>
-      </div>
-
-      {/* Filter Category Bar */}
-      <div className="max-w-[1200px] mx-auto px-4 py-8">
-        <div className="flex flex-wrap items-center justify-center gap-2.5">
+    <div className="bg-[#fcfbf9] text-slate-800 font-manrope rounded-3xl overflow-hidden shadow-sm border border-slate-100">
+      {/* Top Filter & Sort Bar */}
+      <div className="bg-white p-6 border-b border-slate-100 flex flex-col md:flex-row justify-between gap-6 items-center">
+        <div className="flex flex-wrap items-center gap-2.5">
           {categories.map((cat) => (
             <button
               key={cat.value}
               onClick={() => handleCategorySelect(cat.value)}
-              className={`rounded-xl px-6 py-2.5 text-xs font-bold transition-all border cursor-pointer ${selectedCategory === cat.value
+              className={`rounded-xl px-5 py-2.5 text-xs font-bold transition-all border cursor-pointer ${currentCategory === cat.value
                   ? "bg-[#0051d5] border-[#0051d5] text-white shadow-lg shadow-blue-900/10"
                   : "bg-white border-slate-200 text-slate-600 hover:border-slate-400 hover:text-slate-800"
                 }`}
@@ -135,6 +146,34 @@ export default function ShopProductGrid({ initialProducts }: ShopProductGridProp
               {cat.label}
             </button>
           ))}
+        </div>
+
+        <div className="flex items-center gap-4 w-full md:w-auto">
+          <div className="relative flex-grow md:w-64">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <input
+              type="text"
+              placeholder="Tìm kiếm giao diện..."
+              className="w-full pl-9 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-[#0051d5] transition-all"
+              value={searchQuery}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                handleSearch(e.target.value);
+              }}
+            />
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest hidden sm:inline">Sắp xếp:</span>
+            <select 
+              className="bg-transparent text-sm font-bold text-slate-900 focus:outline-none cursor-pointer py-2 pl-2 pr-6 border border-slate-200 rounded-xl"
+              value={currentSort}
+              onChange={(e) => handleSortSelect(e.target.value)}
+            >
+              <option value="newest">Mới nhất</option>
+              <option value="price_asc">Giá: Thấp đến Cao</option>
+              <option value="price_desc">Giá: Cao đến Thấp</option>
+            </select>
+          </div>
         </div>
       </div>
 

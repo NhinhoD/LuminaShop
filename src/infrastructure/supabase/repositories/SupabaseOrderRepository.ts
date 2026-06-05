@@ -40,12 +40,17 @@ export class SupabaseOrderRepository implements IOrderRepository {
     };
   }
 
-  async findAll(filters?: { status?: OrderStatus; limit?: number; offset?: number }): Promise<{ orders: Order[], total: number }> {
+  async findAll(filters?: { status?: OrderStatus; limit?: number; offset?: number; search?: string }): Promise<{ orders: Order[], total: number }> {
     const supabase = this.supabase;
     let query = supabase.from('orders').select('*, items:order_items(*, product:products(title))', { count: 'exact' });
     
     if (filters?.status) {
       query = query.eq('status', filters.status);
+    }
+
+    if (filters?.search) {
+      // Search by ID or customer name.
+      query = query.or(`id.ilike.%${filters.search}%,shipping_address->>fullName.ilike.%${filters.search}%`);
     }
 
     if (filters?.limit) {

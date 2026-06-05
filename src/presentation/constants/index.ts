@@ -3,7 +3,7 @@
  * Used to avoid hardcoding strings and values throughout the application.
  */
 
-export const BRAND_NAME = "LuminaShop";
+export const BRAND_NAME = "KhoUI";
 
 export const ROUTES = {
   HOME: "/",
@@ -33,12 +33,12 @@ export const UI_CONFIG = {
 } as const;
 
 export const CATEGORIES = {
-  BURGERS: "Burgers",
-  PIZZA: "Pizza",
-  CHICKEN: "Fried Chicken",
-  WRAPS: "Wraps",
-  PASTA: "Pasta",
-  DESSERTS: "Desserts",
+  LANDING: "Landing Page",
+  ECOMMERCE: "E-Commerce",
+  DASHBOARD: "Admin Dashboard",
+  PORTFOLIO: "Portfolio",
+  CORPORATE: "Corporate",
+  BLOG: "Blog",
 } as const;
 
 export const LAYOUT_CLASSES = {
@@ -47,12 +47,12 @@ export const LAYOUT_CLASSES = {
 } as const;
 
 export const UI_LABELS = {
-  SHOP_THE_COLLECTION: "Explore Menu",
+  SHOP_THE_COLLECTION: "Explore Catalog",
   CREATE_ACCOUNT: "Create Account",
   LOG_IN: "Log In",
   LOG_OUT: "Log Out",
   SAVE_CHANGES: "Save Changes",
-  VIEW_ALL: "View Full Menu",
+  VIEW_ALL: "View Full Catalog",
   RECENT_ORDERS: "Recent Orders",
   PROFILE_INFO: "Profile Information",
   ORDER_HISTORY: "Order History",

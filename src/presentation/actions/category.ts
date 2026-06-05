@@ -9,9 +9,9 @@ import {
 import { CreateCategoryDTO, UpdateCategoryDTO } from "@/domain/entities/Category";
 import { revalidatePath } from "next/cache";
 
-export async function getCategoriesAction() {
+export async function getCategoriesAction(limit?: number, offset?: number, search?: string) {
   const useCase = await makeGetCategoriesUseCase();
-  const result = await useCase.execute();
+  const result = await useCase.execute({ limit, offset, search });
   return result.success ? { data: result.data } : { error: result.error.message };
 }
 
