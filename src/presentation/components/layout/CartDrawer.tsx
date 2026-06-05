@@ -8,7 +8,7 @@ import { ROUTES } from "@/presentation/constants";
 import { useEffect, useRef } from "react";
 
 export default function CartDrawer() {
-  const { items, subtotal, removeItem, updateQuantity, isLoading } = useCart();
+  const { items, subtotal, removeItem, updateQuantity, isLoading, error } = useCart();
   const { isOpen, closeDrawer } = useCartDrawerStore();
   const drawerRef = useRef<HTMLDivElement>(null);
 
@@ -72,6 +72,11 @@ export default function CartDrawer() {
 
             {/* Content Area */}
             <div className="flex-1 overflow-y-auto px-8 py-6 space-y-6">
+              {error && (
+                <div className="bg-red-50 text-red-600 p-3 text-sm font-medium border border-red-100 rounded-md mb-4">
+                  {error}
+                </div>
+              )}
               {isLoading && items.length === 0 ? (
                 // Premium Skeletal Shimmering Loader
                 <div className="space-y-4 py-8">

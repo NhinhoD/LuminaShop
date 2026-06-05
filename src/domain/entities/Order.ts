@@ -6,7 +6,11 @@ export enum OrderStatus {
   CANCELLED = 'cancelled'
 }
 
-export type PaymentMethod = 'cod' | 'vnpay' | 'momo';
+export enum PaymentMethod {
+  COD = 'cod',
+  VNPAY = 'vnpay',
+  MOMO = 'momo'
+}
 export type PaymentStatus = 'unpaid' | 'paid' | 'failed' | 'refunded';
 
 export interface ShippingAddress {

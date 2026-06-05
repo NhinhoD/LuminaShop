@@ -5,22 +5,22 @@ import ShopProductGrid from "@/presentation/components/product/ShopProductGrid";
 import { PaginationControls } from "@/presentation/components/common/PaginationControls";
 
 interface ShopPageProps {
-  searchParams: Promise<{ page?: string; limit?: string; q?: string; sort?: string; category?: string }>;
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
 export default async function ShopPage({ searchParams }: ShopPageProps) {
   const params = await searchParams;
-  const currentPage = parseInt(params.page || "1", 10);
-  const itemsPerPage = parseInt(params.limit || "9", 10); // 3x3 grid
+  const currentPage = parseInt((params?.page as string) || "1", 10);
+  const itemsPerPage = parseInt((params?.limit as string) || "9", 10); // 3x3 grid
   const offset = (currentPage - 1) * itemsPerPage;
-  const search = typeof params.q === 'string' ? params.q : undefined;
-  const categoryId = typeof params.category === 'string' ? params.category : undefined;
+  const search = typeof params?.q === 'string' ? params.q : undefined;
+  const categoryId = typeof params?.category === 'string' ? params.category : undefined;
   
   let sortType: 'newest' | 'price_asc' | 'price_desc' | 'popular' = 'newest';
   if (
-    params.sort === 'price_asc' || 
-    params.sort === 'price_desc' || 
-    params.sort === 'popular'
+    params?.sort === 'price_asc' || 
+    params?.sort === 'price_desc' || 
+    params?.sort === 'popular'
   ) {
     sortType = params.sort as 'newest' | 'price_asc' | 'price_desc' | 'popular';
   }
@@ -59,6 +59,7 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
           currentSearch={search || ""} 
           currentSort={sortType} 
           currentCategory={categoryId || "all"}
+          initialCategory={categoryId}
         />
         
         {totalPages > 1 && (

@@ -328,7 +328,7 @@ gsap.to(".dot", {
 Visual editor for MotionPath (alignment, offset). Use during development to tune path alignment.
 
 ```javascript
-gsap.registerPlugin(MotionPathPlugin, MotionPathHelperPlugin);
+gsap.registerPlugin(MotionPathPlugin, MotionPathHelper);
 
 const helper = MotionPathHelper.create(".dot", "#path", { end: 0.5 });
 // adjust in UI, then use helper.path or helper.getProgress() in your animation

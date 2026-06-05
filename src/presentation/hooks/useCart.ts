@@ -7,9 +7,12 @@ export function useCart() {
   const store = useCartStore();
   const { openDrawer } = useCartDrawerStore();
 
-  const handleAddItem = async (item: Parameters<typeof store.addItem>[0]) => {
+  const handleAddItem = async (item: Parameters<typeof store.addItem>[0]): Promise<void> => {
     await store.addItem(item);
-    openDrawer();
+    const error = useCartStore.getState().error;
+    if (!error) {
+      openDrawer();
+    }
   };
 
   return {

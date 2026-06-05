@@ -9,7 +9,7 @@ import {
   makeSupabaseClient
 } from "@/infrastructure/supabase/container";
 import { CreateOrderDTO } from "@/application/use-cases/orders/CreateOrder";
-import { OrderStatus, Order } from "@/domain/entities/Order";
+import { OrderStatus, Order, PaymentMethod } from "@/domain/entities/Order";
 import { revalidatePath } from "next/cache";
 import { ROLES } from "@/presentation/constants";
 
@@ -297,7 +297,7 @@ export async function simulatePurchaseAction(productId: string, price: number, t
     const createOrderUseCase = await makeCreateOrderUseCase();
     const result = await createOrderUseCase.execute({
       userId: user.id,
-      paymentMethod: 'cod',
+      paymentMethod: PaymentMethod.COD,
       shippingAddress: {
         fullName: "Digital Purchase",
         phone: "0000000000",

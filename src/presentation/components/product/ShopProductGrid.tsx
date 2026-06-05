@@ -17,9 +17,10 @@ interface ShopProductGridProps {
   currentSearch: string;
   currentSort: string;
   currentCategory: string;
+  initialCategory?: string;
 }
 
-export default function ShopProductGrid({ initialProducts, currentSearch, currentSort, currentCategory }: ShopProductGridProps) {
+export default function ShopProductGrid({ initialProducts, currentSearch, currentSort, currentCategory, initialCategory }: ShopProductGridProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -27,8 +28,10 @@ export default function ShopProductGrid({ initialProducts, currentSearch, curren
   const [searchQuery, setSearchQuery] = useState(currentSearch);
   const [maxPrice, setMaxPrice] = useState<number>(10000000);
   const [selectedTech, setSelectedTech] = useState<readonly string[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<string>(initialCategory || currentCategory || 'all');
   const [isLoading, setIsLoading] = useState(false);
   const gridRef = useRef<HTMLDivElement>(null);
+  const loadingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const categories = [
     { label: "Tất cả", value: "all" },
@@ -39,6 +42,15 @@ export default function ShopProductGrid({ initialProducts, currentSearch, curren
   ];
 
   const techFilters = ["Next.js 15", "Tailwind 4", "GSAP", "Framer Motion", "React 19"];
+
+  // Clear timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (loadingTimeoutRef.current) {
+        clearTimeout(loadingTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const updateUrl = (updates: { q?: string; category?: string; sort?: string }) => {
     setIsLoading(true);
@@ -61,7 +73,8 @@ export default function ShopProductGrid({ initialProducts, currentSearch, curren
 
     params.set("page", "1");
     router.push(`${pathname}?${params.toString()}`);
-    setTimeout(() => setIsLoading(false), 500);
+    if (loadingTimeoutRef.current) clearTimeout(loadingTimeoutRef.current);
+    loadingTimeoutRef.current = setTimeout(() => setIsLoading(false), 500);
   };
 
   const handleSearch = useDebouncedCallback((term: string) => {
@@ -69,6 +82,7 @@ export default function ShopProductGrid({ initialProducts, currentSearch, curren
   }, 500);
 
   const handleCategorySelect = (category: string) => {
+    setSelectedCategory(category);
     updateUrl({ category });
   };
 
@@ -81,7 +95,8 @@ export default function ShopProductGrid({ initialProducts, currentSearch, curren
     setSelectedTech((prev) =>
       prev.includes(tech) ? prev.filter((t) => t !== tech) : [...prev, tech]
     );
-    setTimeout(() => setIsLoading(false), 300);
+    if (loadingTimeoutRef.current) clearTimeout(loadingTimeoutRef.current);
+    loadingTimeoutRef.current = setTimeout(() => setIsLoading(false), 300);
   };
 
   // Local price & tech filters, applied on top of server results for immediate UX

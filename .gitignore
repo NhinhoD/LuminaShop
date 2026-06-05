@@ -49,7 +49,8 @@ _vite_backup/
 .mcp.json
 
 # temporary files
-*.txt
+output.txt
+debug.txt
 
 # Harness Telemetry Logs
 harness_execution.log

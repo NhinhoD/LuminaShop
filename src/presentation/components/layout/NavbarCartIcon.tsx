@@ -9,8 +9,7 @@ export default function NavbarCartIcon() {
 
   return (
     <button 
-      onClick={(e) => {
-        e.preventDefault();
+      onClick={() => {
         toggleDrawer();
       }}
       className="hover:text-slate-950 transition-colors relative cursor-pointer p-1 focus:outline-none"

@@ -6,6 +6,7 @@ import { processPaymentAction } from "@/presentation/actions/payment";
 import { formatCurrency } from "@/lib/utils";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { PaymentMethod } from "@/domain/entities/Order";
 import { z } from "zod";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
@@ -28,7 +29,7 @@ const digitalCheckoutSchema = z.object({
   email: z.string().email("Địa chỉ email không hợp lệ để nhận source code"),
   contactHandle: z.string().min(3, "Vui lòng cung cấp link Facebook hoặc số Zalo để nhận hỗ trợ kỹ thuật"),
   notes: z.string().optional(),
-  paymentMethod: z.enum(["cod", "vnpay", "momo"]) // 'cod' represents Manual Bank Transfer
+  paymentMethod: z.nativeEnum(PaymentMethod)
 });
 
 type CheckoutFormData = z.infer<typeof digitalCheckoutSchema>;
@@ -55,7 +56,7 @@ export default function CheckoutPage() {
     email: "",
     contactHandle: "",
     notes: "",
-    paymentMethod: "cod"
+    paymentMethod: PaymentMethod.COD
   });
   
   const [validationErrors, setValidationErrors] = useState<Partial<Record<keyof CheckoutFormData, string>>>({});
@@ -463,17 +464,17 @@ export default function CheckoutPage() {
                     <div className="grid grid-cols-1 gap-4">
                       {/* Bank Transfer Panel */}
                       <label 
-                        onClick={() => setFormData(prev => ({ ...prev, paymentMethod: 'cod' }))}
+                        onClick={() => setFormData(prev => ({ ...prev, paymentMethod: PaymentMethod.COD }))}
                         className={`
                           relative flex items-start gap-4 p-5 rounded-2xl border-2 cursor-pointer transition-all duration-300 select-none
-                          ${formData.paymentMethod === 'cod' 
+                          ${formData.paymentMethod === PaymentMethod.COD 
                             ? 'border-[#0051d5] bg-blue-50/10 shadow-sm' 
                             : 'border-slate-100 hover:border-slate-200 hover:bg-slate-50/20'
                           }
                         `}
                       >
-                        <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all mt-0.5 ${formData.paymentMethod === 'cod' ? 'border-[#0051d5]' : 'border-slate-300'}`}>
-                          {formData.paymentMethod === 'cod' && <div className="w-2.5 h-2.5 rounded-full bg-[#0051d5] animate-scale-up" />}
+                        <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all mt-0.5 ${formData.paymentMethod === PaymentMethod.COD ? 'border-[#0051d5]' : 'border-slate-300'}`}>
+                          {formData.paymentMethod === PaymentMethod.COD && <div className="w-2.5 h-2.5 rounded-full bg-[#0051d5] animate-scale-up" />}
                         </div>
                         <div>
                           <p className="font-extrabold text-slate-800 text-[13.5px] flex items-center gap-2">
@@ -482,7 +483,7 @@ export default function CheckoutPage() {
                           </p>
                           <p className="text-xs text-slate-400 mt-1">Hệ thống sẽ hiển thị mã VietQR chuyển khoản ngân hàng ở bước tiếp theo. Bản quyền được kích hoạt ngay sau khi admin duyệt giao dịch.</p>
                         </div>
-                        <QrCode className={`w-6 h-6 ml-auto transition-colors duration-300 ${formData.paymentMethod === 'cod' ? 'text-[#0051d5]' : 'text-slate-400'}`} />
+                        <QrCode className={`w-6 h-6 ml-auto transition-colors duration-300 ${formData.paymentMethod === PaymentMethod.COD ? 'text-[#0051d5]' : 'text-slate-400'}`} />
                       </label>
                       
                       {/* VNPay Panel (Disabled) */}

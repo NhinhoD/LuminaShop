@@ -1,5 +1,5 @@
 import { IOrderRepository } from '@/domain/repositories/IOrderRepository';
-import { Order, OrderItem, OrderStatus, PaymentStatus, ShippingAddress, ProductSnapshot } from '@/domain/entities/Order';
+import { Order, OrderItem, OrderStatus, PaymentStatus, ShippingAddress, ProductSnapshot, PaymentMethod } from '@/domain/entities/Order';
 import { OrderRow, OrderItemRow } from '../types';
 import { SupabaseClient } from '@supabase/supabase-js';
 
@@ -147,7 +147,7 @@ export class SupabaseOrderRepository implements IOrderRepository {
       shippingAddress: (typeof row.shipping_address === 'string' ? JSON.parse(row.shipping_address) : row.shipping_address) as ShippingAddress,
       contactEmail: row.contact_email || undefined,
       contactPhone: row.contact_phone || undefined,
-      paymentMethod: row.payment_method,
+      paymentMethod: row.payment_method as PaymentMethod,
       paymentStatus: row.payment_status as PaymentStatus,
       notes: row.notes || undefined,
       items: items.map((item) => ({
