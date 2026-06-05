@@ -1,22 +1,24 @@
-# LuminaShop - Modern E-Commerce Platform
+# KhoUI - Premium Website Template & Theme Marketplace
 
 > ![Status](https://img.shields.io/badge/Status-In%20Progress-yellow?style=flat-square&labelColor=333) This project is actively being built as a personal learning journey to explore and approach modern web technologies.
+
+KhoUI is a high-performance, visually stunning marketplace specialized in providing premium website templates, UI kits, and digital themes. Built with **Next.js 15**, **Tailwind CSS v4**, **GSAP**, **Supabase**, and **TypeScript**, it delivers a state-of-the-art editorial design experience.
 
 ---
 
 ## 📸 UI Showcase
 
-> _Preview of the LuminaShop interface across different pages and viewports._
+> _Preview of the KhoUI interface across different pages and viewports._
 
 ### 🏠 Homepage & Storefront
 | Desktop | 
 |---------|
-| ![Homepage Desktop](https://raw.githubusercontent.com/NhinhoD/LuminaShop/main/public/stitch_e_commerce_ux_ui_design/homepage/screen.png))
+| ![Homepage Desktop](https://raw.githubusercontent.com/NhinhoD/LuminaShop/main/public/stitch_e_commerce_ux_ui_design/homepage/screen.png) |
 
 ### 🛍️ Product Listing & Detail
 | Product Listing | Product Detail |
 |----------------|----------------|
-| ![Product Listing](https://raw.githubusercontent.com/NhinhoD/LuminaShop/main/public/stitch_e_commerce_ux_ui_design/product_listing/screen.png)) | ![Product Detail](https://raw.githubusercontent.com/NhinhoD/LuminaShop/main/public/stitch_e_commerce_ux_ui_design/product_detail/screen.png)) |
+| ![Product Listing](https://raw.githubusercontent.com/NhinhoD/LuminaShop/main/public/stitch_e_commerce_ux_ui_design/product_listing/screen.png) | ![Product Detail](https://raw.githubusercontent.com/NhinhoD/LuminaShop/main/public/stitch_e_commerce_ux_ui_design/product_detail/screen.png) |
 
 ### 🛒 Cart & Checkout
 | Cart | Checkout |
@@ -26,7 +28,7 @@
 ### 👤 User Dashboard
 | Profile |
 |---------|
-| ![User Profile](https://raw.githubusercontent.com/NhinhoD/LuminaShop/main/public/stitch_e_commerce_ux_ui_design/user_profile/screen.png)
+| ![User Profile](https://raw.githubusercontent.com/NhinhoD/LuminaShop/main/public/stitch_e_commerce_ux_ui_design/user_profile/screen.png) |
 
 ### 🔧 Admin Suite
 | Dashboard | Product Management |
@@ -37,12 +39,12 @@
 
 ## 🚀 Features
 
-- **Dynamic Storefront**: Beautifully designed product listings and category navigation.
-- **Real-time Search & Filtering**: Fast and intuitive product discovery.
+- **Premium Template Storefront**: Beautifully designed digital product listings with Framer Motion layout morphing and GSAP scroll interactions.
+- **Multi-Language Support**: Fully localized in English and Vietnamese, powered by a hybrid architecture of static local dictionaries and dynamic database translations.
+- **Digital Product Delivery**: Seamless licensing, purchasing, and automatic download fulfillment for digital assets and source codes.
 - **Secure Authentication**: User registration and login powered by Supabase Auth.
-- **User Dashboard**: Manage profile settings, order history, and preferences.
-- **Admin Suite**: Comprehensive dashboard for managing products, orders, customers, and analytics.
-- **Responsive Design**: Fully optimized for mobile, tablet, and desktop experiences.
+- **Developer-Friendly Admin Suite**: Comprehensive dashboard for managing digital products, licenses, dynamic translations, and sales analytics.
+- **Clean Architecture**: Strictly enforced 4-layer architecture (Domain, Application, Infrastructure, Presentation) for maximum maintainability.
 - **Glassmorphism & Micro-animations**: Premium UI/UX with smooth transitions and modern aesthetics.
 
 ---
@@ -54,6 +56,7 @@
 ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS_4-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white)
 ![Framer Motion](https://img.shields.io/badge/Framer_Motion-0055FF?style=flat-square&logo=framer&logoColor=white)
+![GSAP](https://img.shields.io/badge/GSAP-88CE02?style=flat-square&logo=greensock&logoColor=white)
 ![Zustand](https://img.shields.io/badge/Zustand-433E38?style=flat-square&logo=zustand&logoColor=white)
 ![Zod](https://img.shields.io/badge/Zod-3E67B1?style=flat-square&logo=zod&logoColor=white)
 ![Supabase](https://img.shields.io/badge/Supabase-3FCF8E?style=flat-square&logo=supabase&logoColor=white)
@@ -64,6 +67,7 @@
 - **[React 19](https://react.dev/)** — UI library
 - **[Tailwind CSS 4](https://tailwindcss.com/)** — Utility-first CSS framework
 - **[Framer Motion](https://www.framer.com/motion/)** — Animation library
+- **[GSAP](https://gsap.com/)** — Professional-grade scroll animations
 - **[Zustand](https://github.com/pmndrs/zustand)** — Lightweight state management
 - **[Zod](https://zod.dev/)** — Schema validation
 - **[Lucide React](https://lucide.dev/)** — Icon library
@@ -89,13 +93,14 @@
 ## 📦 Project Structure
 
 ```
-LuminaShop/
+KhoUI/
 ├── src/
 │   ├── app/                # Next.js App Router (Pages & Layouts)
-│   ├── application/        # Business Logic & Use Cases
-│   ├── domain/             # Entities & Models (Core Logic)
+│   ├── application/        # Business Logic & Use Cases (Application Layer)
+│   ├── domain/             # Entities & Models (Core Domain Layer)
 │   ├── infrastructure/     # Data Repositories & API Clients (Supabase)
 │   ├── presentation/       # Shared Components & UI Library
+│   ├── i18n/               # Multi-Language Dictionaries & Fallbacks
 │   └── lib/                # Utility Functions
 ├── public/                 # Static Assets (Images, Icons)
 └── ...configs              # TypeScript, ESLint, Next.js configs
@@ -116,7 +121,7 @@ LuminaShop/
 1. **Clone the repository:**
    ```bash
    git clone https://github.com/NhinhoD/LuminaShop.git
-   cd LuminaShop
+   cd KhoUI
    ```
 
 2. **Install dependencies:**

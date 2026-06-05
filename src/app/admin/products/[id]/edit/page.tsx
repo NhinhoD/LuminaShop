@@ -24,7 +24,7 @@ export default async function EditProductPage({
     notFound();
   }
 
-  const categories = categoriesResult.success ? categoriesResult.data : [];
+  const categories = categoriesResult.success ? categoriesResult.data.categories : [];
   const product = productResult.data;
 
   return (

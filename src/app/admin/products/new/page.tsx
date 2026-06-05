@@ -5,7 +5,7 @@ export default async function NewProductPage() {
   const getCategoriesUseCase = await makeGetCategoriesUseCase();
   
   const result = await getCategoriesUseCase.execute();
-  const categories = result.success ? result.data : [];
+  const categories = result.success ? result.data.categories : [];
 
   return (
     <div className="max-w-[1000px] mx-auto w-full">

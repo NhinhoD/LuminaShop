@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { OrderStatus, Order, OrderItem } from "@/domain/entities/Order";
-import { getOrderAction, updateOrderStatusAction } from "@/presentation/actions/order";
+import { getOrderAction, updateOrderStatusAction, approveManualPaymentAction } from "@/presentation/actions/order";
 import { StatusBadge } from "@/presentation/components/orders/StatusBadge";
 import { formatPrice, formatDate, cn } from "@/presentation/utils";
-import { X, Package, MapPin, CreditCard, Clock, Truck, CheckCircle, AlertCircle } from "lucide-react";
+import { X, Package, MapPin, CreditCard, CheckCircle, AlertCircle, FileText } from "lucide-react";
 import { toast } from "react-hot-toast";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
@@ -70,7 +70,26 @@ export function OrderDetailModal({ orderId, onClose }: OrderDetailModalProps) {
       } else {
         toast.error(response.error || "Cập nhật thất bại");
       }
-    } catch (_e) {
+    } catch {
+      toast.error("Đã có lỗi xảy ra");
+    } finally {
+      setUpdating(false);
+    }
+  };
+
+  const handleApprovePayment = async () => {
+    if (!order) return;
+    setUpdating(true);
+    try {
+      const response = await approveManualPaymentAction(orderId);
+      if (response.success && response.data) {
+        toast.success("Đã phê duyệt thanh toán & kích hoạt bản quyền tải về!");
+        setOrder(response.data);
+        setNewStatus(response.data.status);
+      } else {
+        toast.error(response.error || "Phê duyệt thất bại");
+      }
+    } catch {
       toast.error("Đã có lỗi xảy ra");
     } finally {
       setUpdating(false);
@@ -119,33 +138,50 @@ export function OrderDetailModal({ orderId, onClose }: OrderDetailModalProps) {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {/* Customer Info */}
               <div className="space-y-6">
-                <section>
-                  <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-3 flex items-center gap-2">
-                    <MapPin className="w-4 h-4" /> Thông tin giao hàng
-                  </h3>
-                  <div className="bg-slate-50 p-4 rounded-2xl space-y-1">
-                    <p className="font-bold text-slate-900">{order.shippingAddress?.fullName}</p>
-                    <p className="text-sm text-slate-600">{order.shippingAddress?.phone}</p>
-                    <p className="text-sm text-slate-600 leading-relaxed">
-                      {order.shippingAddress?.street}, {order.shippingAddress?.district}, {order.shippingAddress?.city}
-                    </p>
-                  </div>
-                </section>
+
 
                 <section>
                   <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-3 flex items-center gap-2">
                     <CreditCard className="w-4 h-4" /> Thanh toán
                   </h3>
-                  <div className="bg-slate-50 p-4 rounded-2xl flex items-center justify-between">
-                    <span className="text-sm font-medium uppercase text-slate-600">{order.paymentMethod}</span>
-                    <span className={cn(
-                      "text-sm font-bold px-3 py-1 rounded-full",
-                      order.paymentStatus === 'paid' ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700"
-                    )}>
-                      {order.paymentStatus === 'paid' ? "Đã thanh toán" : "Chờ thanh toán"}
-                    </span>
+                  <div className="bg-slate-50 p-4 rounded-2xl space-y-4">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-bold uppercase text-slate-700">
+                        {order.paymentMethod === 'cod' ? 'Chuyển khoản VietQR' : order.paymentMethod}
+                      </span>
+                      <span className={cn(
+                        "text-sm font-bold px-3 py-1 rounded-full",
+                        order.paymentStatus === 'paid' ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700"
+                      )}>
+                        {order.paymentStatus === 'paid' ? "Đã thanh toán" : "Chờ thanh toán"}
+                      </span>
+                    </div>
+
+                    {order.paymentStatus !== 'paid' && (
+                      <button
+                        onClick={handleApprovePayment}
+                        disabled={updating}
+                        className="w-full bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white font-bold py-2.5 rounded-xl transition-all shadow-md text-xs flex items-center justify-center gap-1.5 cursor-pointer"
+                      >
+                        <CheckCircle className="w-4 h-4" />
+                        Phê duyệt Chuyển khoản (Kích hoạt tải code)
+                      </button>
+                    )}
                   </div>
                 </section>
+
+                {order.notes && (
+                  <section>
+                    <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-3 flex items-center gap-2">
+                      <FileText className="w-4 h-4" /> Ghi chú đơn hàng
+                    </h3>
+                    <div className="bg-slate-50 p-4 rounded-2xl">
+                      <p className="text-sm text-slate-600 italic leading-relaxed">
+                        &ldquo;{order.notes}&rdquo;
+                      </p>
+                    </div>
+                  </section>
+                )}
               </div>
 
               {/* Status Update */}

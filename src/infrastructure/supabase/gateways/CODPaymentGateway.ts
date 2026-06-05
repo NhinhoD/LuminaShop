@@ -19,7 +19,7 @@ export class CODPaymentGateway implements IPaymentGateway {
         .insert({
           order_id: orderId,
           method: 'cod',
-          status: 'paid',
+          status: 'unpaid',
           amount: amount
         })
         .select()

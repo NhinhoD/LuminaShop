@@ -1,4 +1,4 @@
-# LuminaShop — Agent Instructions
+# KhoUI — Agent Instructions
 
 <!-- BEGIN:nextjs-agent-rules -->
 ## ⚠️ IMPORTANT: This is NOT the Next.js you know
@@ -21,10 +21,11 @@ When starting ANY new session, always do this first — no exceptions:
 5. Read @src/infrastructure/supabase — understand DB layer
 6. Read @src/presentation — understand UI layer
 7. Read @public/stitch_e_commerce_ux_ui_design — UI design references
-8. Read @.agents/skills/supabase — Supabase patterns
-9. Read @.agents/skills/supabase-postgres-best-practices — DB best practices
-10. Read @.agents/skills/stitch-design — UI/UX & Stitch patterns
-11. Read @.agents/skills/react-components — React & Tailwind patterns
+8. Read @.agents/skills/supabase/ — Supabase & Postgres best practices
+9. Read @.agents/skills/stitch/ — Stitch UX/UI design patterns
+10. Read @.agents/skills/gsap/ — GSAP core, timeline, and performance core competencies
+11. Read @.agents/skills/design/ — Design taste, layout morphing & prompt enhancements
+12. Read @.agents/skills/react-components — React & Tailwind 4 execution rules
 
 After reading, report to user:
 - ✅ What is DONE
@@ -38,7 +39,7 @@ After reading, report to user:
 
 ## ─── PROJECT CONTEXT ───
 
-**Project:** LuminaShop — Modern E-Commerce Platform
+**Project:** KhoUI — Modern E-Commerce Platform
 **Purpose:** Learning project — exploring modern web technologies
 **Repository:** https://github.com/NhinhoD/LuminaShop
 
@@ -137,6 +138,10 @@ domain/ → application/ → infrastructure/ → presentation/
 4. Supabase migration via MCP Supabase
 5. Server action
 6. UI component (reference Stitch design)
+
+### 🌪️ GSAP & Framer Motion Animation Rules
+- **Performance First**: Always read `@.agents/skills/gsap/gsap-performance` before writing scroll-driven animations. Use `will-change` CSS properties judicially and kill/cleanup active timelines in React `useEffect` unmount hooks to prevent memory leaks.
+- **Micro-interactions**: Utilize GSAP QuickTo for mouse-follow effects and Framer Motion layoutId for seamless fluid layout morphing between listing and detail frames.
 
 ---
 
@@ -274,31 +279,26 @@ chore: install supabase agent skills
 
 ## ─── PROJECT STATUS ───
 
+### 🎯 FINALIZED BUSINESS PIVOT:
+- KhoUI is officially configured as a **Premium UX/UI Website Template Marketplace**. The platform hosts, previews, and licenses high-fidelity frontend templates (Free & Paid digital source codes) equipped with GSAP, Tailwind 4, and Framer Motion.
+
 ### ✅ Completed:
-- **Task 1 (Cart):** Zustand store, server actions, persistent state
-- **Task 2 (Checkout):** Multi-step form, Zod validation, order creation
-- **Task 3a (COD Payment):** CODPaymentGateway, payment flow, success/failure pages
-- **Task 4 (Admin Suite & Customer Dashboard):** Full order management, status tracking, and profile history
-- **Task 1b (Atomic Inventory):** Atomic stock deduction via SQL RPC, race-condition prevention
-- **Inventory Sync:** Auto-sync products.stock from variants via DB triggers
-- **Type Safety:** 100% — 0 `any` types in `src/`, 0 build/lint errors
-- **Git Workflow:** PR-based workflow enforced
-- **All Skills:** Consolidated in `.agents/skills/`
-- **MCP GitHub:** Connected and configured
-- **Cart Bug Fixes**: Corrected cart negative quantity decrement limit and added variant checks to QuickAddButton.
+- **Task 1 (Cart & Checkout framework)**: Baseline architecture built.
+- **Task 5 (UI Evolution)**: Successfully migrated the storefront into an elegant, high-contrast editorial look inspired by the Sarab Spec, configured via local assets.
+- **Digital Product Refactoring**: Transitioned core entities (`Product`, `Order`) from physical inventory tracking to digital download licensing models.
+- **Autonomous AI Template Pipeline**: Engineered native zippers, AI design blueprints (with GSAP scroll triggers and interactive mouse followers), server-side storage handlers, and admin auto-population dashboard interfaces.
 
 ### 🔄 In Progress:
-- None
+- **Multi-Language Localization**:
+  - ✅ Database: Created `languages` table in Supabase via MCP with 'vi' and 'en' records.
+  - ⏳ Next: Implement Domain, Infrastructure (SupabaseLanguageRepository), Application (Use Cases), and Presentation (Server Actions & UI Switcher) layers.
 
 ### ⏳ Next Tasks (recommended order):
-1. **Task 3b** — VNPay / MoMo payment integration
-   *(requires merchant sandbox account first)*
-2. **Task 5** — Performance optimization
-   *(image optimization, edge caching, lazy loading)*
+1. **Multi-Language Localization (Continue)**: Finish the Clean Architecture layers for the newly created `languages` table.
+2. **Payment Gateway Integration**: Hook up a live VietQR/PayOS dynamic payment API so users can purchase these premium templates using real fiat money.
 
 ### ⚠️ Known Issues:
 - None currently
-
 ---
 
 ## ─── PR REVIEW PROMPT ───

@@ -9,7 +9,7 @@ import {
   makeSupabaseClient
 } from "@/infrastructure/supabase/container";
 import { CreateOrderDTO } from "@/application/use-cases/orders/CreateOrder";
-import { OrderStatus, Order } from "@/domain/entities/Order";
+import { OrderStatus, Order, PaymentMethod } from "@/domain/entities/Order";
 import { revalidatePath } from "next/cache";
 import { ROLES } from "@/presentation/constants";
 
@@ -117,15 +117,13 @@ export async function getOrderAction(id: string): Promise<ActionResponse<Order>>
 /**
  * Get current user's orders
  */
-export async function getUserOrdersAction(): Promise<ActionResponse<Order[]>> {
+export async function getUserOrdersAction(limit?: number, offset?: number): Promise<ActionResponse<{ orders: Order[], total: number }>> {
   const user = await getCurrentUser();
   if (!user) return { success: false, error: "Bạn cần đăng nhập để xem lịch sử đơn hàng." };
 
   try {
     const useCase = await makeGetUserOrdersUseCase();
-    const result = await useCase.execute({ userId: user.id });
-
-
+    const result = await useCase.execute({ userId: user.id, limit, offset });
 
     if (!result.success) {
       return { success: false, error: result.error.message };
@@ -141,7 +139,12 @@ export async function getUserOrdersAction(): Promise<ActionResponse<Order[]>> {
 /**
  * Get all orders (Admin only)
  */
-export async function getAllOrdersAction(status?: OrderStatus): Promise<ActionResponse<Order[]>> {
+export async function getAllOrdersAction(
+  status?: OrderStatus, 
+  limit?: number, 
+  offset?: number,
+  search?: string
+): Promise<ActionResponse<{ orders: Order[], total: number }>> {
   const isAdmin = await isUserAdmin();
   if (!isAdmin) return { success: false, error: "Access denied" };
 
@@ -152,7 +155,10 @@ export async function getAllOrdersAction(status?: OrderStatus): Promise<ActionRe
     const useCase = await makeGetAllOrdersUseCase();
     const result = await useCase.execute({ 
       status,
-      adminId: user.id
+      adminId: user.id,
+      limit,
+      offset,
+      search
     });
 
     if (!result.success) {
@@ -248,5 +254,85 @@ export async function cancelOrderAction(orderId: string): Promise<ActionResponse
   } catch (error: unknown) {
     console.error('[Action Error] cancelOrderAction:', error);
     return { success: false, error: "Không thể hủy đơn hàng." };
+  }
+}
+
+/**
+ * Approve manual bank transfer payment (Admin only)
+ */
+export async function approveManualPaymentAction(orderId: string): Promise<ActionResponse<Order>> {
+  const isAdmin = await isUserAdmin();
+  if (!isAdmin) return { success: false, error: "Access denied" };
+
+  try {
+    const { makeOrderRepository } = await import("@/infrastructure/supabase/container");
+    const orderRepo = await makeOrderRepository();
+    await orderRepo.updatePaymentStatus(orderId, 'paid');
+
+    const updatedOrder = await orderRepo.findById(orderId);
+    if (!updatedOrder) {
+      return { success: false, error: "Không tìm thấy đơn hàng sau cập nhật." };
+    }
+
+    revalidatePath("/admin/orders");
+    revalidatePath("/profile");
+    revalidatePath("/profile/orders");
+    revalidatePath(`/profile/orders/${orderId}`);
+
+    return { success: true, data: updatedOrder };
+  } catch (error: unknown) {
+    console.error('[Action Error] approveManualPaymentAction:', error);
+    return { success: false, error: "Không thể phê duyệt thanh toán." };
+  }
+}
+
+/**
+ * Simulate Direct Digital Purchase
+ */
+export async function simulatePurchaseAction(productId: string, price: number, title: string): Promise<ActionResponse<Order>> {
+  const user = await getCurrentUser();
+  if (!user) return { success: false, error: "Bạn cần đăng nhập để mua hàng." };
+
+  try {
+    const createOrderUseCase = await makeCreateOrderUseCase();
+    const result = await createOrderUseCase.execute({
+      userId: user.id,
+      paymentMethod: PaymentMethod.COD,
+      shippingAddress: {
+        fullName: "Digital Purchase",
+        phone: "0000000000",
+        street: "Digital",
+        district: "Digital",
+        city: "Digital"
+      },
+      cartItems: [
+        {
+          productId,
+          quantity: 1,
+          price: price,
+          title: title,
+        }
+      ]
+    });
+
+    if (!result.success) {
+      return { success: false, error: result.error.message };
+    }
+
+    // Auto-approve payment to unlock digital download
+    const { makeOrderRepository } = await import("@/infrastructure/supabase/container");
+    const orderRepo = await makeOrderRepository();
+    await orderRepo.updatePaymentStatus(result.data.id, 'paid');
+
+    const updatedOrder = await orderRepo.findById(result.data.id);
+    
+    revalidatePath("/profile");
+    revalidatePath("/profile/orders");
+    revalidatePath(`/product/${productId}`);
+    
+    return { success: true, data: updatedOrder! };
+  } catch (error: unknown) {
+    console.error('[Action Error] simulatePurchaseAction:', error);
+    return { success: false, error: "Lỗi trong quá trình mua hàng." };
   }
 }

@@ -6,6 +6,9 @@ import { SupabaseInventoryRepository } from './repositories/SupabaseInventoryRep
 import { SupabaseOrderRepository } from './repositories/SupabaseOrderRepository';
 import { SupabaseProductRepository } from './repositories/SupabaseProductRepository';
 import { SupabaseAuthRepository } from './repositories/SupabaseAuthRepository';
+import { SupabaseLanguageRepository } from './repositories/SupabaseLanguageRepository';
+import { SupabaseTranslationRepository } from './repositories/SupabaseTranslationRepository';
+import { SupabaseDashboardRepository } from './repositories/SupabaseDashboardRepository';
 import { IAuthRepository } from '@/domain/repositories/IAuthRepository';
 
 import { AddToCartUseCase } from '@/application/use-cases/cart/AddToCart';
@@ -62,6 +65,21 @@ export async function makeOrderRepository() {
 export async function makeProductRepository() {
   const supabase = await makeSupabaseClient();
   return new SupabaseProductRepository(supabase);
+}
+
+export async function makeLanguageRepository() {
+  const supabase = await makeSupabaseClient();
+  return new SupabaseLanguageRepository(supabase);
+}
+
+export async function makeTranslationRepository() {
+  const supabase = await makeSupabaseClient();
+  return new SupabaseTranslationRepository(supabase);
+}
+
+export async function makeDashboardRepository() {
+  const supabase = await makeSupabaseClient();
+  return new SupabaseDashboardRepository(supabase);
 }
 
 // Use Case Factories
@@ -149,6 +167,26 @@ export async function makeProcessPaymentUseCase() {
   const gateway = await makeCODPaymentGateway(); // default to COD for now, ideally dynamically chosen
   const orderRepo = await makeOrderRepository();
   return new ProcessPaymentUseCase(gateway, orderRepo);
+}
+
+// Language Factories
+export async function makeGetLanguagesUseCase() {
+  const repo = await makeLanguageRepository();
+  const { GetLanguagesUseCase } = await import('@/application/use-cases/languages/GetLanguages');
+  return new GetLanguagesUseCase(repo);
+}
+
+export async function makeToggleLanguageStatusUseCase() {
+  const repo = await makeLanguageRepository();
+  const { ToggleLanguageStatusUseCase } = await import('@/application/use-cases/languages/ToggleLanguageStatus');
+  return new ToggleLanguageStatusUseCase(repo);
+}
+
+// Dashboard Factories
+export async function makeGetDashboardMetricsUseCase() {
+  const repo = await makeDashboardRepository();
+  const { GetDashboardMetricsUseCase } = await import('@/application/use-cases/admin/GetDashboardMetrics');
+  return new GetDashboardMetricsUseCase(repo);
 }
 
 // Auth Factories

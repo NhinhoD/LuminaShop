@@ -1,14 +1,19 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState } from "react";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { OrderStatus, Order } from "@/domain/entities/Order";
 import { StatusBadge } from "@/presentation/components/orders/StatusBadge";
 import { formatPrice, formatDate, cn } from "@/presentation/utils";
-import { Search, Filter, MoreVertical, Eye } from "lucide-react";
+import { Search, Filter, Eye } from "lucide-react";
 import { OrderDetailModal } from "@/presentation/components/admin/orders/OrderDetailModal";
+import { useDebouncedCallback } from "use-debounce";
 
 interface OrderListProps {
   initialOrders: Order[];
+  currentStatus: string;
+  currentSearch: string;
+  total: number;
 }
 
 const tabs = [
@@ -20,19 +25,33 @@ const tabs = [
   { id: OrderStatus.CANCELLED, label: "Đã hủy" },
 ];
 
-export function OrderList({ initialOrders }: OrderListProps) {
-  const [activeTab, setActiveTab] = useState("all");
-  const [searchQuery, setSearchQuery] = useState("");
+export function OrderList({ initialOrders, currentStatus, currentSearch, total }: OrderListProps) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  const [searchQuery, setSearchQuery] = useState(currentSearch);
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
 
-  const filteredOrders = useMemo(() => {
-    return initialOrders.filter((order) => {
-      const matchesTab = activeTab === "all" || order.status === activeTab;
-      const matchesSearch = order.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                           order.shippingAddress?.fullName?.toLowerCase().includes(searchQuery.toLowerCase());
-      return matchesTab && matchesSearch;
-    });
-  }, [initialOrders, activeTab, searchQuery]);
+  const updateUrl = (status: string, search: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (status !== "all") params.set("status", status);
+    else params.delete("status");
+
+    if (search) params.set("q", search);
+    else params.delete("q");
+
+    params.set("page", "1"); // reset page on filter
+    router.push(`${pathname}?${params.toString()}`);
+  };
+
+  const handleSearch = useDebouncedCallback((term: string) => {
+    updateUrl(currentStatus, term);
+  }, 500);
+
+  const handleTabClick = (statusId: string) => {
+    updateUrl(statusId, currentSearch);
+  };
 
   return (
     <div className="space-y-6">
@@ -46,12 +65,15 @@ export function OrderList({ initialOrders }: OrderListProps) {
               placeholder="Tìm kiếm theo mã đơn hàng hoặc khách hàng..."
               className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-100 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                handleSearch(e.target.value);
+              }}
             />
           </div>
           <div className="flex items-center gap-2 text-sm text-slate-500">
             <Filter className="w-4 h-4" />
-            <span>Hiển thị {filteredOrders.length} đơn hàng</span>
+            <span>Đang hiển thị kết quả từ {total} đơn hàng</span>
           </div>
         </div>
 
@@ -59,10 +81,10 @@ export function OrderList({ initialOrders }: OrderListProps) {
           {tabs.map((tab) => (
             <button
               key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
+              onClick={() => handleTabClick(tab.id)}
               className={cn(
                 "px-4 py-2 rounded-xl text-sm font-medium transition-all whitespace-nowrap",
-                activeTab === tab.id
+                currentStatus === tab.id
                   ? "bg-primary text-white shadow-lg shadow-primary/20"
                   : "bg-transparent text-slate-500 hover:bg-slate-50"
               )}
@@ -89,8 +111,8 @@ export function OrderList({ initialOrders }: OrderListProps) {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
-              {filteredOrders.length > 0 ? (
-                filteredOrders.map((order) => (
+              {initialOrders.length > 0 ? (
+                initialOrders.map((order) => (
                   <tr 
                     key={order.id} 
                     className="hover:bg-slate-50/50 transition-colors cursor-pointer group"

@@ -6,21 +6,36 @@ import { SupabaseClient } from '@supabase/supabase-js';
 export class SupabaseCategoryRepository implements ICategoryRepository {
   constructor(private supabase: SupabaseClient) {}
 
-  async findAll(): Promise<Category[]> {
+  async findAll(filters?: { limit?: number; offset?: number; search?: string }): Promise<{ categories: Category[], total: number }> {
     const supabase = this.supabase;
-    const { data, error } = await supabase
+    let query = supabase
       .from('categories')
       .select(`
         *,
         products!products_category_id_fkey(count)
-      `)
-      .order('name');
+      `, { count: 'exact' });
+
+    if (filters?.search) {
+      query = query.ilike('name', `%${filters.search}%`);
+    }
+
+    query = query.order('name');
+
+    if (filters?.limit !== undefined) {
+      const offset = filters.offset || 0;
+      query = query.range(offset, offset + filters.limit - 1);
+    }
+
+    const { data, error, count } = await query;
 
     if (error) throw new Error(error.message);
-    return (data as CategoryRow[] || []).map((row) => ({
+    
+    const categories = (data as CategoryRow[] || []).map((row) => ({
       ...this.mapToEntity(row),
       productCount: row.products?.[0]?.count || 0
     }));
+
+    return { categories, total: count || 0 };
   }
 
   async findById(id: string): Promise<Category | null> {

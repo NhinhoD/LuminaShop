@@ -40,7 +40,7 @@ export class CreateOrderUseCase {
       const orderItems = data.cartItems.map(item => ({
         productId: item.productId,
         variantId: item.variantId,
-        quantity: item.quantity,
+        quantity: 1, // Enforce strict limit of exactly 1 per template
         priceAtPurchase: item.price || 0,
         productSnapshot: {
           title: item.title,

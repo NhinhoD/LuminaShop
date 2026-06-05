@@ -9,6 +9,7 @@ export interface IProductRepository {
     isActive?: boolean;
     limit?: number;
     offset?: number;
+    sort?: 'newest' | 'price_asc' | 'price_desc' | 'popular';
   }): Promise<{ products: Product[]; total: number }>;
   create(data: CreateProductDTO): Promise<Product>;
   update(id: string, data: UpdateProductDTO): Promise<Product>;

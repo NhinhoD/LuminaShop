@@ -1,22 +1,140 @@
 import Link from "next/link";
+import { ROUTES } from "@/presentation/constants";
+import { MapPin, Phone, Mail, Clock, ChevronRight, Globe, Camera, MessageCircle, Play } from "lucide-react";
 
 export function Footer() {
+  const quickLinks = [
+    { label: "Home", href: ROUTES.HOME },
+    { label: "Our Menu", href: ROUTES.SHOP },
+    { label: "About Us", href: "#about" },
+    { label: "Contact", href: "#contact" },
+  ];
+
+  const menuLinks = [
+    { label: "Landing Page", href: `${ROUTES.SHOP}?category=landing-page` },
+    { label: "E-Commerce", href: `${ROUTES.SHOP}?category=e-commerce` },
+    { label: "Admin Dashboard", href: `${ROUTES.SHOP}?category=admin-dashboard` },
+    { label: "Portfolio", href: `${ROUTES.SHOP}?category=portfolio` },
+    { label: "Corporate", href: `${ROUTES.SHOP}?category=corporate` },
+    { label: "Blog & Magazine", href: `${ROUTES.SHOP}?category=blog` },
+  ];
+
+  const contactInfo = [
+    { icon: MapPin, label: "Address", value: "Tech Hub, San Francisco, CA" },
+    { icon: Phone, label: "Phone", value: "+1 (800) 123-4567" },
+    { icon: Mail, label: "Email", value: "hello@lumina-ui.com" },
+    { icon: Clock, label: "Support", value: "24/7 Digital Delivery" },
+  ];
+
+  const socialLinks = [
+    { key: "facebook", Icon: Globe, href: "#" },
+    { key: "instagram", Icon: Camera, href: "#" },
+    { key: "twitter", Icon: MessageCircle, href: "#" },
+    { key: "youtube", Icon: Play, href: "#" },
+  ];
+
   return (
-    <footer className="bg-slate-50 dark:bg-slate-900 w-full border-t border-slate-200 dark:border-slate-800 mt-auto">
-      <div className="flex flex-col md:flex-row justify-between items-center w-full px-8 md:px-20 py-12 max-w-[1280px] mx-auto">
-        {/* Brand & Copyright */}
-        <div className="flex flex-col items-center md:items-start mb-8 md:mb-0">
-          <span className="text-lg font-bold text-slate-900 dark:text-white mb-2">LUMINA</span>
-          <span className="font-['Manrope'] text-xs font-light tracking-widest uppercase text-slate-500 dark:text-slate-400">© 2024 LUMINA. ALL RIGHTS RESERVED.</span>
+    <footer className="bg-[#1a1a1a] text-white mt-auto">
+      {/* Main Footer */}
+      <div className="max-w-[1200px] mx-auto px-4 py-16">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12">
+          {/* Brand Column */}
+          <div>
+            <div className="font-bricolage text-2xl font-black mb-4">
+              Lumina<span className="text-[#0051d5]">UI</span>
+            </div>
+            <p className="text-[#999] text-sm leading-relaxed mb-6">
+              Exclusive, high-quality website templates and themes built with Next.js, Tailwind CSS, and GSAP. Download instantly.
+            </p>
+            <div className="flex gap-2">
+              {socialLinks.map(({ key, Icon, href }) => (
+                <Link
+                  key={key}
+                  href={href}
+                  className="w-[36px] h-[36px] rounded-full bg-[rgba(255,255,255,0.08)] flex items-center justify-center text-[#bbb] text-sm hover:bg-primary hover:text-white transition-colors"
+                >
+                  <Icon size={14} />
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          {/* Quick Links */}
+          <div>
+            <h4 className="text-white text-base font-semibold font-poppins mb-5 relative pb-3 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-[30px] after:h-[3px] after:bg-primary after:rounded">
+              Quick Links
+            </h4>
+            <ul className="list-none space-y-3">
+              {quickLinks.map((link) => (
+                <li key={link.label}>
+                  <Link
+                    href={link.href}
+                    className="text-[#aaa] text-sm flex items-center gap-2 hover:text-primary hover:pl-1 transition-all"
+                  >
+                    <ChevronRight size={12} className="text-primary" />
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Menu Links */}
+          <div>
+            <h4 className="text-white text-base font-semibold font-poppins mb-5 relative pb-3 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-[30px] after:h-[3px] after:bg-[#0051d5] after:rounded">
+              Categories
+            </h4>
+            <ul className="list-none space-y-3">
+              {menuLinks.map((link) => (
+                <li key={link.label}>
+                  <Link
+                    href={link.href}
+                    className="text-[#aaa] text-sm flex items-center gap-2 hover:text-primary hover:pl-1 transition-all"
+                  >
+                    <ChevronRight size={12} className="text-primary" />
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Contact Info */}
+          <div>
+            <h4 className="text-white text-base font-semibold font-poppins mb-5 relative pb-3 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-[30px] after:h-[3px] after:bg-primary after:rounded">
+              Get In Touch
+            </h4>
+            <div className="space-y-4">
+              {contactInfo.map((item) => (
+                <div key={item.label} className="flex items-start gap-3">
+                  <div className="w-[38px] h-[38px] rounded-lg bg-[rgba(232,40,26,0.15)] flex items-center justify-center text-primary flex-shrink-0 mt-0.5">
+                    <item.icon size={16} />
+                  </div>
+                  <div>
+                    <strong className="block text-[#ccc] text-[0.72rem] uppercase tracking-wider mb-0.5">
+                      {item.label}
+                    </strong>
+                    <span className="text-white text-[0.83rem]">{item.value}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
-        {/* Links */}
-        <nav className="flex flex-wrap justify-center gap-x-6 gap-y-4">
-          <Link className="font-['Manrope'] text-xs font-light tracking-widest uppercase text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors underline" href="#">Privacy Policy</Link>
-          <Link className="font-['Manrope'] text-xs font-light tracking-widest uppercase text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors underline" href="#">Terms of Service</Link>
-          <Link className="font-['Manrope'] text-xs font-light tracking-widest uppercase text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors underline" href="#">Shipping & Returns</Link>
-          <Link className="font-['Manrope'] text-xs font-light tracking-widest uppercase text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors underline" href="#">Contact Us</Link>
-          <Link className="font-['Manrope'] text-xs font-light tracking-widest uppercase text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors underline" href="#">Store Locator</Link>
-        </nav>
+      </div>
+
+      {/* Bottom Bar */}
+      <div className="border-t border-[rgba(255,255,255,0.08)] py-5">
+        <div className="max-w-[1200px] mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-3 text-[0.8rem] text-[#777]">
+          <p>
+            &copy; 2026 <span className="text-[#0051d5] font-semibold">LuminaUI</span>. All Rights Reserved.
+          </p>
+          <div className="flex gap-5">
+            <Link href="#" className="text-[#777] hover:text-primary transition-colors">Privacy Policy</Link>
+            <Link href="#" className="text-[#777] hover:text-primary transition-colors">Terms</Link>
+            <Link href="#" className="text-[#777] hover:text-primary transition-colors">Cookies</Link>
+          </div>
+        </div>
       </div>
     </footer>
   );

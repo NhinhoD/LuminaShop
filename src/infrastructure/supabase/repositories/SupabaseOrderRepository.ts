@@ -1,5 +1,5 @@
 import { IOrderRepository } from '@/domain/repositories/IOrderRepository';
-import { Order, OrderItem, OrderStatus, PaymentStatus, ShippingAddress, ProductSnapshot } from '@/domain/entities/Order';
+import { Order, OrderItem, OrderStatus, PaymentStatus, ShippingAddress, ProductSnapshot, PaymentMethod } from '@/domain/entities/Order';
 import { OrderRow, OrderItemRow } from '../types';
 import { SupabaseClient } from '@supabase/supabase-js';
 
@@ -18,29 +18,53 @@ export class SupabaseOrderRepository implements IOrderRepository {
     return this.mapToEntity(data);
   }
 
-  async findByUserId(userId: string): Promise<Order[]> {
+  async findByUserId(userId: string, filters?: { limit?: number; offset?: number }): Promise<{ orders: Order[], total: number }> {
     const supabase = this.supabase;
-    const { data, error } = await supabase
+    let query = supabase
       .from('orders')
-      .select('*, items:order_items(*, product:products(title))')
-      .eq('user_id', userId)
-      .order('created_at', { ascending: false });
+      .select('*, items:order_items(*, product:products(title))', { count: 'exact' })
+      .eq('user_id', userId);
+
+    if (filters?.limit) {
+      const from = filters.offset || 0;
+      const to = from + filters.limit - 1;
+      query = query.range(from, to);
+    }
+
+    const { data, error, count } = await query.order('created_at', { ascending: false });
 
     if (error) throw new Error(error.message);
-    return (data as OrderRow[] || []).map((row) => this.mapToEntity(row));
+    return {
+      orders: (data as OrderRow[] || []).map((row) => this.mapToEntity(row)),
+      total: count || 0
+    };
   }
 
-  async findAll(filters?: { status?: OrderStatus }): Promise<Order[]> {
+  async findAll(filters?: { status?: OrderStatus; limit?: number; offset?: number; search?: string }): Promise<{ orders: Order[], total: number }> {
     const supabase = this.supabase;
-    let query = supabase.from('orders').select('*, items:order_items(*, product:products(title))');
+    let query = supabase.from('orders').select('*, items:order_items(*, product:products(title))', { count: 'exact' });
     
     if (filters?.status) {
       query = query.eq('status', filters.status);
     }
 
-    const { data, error } = await query.order('created_at', { ascending: false });
+    if (filters?.search) {
+      // Search by ID or customer name.
+      query = query.or(`id.ilike.%${filters.search}%,shipping_address->>fullName.ilike.%${filters.search}%`);
+    }
+
+    if (filters?.limit) {
+      const from = filters.offset || 0;
+      const to = from + filters.limit - 1;
+      query = query.range(from, to);
+    }
+
+    const { data, error, count } = await query.order('created_at', { ascending: false });
     if (error) throw new Error(error.message);
-    return (data as OrderRow[] || []).map((row) => this.mapToEntity(row));
+    return {
+      orders: (data as OrderRow[] || []).map((row) => this.mapToEntity(row)),
+      total: count || 0
+    };
   }
 
   async create(order: Omit<Order, 'id' | 'createdAt' | 'updatedAt' | 'items'>, items: Omit<OrderItem, 'id' | 'orderId'>[]): Promise<Order> {
@@ -95,9 +119,18 @@ export class SupabaseOrderRepository implements IOrderRepository {
 
   async updatePaymentStatus(id: string, paymentStatus: string): Promise<void> {
     const supabase = this.supabase;
+    const updateData: { payment_status: string; updated_at: string; status?: string } = { 
+      payment_status: paymentStatus, 
+      updated_at: new Date().toISOString() 
+    };
+    
+    if (paymentStatus === 'paid') {
+      updateData.status = 'delivered'; // Immediately fulfill digital order
+    }
+
     const { error } = await supabase
       .from('orders')
-      .update({ payment_status: paymentStatus, updated_at: new Date().toISOString() })
+      .update(updateData)
       .eq('id', id);
 
     if (error) throw new Error(error.message);
@@ -114,7 +147,7 @@ export class SupabaseOrderRepository implements IOrderRepository {
       shippingAddress: (typeof row.shipping_address === 'string' ? JSON.parse(row.shipping_address) : row.shipping_address) as ShippingAddress,
       contactEmail: row.contact_email || undefined,
       contactPhone: row.contact_phone || undefined,
-      paymentMethod: row.payment_method,
+      paymentMethod: row.payment_method as PaymentMethod,
       paymentStatus: row.payment_status as PaymentStatus,
       notes: row.notes || undefined,
       items: items.map((item) => ({

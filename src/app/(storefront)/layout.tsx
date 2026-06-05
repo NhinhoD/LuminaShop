@@ -3,6 +3,7 @@ import { Footer } from "@/presentation/components/layout/Footer";
 import { AutoBreadcrumbs } from "@/presentation/components/common/AutoBreadcrumbs";
 import { BreadcrumbProvider } from "@/presentation/components/common/BreadcrumbContext";
 import { UI_CONFIG } from "@/presentation/constants";
+import CartDrawer from "@/presentation/components/layout/CartDrawer";
 
 export default function StorefrontLayout({
   children,
@@ -13,6 +14,7 @@ export default function StorefrontLayout({
     <BreadcrumbProvider>
       <div className="flex flex-col min-h-screen">
         <Navbar />
+        <CartDrawer />
         <div style={{ paddingTop: UI_CONFIG.NAVBAR_HEIGHT }}>
           <AutoBreadcrumbs />
           {children}

@@ -1,270 +1,358 @@
 <!DOCTYPE html>
-
-<html class="light" lang="en"><head>
+<html lang="en"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Shopping Cart - LuminaCommerce</title>
+<title>Shopping Cart — MODERN ÉDITION</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com" rel="preconnect"/>
-<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&amp;family=Manrope:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<style>
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-        }
-    </style>
 <script id="tailwind-config">
         tailwind.config = {
             darkMode: "class",
             theme: {
                 extend: {
                     "colors": {
-                        "error-container": "#ffdad6",
-                        "surface-container-highest": "#d3e4fe",
-                        "secondary": "#0051d5",
-                        "surface-container-low": "#eff4ff",
-                        "on-surface": "#0b1c30",
-                        "outline": "#76777d",
-                        "primary-fixed": "#dae2fd",
-                        "on-background": "#0b1c30",
-                        "surface-variant": "#d3e4fe",
-                        "surface-tint": "#565e74",
-                        "on-secondary-fixed": "#00174b",
-                        "background": "#f8f9ff",
-                        "error": "#ba1a1a",
-                        "secondary-fixed-dim": "#b4c5ff",
-                        "tertiary": "#000000",
-                        "tertiary-container": "#002113",
-                        "on-secondary-container": "#fefcff",
-                        "on-primary-fixed-variant": "#3f465c",
-                        "on-primary-container": "#7c839b",
-                        "surface-container-high": "#dce9ff",
-                        "surface-container": "#e5eeff",
-                        "on-tertiary-container": "#009668",
-                        "inverse-on-surface": "#eaf1ff",
-                        "on-primary-fixed": "#131b2e",
-                        "primary-fixed-dim": "#bec6e0",
-                        "primary-container": "#131b2e",
-                        "on-error-container": "#93000a",
-                        "on-tertiary-fixed": "#002113",
-                        "surface-dim": "#cbdbf5",
-                        "surface": "#f8f9ff",
-                        "secondary-container": "#316bf3",
-                        "on-tertiary": "#ffffff",
-                        "on-tertiary-fixed-variant": "#005236",
-                        "on-secondary": "#ffffff",
-                        "outline-variant": "#c6c6cd",
-                        "surface-container-lowest": "#ffffff",
-                        "primary": "#000000",
-                        "on-primary": "#ffffff",
+                        "surface-variant": "#e0e3e5",
                         "inverse-primary": "#bec6e0",
-                        "surface-bright": "#f8f9ff",
-                        "on-secondary-fixed-variant": "#003ea8",
-                        "tertiary-fixed": "#6ffbbe",
+                        "outline-variant": "#c6c6cd",
+                        "surface-container-low": "#f2f4f6",
+                        "primary-container": "#131b2e",
+                        "on-secondary": "#ffffff",
+                        "on-primary-fixed-variant": "#3f465c",
+                        "surface-container": "#eceef0",
+                        "surface-dim": "#d8dadc",
+                        "error": "#ba1a1a",
+                        "tertiary-container": "#410000",
+                        "surface-container-high": "#e6e8ea",
+                        "surface-container-lowest": "#ffffff",
+                        "outline": "#76777d",
+                        "on-tertiary-container": "#f93625",
+                        "paper-white": "#FEF9F2",
+                        "deep-navy": "#0F172A",
+                        "accent-gold": "#F6A621",
+                        "on-secondary-container": "#586377",
+                        "surface": "#f7f9fb",
+                        "on-tertiary-fixed": "#410000",
+                        "surface-bright": "#f7f9fb",
                         "on-surface-variant": "#45464d",
+                        "secondary-fixed": "#d8e3fb",
+                        "primary": "#000000",
+                        "secondary-container": "#d5e0f8",
+                        "on-background": "#191c1e",
+                        "on-tertiary": "#ffffff",
+                        "background": "#f7f9fb",
+                        "primary-fixed": "#dae2fd",
+                        "on-tertiary-fixed-variant": "#930000",
+                        "primary-fixed-dim": "#bec6e0",
+                        "inverse-on-surface": "#eff1f3",
+                        "surface-container-highest": "#e0e3e5",
+                        "error-container": "#ffdad6",
+                        "on-surface": "#191c1e",
+                        "secondary": "#545f73",
                         "on-error": "#ffffff",
-                        "secondary-fixed": "#dbe1ff",
-                        "tertiary-fixed-dim": "#4edea3",
-                        "inverse-surface": "#213145"
+                        "tertiary-fixed-dim": "#ffb4a8",
+                        "tertiary": "#000000",
+                        "on-error-container": "#93000a",
+                        "accent-red": "#E8281A",
+                        "surface-tint": "#565e74",
+                        "secondary-fixed-dim": "#bcc7de",
+                        "on-secondary-fixed": "#111c2d",
+                        "on-primary-fixed": "#131b2e",
+                        "inverse-surface": "#2d3133",
+                        "tertiary-fixed": "#ffdad4",
+                        "slate-surface": "#F1F5F9",
+                        "on-primary": "#ffffff",
+                        "on-secondary-fixed-variant": "#3c475a",
+                        "on-primary-container": "#7c839b"
                     },
                     "borderRadius": {
-                        "DEFAULT": "0.25rem",
-                        "lg": "0.5rem",
-                        "xl": "0.75rem",
-                        "full": "9999px"
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
                     },
                     "spacing": {
-                        "md": "24px",
-                        "container-max": "1280px",
-                        "lg": "48px",
-                        "gutter": "24px",
-                        "xs": "4px",
-                        "sm": "12px",
-                        "base": "8px",
-                        "xl": "80px"
+                        "section-gap": "120px",
+                        "unit": "8px",
+                        "gutter": "32px",
+                        "margin-mobile": "24px",
+                        "container-max-width": "1280px"
                     },
                     "fontFamily": {
-                        "h1": ["Manrope"],
-                        "label-sm": ["Manrope"],
-                        "h2": ["Manrope"],
-                        "body-lg": ["Manrope"],
+                        "headline-xl-mobile": ["Playfair Display"],
+                        "headline-md": ["Playfair Display"],
+                        "headline-lg": ["Playfair Display"],
+                        "label-caps": ["Manrope"],
+                        "headline-xl": ["Playfair Display"],
+                        "button": ["Manrope"],
                         "body-md": ["Manrope"],
-                        "display": ["Manrope"],
-                        "h3": ["Manrope"],
-                        "label-md": ["Manrope"],
-                        "body-sm": ["Manrope"]
+                        "body-lg": ["Manrope"]
                     },
                     "fontSize": {
-                        "h1": ["32px", { "lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "700" }],
-                        "label-sm": ["12px", { "lineHeight": "1.2", "fontWeight": "600" }],
-                        "h2": ["24px", { "lineHeight": "1.4", "letterSpacing": "-0.01em", "fontWeight": "700" }],
-                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "headline-xl-mobile": ["40px", { "lineHeight": "1.2", "fontWeight": "700" }],
+                        "headline-md": ["32px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                        "headline-lg": ["48px", { "lineHeight": "1.2", "fontWeight": "600" }],
+                        "label-caps": ["12px", { "lineHeight": "1", "letterSpacing": "0.1em", "fontWeight": "700" }],
+                        "headline-xl": ["64px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "button": ["14px", { "lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "600" }],
                         "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
-                        "display": ["48px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "800" }],
-                        "h3": ["20px", { "lineHeight": "1.4", "fontWeight": "600" }],
-                        "label-md": ["14px", { "lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600" }],
-                        "body-sm": ["14px", { "lineHeight": "1.5", "fontWeight": "400" }]
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }]
                     }
-                }
-            }
+                },
+            },
         }
     </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        .soft-elevation {
+            box-shadow: 0px 20px 40px rgba(15, 23, 42, 0.05);
+        }
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: #F8FAFC; }
+        ::-webkit-scrollbar-thumb { background: #0F172A; }
+    </style>
 </head>
-<body class="bg-background text-on-background font-body-md antialiased flex flex-col min-h-screen">
-<!-- TopNavBar -->
-<header class="fixed top-0 w-full z-50 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md shadow-sm border-slate-200 dark:border-slate-800">
-<div class="flex justify-between items-center h-20 px-8 max-w-[1280px] mx-auto">
-<div class="text-xl font-bold tracking-tighter text-slate-900 dark:text-white">LuminaCommerce</div>
-<nav class="hidden md:flex items-center gap-8">
-<a class="font-manrope text-sm font-medium tracking-tight text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors" href="#">Shop All</a>
-<a class="font-manrope text-sm font-medium tracking-tight text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors" href="#">New Arrivals</a>
-<a class="font-manrope text-sm font-medium tracking-tight text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors" href="#">Collections</a>
-<a class="font-manrope text-sm font-medium tracking-tight text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors" href="#">Editorial</a>
-<a class="font-manrope text-sm font-medium tracking-tight text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors" href="#">Support</a>
+<body class="bg-surface text-on-surface font-body-md selection:bg-accent-gold selection:text-deep-navy">
+<!-- Top Navigation Bar -->
+<nav class="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-md transition-colors duration-500 ease-in-out shadow-[0px_20px_40px_rgba(15,23,42,0.05)]">
+<div class="flex justify-between items-center px-gutter py-6 max-w-container-max-width mx-auto">
+<div class="flex items-center gap-8">
+<a class="font-headline-md text-headline-md font-bold tracking-tighter text-primary" href="#">MODERN_ÉDITION</a>
+<div class="hidden md:flex gap-6">
+<a class="font-body-md text-body-md tracking-widest uppercase text-on-surface-variant hover:text-primary transition-colors" href="#">Collections</a>
+<a class="font-body-md text-body-md tracking-widest uppercase text-on-surface-variant hover:text-primary transition-colors" href="#">Stories</a>
+<a class="font-body-md text-body-md tracking-widest uppercase text-on-surface-variant hover:text-primary transition-colors" href="#">Archives</a>
+<a class="font-body-md text-body-md tracking-widest uppercase text-on-surface-variant hover:text-primary transition-colors" href="#">Studio</a>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<button class="font-body-md text-body-md tracking-widest uppercase text-on-surface-variant hover:opacity-70 transition-opacity">Search</button>
+<div class="relative group cursor-pointer">
+<span class="material-symbols-outlined text-primary" data-icon="shopping_bag">shopping_bag</span>
+<span class="absolute -top-2 -right-2 bg-deep-navy text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">2</span>
+</div>
+</div>
+</div>
 </nav>
-<div class="flex items-center gap-6 text-blue-600 dark:text-blue-400">
-<button class="cursor-pointer active:scale-95 duration-150 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all duration-200 p-2 rounded-full">
-<span class="material-symbols-outlined" data-icon="search">search</span>
-</button>
-<button class="cursor-pointer active:scale-95 duration-150 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all duration-200 p-2 rounded-full">
-<span class="material-symbols-outlined" data-icon="shopping_cart">shopping_cart</span>
-</button>
-<button class="cursor-pointer active:scale-95 duration-150 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all duration-200 p-2 rounded-full hidden md:block">
-<span class="material-symbols-outlined" data-icon="person">person</span>
-</button>
-</div>
-</div>
+<main class="pt-32 pb-section-gap px-gutter max-w-container-max-width mx-auto">
+<!-- Header Section -->
+<header class="mb-16">
+<h1 class="font-headline-xl text-headline-xl mb-4">Your Selection</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant italic max-w-2xl">Refined essentials curated for the modern aesthetic. Review your chosen pieces before moving to the checkout gallery.</p>
 </header>
-<!-- Main Cart Canvas -->
-<main class="flex-grow pt-[120px] pb-xl px-lg max-w-container-max mx-auto w-full">
-<header class="mb-lg">
-<h1 class="font-h1 text-h1 text-on-surface">Your Cart</h1>
-<p class="font-body-md text-body-md text-on-surface-variant mt-xs">2 items selected</p>
-</header>
-<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-start">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-16 items-start">
 <!-- Cart Items List -->
-<div class="lg:col-span-8 flex flex-col gap-md">
+<section class="lg:col-span-8 space-y-12">
 <!-- Item 1 -->
-<div class="flex flex-col sm:flex-row gap-md p-md bg-surface-container-lowest rounded-lg shadow-sm border border-outline-variant/30 relative group">
-<div class="w-full sm:w-[160px] h-[200px] sm:h-[160px] bg-surface-variant rounded flex-shrink-0 overflow-hidden relative">
-<img alt="Minimalist Scandinavian lounge chair in soft beige fabric with light oak wood legs, placed in a bright airy room with soft natural lighting." class="w-full h-full object-cover mix-blend-multiply" data-alt="Minimalist Scandinavian lounge chair in soft beige fabric with light oak wood legs, placed in a bright airy room with soft natural lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAUtNem0u0z17VzakmlHioX-l0FvNbtInRUpfugWP-drF_SS4D13AgGjXctvX6JSQ8UDX462wJvCIgdEQoXZ5O15jwLx0qGJ6Fveb0KYkvhNFFWs-RNQkaMK8Ne0jfAL-4EGfR5F7T_PXaZzI5k7Dvmm1PF55E_OM_UC5RoAEOlDlKGy7m7dLxzpBuEvXVFhQS2hsVT_izfMs8iPTA6SGpkQ3khnSlkBuNbv4-DDgUB4d8lj64rQQSRQ1p4aswQvwyrpx5qyd7kGE_4"/>
+<article class="reveal group relative flex flex-col md:flex-row gap-8 items-center bg-white p-8 soft-elevation transition-all hover:scale-[1.01]">
+<div class="w-full md:w-64 aspect-[4/5] bg-slate-surface overflow-hidden">
+<img class="w-full h-full object-cover grayscale-[20%] group-hover:scale-105 transition-transform duration-700" data-alt="A high-end, minimalist studio portrait of a tailored charcoal grey wool coat draped elegantly over a pristine white sculptural pedestal. The lighting is soft and directional, casting long, gentle shadows that emphasize the premium texture of the fabric. The background is a seamless, matte off-white, creating a clean, editorial atmosphere that aligns with a luxury fashion publication." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBeThSi3q-n2c8uuViyam1b2_2pJAgJlHuNIIgjEmCyPwG5XpcajjcWm-5FGiLliZNL_gshSTBtxWDzDKPNHOva9Ph-GJeDXnpdDn7tQSgKwBDZadnCeuQxqS09E-Wf4BPt-ftlB9QdobtniTQCyxavZMXrid606Nl3YZfJEelerGPzGLHIhq8f4WofWGLm5fwm8B9_dnUq3Tb-Io-NFovt-sTT34MmJX6iApgvJJ9BzK8llQShaPrkAUlJ8_1XoA8zalMw3Qr5ngq6"/>
 </div>
-<div class="flex flex-col flex-grow justify-between py-xs">
+<div class="flex-1 flex flex-col justify-between h-full py-2">
 <div>
-<div class="flex justify-between items-start">
-<div>
-<h3 class="font-h3 text-h3 text-on-surface">Aura Lounge Chair</h3>
-<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Color: Oat • Material: Bouclé</p>
+<div class="flex justify-between items-start mb-2">
+<h2 class="font-headline-md text-headline-md text-primary">Sculptural Wool Overcoat</h2>
+<span class="font-body-lg text-body-lg text-primary">$1,250.00</span>
 </div>
-<span class="font-h3 text-h3 text-on-surface">$895.00</span>
+<p class="font-label-caps text-label-caps text-on-surface-variant mb-6">ARCHIVE COLLECTION — SIZE: 42 (IT)</p>
 </div>
-</div>
-<div class="flex justify-between items-center mt-md">
-<div class="flex items-center border border-outline-variant rounded-DEFAULT h-[40px]">
-<button class="px-sm text-on-surface-variant hover:text-on-surface transition-colors flex items-center justify-center h-full">
-<span class="material-symbols-outlined text-[18px]">remove</span>
+<div class="flex items-center justify-between mt-auto">
+<div class="flex items-center gap-6 bg-slate-surface px-4 py-2">
+<button class="hover:text-accent-gold transition-colors p-1" onclick="updateQty(this, -1)">
+<span class="material-symbols-outlined text-sm" data-icon="remove">remove</span>
 </button>
-<span class="font-body-md text-body-md text-on-surface px-sm min-w-[40px] text-center">1</span>
-<button class="px-sm text-on-surface-variant hover:text-on-surface transition-colors flex items-center justify-center h-full">
-<span class="material-symbols-outlined text-[18px]">add</span>
+<span class="font-button text-button w-4 text-center">01</span>
+<button class="hover:text-accent-gold transition-colors p-1" onclick="updateQty(this, 1)">
+<span class="material-symbols-outlined text-sm" data-icon="add">add</span>
 </button>
 </div>
-<button class="flex items-center gap-1 text-outline hover:text-error transition-colors">
-<span class="material-symbols-outlined text-[20px]">delete</span>
-<span class="font-label-sm text-label-sm uppercase tracking-wider">Remove</span>
-</button>
+<button class="font-label-caps text-label-caps text-on-surface-variant hover:text-error transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]" data-icon="close">close</span>
+                                REMOVE
+                            </button>
 </div>
 </div>
-</div>
+</article>
 <!-- Item 2 -->
-<div class="flex flex-col sm:flex-row gap-md p-md bg-surface-container-lowest rounded-lg shadow-sm border border-outline-variant/30 relative group">
-<div class="w-full sm:w-[160px] h-[200px] sm:h-[160px] bg-surface-variant rounded flex-shrink-0 overflow-hidden relative">
-<img alt="Handcrafted matte black ceramic vase with subtle texture, sitting on a polished white marble surface with dramatic side lighting." class="w-full h-full object-cover mix-blend-multiply" data-alt="Handcrafted matte black ceramic vase with subtle texture, sitting on a polished white marble surface with dramatic side lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBR327bRy-_ohXu0cbzdkqrzrA4ZPNzcMJszfBxJsehcFWTPRmZLSiqMXiEMt5TZGyvMvJcpiGmAfBaZivJ6teRLnhWHX0UVeh7wEnTqR_zDFGRqo_vfJclnLR3_rdEMsgtfaly8Pe6yljqfyCGu8K5NvYE84QwHl80-IpmaoUG0prjO0Fif8qlJFsUNzciqAoZh1wZYher_e7DbzzAseDgB7CJqCkAWQj3I89LujrfTxEtCdJTNM0phawqsqBjPFJR-WDYZMwDurU0"/>
+<article class="reveal group relative flex flex-col md:flex-row gap-8 items-center bg-white p-8 soft-elevation transition-all hover:scale-[1.01]">
+<div class="w-full md:w-64 aspect-[4/5] bg-slate-surface overflow-hidden">
+<img class="w-full h-full object-cover grayscale-[20%] group-hover:scale-105 transition-transform duration-700" data-alt="Close-up shot of an artisanal, hand-poured ceramic vessel in matte obsidian black. The texture is organic and slightly porous, reflecting light in a soft, diffused manner. It sits on a slab of honed white marble against a dark, moody background. The scene is shot with a shallow depth of field, emphasizing the quiet, luxurious craftsmanship of the object." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAd6_odzYx0FDTRx4M7o1lMezeCU3fa461FqM3CpA4vMYlqTrfE7H5dBIHyLtWfj0UanxhbQSUh9Xt1-Z7kjMu-NRUPH42dy2__X6mSew9u5PxMMftl4l2vGqK7xUnCJIyLAFvLNKbeDWPxsNGuZNKz6IN1gFzXzu4NjSCZfOpJWAfW4xCwJJ2UMMJPOmbks--wy_O2eHF-fLG4Msf7lmyMKiUlOFsfhwszbCnZrYYQ49qvXlc-hvLV9IXkYJ3nkppraGNbP7qjp4Iy"/>
 </div>
-<div class="flex flex-col flex-grow justify-between py-xs">
+<div class="flex-1 flex flex-col justify-between h-full py-2">
 <div>
-<div class="flex justify-between items-start">
-<div>
-<h3 class="font-h3 text-h3 text-on-surface">Nocturne Ceramic Vase</h3>
-<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Size: Large • Finish: Matte</p>
+<div class="flex justify-between items-start mb-2">
+<h2 class="font-headline-md text-headline-md text-primary">Obsidian Ceramic Vessel</h2>
+<span class="font-body-lg text-body-lg text-primary">$480.00</span>
 </div>
-<span class="font-h3 text-h3 text-on-surface">$145.00</span>
+<p class="font-label-caps text-label-caps text-on-surface-variant mb-6">STUDIO SERIES — NO. 0842</p>
 </div>
-</div>
-<div class="flex justify-between items-center mt-md">
-<div class="flex items-center border border-outline-variant rounded-DEFAULT h-[40px]">
-<button class="px-sm text-on-surface-variant hover:text-on-surface transition-colors flex items-center justify-center h-full">
-<span class="material-symbols-outlined text-[18px]">remove</span>
+<div class="flex items-center justify-between mt-auto">
+<div class="flex items-center gap-6 bg-slate-surface px-4 py-2">
+<button class="hover:text-accent-gold transition-colors p-1" onclick="updateQty(this, -1)">
+<span class="material-symbols-outlined text-sm" data-icon="remove">remove</span>
 </button>
-<span class="font-body-md text-body-md text-on-surface px-sm min-w-[40px] text-center">2</span>
-<button class="px-sm text-on-surface-variant hover:text-on-surface transition-colors flex items-center justify-center h-full">
-<span class="material-symbols-outlined text-[18px]">add</span>
+<span class="font-button text-button w-4 text-center">01</span>
+<button class="hover:text-accent-gold transition-colors p-1" onclick="updateQty(this, 1)">
+<span class="material-symbols-outlined text-sm" data-icon="add">add</span>
 </button>
 </div>
-<button class="flex items-center gap-1 text-outline hover:text-error transition-colors">
-<span class="material-symbols-outlined text-[20px]">delete</span>
-<span class="font-label-sm text-label-sm uppercase tracking-wider">Remove</span>
-</button>
+<button class="font-label-caps text-label-caps text-on-surface-variant hover:text-error transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]" data-icon="close">close</span>
+                                REMOVE
+                            </button>
 </div>
 </div>
-</div>
-</div>
+</article>
+</section>
 <!-- Order Summary Sidebar -->
-<div class="lg:col-span-4 sticky top-[120px]">
-<div class="bg-surface-container-lowest p-lg rounded-lg shadow-sm border border-outline-variant/30 flex flex-col gap-md">
-<h2 class="font-h2 text-h2 text-on-surface mb-xs">Order Summary</h2>
-<div class="flex justify-between items-center py-sm border-b border-surface-container-high">
-<span class="font-body-md text-body-md text-on-surface-variant">Subtotal</span>
-<span class="font-body-md text-body-md text-on-surface font-medium">$1,185.00</span>
+<aside class="lg:col-span-4 sticky top-32">
+<div class="bg-white p-10 soft-elevation space-y-8">
+<h3 class="font-headline-md text-headline-md border-b border-slate-surface pb-6">Summary</h3>
+<div class="space-y-4">
+<div class="flex justify-between font-body-md text-on-surface-variant">
+<span>Subtotal</span>
+<span>$1,730.00</span>
 </div>
-<div class="flex justify-between items-center py-sm border-b border-surface-container-high">
-<span class="font-body-md text-body-md text-on-surface-variant">Estimated Shipping</span>
-<span class="font-body-md text-body-md text-on-surface font-medium">Calculated at checkout</span>
+<div class="flex justify-between font-body-md text-on-surface-variant">
+<span>Shipping</span>
+<span>Calculated at next step</span>
 </div>
-<div class="flex justify-between items-center py-sm border-b border-surface-container-high">
-<span class="font-body-md text-body-md text-on-surface-variant">Estimated Tax</span>
-<span class="font-body-md text-body-md text-on-surface font-medium">$94.80</span>
-</div>
-<div class="flex justify-between items-center py-md mt-sm">
-<span class="font-h3 text-h3 text-on-surface">Total</span>
-<span class="font-h2 text-h2 text-on-surface">$1,279.80</span>
-</div>
-<button class="w-full bg-secondary text-on-secondary font-label-md text-label-md py-[16px] rounded flex items-center justify-center gap-2 hover:bg-secondary-container hover:text-on-secondary-container transition-all shadow-sm hover:shadow-md mt-sm">
-<span class="material-symbols-outlined text-[20px]">lock</span>
-                        Proceed to Checkout
-                    </button>
-<div class="mt-sm flex items-center justify-center gap-4 text-outline">
-<span class="material-symbols-outlined text-[24px]">local_shipping</span>
-<span class="material-symbols-outlined text-[24px]">verified_user</span>
-<span class="material-symbols-outlined text-[24px]">credit_card</span>
+<div class="flex justify-between font-body-md text-on-surface-variant">
+<span>Tax</span>
+<span>$0.00</span>
 </div>
 </div>
+<div class="flex justify-between items-baseline pt-6 border-t border-slate-surface">
+<span class="font-label-caps text-label-caps">ESTIMATED TOTAL</span>
+<span class="font-headline-md text-headline-md">$1,730.00</span>
+</div>
+<div class="pt-8 space-y-4">
+<button class="w-full bg-deep-navy text-white font-button text-button py-6 hover:opacity-90 transition-opacity uppercase tracking-widest flex items-center justify-center gap-3 group">
+                            Checkout
+                            <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform" data-icon="arrow_forward">arrow_forward</span>
+</button>
+<p class="text-center font-label-caps text-[10px] text-on-surface-variant uppercase tracking-widest">Complimentary delivery for members</p>
+</div>
+<!-- Payment Icons -->
+<div class="flex justify-center gap-6 pt-8 opacity-40">
+<span class="material-symbols-outlined" data-icon="credit_card">credit_card</span>
+<span class="material-symbols-outlined" data-icon="account_balance">account_balance</span>
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
 </div>
 </div>
+<div class="mt-8 px-4 flex items-start gap-4 text-on-surface-variant italic font-body-md">
+<span class="material-symbols-outlined text-accent-gold" data-icon="verified">verified</span>
+<p class="text-sm">Each piece in our collection is authenticated by the Modern Édition studio to ensure unparalleled quality and provenance.</p>
+</div>
+</aside>
+</div>
+<!-- Featured Carousel (Asymmetric/Magazine style) -->
+<section class="mt-section-gap">
+<h4 class="font-label-caps text-label-caps mb-8 text-on-surface-variant">COMPLEMENT THE LOOK</h4>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+<div class="reveal aspect-[3/4] overflow-hidden bg-slate-surface relative group">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" data-alt="A luxurious minimalist designer handbag in smooth, camel-colored calfskin leather. The bag is showcased in a high-fashion editorial style, resting on a sharp-edged concrete plinth. Soft, cold morning light fills the room, highlighting the clean lines and meticulous stitching. The aesthetic is extremely clean and professional, focusing on texture and form." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBpwGh8511sfWTVEwz8_bMYjr2UvHxxcO3dGctXQovDDsz_Dei6SkscusGq51JffTE6UF4lPTnJvVuFto4zAXwH5FdzLFIag4cnPCd1j6v1eWwq76mgSLQTaM_QRocQmAtSfhepzLsP6xkBzmrpHtrI2xzuZECHBwcNgjUYt_uD5QqQOMsnxFISP6mD8AxvqmBgsMIXChjITpfQS0UpS52aGsFGz2oYBgvbW-HaF-SDt-Jpn0woD729drMlHhXxB_Ufo1vX7t9JJNdZ"/>
+<div class="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all flex flex-col justify-end p-6 opacity-0 group-hover:opacity-100">
+<p class="text-white font-label-caps">Leather Carryall — $850</p>
+</div>
+</div>
+<div class="reveal aspect-[3/4] overflow-hidden bg-slate-surface relative group mt-12 md:mt-24">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" data-alt="An artistic composition featuring a single, modernist glass carafe and a matching tumbler. The glassware is delicate and architectural, catching glints of light that create sharp prismatic effects on a light-colored wooden surface. The mood is tranquil and sophisticated, typical of high-end lifestyle photography found in premium architectural magazines." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCE0qj6q0yQdvA-EKxnIvhVFG8kx7bEl9_dPLpKTaP4FAyHuKXbKZrN5y3At0hzD-43CKPiu-ut7IbNdd242OKepwvFs-EpObWb-9tbnywcNQGJCLy_dkSI5xvofD4xW0rLbjTRhuFmi_J18Ub72hGxad6PWQWGOr7PzRroleeFf6cnY5298UlwVq_9NGTQlervkWhi-XFTs66-F_OmLzLyjeuNKjBjQL-zaa6x4b5LBrAzHN6J-flFSRz3F7en5y5Y9rQ3m_gc0fEy"/>
+<div class="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all flex flex-col justify-end p-6 opacity-0 group-hover:opacity-100">
+<p class="text-white font-label-caps">Hand-Blown Carafe — $120</p>
+</div>
+</div>
+<div class="reveal aspect-[3/4] overflow-hidden bg-slate-surface relative group">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" data-alt="A pair of architectural sneakers in stark monochrome white. They are presented as art objects, suspended by invisible wires in a vast, empty warehouse space. Strong overhead spotlighting creates high contrast and deep shadows, emphasizing the complex geometric construction of the footwear. The aesthetic is futuristic, clean, and aggressively minimal." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBgdoKi7xjemUQh5y-_z8QEo5LnFJgjzY6MNHWHMhFn4JWrpz9eYQtaZSOtOKhiuai7QyBo_urJdbsRCaoZ3y1TupjXTf2BLzzMrnxxA0wtqmGAn2cLJxDNoJYeH69iwl41IdmIQ2qDQ90BUEA7XG0CaOAWG3I06gXilriUhfTNB8WMI0jGiacEVoMiOGh8CicZ9eZvQeZMsZNw67Z9J31BMAk10JcKu608Kq-IIMjt6ON81X71KSjYmSXapck6vZdFJzX7KZ8WB7RZ"/>
+<div class="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all flex flex-col justify-end p-6 opacity-0 group-hover:opacity-100">
+<p class="text-white font-label-caps">Tech-Knit Sneaker — $340</p>
+</div>
+</div>
+<div class="reveal aspect-[3/4] overflow-hidden bg-slate-surface relative group mt-12">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" data-alt="A sleek, designer smartwatch with a brushed titanium finish and a black Milanese loop band. It is photographed on a dark, reflective surface that mimics a still pool of water. The display shows a minimalist, typographic watch face. The lighting is low-key and dramatic, creating a premium, luxury-tech ambiance with subtle highlights on the metallic edges." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBI9mh5Y--w3-NdUGfeqxsesPKbVb1JAoa08g2BMvxywWQOiQQ-Qfp1gOGv9xMhT1mCVhwphn1BmBuNWms1OR1MDIzZk1-vo0mCl39QEXi-oLpNESvDLEenPpHybgr0GJi1tre2-p-I-P5nrQk80HLf1PYGVDxb5gf4HatDNZ8Bp-0YNChCvFJL3FwffOOufJteSMCDQV611Fd45_VywGsScuCJX8W4FCMF3HfLvKnJSQC-DpT-gvdH_N5n-zgIOXiI-0vKsfriMl7A"/>
+<div class="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all flex flex-col justify-end p-6 opacity-0 group-hover:opacity-100">
+<p class="text-white font-label-caps">Series X Timepiece — $1,100</p>
+</div>
+</div>
+</div>
+</section>
 </main>
 <!-- Footer -->
-<footer class="w-full border-t mt-auto border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950">
-<div class="grid grid-cols-1 md:grid-cols-4 gap-12 py-16 px-8 max-w-[1280px] mx-auto focus-within:ring-2 focus-within:ring-blue-500">
+<footer class="w-full pt-section-gap pb-gutter bg-deep-navy">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-gutter px-gutter max-w-container-max-width mx-auto">
 <div class="md:col-span-1">
-<div class="text-lg font-bold text-slate-900 dark:text-white mb-4">LuminaCommerce</div>
-<p class="font-manrope text-sm text-slate-500 dark:text-slate-400">© 2024 LuminaCommerce. Built for excellence.</p>
+<span class="font-headline-lg text-headline-lg italic text-surface block mb-8">Modern_Édition</span>
+<p class="font-body-md text-outline-variant max-w-xs">Curating the finest expressions of modern minimalism for the discerning collector.</p>
 </div>
-<div class="md:col-span-3 grid grid-cols-2 sm:grid-cols-3 gap-8">
-<div class="flex flex-col gap-3">
-<a class="font-manrope text-sm text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:underline transition-all" href="#">Sustainability</a>
-<a class="font-manrope text-sm text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:underline transition-all" href="#">Track Order</a>
+<div>
+<h5 class="font-label-caps text-label-caps text-surface mb-6">EXPLORE</h5>
+<ul class="space-y-4 font-body-md text-outline-variant">
+<li><a class="hover:text-surface transition-colors" href="#">New Arrivals</a></li>
+<li><a class="hover:text-surface transition-colors" href="#">The Archive</a></li>
+<li><a class="hover:text-surface transition-colors" href="#">Bespoke Studio</a></li>
+</ul>
 </div>
-<div class="flex flex-col gap-3">
-<a class="font-manrope text-sm text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:underline transition-all" href="#">Returns &amp; Exchanges</a>
-<a class="font-manrope text-sm text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:underline transition-all" href="#">Size Guide</a>
+<div>
+<h5 class="font-label-caps text-label-caps text-surface mb-6">UTILITIES</h5>
+<ul class="space-y-4 font-body-md text-outline-variant">
+<li><a class="hover:text-surface transition-colors" href="#">Sustainability</a></li>
+<li><a class="hover:text-surface transition-colors" href="#">Shipping</a></li>
+<li><a class="hover:text-surface transition-colors" href="#">Terms</a></li>
+<li><a class="hover:text-surface transition-colors" href="#">Contact</a></li>
+</ul>
 </div>
-<div class="flex flex-col gap-3">
-<a class="font-manrope text-sm text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:underline transition-all" href="#">Privacy Policy</a>
-<a class="font-manrope text-sm text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:underline transition-all" href="#">Terms of Service</a>
+<div>
+<h5 class="font-label-caps text-label-caps text-surface mb-6">NEWSLETTER</h5>
+<div class="flex flex-col gap-4">
+<input class="bg-surface/10 border-none p-4 font-body-md text-surface placeholder:text-outline-variant focus:ring-1 focus:ring-accent-gold transition-all" placeholder="Email Address" type="email"/>
+<button class="bg-surface text-deep-navy font-button py-4 uppercase tracking-widest hover:bg-accent-gold transition-colors">Subscribe</button>
 </div>
+</div>
+</div>
+<div class="max-w-container-max-width mx-auto px-gutter mt-24 flex flex-col md:flex-row justify-between items-center gap-8 border-t border-surface/10 pt-8">
+<p class="font-label-caps text-label-caps text-outline-variant">© 2024 MODERN ÉDITION. ALL RIGHTS RESERVED.</p>
+<div class="flex gap-8 text-outline-variant">
+<a class="hover:text-surface transition-colors" href="#"><span class="material-symbols-outlined" data-icon="facebook">social_leaderboard</span></a>
+<a class="hover:text-surface transition-colors" href="#"><span class="material-symbols-outlined" data-icon="instagram">retweet</span></a>
+<a class="hover:text-surface transition-colors" href="#"><span class="material-symbols-outlined" data-icon="public">public</span></a>
 </div>
 </div>
 </footer>
+<script>
+        function updateQty(btn, delta) {
+            const container = btn.parentElement;
+            const span = container.querySelector('span:not(.material-symbols-outlined)');
+            let current = parseInt(span.innerText);
+            current = Math.max(1, current + delta);
+            span.innerText = current.toString().padStart(2, '0');
+            
+            // Subtle feedback animation
+            span.classList.add('scale-110', 'text-accent-gold');
+            setTimeout(() => {
+                span.classList.remove('scale-110', 'text-accent-gold');
+            }, 200);
+        }
+
+        // Intersection Observer for scroll reveal effects
+        const observerOptions = {
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('opacity-100', 'translate-y-0');
+                    entry.target.classList.remove('opacity-0', 'translate-y-8');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.reveal').forEach(el => {
+            el.classList.add('transition-all', 'duration-1000', 'opacity-0', 'translate-y-8');
+            observer.observe(el);
+        });
+    </script>
 </body></html>
