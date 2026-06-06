@@ -1,5 +1,8 @@
 import { notFound, redirect } from "next/navigation";
-import { createClient } from "@/infrastructure/supabase/server";
+import { cookies } from "next/headers";
+// Justification: Next.js App Router Server Components require direct cookie access for session validation.
+// We alias createClient to createServerSupabaseClient to make the infrastructure coupling explicit.
+import { createClient as createServerSupabaseClient } from "@/infrastructure/supabase/server";
 import { ROLES, ROUTES } from "@/presentation/constants";
 import { NavLink } from "@/presentation/components/common/NavLink";
 import { LanguageSwitcher } from "@/presentation/components/common/LanguageSwitcher";
@@ -9,9 +12,12 @@ export default async function AdminLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
-}>) {
+}>): Promise<React.ReactNode> {
+  const cookieStore = await cookies();
+  const initialLocale = (cookieStore.get("NEXT_LOCALE")?.value || "en") as "vi" | "en";
+
   // Layer 2: Server-side admin guard (defense-in-depth)
-  const supabase = await createClient();
+  const supabase = await createServerSupabaseClient();
   const { data: { user }, error: userError } = await supabase.auth.getUser();
 
   // If not logged in, redirect to login instead of 404 to improve UX
@@ -28,7 +34,6 @@ export default async function AdminLayout({
 
   // If not an admin, show 404 to hide admin existence (security by obscurity)
   if (profileError || !profile || profile.role !== ROLES.ADMIN) {
-    console.warn(`Admin access denied for user ${user.id}:`, profileError || 'Not an admin');
     notFound();
   }
 
@@ -69,7 +74,7 @@ export default async function AdminLayout({
           <div className="hidden text-xl font-bold text-slate-900 dark:text-slate-50 tracking-tight">Admin Console</div>
           <div className="flex items-center gap-6">
             <div className="mr-2">
-              <LanguageSwitcher />
+              <LanguageSwitcher initialLocale={initialLocale} />
             </div>
             <button className="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-50 transition-colors">
               <span className="material-symbols-outlined">notifications</span>
