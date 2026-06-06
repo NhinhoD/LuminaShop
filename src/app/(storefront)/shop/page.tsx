@@ -14,8 +14,24 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
   const itemsPerPage = parseInt((params?.limit as string) || "9", 10); // 3x3 grid
   const offset = (currentPage - 1) * itemsPerPage;
   const search = typeof params?.q === 'string' ? params.q : undefined;
-  const categoryId = typeof params?.category === 'string' ? params.category : undefined;
+  const categorySlug = typeof params?.category === 'string' ? params.category : undefined;
   
+  let categoryId: string | undefined = undefined;
+  if (categorySlug && categorySlug !== 'all') {
+    const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(categorySlug);
+    if (isUUID) {
+       categoryId = categorySlug;
+    } else {
+       const { makeCategoryRepository } = await import("@/infrastructure/supabase/container");
+       const categoryRepo = await makeCategoryRepository();
+       const category = await categoryRepo.findBySlug(categorySlug);
+       if (category) {
+          categoryId = category.id;
+       } else {
+          categoryId = "00000000-0000-0000-0000-000000000000";
+       }
+    }
+  }
   let sortType: 'newest' | 'price_asc' | 'price_desc' | 'popular' = 'newest';
   if (
     params?.sort === 'price_asc' || 
@@ -58,8 +74,8 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
           initialProducts={products} 
           currentSearch={search || ""} 
           currentSort={sortType} 
-          currentCategory={categoryId || "all"}
-          initialCategory={categoryId}
+          currentCategory={categorySlug || "all"}
+          initialCategory={categorySlug}
         />
         
         {totalPages > 1 && (

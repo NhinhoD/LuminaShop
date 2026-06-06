@@ -20,9 +20,9 @@ export function Footer() {
   ];
 
   const contactInfo = [
-    { icon: MapPin, label: "Address", value: "Tech Hub, San Francisco, CA" },
-    { icon: Phone, label: "Phone", value: "+1 (800) 123-4567" },
-    { icon: Mail, label: "Email", value: "hello@lumina-ui.com" },
+    { icon: MapPin, label: "Address", value: "Ho Chi Minh City, Vietnam" },
+    { icon: Phone, label: "Phone", value: "0987 654 321" },
+    { icon: Mail, label: "Email", value: "contact@khoui.com" },
     { icon: Clock, label: "Support", value: "24/7 Digital Delivery" },
   ];
 
@@ -41,7 +41,7 @@ export function Footer() {
           {/* Brand Column */}
           <div>
             <div className="font-bricolage text-2xl font-black mb-4">
-              Lumina<span className="text-[#0051d5]">UI</span>
+              Kho<span className="text-[#0051d5]">UI</span>
             </div>
             <p className="text-[#999] text-sm leading-relaxed mb-6">
               Exclusive, high-quality website templates and themes built with Next.js, Tailwind CSS, and GSAP. Download instantly.
@@ -127,7 +127,7 @@ export function Footer() {
       <div className="border-t border-[rgba(255,255,255,0.08)] py-5">
         <div className="max-w-[1200px] mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-3 text-[0.8rem] text-[#777]">
           <p>
-            &copy; 2026 <span className="text-[#0051d5] font-semibold">LuminaUI</span>. All Rights Reserved.
+            &copy; 2026 <span className="text-[#0051d5] font-semibold">KhoUI</span>. All Rights Reserved.
           </p>
           <div className="flex gap-5">
             <Link href="#" className="text-[#777] hover:text-primary transition-colors">Privacy Policy</Link>

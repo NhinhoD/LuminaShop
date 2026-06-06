@@ -3,7 +3,8 @@ import { makeGetProductsUseCase, makeGetCategoriesUseCase } from "@/infrastructu
 import { formatCurrency } from "@/lib/utils";
 import { ProductDeleteButton } from "@/app/admin/products/ProductDeleteButton";
 import { PaginationControls } from "@/presentation/components/common/PaginationControls";
-import { getDictionary } from "@/i18n/getDictionary";
+import { getDictionary, getLocale } from "@/i18n/getDictionary";
+import { getLocalizedText } from "@/presentation/utils/locale";
 
 export default async function AdminProductsPage({
   searchParams,
@@ -12,6 +13,7 @@ export default async function AdminProductsPage({
 }) {
   const dictionary = await getDictionary();
   const dict = dictionary.products;
+  const locale = await getLocale();
   
   const params = await searchParams;
   const page = typeof params.page === 'string' ? parseInt(params.page) : 1;
@@ -75,7 +77,7 @@ export default async function AdminProductsPage({
             <select name="category" defaultValue={params.category || "all"} className="bg-white border border-slate-200 rounded-lg px-4 py-2.5 text-sm outline-none focus:border-[#0051d5] shadow-sm font-medium text-slate-700">
               <option value="all">{dict.filterCategory}</option>
               {categories.map(c => (
-                <option key={c.id} value={c.id}>{c.name}</option>
+                <option key={c.id} value={c.id}>{getLocalizedText(c.name as unknown as Record<string, string>, locale)}</option>
               ))}
             </select>
             <select name="status" defaultValue={params.status || "all"} className="bg-white border border-slate-200 rounded-lg px-4 py-2.5 text-sm outline-none focus:border-[#0051d5] shadow-sm font-medium text-slate-700">
@@ -116,7 +118,7 @@ export default async function AdminProductsPage({
                     <div className="flex items-center gap-4">
                       <div className="w-14 h-14 rounded-lg border border-slate-100 bg-slate-50 flex-shrink-0 overflow-hidden shadow-sm">
                         {product.imageUrl ? (
-                          <img alt={product.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" src={product.imageUrl} />
+                          <img alt={getLocalizedText(product.title as unknown as Record<string, string>, locale)} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" src={product.imageUrl} />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center text-slate-300">
                             <span className="material-symbols-outlined">image</span>
@@ -124,7 +126,7 @@ export default async function AdminProductsPage({
                         )}
                       </div>
                       <div>
-                        <div className="font-bold text-slate-900 group-hover:text-[#0051d5] transition-colors">{product.title}</div>
+                        <div className="font-bold text-slate-900 group-hover:text-[#0051d5] transition-colors">{getLocalizedText(product.title as unknown as Record<string, string>, locale)}</div>
                         <div className="text-slate-400 text-xs mt-0.5">{product.slug}</div>
                       </div>
                     </div>

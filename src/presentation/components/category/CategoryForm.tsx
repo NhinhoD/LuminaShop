@@ -12,8 +12,9 @@ interface CategoryFormProps {
 }
 
 export function CategoryForm({ category, onSuccess, onCancel }: CategoryFormProps) {
-  const [name, setName] = useState(category?.name || "");
-  const [description, setDescription] = useState(category?.description || "");
+  const [currentLang, setCurrentLang] = useState<'vi' | 'en'>('vi');
+  const [name, setName] = useState<Record<string, string>>(category?.name || { vi: '', en: '' });
+  const [description, setDescription] = useState<Record<string, string>>(category?.description || { vi: '', en: '' });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -22,7 +23,7 @@ export function CategoryForm({ category, onSuccess, onCancel }: CategoryFormProp
     setLoading(true);
     setError(null);
 
-    const slug = generateSlug(name);
+    const slug = generateSlug(name.vi || name.en || "category");
     
     try {
       if (category) {
@@ -68,24 +69,44 @@ export function CategoryForm({ category, onSuccess, onCancel }: CategoryFormProp
       )}
 
       <div className="space-y-2">
-        <label className="text-sm font-medium text-slate-700">Tên danh mục</label>
+        <div className="flex justify-between items-center mb-2">
+          <label className="text-sm font-medium text-slate-700">Tên danh mục</label>
+          <div className="flex bg-slate-100 p-1 rounded-lg">
+            <button 
+              type="button"
+              onClick={() => setCurrentLang('vi')}
+              className={`px-2 py-1 text-xs font-bold rounded-md transition-colors ${currentLang === 'vi' ? 'bg-white shadow-sm text-[#0051d5]' : 'text-slate-500'}`}
+            >
+              Tiếng Việt
+            </button>
+            <button 
+              type="button"
+              onClick={() => setCurrentLang('en')}
+              className={`px-2 py-1 text-xs font-bold rounded-md transition-colors ${currentLang === 'en' ? 'bg-white shadow-sm text-[#0051d5]' : 'text-slate-500'}`}
+            >
+              English
+            </button>
+          </div>
+        </div>
         <input
           type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          placeholder="Ví dụ: Men's Apparel"
+          value={name[currentLang] || ""}
+          onChange={(e) => setName({ ...name, [currentLang]: e.target.value })}
+          placeholder={currentLang === 'vi' ? "Ví dụ: Giao diện cá nhân" : "Example: Personal Portfolio"}
           className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
           required
         />
-        <p className="text-xs text-slate-500 italic">Slug sẽ được tự động tạo: {generateSlug(name) || "..."}</p>
+        <p className="text-xs text-slate-500 italic">Slug sẽ được tự động tạo: {generateSlug(name.vi || name.en || "category") || "..."}</p>
       </div>
 
       <div className="space-y-2">
-        <label className="text-sm font-medium text-slate-700">Mô tả</label>
+        <div className="flex justify-between items-center mb-2">
+          <label className="text-sm font-medium text-slate-700">Mô tả</label>
+        </div>
         <textarea
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          placeholder="Mô tả ngắn gọn về danh mục..."
+          value={description[currentLang] || ""}
+          onChange={(e) => setDescription({ ...description, [currentLang]: e.target.value })}
+          placeholder={currentLang === 'vi' ? "Mô tả ngắn gọn về danh mục..." : "Brief description of the category..."}
           rows={3}
           className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all resize-none"
         />

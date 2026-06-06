@@ -18,7 +18,7 @@ export default function AddToCartButton({ product }: AddToCartButtonProps) {
     
     // Simulate a bit of loading for UX feel
     setTimeout(() => {
-      addItem(product);
+      addItem({ ...product, title: product.title as unknown as Record<string, string> });
       setIsAdding(false);
       setIsSuccess(true);
       

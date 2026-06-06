@@ -33,9 +33,13 @@ function buildNestedDictionary(entries: { key: string; text: string }[]): Record
 let cachedDictionary: { vi: Record<string, unknown>; en: Record<string, unknown>; timestamp: number } | null = null;
 const CACHE_TTL_MS = 60 * 1000; // 1 minute cache
 
-export async function getDictionary(): Promise<Dictionary> {
+export async function getLocale(): Promise<Locale> {
   const cookieStore = await cookies();
-  const locale = (cookieStore.get("NEXT_LOCALE")?.value as Locale) || "vi";
+  return (cookieStore.get("NEXT_LOCALE")?.value as Locale) || "vi";
+}
+
+export async function getDictionary(): Promise<Dictionary> {
+  const locale = await getLocale();
 
   try {
     const now = Date.now();

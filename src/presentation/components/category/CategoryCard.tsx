@@ -1,6 +1,8 @@
 "use client";
 
 import { Category } from "@/domain/entities/Category";
+import { useLocale } from "@/presentation/hooks/useLocale";
+import { getLocalizedText } from "@/presentation/utils/locale";
 
 interface CategoryCardProps {
   category: Category;
@@ -10,6 +12,8 @@ interface CategoryCardProps {
 }
 
 export function CategoryCard({ category, productCount = 0, onEdit, onDelete }: CategoryCardProps) {
+  const locale = useLocale();
+
   // Simple icon mapping based on name/slug
   const getIcon = (name: string) => {
     const n = name.toLowerCase();
@@ -25,7 +29,7 @@ export function CategoryCard({ category, productCount = 0, onEdit, onDelete }: C
     <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition-all group relative flex flex-col h-full">
       <div className="flex justify-between items-start mb-4">
         <div className="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center text-[#0051d5]">
-          <span className="material-symbols-outlined text-2xl">{getIcon(category.name)}</span>
+          <span className="material-symbols-outlined text-2xl">{getIcon(getLocalizedText(category.name, locale))}</span>
         </div>
         <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
           <button
@@ -46,10 +50,10 @@ export function CategoryCard({ category, productCount = 0, onEdit, onDelete }: C
       </div>
 
       <div className="flex-grow">
-        <h3 className="text-lg font-bold text-slate-900 mb-1">{category.name}</h3>
+        <h3 className="text-lg font-bold text-slate-900 mb-1">{getLocalizedText(category.name, locale)}</h3>
         <p className="text-sm font-semibold text-[#0051d5] mb-3">/{category.slug}</p>
         <p className="text-sm text-slate-500 line-clamp-3 leading-relaxed mb-4">
-          {category.description || "No description provided for this collection."}
+          {getLocalizedText(category.description, locale) || "No description provided for this collection."}
         </p>
       </div>
 

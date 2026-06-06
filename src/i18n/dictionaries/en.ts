@@ -60,7 +60,7 @@ export const en = {
       title3: "in just 5 minutes.",
       desc: "Get the complete source code (Next.js 15, Tailwind v4, GSAP) following Clean Architecture, optimized by senior developers. Fast, secure delivery, free deployment to Vercel/Netlify.",
       cta1: "Explore Templates",
-      cta2: "Why choose Lumina?"
+      cta2: "Why choose KhoUI?"
     }
   }
 };

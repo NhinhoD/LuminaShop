@@ -6,6 +6,8 @@ import { useEffect, useRef, useState } from "react";
 import type { Dictionary } from "@/i18n/getDictionary";
 import { ROUTES } from "@/presentation/constants";
 import { formatCurrency } from "@/lib/utils";
+import { useLocale } from "@/presentation/hooks/useLocale";
+import { getLocalizedText } from "@/presentation/utils/locale";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Product } from "@/domain/entities/Product";
@@ -87,14 +89,16 @@ export default function HomePageClient({ featuredProducts, dict }: HomePageClien
   const journeyRef = useRef<HTMLElement>(null);
 
   const [activeCategory, setActiveCategory] = useState("all");
+  const locale = useLocale();
 
-  // Filter products based on category name or tags
   const filteredProducts = featuredProducts.filter((product) => {
     if (activeCategory === "all") return true;
+    const titleText = getLocalizedText(product.title as unknown as Record<string, string>, locale);
+    const descText = getLocalizedText(product.description as unknown as Record<string, string>, locale);
     return (
       product.categoryId?.toLowerCase().includes(activeCategory) ||
-      product.title.toLowerCase().includes(activeCategory) ||
-      product.description?.toLowerCase().includes(activeCategory)
+      titleText.toLowerCase().includes(activeCategory) ||
+      descText.toLowerCase().includes(activeCategory)
     );
   });
 
@@ -179,7 +183,7 @@ export default function HomePageClient({ featuredProducts, dict }: HomePageClien
 
         {/* Editorial Watermark */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[18vw] font-extrabold font-playfair text-[rgba(0,0,0,0.015)] pointer-events-none whitespace-nowrap select-none">
-          LUMINA
+          KHOUI
         </div>
 
         <div className="max-w-[1440px] mx-auto px-8 md:px-12 w-full relative z-10">
@@ -211,7 +215,7 @@ export default function HomePageClient({ featuredProducts, dict }: HomePageClien
                   <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
                 </Link>
                 <a href="#advantages" className="inline-flex items-center gap-2 bg-white hover:bg-slate-50 text-slate-800 border border-slate-200 px-8 py-4 rounded-xl font-bold transition-all active:scale-95 text-sm">
-                  {dict?.hero?.cta2 || 'Tại sao chọn Lumina?'}
+                  {dict?.hero?.cta2 || 'Tại sao chọn KhoUI?'}
                 </a>
               </div>
 
@@ -241,14 +245,14 @@ export default function HomePageClient({ featuredProducts, dict }: HomePageClien
                 <div className="relative w-[340px] h-[440px] rounded-3xl overflow-hidden shadow-2xl shadow-slate-900/10 bg-white border border-slate-100 p-3 rotate-[-3deg] hover:rotate-0 transition-transform duration-500">
                   <Image
                     src="/sarab-1.0.0/sarab/img/banner-img.jpg"
-                    alt="Lumina Template Mockup"
+                    alt="KhoUI Template Mockup"
                     fill
                     className="object-cover rounded-2xl"
                     priority
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent flex flex-col justify-end p-6 text-white rounded-2xl">
                     <span className="text-[10px] font-bold tracking-widest text-amber-400 uppercase mb-1">BEST SELLER</span>
-                    <h3 className="text-xl font-bold font-playfair mb-1">Lumina Creative Editorial Portfolio</h3>
+                    <h3 className="text-xl font-bold font-playfair mb-1">KhoUI Creative Editorial Portfolio</h3>
                     <p className="text-xs text-slate-300">Tích hợp sẵn GSAP ScrollTrigger & Smooth Scroll.</p>
                   </div>
                 </div>
@@ -407,7 +411,7 @@ export default function HomePageClient({ featuredProducts, dict }: HomePageClien
                     {product.imageUrl ? (
                       <img
                         src={product.imageUrl}
-                        alt={product.title}
+                        alt={getLocalizedText(product.title as unknown as Record<string, string>, locale)}
                         className="w-full h-full object-cover"
                       />
                     ) : (
@@ -448,11 +452,11 @@ export default function HomePageClient({ featuredProducts, dict }: HomePageClien
                       </div>
                       <Link href={`${ROUTES.PRODUCT}/${product.id}`}>
                         <h3 className="text-lg font-bold font-playfair text-slate-950 truncate hover:text-[#0051d5] transition-colors">
-                          {product.title}
+                          {getLocalizedText(product.title as unknown as Record<string, string>, locale)}
                         </h3>
                       </Link>
                       <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed h-8">
-                        {product.description || "Website Template chất lượng cao, tích hợp đầy đủ công nghệ hiện đại nhất hiện nay."}
+                        {getLocalizedText(product.description as unknown as Record<string, string>, locale) || "Website Template chất lượng cao, tích hợp đầy đủ công nghệ hiện đại nhất hiện nay."}
                       </p>
                     </div>
 

@@ -12,9 +12,9 @@ export interface ProductVariant {
 export interface Product {
   id: string;
   categoryId: string;
-  title: string;
+  title: Record<string, string>;
   slug: string;
-  description: string;
+  description: Record<string, string>;
   price: number; // VND, integer
   stock: number;
   imageUrl?: string;

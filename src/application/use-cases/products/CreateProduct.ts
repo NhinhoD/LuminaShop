@@ -8,7 +8,7 @@ export class CreateProductUseCase {
   async execute(data: CreateProductDTO): Promise<Result<Product>> {
     try {
       // Domain validation
-      if (!data.title.trim()) {
+      if (!data.title.vi?.trim()) {
         return fail(new Error('Tên sản phẩm không được để trống.'));
       }
       if (data.price < 0) {

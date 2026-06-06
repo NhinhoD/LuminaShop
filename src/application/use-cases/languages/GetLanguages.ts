@@ -5,6 +5,6 @@ export class GetLanguagesUseCase {
   constructor(private languageRepository: ILanguageRepository) {}
 
   async execute(): Promise<Language[]> {
-    return await this.languageRepository.getAllLanguages();
+    return await this.languageRepository.findAll();
   }
 }

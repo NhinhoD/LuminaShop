@@ -7,7 +7,7 @@ export interface CartItem {
   quantity: number;
   // Denormalized for ease of display in UI if needed, 
   // though usually fetched via join
-  productTitle?: string;
+  productTitle?: Record<string, string>;
   productPrice?: number;
   productImageUrl?: string;
 }

@@ -7,7 +7,7 @@ export class UpdateCategoryUseCase {
 
   async execute(id: string, data: UpdateCategoryDTO): Promise<Result<Category>> {
     try {
-      if (data.name !== undefined && !data.name.trim()) {
+      if (data.name && !data.name.vi?.trim()) {
         return fail(new Error('Tên danh mục không được để trống.'));
       }
 

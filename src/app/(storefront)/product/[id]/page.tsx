@@ -4,6 +4,8 @@ import { BreadcrumbSetter } from "@/presentation/components/common/BreadcrumbSet
 import { ROUTES } from "@/presentation/constants";
 import ProductSelection from "@/presentation/components/product/ProductSelection";
 import ProductMediaGallery from "@/presentation/components/product/ProductMediaGallery";
+import { getLocale } from "@/i18n/getDictionary";
+import { getLocalizedText } from "@/presentation/utils/locale";
 
 interface ProductPageProps {
   params: Promise<{ id: string }>;
@@ -17,6 +19,7 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
   if (!product) {
     notFound();
   }
+  const locale = await getLocale();
 
   const supabase = await makeSupabaseClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -39,7 +42,7 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
   return (
     <main className="flex-grow bg-white py-12">
       <BreadcrumbSetter
-        currentLabel={product.title}
+        currentLabel={getLocalizedText(product.title as unknown as Record<string, string>, locale)}
         parentLabels={{ [ROUTES.SHOP]: "Menu" }}
       />
 
@@ -49,7 +52,7 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
           <div className="lg:col-span-7">
             <ProductMediaGallery
               productId={product.id}
-              title={product.title}
+              title={getLocalizedText(product.title as unknown as Record<string, string>, locale)}
               imageUrl={product.imageUrl}
               demoUrl={product.demoUrl}
             />
@@ -62,7 +65,7 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
                 Gourmet Selection
               </p>
               <h1 className="text-4xl font-black text-dark mb-4 leading-tight font-playfair">
-                {product.title}
+                {getLocalizedText(product.title as unknown as Record<string, string>, locale)}
               </h1>
               <div className="flex items-center gap-3 text-secondary text-sm">
                 <span>⭐ 4.9</span>
@@ -74,7 +77,7 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
 
             <div className="mb-8 pb-8 border-b border-[#f0f0f0]">
               <p className="text-[#777] leading-relaxed text-sm">
-                {product.description ||
+                {getLocalizedText(product.description as unknown as Record<string, string>, locale) ||
                   "Meticulously crafted with premium ingredients, this dish represents our commitment to quality and culinary excellence. Every bite is an adventure worth savoring."}
               </p>
             </div>

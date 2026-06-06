@@ -14,7 +14,7 @@ export interface CartItem {
   productId: string;
   variantId?: string;
   variantName?: string;
-  title: string;
+  title: Record<string, string>;
   price: number;
   imageUrl?: string;
   quantity: number;
@@ -27,7 +27,7 @@ interface CartState {
   isGuest: boolean;
   setGuestStatus: (isGuest: boolean) => void;
   syncWithServer: () => Promise<void>;
-  addItem: (item: { productId: string, variantId?: string, variantName?: string, quantity: number, title?: string, price?: number, imageUrl?: string }) => Promise<void>;
+  addItem: (item: { productId: string, variantId?: string, variantName?: string, quantity: number, title?: Record<string, string>, price?: number, imageUrl?: string }) => Promise<void>;
   removeItem: (itemId: string) => Promise<void>;
   updateQuantity: (itemId: string, quantity: number) => Promise<void>;
   clearCart: () => Promise<void>;
@@ -86,7 +86,7 @@ export const useCartStore = create<CartState>()(
               productId: i.productId,
               variantId: i.variantId,
               variantName: i.variantName ?? undefined,
-              title: i.productTitle || "",
+              title: i.productTitle || { vi: '', en: '' },
               price: i.productPrice || 0,
               imageUrl: i.productImageUrl,
               quantity: i.quantity
@@ -136,7 +136,7 @@ export const useCartStore = create<CartState>()(
                    variantId: item.variantId,
                    variantName: item.variantName ?? undefined,
                    quantity: item.quantity,
-                   title: item.title || "",
+                   title: item.title || { vi: '', en: '' },
                    price: item.price || 0,
                    imageUrl: item.imageUrl
                  }]

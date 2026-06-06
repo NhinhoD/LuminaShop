@@ -7,7 +7,7 @@ export class CreateCategoryUseCase {
 
   async execute(data: CreateCategoryDTO): Promise<Result<Category>> {
     try {
-      if (!data.name.trim()) {
+      if (!data.name.vi?.trim()) {
         return fail(new Error('Tên danh mục không được để trống.'));
       }
 

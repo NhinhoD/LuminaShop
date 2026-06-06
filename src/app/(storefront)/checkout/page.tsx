@@ -4,6 +4,8 @@ import { useCart } from "@/presentation/hooks/useCart";
 import { createOrderAction } from "@/presentation/actions/order";
 import { processPaymentAction } from "@/presentation/actions/payment";
 import { formatCurrency } from "@/lib/utils";
+import { useLocale } from "@/presentation/hooks/useLocale";
+import { getLocalizedText } from "@/presentation/utils/locale";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { PaymentMethod } from "@/domain/entities/Order";
@@ -43,6 +45,7 @@ const shakeVariants = {
 };
 
 export default function CheckoutPage() {
+  const locale = useLocale();
   const { items, subtotal, clearCart, isLoading: cartLoading } = useCart();
   const router = useRouter();
   
@@ -96,6 +99,7 @@ export default function CheckoutPage() {
         // Enforce strict quantity limit of exactly 1 for all items in order
         const mappedItems = items.map(item => ({
           ...item,
+          title: getLocalizedText(item.title as unknown as Record<string, string>, locale) || "Product",
           quantity: 1 // Double-ensure digital quantity limit
         }));
 
@@ -283,12 +287,12 @@ export default function CheckoutPage() {
                       <div key={item.id} className="flex gap-5 py-5 first:pt-0 last:pb-0 group">
                         {item.imageUrl && (
                           <div className="w-20 h-16 rounded-xl overflow-hidden border border-slate-100 bg-slate-50 relative flex-shrink-0">
-                            <img src={item.imageUrl} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                            <img src={item.imageUrl} alt={getLocalizedText(item.title as unknown as Record<string, string>, locale) || "Product"} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                           </div>
                         )}
                         <div className="flex-1 flex flex-col justify-between">
                           <div>
-                            <h3 className="font-extrabold text-slate-800 text-[15px] group-hover:text-[#0051d5] transition-colors">{item.title}</h3>
+                            <h3 className="font-extrabold text-slate-800 text-[15px] group-hover:text-[#0051d5] transition-colors">{getLocalizedText(item.title as unknown as Record<string, string>, locale)}</h3>
                             <div className="flex gap-1.5 mt-1.5">
                               <span className="text-[9px] text-[#0051d5] font-bold bg-blue-50 px-2 py-0.5 rounded">
                                 Bản quyền trọn đời
@@ -587,7 +591,7 @@ export default function CheckoutPage() {
                           {items.map(item => (
                             <div key={item.id} className="flex justify-between items-center text-xs py-2 first:pt-0 last:pb-0">
                               <div className="flex flex-col">
-                                <span className="font-bold text-slate-800 text-[13px] max-w-[280px] md:max-w-[400px] truncate">{item.title}</span>
+                                <span className="font-bold text-slate-800 text-[13px] max-w-[280px] md:max-w-[400px] truncate">{getLocalizedText(item.title as unknown as Record<string, string>, locale)}</span>
                                 <span className="text-[9px] text-[#0051d5] font-black mt-0.5">GIẤY PHÉP TRỌN ĐỜI</span>
                               </div>
                               <span className="font-extrabold text-slate-900 text-[13px]">{formatCurrency(item.price)}</span>

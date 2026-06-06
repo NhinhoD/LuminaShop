@@ -2,6 +2,8 @@ import { getLanguagesAction, toggleLanguageAction } from '@/presentation/actions
 import { Globe, CheckCircle2, XCircle } from 'lucide-react';
 import { revalidatePath } from 'next/cache';
 
+export const dynamic = 'force-dynamic';
+
 export default async function AdminLanguagesPage() {
   const languages = await getLanguagesAction();
 
@@ -29,7 +31,6 @@ export default async function AdminLanguagesPage() {
             <tr className="bg-surface-container/50 border-b border-outline-variant">
               <th className="px-6 py-4 font-semibold text-sm">Code</th>
               <th className="px-6 py-4 font-semibold text-sm">Name</th>
-              <th className="px-6 py-4 font-semibold text-sm text-center">Status</th>
               <th className="px-6 py-4 font-semibold text-sm text-center">Default</th>
               <th className="px-6 py-4 font-semibold text-sm text-right">Actions</th>
             </tr>
@@ -37,7 +38,7 @@ export default async function AdminLanguagesPage() {
           <tbody>
             {languages.length === 0 ? (
               <tr>
-                <td colSpan={5} className="px-6 py-8 text-center text-on-surface/60">
+                <td colSpan={4} className="px-6 py-8 text-center text-on-surface/60">
                   No languages found.
                 </td>
               </tr>
@@ -47,19 +48,6 @@ export default async function AdminLanguagesPage() {
                   <td className="px-6 py-4 font-medium uppercase">{lang.code}</td>
                   <td className="px-6 py-4">{lang.name}</td>
                   <td className="px-6 py-4 text-center">
-                    {lang.isActive ? (
-                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-green-500/10 text-green-600">
-                        <CheckCircle2 className="w-3.5 h-3.5" />
-                        Active
-                      </span>
-                    ) : (
-                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-red-500/10 text-red-600">
-                        <XCircle className="w-3.5 h-3.5" />
-                        Inactive
-                      </span>
-                    )}
-                  </td>
-                  <td className="px-6 py-4 text-center">
                     {lang.isDefault ? (
                       <span className="text-xs font-semibold px-2 py-1 bg-primary/10 text-primary rounded-md">Default</span>
                     ) : (
@@ -67,12 +55,12 @@ export default async function AdminLanguagesPage() {
                     )}
                   </td>
                   <td className="px-6 py-4 text-right">
-                    <form action={toggleStatus.bind(null, lang.code, lang.isActive)}>
+                    <form action={toggleStatus.bind(null, lang.code, false)}>
                       <button 
                         disabled={lang.isDefault}
                         className="text-sm font-medium px-3 py-1.5 rounded-lg border border-outline-variant hover:bg-surface-container transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                       >
-                        {lang.isActive ? 'Disable' : 'Enable'}
+                        {lang.isDefault ? 'Default' : 'Set Default'}
                       </button>
                     </form>
                   </td>
@@ -85,3 +73,4 @@ export default async function AdminLanguagesPage() {
     </div>
   );
 }
+

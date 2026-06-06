@@ -19,9 +19,9 @@ const productVariantSchema = z.object({
 const productSchema = z.object({
   id: z.string(),
   categoryId: z.string(),
-  title: z.string(),
+  title: z.record(z.string(), z.string()),
   slug: z.string(),
-  description: z.string(),
+  description: z.record(z.string(), z.string()),
   price: z.number(),
   stock: z.number(),
   imageUrl: z.string().optional(),

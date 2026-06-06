@@ -1,9 +1,6 @@
 export interface Language {
-  id?: string;
-  code: string; // e.g., 'en', 'vi'
-  name: string; // e.g., 'English', 'Tiếng Việt'
-  isActive: boolean;
+  code: string;
+  name: string;
   isDefault: boolean;
-  createdAt?: string;
-  updatedAt?: string;
+  createdAt: Date;
 }

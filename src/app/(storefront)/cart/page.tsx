@@ -2,10 +2,13 @@
 
 import Link from "next/link";
 import { useCart } from "@/presentation/hooks/useCart";
+import { useLocale } from "@/presentation/hooks/useLocale";
+import { getLocalizedText } from "@/presentation/utils/locale";
 import { ROUTES } from "@/presentation/constants";
 
 export default function CartPage() {
   const { items, updateQuantity, removeItem, subtotal } = useCart();
+  const locale = useLocale();
 
   if (items.length === 0) {
     return (
@@ -42,7 +45,7 @@ export default function CartPage() {
                 <div className="w-32 h-40 bg-slate-50 rounded-lg overflow-hidden flex-shrink-0">
                   {item.imageUrl ? (
                     <img 
-                      alt={item.title} 
+                      alt={getLocalizedText(item.title as unknown as Record<string, string>, locale)} 
                       className="w-full h-full object-cover mix-blend-multiply opacity-90" 
                       src={item.imageUrl} 
                     />
@@ -56,7 +59,7 @@ export default function CartPage() {
                 <div className="flex flex-col flex-grow py-1">
                   <div className="flex justify-between items-start mb-2">
                     <div>
-                      <h3 className="font-bold text-slate-950 text-lg mb-1">{item.title}</h3>
+                      <h3 className="font-bold text-slate-950 text-lg mb-1">{getLocalizedText(item.title as unknown as Record<string, string>, locale)}</h3>
                       <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Premium Selection</p>
                     </div>
                     <p className="font-bold text-slate-950 text-base">${(item.price * item.quantity).toFixed(2)}</p>
