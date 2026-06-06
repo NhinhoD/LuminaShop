@@ -11,6 +11,8 @@ import { formatCurrency } from "@/lib/utils";
 import gsap from "gsap";
 import { Heart, Search, SlidersHorizontal, Monitor } from "lucide-react";
 import { useDebouncedCallback } from "use-debounce";
+import { useLocale } from "@/presentation/hooks/useLocale";
+import { getLocalizedText } from "@/presentation/utils/locale";
 
 interface ShopProductGridProps {
   initialProducts: readonly Product[];
@@ -24,6 +26,7 @@ export default function ShopProductGrid({ initialProducts, currentSearch, curren
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const locale = useLocale();
 
   const [searchQuery, setSearchQuery] = useState(currentSearch);
   const [maxPrice, setMaxPrice] = useState<number>(10000000);
@@ -105,8 +108,10 @@ export default function ShopProductGrid({ initialProducts, currentSearch, curren
     if (selectedTech.length > 0) {
       const match = selectedTech.some((tech) => {
         const inStack = product.techStack?.some((t) => t.toLowerCase().includes(tech.toLowerCase()));
-        const inDesc = product.description?.toLowerCase().includes(tech.toLowerCase());
-        const inTitle = product.title.toLowerCase().includes(tech.toLowerCase());
+        const descText = getLocalizedText(product.description as unknown as Record<string, string>, locale);
+        const inDesc = descText.toLowerCase().includes(tech.toLowerCase());
+        const titleText = getLocalizedText(product.title as unknown as Record<string, string>, locale);
+        const inTitle = titleText.toLowerCase().includes(tech.toLowerCase());
         return inStack || inDesc || inTitle;
       });
       if (!match) return false;
@@ -291,7 +296,7 @@ export default function ShopProductGrid({ initialProducts, currentSearch, curren
                           {product.imageUrl ? (
                             <img
                               src={product.imageUrl}
-                              alt={product.title}
+                              alt={getLocalizedText(product.title as unknown as Record<string, string>, locale)}
                               className="w-full h-full object-cover"
                             />
                           ) : (
@@ -326,12 +331,12 @@ export default function ShopProductGrid({ initialProducts, currentSearch, curren
                             )}
                           </div>
                           <Link href={`${ROUTES.PRODUCT}/${product.id}`}>
-                            <h3 className="text-base font-extrabold text-slate-900 hover:text-[#0051d5] transition-colors truncate">
-                              {product.title}
+                            <h3 className="text-xl font-bold text-slate-900 group-hover:text-[#0051d5] transition-colors line-clamp-1">
+                              {getLocalizedText(product.title as unknown as Record<string, string>, locale)}
                             </h3>
                           </Link>
                           <p className="text-slate-400 text-xs line-clamp-2 leading-relaxed h-8">
-                            {product.description || "Giao diện website cao cấp được thiết kế tỉ mỉ, đầy đủ công nghệ hiện đại."}
+                            {getLocalizedText(product.description as unknown as Record<string, string>, locale) || "Giao diện website cao cấp được thiết kế tỉ mỉ, đầy đủ công nghệ hiện đại."}
                           </p>
                         </div>
 
@@ -358,7 +363,7 @@ export default function ShopProductGrid({ initialProducts, currentSearch, curren
                               product={{
                                 id: product.id,
                                 productId: product.id,
-                                title: product.title,
+                                title: product.title as unknown as Record<string, string>,
                                 price: Number(product.price),
                                 imageUrl: product.imageUrl || undefined,
                                 quantity: 1,

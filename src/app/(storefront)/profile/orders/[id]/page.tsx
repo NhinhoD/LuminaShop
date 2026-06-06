@@ -8,6 +8,8 @@ import { Package, MapPin, CreditCard, ShoppingBag, Download, ExternalLink } from
 import { ImageWithFallback } from "@/presentation/components/common/ImageWithFallback";
 import { OrderStatus } from "@/domain/entities/Order";
 import { Metadata } from "next";
+import { getLocale } from "@/i18n/getDictionary";
+import { getLocalizedText } from "@/presentation/utils/locale";
 
 export const metadata: Metadata = {
   title: "Chi tiết đơn hàng | KhoUI",
@@ -20,6 +22,7 @@ interface PageProps {
 export default async function OrderDetailPage({ params }: PageProps) {
   const { id } = await params;
   const response = await getOrderAction(id);
+  const locale = await getLocale();
 
   if (!response.success) {
     return (
@@ -136,7 +139,7 @@ export default async function OrderDetailPage({ params }: PageProps) {
                       {item.productSnapshot?.image_url || item.productSnapshot?.image ? (
                         <ImageWithFallback
                           src={item.productSnapshot.image_url || item.productSnapshot.image || ""}
-                          alt={item.productTitle || "Product"}
+                          alt={getLocalizedText(item.productTitle as unknown as Record<string, string>, locale) || "Product"}
                           fill
                           className="object-cover"
                           fallbackElement={<Package className="w-8 h-8 text-slate-300 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />}
@@ -147,7 +150,7 @@ export default async function OrderDetailPage({ params }: PageProps) {
                     </div>
                     <div className="flex-1 min-w-0">
                       <h3 className="font-extrabold text-slate-800 text-[14px] truncate">
-                        {item.productTitle || "Sản phẩm không xác định"}
+                        {getLocalizedText(item.productTitle as unknown as Record<string, string>, locale) || "Sản phẩm không xác định"}
                       </h3>
                       <div className="flex gap-1.5 mt-1">
                         <span className="text-[8px] bg-slate-100 text-slate-400 font-extrabold px-1.5 py-0.5 rounded">

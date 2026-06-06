@@ -5,9 +5,12 @@ import { useCartDrawerStore } from "@/presentation/hooks/useCartDrawerStore";
 import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
 import { ROUTES } from "@/presentation/constants";
+import { useLocale } from "@/presentation/hooks/useLocale";
+import { getLocalizedText } from "@/presentation/utils/locale";
 import { useEffect, useRef } from "react";
 
 export default function CartDrawer() {
+  const locale = useLocale();
   const { items, subtotal, removeItem, updateQuantity, isLoading, error } = useCart();
   const { isOpen, closeDrawer } = useCartDrawerStore();
   const drawerRef = useRef<HTMLDivElement>(null);
@@ -121,7 +124,7 @@ export default function CartDrawer() {
                           {item.imageUrl ? (
                             <img 
                               src={item.imageUrl} 
-                              alt={item.title} 
+                              alt={getLocalizedText(item.title as unknown as Record<string, string>, locale) || "Product"} 
                               className="w-full h-full object-cover grayscale opacity-90 transition-transform duration-700 group-hover:scale-105 group-hover:grayscale-0"
                             />
                           ) : (
@@ -135,7 +138,7 @@ export default function CartDrawer() {
                           <div>
                             <div className="flex justify-between items-start gap-2">
                               <h3 className="font-playfair font-bold text-slate-900 text-sm line-clamp-2 leading-tight">
-                                {item.title}
+                                {getLocalizedText(item.title as unknown as Record<string, string>, locale)}
                               </h3>
                               <button 
                                 onClick={() => removeItem(item.id)}

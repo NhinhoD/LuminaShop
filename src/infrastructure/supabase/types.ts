@@ -1,9 +1,12 @@
 export interface ProductRow {
   id: string;
   category_id: string;
-  title: string;
+  title: Record<string, string>;
   slug: string;
-  description: string;
+  description: Record<string, string>;
+  demo_url?: string;
+  source_code_url?: string;
+  tech_stack?: string[];
   price: string | number;
   stock: number;
   image_url: string | null;
@@ -63,7 +66,7 @@ export interface OrderItemRow {
   price_at_purchase: string | number;
   product_snapshot?: unknown;
   created_at: string;
-  product?: { title: string };
+  product?: { title: Record<string, string> };
 }
 
 export interface CartRow {
@@ -88,9 +91,9 @@ export interface CartItemRow {
 
 export interface CategoryRow {
   id: string;
-  name: string;
+  name: Record<string, string>;
   slug: string;
-  description: string | null;
+  description: Record<string, string> | null;
   created_at: string;
   updated_at: string;
   products?: { count: number }[];

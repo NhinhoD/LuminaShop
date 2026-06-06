@@ -6,9 +6,12 @@ import { generateSlug, generateSKU } from '@/lib/utils';
 
 interface ProductDTO {
   category_id?: string;
-  title?: string;
+  title?: Record<string, string>;
   slug?: string;
-  description?: string;
+  description?: Record<string, string>;
+  demo_url?: string | null;
+  source_code_url?: string | null;
+  tech_stack?: string[];
   price?: number;
   stock?: number;
   image_url?: string | null;
@@ -59,7 +62,9 @@ export class SupabaseProductRepository implements IProductRepository {
 
     if (filters?.categoryId) query = query.eq('category_id', filters.categoryId);
     if (filters?.isActive !== undefined) query = query.eq('is_active', filters.isActive);
-    if (filters?.search) query = query.ilike('title', `%${filters.search}%`);
+    if (filters?.search) {
+      query = query.or(`title->>vi.ilike.%${filters.search}%,title->>en.ilike.%${filters.search}%`);
+    }
     
     if (filters?.limit) {
       const from = filters.offset || 0;
@@ -88,21 +93,17 @@ export class SupabaseProductRepository implements IProductRepository {
 
   async create(data: CreateProductDTO): Promise<Product> {
     const supabase = this.supabase;
-    
-    const serializedDescription = JSON.stringify({
-      description: data.description || '',
-      demoUrl: data.demoUrl || '',
-      sourceCodeUrl: data.sourceCodeUrl || '',
-      techStack: data.techStack || []
-    });
 
     const { data: product, error } = await supabase
       .from('products')
       .insert({
         category_id: data.categoryId,
         title: data.title,
-        slug: data.slug || generateSlug(data.title),
-        description: serializedDescription,
+        slug: data.slug || generateSlug(data.title['vi'] || data.title['en'] || 'product'),
+        description: data.description,
+        demo_url: data.demoUrl || null,
+        source_code_url: data.sourceCodeUrl || null,
+        tech_stack: data.techStack || [],
         price: Math.floor(data.price), // Ensure integer VND
         stock: 999999, // Infinite digital inventory
         image_url: data.imageUrl,
@@ -130,23 +131,17 @@ export class SupabaseProductRepository implements IProductRepository {
     const existingProduct = await this.findById(id);
     if (!existingProduct) throw new Error("Sản phẩm không tồn tại.");
 
-    const mergedDesc = {
-      description: data.description !== undefined ? data.description : existingProduct.description,
-      demoUrl: data.demoUrl !== undefined ? data.demoUrl : existingProduct.demoUrl,
-      sourceCodeUrl: data.sourceCodeUrl !== undefined ? data.sourceCodeUrl : existingProduct.sourceCodeUrl,
-      techStack: data.techStack !== undefined ? data.techStack : existingProduct.techStack
-    };
-
-    const serializedDescription = JSON.stringify(mergedDesc);
-
     const dbData: ProductDTO = {};
     if (data.categoryId) dbData.category_id = data.categoryId;
     if (data.title) {
       dbData.title = data.title;
-      if (!data.slug) dbData.slug = generateSlug(data.title);
+      if (!data.slug) dbData.slug = generateSlug(data.title['vi'] || data.title['en'] || 'product');
     }
     if (data.slug) dbData.slug = data.slug;
-    dbData.description = serializedDescription;
+    if (data.description !== undefined) dbData.description = data.description;
+    if (data.demoUrl !== undefined) dbData.demo_url = data.demoUrl;
+    if (data.sourceCodeUrl !== undefined) dbData.source_code_url = data.sourceCodeUrl;
+    if (data.techStack !== undefined) dbData.tech_stack = data.techStack;
     if (data.price !== undefined) dbData.price = Math.floor(data.price);
     dbData.stock = 999999;
     if (data.imageUrl !== undefined) dbData.image_url = data.imageUrl;
@@ -155,7 +150,7 @@ export class SupabaseProductRepository implements IProductRepository {
 
     const { error } = await supabase
       .from('products')
-      .update(dbData)
+      .update(dbData as unknown as Record<string, string>)
       .eq('id', id);
 
     if (error) throw new Error(`Database error: ${error.message}`);
@@ -189,42 +184,19 @@ export class SupabaseProductRepository implements IProductRepository {
   }
 
   private mapToEntity(row: ProductRow): Product {
-    let parsedDesc = {
-      description: row.description || "",
-      demoUrl: "",
-      sourceCodeUrl: "",
-      techStack: [] as string[]
-    };
-    
-    try {
-      if (row.description && (row.description.startsWith('{') || row.description.startsWith('['))) {
-        const data = JSON.parse(row.description);
-        if (data && typeof data === 'object') {
-          parsedDesc = {
-            description: data.description || '',
-            demoUrl: data.demoUrl || '',
-            sourceCodeUrl: data.sourceCodeUrl || '',
-            techStack: Array.isArray(data.techStack) ? data.techStack : []
-          };
-        }
-      }
-    } catch (_e) {
-      // Graceful fallback
-    }
-
     return {
       id: row.id,
       categoryId: row.category_id,
-      title: row.title,
+      title: row.title || { vi: '', en: '' },
       slug: row.slug,
-      description: parsedDesc.description,
+      description: row.description || { vi: '', en: '' },
       price: typeof row.price === 'string' ? parseInt(row.price) : row.price,
       stock: row.stock,
       imageUrl: row.image_url || undefined,
       isActive: row.is_active,
-      demoUrl: parsedDesc.demoUrl,
-      sourceCodeUrl: parsedDesc.sourceCodeUrl,
-      techStack: parsedDesc.techStack,
+      demoUrl: row.demo_url || '',
+      sourceCodeUrl: row.source_code_url || '',
+      techStack: row.tech_stack || [],
       variants: row.variants?.map((v) => ({
         id: v.id,
         productId: v.product_id,

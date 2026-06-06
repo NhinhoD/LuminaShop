@@ -9,6 +9,7 @@ import { X, Package, MapPin, CreditCard, CheckCircle, AlertCircle, FileText } fr
 import { toast } from "react-hot-toast";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
+import { getLocalizedText } from "@/presentation/utils/locale";
 
 interface OrderDetailModalProps {
   orderId: string;
@@ -231,7 +232,7 @@ export function OrderDetailModal({ orderId, onClose }: OrderDetailModalProps) {
                        {item.productSnapshot?.image_url || item.productSnapshot?.image ? (
                          <Image 
                            src={item.productSnapshot.image_url || item.productSnapshot.image || ""} 
-                           alt={item.productTitle || "Product"}
+                           alt={getLocalizedText(item.productTitle as unknown as Record<string, string>, 'vi') || "Product"}
                            fill
                            className="object-cover"
                          />
@@ -240,7 +241,7 @@ export function OrderDetailModal({ orderId, onClose }: OrderDetailModalProps) {
                        )}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-bold text-slate-900 truncate">{item.productTitle}</p>
+                      <p className="text-sm font-bold text-slate-900 truncate">{getLocalizedText(item.productTitle as unknown as Record<string, string>, 'vi')}</p>
                       {item.productSnapshot?.variantName && (
                         <p className="text-xs text-slate-500">Phân loại: {item.productSnapshot.variantName}</p>
                       )}

@@ -58,13 +58,13 @@ export default function NavbarClient({ user, navLinks, dict }: NavbarClientProps
         <div className="max-w-[1200px] mx-auto px-4 flex justify-between items-center flex-wrap gap-2">
           <div className="flex flex-wrap gap-4">
             <span className="text-[#aaa]">
-              <span className="text-secondary mr-1">📞</span>+1 (800) 123-4567
+              <span className="text-secondary mr-1">📞</span>0987 654 321
             </span>
             <span className="text-[#aaa]">
-              <span className="text-secondary mr-1">✉</span>hello@lumina-ui.com
+              <span className="text-secondary mr-1">✉</span>contact@khoui.com
             </span>
             <span className="text-[#aaa]">
-              <span className="text-secondary mr-1">📍</span>Tech Hub, San Francisco
+              <span className="text-secondary mr-1">📍</span>Ho Chi Minh City, Vietnam
             </span>
           </div>
           <div className="flex items-center gap-3">
@@ -92,7 +92,7 @@ export default function NavbarClient({ user, navLinks, dict }: NavbarClientProps
             </div>
             <div>
               <div className="font-bricolage text-2xl font-black text-dark">
-                Lumina<span className="text-[#0051d5]">UI</span>
+                Kho<span className="text-[#0051d5]">UI</span>
               </div>
               <div className="text-[0.62rem] uppercase tracking-[2px] text-[#aaa]">
                 Premium Templates
@@ -185,6 +185,9 @@ export default function NavbarClient({ user, navLinks, dict }: NavbarClientProps
             >
               ✨ {dict?.nav?.explore || "Explore Themes"}
             </Link>
+            <div className="mt-4 flex justify-center pb-2 border-t border-slate-100 pt-4">
+              <LanguageSwitcher />
+            </div>
           </div>
         )}
       </nav>

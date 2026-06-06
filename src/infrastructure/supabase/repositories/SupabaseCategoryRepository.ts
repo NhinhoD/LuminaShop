@@ -16,7 +16,7 @@ export class SupabaseCategoryRepository implements ICategoryRepository {
       `, { count: 'exact' });
 
     if (filters?.search) {
-      query = query.ilike('name', `%${filters.search}%`);
+      query = query.or(`name->>vi.ilike.%${filters.search}%,name->>en.ilike.%${filters.search}%`);
     }
 
     query = query.order('name');
@@ -109,7 +109,7 @@ export class SupabaseCategoryRepository implements ICategoryRepository {
   private mapToEntity(row: CategoryRow): Category {
     return {
       id: row.id,
-      name: row.name,
+      name: row.name || { vi: '', en: '' },
       slug: row.slug,
       description: row.description || undefined,
       createdAt: new Date(row.created_at),

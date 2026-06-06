@@ -1,8 +1,8 @@
 export interface Category {
   id: string;
-  name: string;
+  name: Record<string, string>;
   slug: string;
-  description?: string;
+  description?: Record<string, string>;
   createdAt: Date;
   updatedAt: Date;
   productCount?: number;

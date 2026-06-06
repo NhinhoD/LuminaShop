@@ -2,6 +2,8 @@ import { makeTranslationRepository } from "@/infrastructure/supabase/container";
 import LanguageTableClient from "./LanguageTableClient";
 import { TranslationEntry } from "@/domain/repositories/ITranslationRepository";
 
+export const dynamic = 'force-dynamic';
+
 export default async function AdminLanguagesPage() {
   let translations: TranslationEntry[] = [];
   try {

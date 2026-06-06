@@ -14,8 +14,8 @@ interface ProductFormProps {
 }
 
 interface ProductFormData {
-  title: string;
-  description: string;
+  title: Record<string, string>;
+  description: Record<string, string>;
   price: number;
   categoryId: string;
   imageUrl: string;
@@ -296,7 +296,7 @@ export function ProductForm({ categories, initialData }: ProductFormProps) {
       if (normalized.length > 0) {
         await uploadPreviewFilesAsync(
           normalized,
-          formData.title,
+          formData.title.en || formData.title.vi || "preview",
           setFormData,
           setPreviewFolderUploading,
           setPreviewFolderUploadSuccess,
@@ -326,7 +326,7 @@ export function ProductForm({ categories, initialData }: ProductFormProps) {
     const normalized = normalizePaths(filesToUpload);
     uploadPreviewFilesAsync(
       normalized,
-      formData.title,
+      formData.title.en || formData.title.vi || "preview",
       setFormData,
       setPreviewFolderUploading,
       setPreviewFolderUploadSuccess,
@@ -380,9 +380,11 @@ export function ProductForm({ categories, initialData }: ProductFormProps) {
     }
   };
 
+  const [currentLang, setCurrentLang] = useState<'vi' | 'en'>('vi');
+
   const [formData, setFormData] = useState<ProductFormData>({
-    title: initialData?.title || "",
-    description: initialData?.description || "",
+    title: initialData?.title || { vi: '', en: '' },
+    description: initialData?.description || { vi: '', en: '' },
     price: initialData?.price || 0,
     categoryId: initialData?.categoryId || categories[0]?.id || "",
     imageUrl: initialData?.imageUrl || "",
@@ -394,6 +396,19 @@ export function ProductForm({ categories, initialData }: ProductFormProps) {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
+    
+    // Handle localized fields
+    if (name === 'title' || name === 'description') {
+      setFormData(prev => ({
+        ...prev,
+        [name]: {
+          ...prev[name],
+          [currentLang]: value
+        }
+      }));
+      return;
+    }
+
     setFormData(prev => ({
       ...prev,
       [name]: type === 'number' ? parseInt(value) || 0 : value
@@ -418,7 +433,7 @@ export function ProductForm({ categories, initialData }: ProductFormProps) {
     try {
       const supabase = createClient();
       const ext = file.name.split('.').pop() || 'jpg';
-      const cleanTitle = sanitizeName(formData.title || "preview");
+      const cleanTitle = sanitizeName(formData.title.en || formData.title.vi || "preview");
       const filePath = `previews/${cleanTitle}-${Date.now()}.${ext}`;
 
       const { error: uploadError } = await supabase.storage
@@ -453,7 +468,7 @@ export function ProductForm({ categories, initialData }: ProductFormProps) {
 
     try {
       const supabase = createClient();
-      const cleanTitle = sanitizeName(formData.title || "template");
+      const cleanTitle = sanitizeName(formData.title.en || formData.title.vi || "template");
       const fileName = `lumina-${cleanTitle}-${Date.now()}.zip`;
 
       const { error: uploadError } = await supabase.storage
@@ -529,16 +544,34 @@ export function ProductForm({ categories, initialData }: ProductFormProps) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         
         {/* Title */}
-        <div className="space-y-2">
-          <label className="text-xs font-extrabold uppercase tracking-wider text-slate-700">Tên Template *</label>
+        <div className="space-y-2 md:col-span-2">
+          <div className="flex justify-between items-center mb-2">
+            <label className="text-xs font-extrabold uppercase tracking-wider text-slate-700">Tên Template *</label>
+            <div className="flex bg-slate-100 p-1 rounded-lg">
+              <button 
+                type="button"
+                onClick={() => setCurrentLang('vi')}
+                className={`px-3 py-1 text-xs font-bold rounded-md transition-colors ${currentLang === 'vi' ? 'bg-white shadow-sm text-[#0051d5]' : 'text-slate-500'}`}
+              >
+                Tiếng Việt
+              </button>
+              <button 
+                type="button"
+                onClick={() => setCurrentLang('en')}
+                className={`px-3 py-1 text-xs font-bold rounded-md transition-colors ${currentLang === 'en' ? 'bg-white shadow-sm text-[#0051d5]' : 'text-slate-500'}`}
+              >
+                English
+              </button>
+            </div>
+          </div>
           <input
             required
             name="title"
             disabled={loading}
-            value={formData.title}
+            value={formData.title[currentLang] || ''}
             onChange={handleChange}
             className="w-full px-4 py-3 border border-slate-200 focus:border-[#0051d5] rounded-xl outline-none text-xs font-semibold bg-white disabled:bg-slate-50 disabled:text-slate-400"
-            placeholder="Ví dụ: Lumina Creative Editorial Portfolio"
+            placeholder={currentLang === 'vi' ? "Ví dụ: Lumina Creative Editorial Portfolio" : "Example: Lumina Creative Editorial Portfolio"}
           />
         </div>
 
@@ -553,7 +586,7 @@ export function ProductForm({ categories, initialData }: ProductFormProps) {
             className="w-full px-4 py-3 border border-slate-200 focus:border-[#0051d5] rounded-xl outline-none text-xs font-semibold bg-white disabled:bg-slate-50 disabled:text-slate-400"
           >
             {categories.map(c => (
-              <option key={c.id} value={c.id}>{c.name}</option>
+              <option key={c.id} value={c.id}>{c.name?.vi || c.name?.en || 'Danh mục'}</option>
             ))}
           </select>
         </div>
@@ -755,16 +788,34 @@ export function ProductForm({ categories, initialData }: ProductFormProps) {
 
         {/* Description */}
         <div className="space-y-2 md:col-span-2">
-          <label className="text-xs font-extrabold uppercase tracking-wider text-slate-700">Mô tả tính năng chi tiết *</label>
+          <div className="flex justify-between items-center mb-2">
+            <label className="text-xs font-extrabold uppercase tracking-wider text-slate-700">Mô tả tính năng chi tiết *</label>
+            <div className="flex bg-slate-100 p-1 rounded-lg">
+              <button 
+                type="button"
+                onClick={() => setCurrentLang('vi')}
+                className={`px-3 py-1 text-xs font-bold rounded-md transition-colors ${currentLang === 'vi' ? 'bg-white shadow-sm text-[#0051d5]' : 'text-slate-500'}`}
+              >
+                Tiếng Việt
+              </button>
+              <button 
+                type="button"
+                onClick={() => setCurrentLang('en')}
+                className={`px-3 py-1 text-xs font-bold rounded-md transition-colors ${currentLang === 'en' ? 'bg-white shadow-sm text-[#0051d5]' : 'text-slate-500'}`}
+              >
+                English
+              </button>
+            </div>
+          </div>
           <textarea
             required
             name="description"
             disabled={loading}
-            value={formData.description}
+            value={formData.description[currentLang] || ''}
             onChange={handleChange}
             rows={5}
             className="w-full px-4 py-3 border border-slate-200 focus:border-[#0051d5] rounded-xl outline-none text-xs font-semibold bg-white resize-none disabled:bg-slate-50 disabled:text-slate-400"
-            placeholder="Mô tả các tính năng chính, hiệu ứng GSAP nổi bật, hướng dẫn cấu hình môi trường..."
+            placeholder={currentLang === 'vi' ? "Mô tả các tính năng chính, hiệu ứng GSAP nổi bật..." : "Describe main features, GSAP effects..."}
           />
         </div>
 

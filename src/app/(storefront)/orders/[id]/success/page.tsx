@@ -4,11 +4,14 @@ import { formatCurrency } from "@/lib/utils";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { CheckCircle2 } from "lucide-react";
+import { getLocale } from "@/i18n/getDictionary";
+import { getLocalizedText } from "@/presentation/utils/locale";
 
 export default async function OrderSuccessPage(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
   const result = await getOrderAction(params.id);
   const order = result.data;
+  const locale = await getLocale();
 
   if (!order) {
     redirect("/");
@@ -32,7 +35,7 @@ export default async function OrderSuccessPage(props: { params: Promise<{ id: st
           {order.items.map((item: OrderItem) => (
             <div key={item.id} className="flex justify-between items-center text-sm">
               <div className="flex-1">
-                <p className="font-bold">{item.productSnapshot?.title || item.productTitle || 'Sản phẩm'}</p>
+                <p className="font-bold">{getLocalizedText(item.productSnapshot?.title as unknown as Record<string, string>, locale) || getLocalizedText(item.productTitle as unknown as Record<string, string>, locale) || 'Sản phẩm'}</p>
                 <p className="text-on-surface-variant">Số lượng: {item.quantity}</p>
               </div>
               <span className="font-medium">{formatCurrency(item.priceAtPurchase * item.quantity)}</span>
