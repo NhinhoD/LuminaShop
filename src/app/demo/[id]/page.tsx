@@ -2,12 +2,16 @@ import { notFound } from "next/navigation";
 import { makeProductRepository } from "@/infrastructure/supabase/container";
 import Link from "next/link";
 import { Monitor, Smartphone, Tablet } from "lucide-react";
+import { cookies } from "next/headers";
+import { getLocalizedText } from "@/presentation/utils/locale";
 
 interface DemoPageProps {
   params: Promise<{ id: string }>;
 }
 
 export default async function DemoPage({ params }: DemoPageProps) {
+  const cookieStore = await cookies();
+  const locale = (cookieStore.get('NEXT_LOCALE')?.value as 'vi' | 'en') || 'vi';
   const { id } = await params;
   const productRepository = await makeProductRepository();
   const product = await productRepository.findById(id);
@@ -65,7 +69,7 @@ export default async function DemoPage({ params }: DemoPageProps) {
           className="w-full h-full border-0 bg-white" 
           sandbox="allow-scripts allow-same-origin allow-popups"
           allow="autoplay; fullscreen; clipboard-read; clipboard-write; encrypted-media"
-          title={`Live Demo of ${product.title}`}
+          title={`Live Demo of ${getLocalizedText(product.title as Record<string, string>, locale)}`}
         />
       </div>
     </div>
