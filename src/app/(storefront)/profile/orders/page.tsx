@@ -1,9 +1,11 @@
 import Link from "next/link";
 import { Download, Package, ShoppingBag, ArrowRight } from "lucide-react";
 import { Metadata } from "next";
+import { cookies } from "next/headers";
 import { createClient } from "@/infrastructure/supabase/server";
 import { PaginationControls } from "@/presentation/components/common/PaginationControls";
 import { ProfileOrderSearch } from "./ProfileOrderSearch";
+import { getLocalizedText } from "@/presentation/utils/locale";
 
 export const metadata: Metadata = {
   title: "Kho giao diện đã mua | KhoUI",
@@ -15,6 +17,8 @@ interface OrderHistoryPageProps {
 }
 
 export default async function OrderHistoryPage({ searchParams }: OrderHistoryPageProps) {
+  const cookieStore = await cookies();
+  const locale = (cookieStore.get('NEXT_LOCALE')?.value as 'vi' | 'en') || 'vi';
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
@@ -129,7 +133,7 @@ export default async function OrderHistoryPage({ searchParams }: OrderHistoryPag
                     // eslint-disable-next-line @next/next/no-img-element
                     <img 
                       src={product.image_url} 
-                      alt={product.title} 
+                      alt={getLocalizedText(product.title as Record<string, string>, locale)} 
                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
                     />
                   ) : (
@@ -149,7 +153,7 @@ export default async function OrderHistoryPage({ searchParams }: OrderHistoryPag
                   <div className="flex-grow">
                     <Link href={`/product/${item.product_id}`}>
                       <h3 className="font-extrabold text-slate-900 text-xl font-bricolage leading-snug mb-2 group-hover:text-[#0051d5] transition-colors line-clamp-2">
-                        {product.title}
+                        {getLocalizedText(product.title as Record<string, string>, locale)}
                       </h3>
                     </Link>
                     <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-6">
