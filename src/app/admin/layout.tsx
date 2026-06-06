@@ -2,7 +2,9 @@ import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/infrastructure/supabase/server";
 import { ROLES, ROUTES } from "@/presentation/constants";
 import { NavLink } from "@/presentation/components/common/NavLink";
+import { LanguageSwitcher } from "@/presentation/components/common/LanguageSwitcher";
 
+export const dynamic = "force-dynamic";
 export default async function AdminLayout({
   children,
 }: Readonly<{
@@ -66,6 +68,9 @@ export default async function AdminLayout({
           </div>
           <div className="hidden text-xl font-bold text-slate-900 dark:text-slate-50 tracking-tight">Admin Console</div>
           <div className="flex items-center gap-6">
+            <div className="mr-2">
+              <LanguageSwitcher />
+            </div>
             <button className="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-50 transition-colors">
               <span className="material-symbols-outlined">notifications</span>
             </button>
