@@ -1,16 +1,13 @@
 import { cookies } from "next/headers";
-import { vi as fallbackVi } from "./dictionaries/vi";
-import { en as fallbackEn } from "./dictionaries/en";
-import { makeTranslationRepository } from "@/infrastructure/supabase/container";
+import { makeLanguageRepository } from "@/infrastructure/supabase/container";
 
 export type Locale = "vi" | "en";
-export type Dictionary = typeof fallbackVi; // Maintain the same type structure
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type Dictionary = Record<string, any>;
 
-const fallbackDictionaries: Record<Locale, Dictionary> = {
-  vi: fallbackVi,
-  en: fallbackEn,
-};
-
+// Simple in-memory cache to avoid hitting the DB on every single render
+let cachedDictionary: { vi: Record<string, unknown>; en: Record<string, unknown>; timestamp: number } | null = null;
+const CACHE_TTL_MS = 60 * 1000; // 1 minute cache
 /**
  * Helper to build a nested dictionary object from flat translation entries.
  * e.g., 'home.hero.title' -> { home: { hero: { title: '...' } } }
@@ -29,9 +26,6 @@ function buildNestedDictionary(entries: { key: string; text: string }[]): Record
   return dict;
 }
 
-// Simple in-memory cache to avoid hitting the DB on every single render
-let cachedDictionary: { vi: Record<string, unknown>; en: Record<string, unknown>; timestamp: number } | null = null;
-const CACHE_TTL_MS = 60 * 1000; // 1 minute cache
 
 export async function getLocale(): Promise<Locale> {
   const cookieStore = await cookies();
@@ -45,38 +39,31 @@ export async function getDictionary(): Promise<Dictionary> {
     const now = Date.now();
     // Check if we have a valid cache
     if (cachedDictionary && (now - cachedDictionary.timestamp) < CACHE_TTL_MS) {
-      // Merge cached DB dictionary over the fallback to ensure no missing keys
-      return {
-        ...fallbackDictionaries[locale],
-        ...(cachedDictionary[locale] || {})
-      } as Dictionary;
+      return cachedDictionary[locale] as Dictionary;
     }
 
-    const repo = await makeTranslationRepository();
-    const entries = await repo.getAllTranslations();
+    const repo = await makeLanguageRepository();
+    const flatDict = await repo.fetchTranslations(locale);
 
-    if (!entries || entries.length === 0) {
-      return fallbackDictionaries[locale];
+    if (!flatDict || Object.keys(flatDict).length === 0) {
+      return {};
     }
 
-    const viEntries = entries.map(e => ({ key: e.key, text: e.vi }));
-    const enEntries = entries.map(e => ({ key: e.key, text: e.en }));
+    const entries = Object.entries(flatDict).map(([key, text]) => ({ key, text }));
+    const nestedDict = buildNestedDictionary(entries);
 
-    cachedDictionary = {
-      vi: buildNestedDictionary(viEntries),
-      en: buildNestedDictionary(enEntries),
-      timestamp: now
-    };
+    // Update cache for the locale
+    if (!cachedDictionary) {
+      cachedDictionary = { vi: {}, en: {}, timestamp: now };
+    }
+    cachedDictionary[locale] = nestedDict;
+    cachedDictionary.timestamp = now;
 
-    // Deep merge DB dictionary over fallback dictionary
-    return {
-      ...fallbackDictionaries[locale],
-      ...(cachedDictionary[locale] || {})
-    } as Dictionary;
+    return cachedDictionary[locale] as Dictionary;
 
   } catch (error) {
-    console.error("Failed to load dictionary from Supabase, falling back to static files:", error);
-    return fallbackDictionaries[locale];
+    console.error("Failed to load dictionary from Supabase:", error);
+    return {};
   }
 }
 

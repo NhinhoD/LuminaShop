@@ -189,6 +189,25 @@ export async function makeGetDashboardMetricsUseCase() {
   return new GetDashboardMetricsUseCase(repo);
 }
 
+// Translation Factories
+export async function makeAddTranslationUseCase() {
+  const repo = await makeTranslationRepository();
+  const { AddTranslationUseCase } = await import('@/application/use-cases/translations/AddTranslation');
+  return new AddTranslationUseCase(repo);
+}
+
+export async function makeUpdateTranslationUseCase() {
+  const repo = await makeTranslationRepository();
+  const { UpdateTranslationUseCase } = await import('@/application/use-cases/translations/UpdateTranslation');
+  return new UpdateTranslationUseCase(repo);
+}
+
+export async function makeDeleteTranslationUseCase() {
+  const repo = await makeTranslationRepository();
+  const { DeleteTranslationUseCase } = await import('@/application/use-cases/translations/DeleteTranslation');
+  return new DeleteTranslationUseCase(repo);
+}
+
 // Auth Factories
 export async function makeAuthRepository(): Promise<IAuthRepository> {
   const supabase = await makeSupabaseClient();

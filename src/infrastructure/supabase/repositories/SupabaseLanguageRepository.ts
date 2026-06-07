@@ -37,4 +37,23 @@ export class SupabaseLanguageRepository implements ILanguageRepository {
       createdAt: new Date(data.created_at)
     };
   }
+
+  async fetchTranslations(locale: 'vi' | 'en'): Promise<Record<string, string>> {
+    const { data, error } = await this.supabase
+      .from('site_translations')
+      .select(`key, ${locale}`);
+
+    if (error) {
+      console.error('Error fetching translations:', error);
+      return {};
+    }
+
+    const dict: Record<string, string> = {};
+    if (data) {
+      data.forEach((row: Record<string, string>) => {
+        dict[row.key] = row[locale] || '';
+      });
+    }
+    return dict;
+  }
 }

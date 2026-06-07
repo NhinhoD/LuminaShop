@@ -287,15 +287,16 @@ chore: install supabase agent skills
 - **Task 5 (UI Evolution)**: Successfully migrated the storefront into an elegant, high-contrast editorial look inspired by the Sarab Spec, configured via local assets.
 - **Digital Product Refactoring**: Transitioned core entities (`Product`, `Order`) from physical inventory tracking to digital download licensing models.
 - **Autonomous AI Template Pipeline**: Engineered native zippers, AI design blueprints (with GSAP scroll triggers and interactive mouse followers), server-side storage handlers, and admin auto-population dashboard interfaces.
+- **Multi-Language Localization**:
+  - Database: Created `languages` and `site_translations` tables in Supabase via MCP with 'vi' and 'en' records.
+  - Implemented Domain, Infrastructure (`SupabaseLanguageRepository`, `SupabaseTranslationRepository`), Application (Use Cases), and Presentation (Server Actions & Admin UI).
+  - Replaced static dictionaries with dynamic database-driven translations.
 
 ### 🔄 In Progress:
-- **Multi-Language Localization**:
-  - ✅ Database: Created `languages` table in Supabase via MCP with 'vi' and 'en' records.
-  - ⏳ Next: Implement Domain, Infrastructure (SupabaseLanguageRepository), Application (Use Cases), and Presentation (Server Actions & UI Switcher) layers.
+- None currently.
 
 ### ⏳ Next Tasks (recommended order):
-1. **Multi-Language Localization (Continue)**: Finish the Clean Architecture layers for the newly created `languages` table.
-2. **Payment Gateway Integration**: Hook up a live VietQR/PayOS dynamic payment API so users can purchase these premium templates using real fiat money.
+1. **Payment Gateway Integration**: Hook up a live VietQR/PayOS dynamic payment API so users can purchase these premium templates using real fiat money.
 
 ### ⚠️ Known Issues:
 - None currently
