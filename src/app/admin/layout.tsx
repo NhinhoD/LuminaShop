@@ -57,6 +57,8 @@ export default async function AdminLayout({
             <NavLink href="/admin/categories" icon="category">Categories</NavLink>
             <NavLink href="/admin/orders" icon="shopping_cart">Orders</NavLink>
             <NavLink href="/admin/customers" icon="group">Customers</NavLink>
+            <NavLink href="/admin/languages" icon="language">Languages</NavLink>
+            <NavLink href="/admin/translations" icon="translate">Translations</NavLink>
             <NavLink href="/admin/settings" icon="settings">Settings</NavLink>
           </ul>
         </div>
