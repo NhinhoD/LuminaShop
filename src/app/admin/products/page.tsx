@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { makeGetProductsUseCase, makeGetCategoriesUseCase } from "@/infrastructure/supabase/container";
+import { makeGetProductsUseCase, makeGetCategoriesUseCase, makeLanguageRepository } from "@/infrastructure/supabase/container";
 import { formatCurrency } from "@/lib/utils";
 import { ProductDeleteButton } from "@/app/admin/products/ProductDeleteButton";
 import { PaginationControls } from "@/presentation/components/common/PaginationControls";
@@ -11,8 +11,9 @@ export default async function AdminProductsPage({
 }: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
-  const dictionary = await getDictionary();
-  const dict = dictionary.products;
+  const repo = await makeLanguageRepository();
+  const dictionary = await getDictionary(repo);
+  const dict = (dictionary.products as Record<string, string>) || {};
   const locale = await getLocale();
   
   const params = await searchParams;

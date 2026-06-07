@@ -1,16 +1,24 @@
 import { cookies } from "next/headers";
-import { vi as fallbackVi } from "./dictionaries/vi";
-import { en as fallbackEn } from "./dictionaries/en";
-import { makeTranslationRepository } from "@/infrastructure/supabase/container";
+import { ILanguageRepository, Locale as DomainLocale } from "@/domain/repositories/ILanguageRepository";
 
 export type Locale = "vi" | "en";
-export type Dictionary = typeof fallbackVi; // Maintain the same type structure
 
-const fallbackDictionaries: Record<Locale, Dictionary> = {
-  vi: fallbackVi,
-  en: fallbackEn,
+export interface Dictionary {
+  [key: string]: string | Dictionary;
+}
+
+const DEFAULT_ADMIN_DICTIONARY: Dictionary = {
+  dashboard: {},
+  products: {},
+  home: {}
 };
 
+// Simple in-memory cache to avoid hitting the DB on every single render
+const cache: Record<Locale, { data: Record<string, unknown> | null; timestamp: number }> = {
+  vi: { data: null, timestamp: 0 },
+  en: { data: null, timestamp: 0 }
+};
+const CACHE_TTL_MS = 60 * 1000; // 1 minute cache
 /**
  * Helper to build a nested dictionary object from flat translation entries.
  * e.g., 'home.hero.title' -> { home: { hero: { title: '...' } } }
@@ -29,57 +37,46 @@ function buildNestedDictionary(entries: { key: string; text: string }[]): Record
   return dict;
 }
 
-// Simple in-memory cache to avoid hitting the DB on every single render
-let cachedDictionary: { vi: Record<string, unknown>; en: Record<string, unknown>; timestamp: number } | null = null;
-const CACHE_TTL_MS = 60 * 1000; // 1 minute cache
 
 export async function getLocale(): Promise<Locale> {
   const cookieStore = await cookies();
   return (cookieStore.get("NEXT_LOCALE")?.value as Locale) || "vi";
 }
 
-export async function getDictionary(): Promise<Dictionary> {
+export async function getDictionary(repo: ILanguageRepository): Promise<Dictionary> {
   const locale = await getLocale();
 
   try {
     const now = Date.now();
     // Check if we have a valid cache
-    if (cachedDictionary && (now - cachedDictionary.timestamp) < CACHE_TTL_MS) {
-      // Merge cached DB dictionary over the fallback to ensure no missing keys
-      return {
-        ...fallbackDictionaries[locale],
-        ...(cachedDictionary[locale] || {})
-      } as Dictionary;
+    if (cache[locale].data && (now - cache[locale].timestamp) < CACHE_TTL_MS) {
+      return cache[locale].data as Dictionary;
     }
 
-    const repo = await makeTranslationRepository();
-    const entries = await repo.getAllTranslations();
+    const flatDict = await repo.fetchTranslations(locale === 'vi' ? DomainLocale.VI : DomainLocale.EN);
 
-    if (!entries || entries.length === 0) {
-      return fallbackDictionaries[locale];
+    if (!flatDict || Object.keys(flatDict).length === 0) {
+      return DEFAULT_ADMIN_DICTIONARY;
     }
 
-    const viEntries = entries.map(e => ({ key: e.key, text: e.vi }));
-    const enEntries = entries.map(e => ({ key: e.key, text: e.en }));
+    const entries = Object.entries(flatDict).map(([key, text]) => ({ key, text }));
+    const nestedDict = buildNestedDictionary(entries) as Dictionary;
 
-    cachedDictionary = {
-      vi: buildNestedDictionary(viEntries),
-      en: buildNestedDictionary(enEntries),
-      timestamp: now
-    };
+    const mergedDict = { ...DEFAULT_ADMIN_DICTIONARY, ...nestedDict };
 
-    // Deep merge DB dictionary over fallback dictionary
-    return {
-      ...fallbackDictionaries[locale],
-      ...(cachedDictionary[locale] || {})
-    } as Dictionary;
+    // Update cache for the locale
+    cache[locale].data = mergedDict as Record<string, unknown>;
+    cache[locale].timestamp = now;
+
+    return mergedDict;
 
   } catch (error) {
-    console.error("Failed to load dictionary from Supabase, falling back to static files:", error);
-    return fallbackDictionaries[locale];
+    console.error("Failed to load dictionary from Supabase:", error);
+    return DEFAULT_ADMIN_DICTIONARY;
   }
 }
 
-export function clearDictionaryCache() {
-  cachedDictionary = null;
+export function clearDictionaryCache(): void {
+  cache.vi = { data: null, timestamp: 0 };
+  cache.en = { data: null, timestamp: 0 };
 }

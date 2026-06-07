@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { makeGetDashboardMetricsUseCase, makeOrderRepository } from "@/infrastructure/supabase/container";
+import { makeGetDashboardMetricsUseCase, makeOrderRepository, makeLanguageRepository } from "@/infrastructure/supabase/container";
 import { getDictionary } from "@/i18n/getDictionary";
 import { formatCurrency } from "@/lib/utils";
 import { StatusBadge } from "@/presentation/components/orders/StatusBadge";
@@ -7,8 +7,9 @@ import { formatDate } from "@/presentation/utils";
 import { Order } from "@/domain/entities/Order";
 
 export default async function AdminDashboardPage() {
-  const dictionary = await getDictionary();
-  const dict = dictionary.dashboard;
+  const repo = await makeLanguageRepository();
+  const dictionary = await getDictionary(repo);
+  const dict = (dictionary.dashboard as Record<string, string>) || {};
 
   const dashboardUseCase = await makeGetDashboardMetricsUseCase();
   const orderRepo = await makeOrderRepository();

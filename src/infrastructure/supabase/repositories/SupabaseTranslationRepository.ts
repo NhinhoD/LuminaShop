@@ -27,4 +27,25 @@ export class SupabaseTranslationRepository implements ITranslationRepository {
       throw new Error(`Failed to update translation: ${error.message}`);
     }
   }
+
+  async addTranslation(entry: TranslationEntry): Promise<void> {
+    const { error } = await this.supabase
+      .from('site_translations')
+      .insert({ ...entry, created_at: new Date().toISOString(), updated_at: new Date().toISOString() });
+
+    if (error) {
+      throw new Error(`Failed to add translation: ${error.message}`);
+    }
+  }
+
+  async deleteTranslation(key: string): Promise<void> {
+    const { error } = await this.supabase
+      .from('site_translations')
+      .delete()
+      .eq('key', key);
+
+    if (error) {
+      throw new Error(`Failed to delete translation: ${error.message}`);
+    }
+  }
 }

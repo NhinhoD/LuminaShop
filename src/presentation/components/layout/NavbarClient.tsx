@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState, useRef } from "react";
-import type { Dictionary } from "@/i18n/getDictionary";
+
 import { ROUTES } from "@/presentation/constants";
 import NavbarCartIcon from "./NavbarCartIcon";
 import gsap from "gsap";
@@ -13,7 +13,7 @@ interface NavbarClientProps {
   readonly user: unknown;
   readonly brandName: string;
   readonly navLinks: readonly { label: string; href: string }[];
-  readonly dict: Dictionary;
+  readonly dict: Record<string, Record<string, string>>;
 }
 
 export default function NavbarClient({ user, navLinks, dict }: NavbarClientProps) {

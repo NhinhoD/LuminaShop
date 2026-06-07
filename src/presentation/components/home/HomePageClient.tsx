@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
-import type { Dictionary } from "@/i18n/getDictionary";
+
 import { ROUTES } from "@/presentation/constants";
 import { formatCurrency } from "@/lib/utils";
 import { useLocale } from "@/presentation/hooks/useLocale";
@@ -32,7 +32,7 @@ if (typeof window !== "undefined") {
 
 interface HomePageClientProps {
   readonly featuredProducts: readonly Product[];
-  readonly dict: Dictionary['home'];
+  readonly dict: Record<string, Record<string, string>>;
 }
 
 /* ─── Digital Marketplace Static Data ─── */

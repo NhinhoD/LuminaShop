@@ -1,4 +1,4 @@
-import { ILanguageRepository } from '@/domain/repositories/ILanguageRepository';
+import { ILanguageRepository, Locale } from '@/domain/repositories/ILanguageRepository';
 import { Language } from '@/domain/entities/Language';
 import { SupabaseClient } from '@supabase/supabase-js';
 
@@ -36,5 +36,24 @@ export class SupabaseLanguageRepository implements ILanguageRepository {
       isDefault: data.is_default,
       createdAt: new Date(data.created_at)
     };
+  }
+
+  async fetchTranslations(locale: Locale): Promise<Record<string, string>> {
+    const { data, error } = await this.supabase
+      .from('site_translations')
+      .select(`key, ${locale}`);
+
+    if (error) {
+      console.error('Error fetching translations:', error);
+      return {};
+    }
+
+    const dict: Record<string, string> = {};
+    if (data) {
+      data.forEach((row: Record<string, string>) => {
+        dict[row.key] = row[locale] || '';
+      });
+    }
+    return dict;
   }
 }
