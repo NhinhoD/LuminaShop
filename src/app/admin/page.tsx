@@ -8,7 +8,7 @@ import { Order } from "@/domain/entities/Order";
 
 export default async function AdminDashboardPage() {
   const dictionary = await getDictionary();
-  const dict = dictionary.dashboard;
+  const dict = dictionary.dashboard || {};
 
   const dashboardUseCase = await makeGetDashboardMetricsUseCase();
   const orderRepo = await makeOrderRepository();

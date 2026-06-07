@@ -12,7 +12,7 @@ export default async function AdminProductsPage({
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   const dictionary = await getDictionary();
-  const dict = dictionary.products;
+  const dict = dictionary.products || {};
   const locale = await getLocale();
   
   const params = await searchParams;

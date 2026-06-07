@@ -6,7 +6,10 @@ export type Locale = "vi" | "en";
 export type Dictionary = Record<string, any>;
 
 // Simple in-memory cache to avoid hitting the DB on every single render
-let cachedDictionary: { vi: Record<string, unknown>; en: Record<string, unknown>; timestamp: number } | null = null;
+const cache: Record<Locale, { data: Record<string, unknown> | null; timestamp: number }> = {
+  vi: { data: null, timestamp: 0 },
+  en: { data: null, timestamp: 0 }
+};
 const CACHE_TTL_MS = 60 * 1000; // 1 minute cache
 /**
  * Helper to build a nested dictionary object from flat translation entries.
@@ -38,8 +41,8 @@ export async function getDictionary(): Promise<Dictionary> {
   try {
     const now = Date.now();
     // Check if we have a valid cache
-    if (cachedDictionary && (now - cachedDictionary.timestamp) < CACHE_TTL_MS) {
-      return cachedDictionary[locale] as Dictionary;
+    if (cache[locale].data && (now - cache[locale].timestamp) < CACHE_TTL_MS) {
+      return cache[locale].data as Dictionary;
     }
 
     const repo = await makeLanguageRepository();
@@ -53,13 +56,10 @@ export async function getDictionary(): Promise<Dictionary> {
     const nestedDict = buildNestedDictionary(entries);
 
     // Update cache for the locale
-    if (!cachedDictionary) {
-      cachedDictionary = { vi: {}, en: {}, timestamp: now };
-    }
-    cachedDictionary[locale] = nestedDict;
-    cachedDictionary.timestamp = now;
+    cache[locale].data = nestedDict;
+    cache[locale].timestamp = now;
 
-    return cachedDictionary[locale] as Dictionary;
+    return nestedDict as Dictionary;
 
   } catch (error) {
     console.error("Failed to load dictionary from Supabase:", error);
@@ -68,5 +68,6 @@ export async function getDictionary(): Promise<Dictionary> {
 }
 
 export function clearDictionaryCache() {
-  cachedDictionary = null;
+  cache.vi = { data: null, timestamp: 0 };
+  cache.en = { data: null, timestamp: 0 };
 }

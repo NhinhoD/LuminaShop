@@ -42,7 +42,7 @@ export default async function HomePage(): Promise<React.ReactElement> {
 
   return (
     <main className="flex flex-col min-h-screen">
-      <HomePageClient featuredProducts={featuredProducts} dict={dictionary.home} />
+      <HomePageClient featuredProducts={featuredProducts} dict={dictionary.home || {}} />
     </main>
   );
 }
