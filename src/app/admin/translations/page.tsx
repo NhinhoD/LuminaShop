@@ -1,10 +1,9 @@
-import { makeTranslationRepository } from '@/infrastructure/supabase/container';
+import { getTranslationsAction } from '@/presentation/actions/i18n';
 import { Languages } from 'lucide-react';
 import TranslationTableClient from './TranslationTableClient';
 
-export default async function AdminTranslationsPage() {
-  const repo = await makeTranslationRepository();
-  const translations = await repo.getAllTranslations();
+export default async function AdminTranslationsPage(): Promise<React.ReactElement> {
+  const translations = await getTranslationsAction();
 
   // Sort by namespace then key
   translations.sort((a, b) => a.key.localeCompare(b.key));

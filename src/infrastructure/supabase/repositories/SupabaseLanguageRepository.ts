@@ -1,4 +1,4 @@
-import { ILanguageRepository } from '@/domain/repositories/ILanguageRepository';
+import { ILanguageRepository, Locale } from '@/domain/repositories/ILanguageRepository';
 import { Language } from '@/domain/entities/Language';
 import { SupabaseClient } from '@supabase/supabase-js';
 
@@ -38,7 +38,7 @@ export class SupabaseLanguageRepository implements ILanguageRepository {
     };
   }
 
-  async fetchTranslations(locale: 'vi' | 'en'): Promise<Record<string, string>> {
+  async fetchTranslations(locale: Locale): Promise<Record<string, string>> {
     const { data, error } = await this.supabase
       .from('site_translations')
       .select(`key, ${locale}`);

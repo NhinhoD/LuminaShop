@@ -1,9 +1,17 @@
 import { cookies } from "next/headers";
-import { makeLanguageRepository } from "@/infrastructure/supabase/container";
+import { ILanguageRepository, Locale as DomainLocale } from "@/domain/repositories/ILanguageRepository";
 
 export type Locale = "vi" | "en";
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type Dictionary = Record<string, any>;
+
+export interface Dictionary {
+  [key: string]: string | Dictionary;
+}
+
+const DEFAULT_ADMIN_DICTIONARY: Dictionary = {
+  dashboard: {},
+  products: {},
+  home: {}
+};
 
 // Simple in-memory cache to avoid hitting the DB on every single render
 const cache: Record<Locale, { data: Record<string, unknown> | null; timestamp: number }> = {
@@ -35,7 +43,7 @@ export async function getLocale(): Promise<Locale> {
   return (cookieStore.get("NEXT_LOCALE")?.value as Locale) || "vi";
 }
 
-export async function getDictionary(): Promise<Dictionary> {
+export async function getDictionary(repo: ILanguageRepository): Promise<Dictionary> {
   const locale = await getLocale();
 
   try {
@@ -45,29 +53,30 @@ export async function getDictionary(): Promise<Dictionary> {
       return cache[locale].data as Dictionary;
     }
 
-    const repo = await makeLanguageRepository();
-    const flatDict = await repo.fetchTranslations(locale);
+    const flatDict = await repo.fetchTranslations(locale === 'vi' ? DomainLocale.VI : DomainLocale.EN);
 
     if (!flatDict || Object.keys(flatDict).length === 0) {
-      return {};
+      return DEFAULT_ADMIN_DICTIONARY;
     }
 
     const entries = Object.entries(flatDict).map(([key, text]) => ({ key, text }));
-    const nestedDict = buildNestedDictionary(entries);
+    const nestedDict = buildNestedDictionary(entries) as Dictionary;
+
+    const mergedDict = { ...DEFAULT_ADMIN_DICTIONARY, ...nestedDict };
 
     // Update cache for the locale
-    cache[locale].data = nestedDict;
+    cache[locale].data = mergedDict as Record<string, unknown>;
     cache[locale].timestamp = now;
 
-    return nestedDict as Dictionary;
+    return mergedDict;
 
   } catch (error) {
     console.error("Failed to load dictionary from Supabase:", error);
-    return {};
+    return DEFAULT_ADMIN_DICTIONARY;
   }
 }
 
-export function clearDictionaryCache() {
+export function clearDictionaryCache(): void {
   cache.vi = { data: null, timestamp: 0 };
   cache.en = { data: null, timestamp: 0 };
 }

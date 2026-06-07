@@ -1,12 +1,17 @@
 "use server";
 
 import { cookies } from "next/headers";
-import { makeAddTranslationUseCase, makeUpdateTranslationUseCase, makeDeleteTranslationUseCase } from "@/infrastructure/supabase/container";
+import { makeAddTranslationUseCase, makeUpdateTranslationUseCase, makeDeleteTranslationUseCase, makeTranslationRepository } from "@/infrastructure/supabase/container";
 import { clearDictionaryCache } from "@/i18n/getDictionary";
 
 export async function setLanguageAction(locale: "vi" | "en") {
   const cookieStore = await cookies();
   cookieStore.set("NEXT_LOCALE", locale, { path: "/", maxAge: 60 * 60 * 24 * 365 }); // 1 year
+}
+
+export async function getTranslationsAction() {
+  const repo = await makeTranslationRepository();
+  return repo.getAllTranslations();
 }
 
 export async function addTranslationAction(key: string, namespace: string, vi: string, en: string) {

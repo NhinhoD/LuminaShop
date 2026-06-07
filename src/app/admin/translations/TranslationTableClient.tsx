@@ -6,10 +6,13 @@ import { Edit3, Plus, Trash2, Search, Check, X } from 'lucide-react';
 import { addTranslationAction, updateTranslationAction, deleteTranslationAction } from '@/presentation/actions/i18n';
 import { useRouter } from 'next/navigation';
 
-export default function TranslationTableClient({ initialTranslations }: { initialTranslations: TranslationEntry[] }) {
+import React from 'react';
+
+export default function TranslationTableClient({ initialTranslations }: { initialTranslations: TranslationEntry[] }): React.ReactElement {
   const [search, setSearch] = useState("");
   const [adding, setAdding] = useState(false);
   const [editingKey, setEditingKey] = useState<string | null>(null);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
   
   // New translation state
   const [newKey, setNewKey] = useState("");
@@ -39,7 +42,7 @@ export default function TranslationTableClient({ initialTranslations }: { initia
       setNewEn("");
       router.refresh();
     } else {
-      alert(res.error);
+      setErrorMsg(res.error || 'Failed to add translation');
     }
   }
 
@@ -49,7 +52,7 @@ export default function TranslationTableClient({ initialTranslations }: { initia
       setEditingKey(null);
       router.refresh();
     } else {
-      alert(res.error);
+      setErrorMsg(res.error || 'Failed to update translation');
     }
   }
 
@@ -59,7 +62,7 @@ export default function TranslationTableClient({ initialTranslations }: { initia
     if (res.success) {
       router.refresh();
     } else {
-      alert(res.error);
+      setErrorMsg(res.error || 'Failed to delete translation');
     }
   }
 
@@ -71,6 +74,12 @@ export default function TranslationTableClient({ initialTranslations }: { initia
 
   return (
     <div className="space-y-4">
+      {errorMsg && (
+        <div className="bg-red-50 text-red-600 p-3 rounded-lg border border-red-100 flex justify-between items-center text-sm">
+          <span>{errorMsg}</span>
+          <button onClick={() => setErrorMsg(null)} className="p-1 hover:bg-red-100 rounded-md"><X className="w-4 h-4" /></button>
+        </div>
+      )}
       <div className="flex gap-4 items-center mb-4">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-on-surface/50" />

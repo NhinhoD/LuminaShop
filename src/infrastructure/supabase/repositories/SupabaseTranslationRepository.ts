@@ -28,7 +28,7 @@ export class SupabaseTranslationRepository implements ITranslationRepository {
     }
   }
 
-  async addTranslation(entry: Omit<TranslationEntry, 'id'>): Promise<void> {
+  async addTranslation(entry: TranslationEntry): Promise<void> {
     const { error } = await this.supabase
       .from('site_translations')
       .insert({ ...entry, created_at: new Date().toISOString(), updated_at: new Date().toISOString() });
