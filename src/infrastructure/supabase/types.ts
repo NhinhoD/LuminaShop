@@ -98,3 +98,14 @@ export interface CategoryRow {
   updated_at: string;
   products?: { count: number }[];
 }
+
+export interface PaymentRow {
+  id: string;
+  order_id: string;
+  method: string;
+  status: string;
+  amount: number | string;
+  transaction_id?: string | null;
+  webhook_payload?: unknown;
+  created_at: string;
+}
