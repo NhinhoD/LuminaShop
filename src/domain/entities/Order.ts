@@ -9,7 +9,8 @@ export enum OrderStatus {
 export enum PaymentMethod {
   COD = 'cod',
   VNPAY = 'vnpay',
-  MOMO = 'momo'
+  MOMO = 'momo',
+  PAYOS = 'payos'
 }
 export type PaymentStatus = 'unpaid' | 'paid' | 'failed' | 'refunded';
 

@@ -8,9 +8,9 @@ export default async function RegisterPage({ searchParams }: { searchParams: { e
   return (
     <div className="min-h-screen bg-[#f8f9fa] flex flex-col items-center justify-center py-20 px-4">
       {/* Brand Header */}
-      <h1 className="text-4xl font-black tracking-[0.2em] text-slate-950 uppercase mb-12">
-        {BRAND_NAME}
-      </h1>
+      <Link href={ROUTES.HOME} className="mb-12">
+        <img src="/LogoKhoUI.png" alt="KhoUI Logo" className="h-16 w-auto object-contain" />
+      </Link>
 
       {/* Registration Card */}
       <div className="w-full max-w-[540px] bg-white rounded-xl shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-slate-100 p-10 md:p-12">

@@ -27,7 +27,10 @@ import { UpdateProductUseCase } from '@/application/use-cases/products/UpdatePro
 import { GetProductByIdUseCase } from '@/application/use-cases/products/GetProductById';
 import { GetProductsUseCase } from '@/application/use-cases/products/GetProducts';
 import { ProcessPaymentUseCase } from '@/application/use-cases/payment/ProcessPayment';
+import { HandlePayOSWebhookUseCase } from '@/application/use-cases/payment/HandlePayOSWebhook';
 import { CODPaymentGateway } from './gateways/CODPaymentGateway';
+import { PayOSGateway } from './gateways/PayOSGateway';
+import { CompositePaymentGateway } from './gateways/CompositePaymentGateway';
 
 import { LoginUseCase } from '@/application/use-cases/auth/LoginUseCase';
 import { SignupUseCase } from '@/application/use-cases/auth/SignupUseCase';
@@ -163,10 +166,28 @@ export async function makeCODPaymentGateway() {
   return new CODPaymentGateway(supabase);
 }
 
+export async function makePayOSGateway() {
+  const supabase = await makeSupabaseClient();
+  return new PayOSGateway(supabase);
+}
+
 export async function makeProcessPaymentUseCase() {
-  const gateway = await makeCODPaymentGateway(); // default to COD for now, ideally dynamically chosen
+  const codGateway = await makeCODPaymentGateway();
+  const payosGateway = await makePayOSGateway();
+  
+  const compositeGateway = new CompositePaymentGateway({
+    cod: codGateway,
+    payos: payosGateway
+  });
+
   const orderRepo = await makeOrderRepository();
-  return new ProcessPaymentUseCase(gateway, orderRepo);
+  return new ProcessPaymentUseCase(compositeGateway, orderRepo);
+}
+
+export async function makeHandlePayOSWebhookUseCase() {
+  const supabase = await makeSupabaseClient();
+  const orderRepo = await makeOrderRepository();
+  return new HandlePayOSWebhookUseCase(orderRepo, supabase);
 }
 
 // Language Factories
