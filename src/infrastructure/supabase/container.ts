@@ -190,6 +190,13 @@ export async function makeHandlePayOSWebhookUseCase() {
   return new HandlePayOSWebhookUseCase(orderRepo, supabase);
 }
 
+export async function makeVerifyOrderPaymentUseCase() {
+  const supabase = await makeSupabaseClient();
+  const orderRepo = await makeOrderRepository();
+  const { VerifyOrderPaymentUseCase } = await import('@/application/use-cases/payment/VerifyOrderPayment');
+  return new VerifyOrderPaymentUseCase(orderRepo, supabase);
+}
+
 // Language Factories
 export async function makeGetLanguagesUseCase() {
   const repo = await makeLanguageRepository();

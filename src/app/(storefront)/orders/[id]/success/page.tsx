@@ -1,4 +1,5 @@
 import { getOrderAction } from "@/presentation/actions/order";
+import { verifyOrderPaymentAction } from "@/presentation/actions/payment";
 import { OrderItem } from "@/domain/entities/Order";
 import { formatCurrency } from "@/lib/utils";
 import Link from "next/link";
@@ -9,6 +10,10 @@ import { getLocalizedText } from "@/presentation/utils/locale";
 
 export default async function OrderSuccessPage(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
+  
+  // Verify payment status (especially for PayOS on localhost where webhook might not reach)
+  await verifyOrderPaymentAction(params.id);
+  
   const result = await getOrderAction(params.id);
   const order = result.data;
   const locale = await getLocale();
