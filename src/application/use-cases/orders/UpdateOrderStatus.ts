@@ -45,15 +45,10 @@ export class UpdateOrderStatusUseCase {
 
     switch (current) {
       case OrderStatus.PENDING:
-        return next === OrderStatus.PROCESSING || next === OrderStatus.CANCELLED;
-      case OrderStatus.PROCESSING:
-        return next === OrderStatus.SHIPPED || next === OrderStatus.CANCELLED;
-      case OrderStatus.SHIPPED:
-        return next === OrderStatus.DELIVERED;
-      case OrderStatus.DELIVERED:
-        return false; // No transition allowed from DELIVERED
+        return next === OrderStatus.COMPLETED || next === OrderStatus.CANCELLED;
+      case OrderStatus.COMPLETED:
       case OrderStatus.CANCELLED:
-        return false; // No transition allowed from CANCELLED
+        return false;
       default:
         return false;
     }

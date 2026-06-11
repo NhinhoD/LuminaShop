@@ -13,16 +13,8 @@ const statusConfig = {
     label: "Chờ xác nhận",
     classes: "bg-yellow-100 text-yellow-700 border-yellow-200",
   },
-  [OrderStatus.PROCESSING]: {
-    label: "Đang xử lý",
-    classes: "bg-blue-100 text-blue-700 border-blue-200",
-  },
-  [OrderStatus.SHIPPED]: {
-    label: "Đã thanh toán",
-    classes: "bg-purple-100 text-purple-700 border-purple-200",
-  },
-  [OrderStatus.DELIVERED]: {
-    label: "Đã kích hoạt",
+  [OrderStatus.COMPLETED]: {
+    label: "Đã hoàn thành",
     classes: "bg-green-100 text-green-700 border-green-200",
   },
   [OrderStatus.CANCELLED]: {

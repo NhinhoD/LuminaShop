@@ -39,19 +39,21 @@ export class VerifyOrderPaymentUseCase {
               .update({ status: 'paid' })
               .eq('id', payment.id);
 
-            await this.orderRepo.updatePaymentStatus(orderId, 'paid');
-            return { success: true, message: 'Payment verified successfully' };
+            await this.orderRepo.updatePaymentStatus(payment.order_id, 'paid');
+            
+            return {
+              success: true, message: 'Payment verified successfully' };
           }
-        } catch (payosError: any) {
-          console.error('PayOS verify error:', payosError.message);
+        } catch (payosError: unknown) {
+          console.error('PayOS verify error:', payosError instanceof Error ? payosError.message : String(payosError));
           return { success: false, message: 'Could not verify with PayOS' };
         }
       }
 
       return { success: false, message: 'Payment is not PAID yet or unsupported method' };
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('VerifyOrderPaymentUseCase error:', error);
-      return { success: false, message: error.message };
+      return { success: false, message: error instanceof Error ? error.message : 'Unknown error' };
     }
   }
 }

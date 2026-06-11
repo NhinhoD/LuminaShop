@@ -10,9 +10,7 @@ interface OrderTimelineProps {
 
 const steps = [
   { status: OrderStatus.PENDING, label: "Chờ xác nhận", icon: Clock },
-  { status: OrderStatus.PROCESSING, label: "Đang xử lý", icon: Package },
-  { status: OrderStatus.SHIPPED, label: "Đang giao", icon: Truck },
-  { status: OrderStatus.DELIVERED, label: "Đã giao", icon: Home },
+  { status: OrderStatus.COMPLETED, label: "Đã hoàn thành", icon: Home },
 ];
 
 export function OrderTimeline({ currentStatus }: OrderTimelineProps) {
@@ -32,7 +30,7 @@ export function OrderTimeline({ currentStatus }: OrderTimelineProps) {
       <div className="flex items-center justify-between w-full">
         {steps.map((step, index) => {
           const Icon = step.icon;
-          const isCompleted = index < currentIndex || currentStatus === OrderStatus.DELIVERED;
+          const isCompleted = index < currentIndex || currentStatus === OrderStatus.COMPLETED;
           const isCurrent = index === currentIndex;
 
           return (

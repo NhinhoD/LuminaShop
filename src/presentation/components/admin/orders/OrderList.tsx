@@ -18,10 +18,8 @@ interface OrderListProps {
 
 const tabs = [
   { id: "all", label: "Tất cả" },
-  { id: OrderStatus.PENDING, label: "Chờ xác nhận" },
-  { id: OrderStatus.PROCESSING, label: "Đang xử lý" },
-  { id: OrderStatus.SHIPPED, label: "Đang giao" },
-  { id: OrderStatus.DELIVERED, label: "Đã giao" },
+  { id: OrderStatus.PENDING, label: "Chờ thanh toán" },
+  { id: OrderStatus.COMPLETED, label: "Đã hoàn thành" },
   { id: OrderStatus.CANCELLED, label: "Đã hủy" },
 ];
 

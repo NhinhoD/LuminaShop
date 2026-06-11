@@ -54,7 +54,7 @@ export default async function OrderHistoryPage({ searchParams }: OrderHistoryPag
       )
     `, { count: 'exact' })
     .eq('orders.user_id', user.id)
-    .in('orders.status', ['delivered', 'completed', 'shipped']);
+    .in('orders.status', ['completed', 'delivered']);
 
   if (search) {
     query = query.ilike('products.title', `%${search}%`);

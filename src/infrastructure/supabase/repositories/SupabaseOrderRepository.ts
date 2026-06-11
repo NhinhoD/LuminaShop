@@ -125,7 +125,7 @@ export class SupabaseOrderRepository implements IOrderRepository {
     };
     
     if (paymentStatus === 'paid') {
-      updateData.status = 'delivered'; // Immediately fulfill digital order
+      updateData.status = 'completed'; // Immediately fulfill digital order
     }
 
     const { error } = await supabase

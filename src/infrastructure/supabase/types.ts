@@ -44,7 +44,7 @@ export interface InventoryItemRow {
 export interface OrderRow {
   id: string;
   user_id: string | null;
-  status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
+  status: 'pending' | 'completed' | 'cancelled';
   total_amount: string | number;
   contact_email: string | null;
   contact_phone: string | null;
