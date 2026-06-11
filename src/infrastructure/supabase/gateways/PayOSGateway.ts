@@ -46,8 +46,8 @@ export class PayOSGateway implements IPaymentGateway {
           order_id: orderId,
           method: 'payos',
           status: 'unpaid',
-          amount: amount
-          // Note: ideally we'd store orderCode in the DB to map webhook callbacks to this payment
+          amount: amount,
+          transaction_id: String(orderCode)
         })
         .select()
         .single();
