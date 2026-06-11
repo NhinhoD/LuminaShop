@@ -15,10 +15,7 @@ export default async function ProfilePage() {
 
   const { data: profile } = await supabase.from('profiles').select('*').eq('id', user.id).single();
   
-  // Fetch recent orders
-  const { getUserOrdersAction } = await import('@/presentation/actions/order');
-  const response = await getUserOrdersAction(5, 0);
-  const recentOrders = response.success ? response.data?.orders || [] : [];
+  // Only profile data is needed now
 
   const { UserOrdersRealtimeTracker } = await import('@/presentation/components/orders/UserOrdersRealtimeTracker');
 
@@ -123,59 +120,6 @@ export default async function ProfilePage() {
               </div>
             </section>
 
-            {/* Recent Orders Section */}
-            <section className="bg-white rounded-3xl border border-slate-100 p-8 md:p-10 shadow-sm">
-              <div className="flex justify-between items-center mb-10">
-                <div>
-                  <span className="text-[10px] font-black tracking-widest text-[#0051d5] uppercase block mb-1">GIAO DỊCH GẦN ĐÂY</span>
-                  <h2 className="text-xl font-bold text-slate-950 font-playfair">Lịch sử đơn hàng</h2>
-                </div>
-                <Link href="/profile/orders" className="text-[10px] font-extrabold text-[#0051d5] uppercase tracking-wider hover:underline underline-offset-4">Xem tất cả</Link>
-              </div>
-
-              <div className="space-y-4">
-                {recentOrders.length === 0 ? (
-                  <div className="py-12 text-center border border-dashed border-slate-200 rounded-3xl">
-                    <p className="text-slate-400 text-sm font-semibold">Bạn chưa mua mẫu mã nguồn nào.</p>
-                  </div>
-                ) : (
-                  recentOrders.map((order) => (
-                    <Link 
-                      key={order.id}
-                      href={`/profile/orders/${order.id}`}
-                      className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 border border-slate-100 rounded-2xl hover:border-slate-200 hover:shadow-sm transition-all group"
-                    >
-                      <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 bg-blue-50 text-[#0051d5] rounded-xl flex items-center justify-center flex-shrink-0 transition-transform group-hover:scale-105">
-                          <span className="material-symbols-outlined text-[24px]">
-                            {order.paymentStatus === 'paid' ? 'download_done' : 'payment'}
-                          </span>
-                        </div>
-                        <div>
-                          <h3 className="font-extrabold text-slate-800 text-sm mb-0.5 group-hover:text-[#0051d5] transition-colors">
-                            Đơn hàng #{order.id.slice(0, 8).toUpperCase()}
-                          </h3>
-                          <p className="text-slate-400 text-[10px] font-bold uppercase tracking-wider">
-                            Đặt ngày {new Date(order.createdAt).toLocaleDateString('vi-VN')}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex items-center justify-between sm:justify-end gap-6 border-t sm:border-t-0 pt-3 sm:pt-0 border-slate-100">
-                        <div className="text-left sm:text-right">
-                          <span className="block font-black text-slate-900 text-base mb-0.5">
-                            {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(order.totalAmount)}
-                          </span>
-                          <span className="text-[10px] text-slate-400 font-bold block uppercase">
-                            {order.paymentMethod === 'cod' ? 'Chuyển khoản thủ công' : order.paymentMethod}
-                          </span>
-                        </div>
-                        <StatusBadge status={order.status} className="text-[10px] font-bold px-2.5 py-0.5" />
-                      </div>
-                    </Link>
-                  ))
-                )}
-              </div>
-            </section>
 
           </div>
         </div>
