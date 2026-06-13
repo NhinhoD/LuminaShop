@@ -87,17 +87,7 @@ export default function NavbarClient({ user, navLinks, dict }: NavbarClientProps
         <div className="max-w-[1200px] mx-auto px-4 flex justify-between items-center h-[68px]">
           {/* Logo */}
           <Link ref={logoRef} href={ROUTES.HOME} className="flex items-center gap-2.5 group">
-            <div className="w-[46px] h-[46px] rounded-full bg-gradient-to-br from-[#0051d5] to-[#0041ab] flex items-center justify-center text-white text-xl shadow-[0_4px_15px_rgba(0,81,213,0.35)]">
-              ✨
-            </div>
-            <div>
-              <div className="font-bricolage text-2xl font-black text-dark">
-                Kho<span className="text-[#0051d5]">UI</span>
-              </div>
-              <div className="text-[0.62rem] uppercase tracking-[2px] text-[#aaa]">
-                Premium Templates
-              </div>
-            </div>
+            <img src="/LogoKhoUI.png" alt="KhoUI Logo" className="h-12 w-auto object-contain" />
           </Link>
 
           {/* Desktop Nav Links */}

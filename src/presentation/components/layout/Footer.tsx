@@ -40,9 +40,7 @@ export function Footer() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12">
           {/* Brand Column */}
           <div>
-            <div className="font-bricolage text-2xl font-black mb-4">
-              Kho<span className="text-[#0051d5]">UI</span>
-            </div>
+            <img src="/LogoKhoUI.png" alt="KhoUI Logo" className="h-12 w-auto object-contain mb-4" />
             <p className="text-[#999] text-sm leading-relaxed mb-6">
               Exclusive, high-quality website templates and themes built with Next.js, Tailwind CSS, and GSAP. Download instantly.
             </p>

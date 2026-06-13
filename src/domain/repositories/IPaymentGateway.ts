@@ -2,6 +2,7 @@ export interface PaymentResult {
   success: boolean;
   paymentId: string;
   message: string;
+  checkoutUrl?: string;
 }
 
 export interface IPaymentGateway {

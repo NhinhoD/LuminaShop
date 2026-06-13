@@ -17,3 +17,17 @@ export async function processPaymentAction(orderId: string, amount: number, meth
   
   return { data: result };
 }
+
+export async function verifyOrderPaymentAction(orderId: string) {
+  const { makeVerifyOrderPaymentUseCase } = await import('@/infrastructure/supabase/container');
+  const useCase = await makeVerifyOrderPaymentUseCase();
+  const result = await useCase.execute(orderId);
+  
+  if (result.success) {
+    revalidatePath("/profile/orders");
+    revalidatePath(`/orders/${orderId}/success`);
+    revalidatePath("/admin/orders");
+  }
+  
+  return result;
+}

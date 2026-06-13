@@ -77,7 +77,7 @@ export default async function OrderDetailPage({ params }: PageProps) {
     })
   );
 
-  const isOrderPaid = order.paymentStatus === 'paid' || order.status === OrderStatus.DELIVERED;
+  const isOrderPaid = order.paymentStatus === 'paid' || order.status === OrderStatus.COMPLETED;
 
   return (
     <div className="container mx-auto px-4 py-24 max-w-5xl font-manrope">
@@ -117,7 +117,7 @@ export default async function OrderDetailPage({ params }: PageProps) {
               </div>
             )}
             
-            {(order.status === OrderStatus.PENDING || order.status === OrderStatus.PROCESSING) && (
+            {order.status === OrderStatus.PENDING && (
               <div className="mt-8 flex justify-end">
                 <CancelOrderButton orderId={order.id} />
               </div>
