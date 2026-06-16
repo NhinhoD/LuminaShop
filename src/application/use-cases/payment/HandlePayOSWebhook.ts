@@ -1,5 +1,5 @@
 import { IOrderRepository } from '@/domain/repositories/IOrderRepository';
-import { SupabaseClient } from '@supabase/supabase-js';
+import { IPaymentRepository } from '@/domain/repositories/IPaymentRepository';
 
 export interface WebhookData {
   orderCode: number;
@@ -17,28 +17,20 @@ export interface WebhookData {
 export class HandlePayOSWebhookUseCase {
   constructor(
     private orderRepo: IOrderRepository,
-    private supabase: SupabaseClient
+    private paymentRepo: IPaymentRepository
   ) {}
 
   async execute(data: WebhookData): Promise<{ success: boolean; message: string }> {
     try {
       if (data.code === '00') {
-        const { data: payment, error } = await this.supabase
-          .from('payments')
-          .select('order_id')
-          .eq('transaction_id', String(data.orderCode))
-          .single();
+        const payment = await this.paymentRepo.findByTransactionId(String(data.orderCode));
 
-        if (error || !payment) {
+        if (!payment) {
           throw new Error(`Payment record not found for webhook orderCode ${data.orderCode}`);
         }
 
-        await this.supabase
-          .from('payments')
-          .update({ status: 'paid' })
-          .eq('transaction_id', String(data.orderCode));
-
-        await this.orderRepo.updatePaymentStatus(payment.order_id, 'paid');
+        await this.paymentRepo.updatePaymentStatus(payment.id, 'paid');
+        await this.orderRepo.updatePaymentStatus(payment.orderId, 'paid');
         
         return { success: true, message: 'Webhook processed successfully' };
       }

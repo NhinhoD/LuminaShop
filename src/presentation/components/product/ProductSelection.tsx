@@ -15,7 +15,7 @@ interface ProductSelectionProps {
   hasPurchased?: boolean;
 }
 
-export default function ProductSelection({ product, hasPurchased }: ProductSelectionProps) {
+export default function ProductSelection({ product, hasPurchased }: ProductSelectionProps): React.ReactElement | null {
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(
     product.variants && product.variants.length > 0 ? product.variants[0] : null
   );
@@ -24,6 +24,7 @@ export default function ProductSelection({ product, hasPurchased }: ProductSelec
 
   const router = useRouter();
   const [isProcessing, setIsProcessing] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   const currentPrice = useMemo(() => {
     if (!selectedVariant) return product.price;
@@ -104,6 +105,11 @@ export default function ProductSelection({ product, hasPurchased }: ProductSelec
       )}
 
       {/* Add to Cart Actions */}
+      {errorMsg && (
+        <div className="bg-red-50 text-red-600 text-sm p-3 rounded-lg border border-red-100">
+          {errorMsg}
+        </div>
+      )}
       <div className="space-y-3 pt-2">
         <button
           onClick={async () => {
@@ -113,11 +119,12 @@ export default function ProductSelection({ product, hasPurchased }: ProductSelec
             }
 
             setIsProcessing(true);
+            setErrorMsg(null);
             try {
               const supabase = createClient();
               const { data: { session } } = await supabase.auth.getSession();
               if (!session) {
-                alert("Bạn cần đăng nhập để mua template này.");
+                setErrorMsg("Bạn cần đăng nhập để mua template này.");
                 router.push("/login");
                 return;
               }
@@ -134,8 +141,7 @@ export default function ProductSelection({ product, hasPurchased }: ProductSelec
 
               router.push("/checkout");
             } catch (err) {
-              console.error(err);
-              alert("Đã xảy ra lỗi hệ thống.");
+              setErrorMsg(err instanceof Error ? err.message : "Đã xảy ra lỗi hệ thống.");
             } finally {
               setIsProcessing(false);
             }

@@ -49,7 +49,7 @@ export interface OrderRow {
   contact_email: string | null;
   contact_phone: string | null;
   shipping_address: unknown;
-  payment_method: 'cod' | 'vnpay' | 'momo';
+  payment_method: 'cod' | 'vnpay' | 'momo' | 'payos';
   payment_status: string;
   notes: string | null;
   created_at: string;

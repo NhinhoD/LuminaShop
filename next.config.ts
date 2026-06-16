@@ -23,7 +23,7 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: 'https',
-        hostname: 'shwofhhfdokbycejeam.supabase.co',
+        hostname: 'shwofhhhfdokbycejeam.supabase.co',
         port: '',
         pathname: '/**',
       },

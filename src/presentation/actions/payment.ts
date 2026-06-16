@@ -18,12 +18,12 @@ export async function processPaymentAction(orderId: string, amount: number, meth
   return { data: result };
 }
 
-export async function verifyOrderPaymentAction(orderId: string) {
+export async function verifyOrderPaymentAction(orderId: string, shouldRevalidate: boolean = true) {
   const { makeVerifyOrderPaymentUseCase } = await import('@/infrastructure/supabase/container');
   const useCase = await makeVerifyOrderPaymentUseCase();
   const result = await useCase.execute(orderId);
   
-  if (result.success) {
+  if (result.success && shouldRevalidate) {
     revalidatePath("/profile/orders");
     revalidatePath(`/orders/${orderId}/success`);
     revalidatePath("/admin/orders");

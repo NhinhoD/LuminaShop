@@ -72,8 +72,23 @@ export class PayOSGateway implements IPaymentGateway {
     }
   }
 
+  async verifyPayment(transactionId: string): Promise<{ success: boolean; message: string }> {
+    try {
+      const paymentInfo = await this.payos.paymentRequests.get(Number(transactionId));
+      if (paymentInfo && paymentInfo.status === 'PAID') {
+        return { success: true, message: 'Payment verified successfully' };
+      }
+      return { success: false, message: 'Payment is not PAID yet' };
+    } catch (payosError: unknown) {
+      console.error('PayOS verify error:', payosError instanceof Error ? payosError.message : String(payosError));
+      return { success: false, message: 'Could not verify with PayOS' };
+    }
+  }
+
   async verifyPaymentWebhookData(body: unknown) {
-    // We cast to Webhook internally because the PayOS SDK expects a specific type
-    return await this.payos.webhooks.verify(body as Webhook);
+    if (!body || typeof body !== 'object' || !('data' in body) || !('signature' in body)) {
+      throw new Error('Invalid webhook payload format');
+    }
+    return this.payos.webhooks.verify(body as Webhook);
   }
 }

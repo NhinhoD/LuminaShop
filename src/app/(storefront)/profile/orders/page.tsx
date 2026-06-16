@@ -65,7 +65,23 @@ export default async function OrderHistoryPage({ searchParams }: OrderHistoryPag
     .range(offset, offset + itemsPerPage - 1);
 
   if (error) {
-    console.error("Lỗi khi lấy danh sách giao diện đã mua:", error);
+    return (
+      <div className="container mx-auto px-4 py-16 max-w-7xl font-manrope">
+        <div className="text-center py-24 bg-white rounded-[32px] shadow-sm border border-red-100 max-w-3xl mx-auto">
+          <Package className="w-16 h-16 text-red-300 mx-auto mb-6" />
+          <h2 className="text-2xl font-extrabold text-red-900 font-bricolage mb-3">Lỗi tải dữ liệu</h2>
+          <p className="text-slate-500 mb-10 max-w-sm mx-auto">
+            Đã có lỗi xảy ra khi lấy danh sách giao diện đã mua. Vui lòng thử lại sau.
+          </p>
+          <Link
+            href="/profile/orders"
+            className="inline-flex items-center justify-center px-8 py-4 text-sm font-bold rounded-xl text-white bg-red-600 hover:bg-red-700 transition-all shadow-lg shadow-red-900/20 active:scale-95 uppercase tracking-wider"
+          >
+            Thử lại
+          </Link>
+        </div>
+      </div>
+    );
   }
   
   const totalPages = Math.ceil((count || 0) / itemsPerPage);

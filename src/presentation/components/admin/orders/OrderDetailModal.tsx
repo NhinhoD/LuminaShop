@@ -1,13 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { OrderStatus, Order, OrderItem } from "@/domain/entities/Order";
 import { getOrderAction, updateOrderStatusAction, approveManualPaymentAction } from "@/presentation/actions/order";
 import { StatusBadge } from "@/presentation/components/orders/StatusBadge";
 import { formatPrice, formatDate, cn } from "@/presentation/utils";
 import { X, Package, MapPin, CreditCard, CheckCircle, AlertCircle, FileText } from "lucide-react";
 import { toast } from "react-hot-toast";
-import Image from "next/image";
+import { ImageWithFallback } from "@/presentation/components/common/ImageWithFallback";
 import { motion, AnimatePresence } from "framer-motion";
 import { getLocalizedText } from "@/presentation/utils/locale";
 
@@ -16,7 +16,7 @@ interface OrderDetailModalProps {
   onClose: () => void;
 }
 
-export function OrderDetailModal({ orderId, onClose }: OrderDetailModalProps) {
+export function OrderDetailModal({ orderId, onClose }: OrderDetailModalProps): React.ReactElement | null {
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
@@ -151,14 +151,15 @@ export function OrderDetailModal({ orderId, onClose }: OrderDetailModalProps) {
               </h3>
               <div className="border border-slate-100 rounded-2xl overflow-hidden divide-y divide-slate-50">
                 {order.items?.map((item: OrderItem) => (
-                  <div key={item.id} className="p-4 flex items-center gap-4 bg-white">
-                    <div className="w-12 h-12 bg-slate-100 rounded-lg flex-shrink-0 flex items-center justify-center text-slate-300 relative overflow-hidden">
+                   <div key={item.id} className="p-4 flex items-center gap-4 bg-white">
+                    <div className="relative w-12 h-12 bg-slate-100 rounded-lg flex-shrink-0 flex items-center justify-center text-slate-300 overflow-hidden">
                        {item.productSnapshot?.image_url || item.productSnapshot?.image ? (
-                         <Image 
+                         <ImageWithFallback 
                            src={item.productSnapshot.image_url || item.productSnapshot.image || ""} 
                            alt={getLocalizedText(item.productTitle as unknown as Record<string, string>, 'vi') || "Product"}
                            fill
                            className="object-cover"
+                           fallbackElement={<Package className="w-6 h-6" />}
                          />
                        ) : (
                          <Package className="w-6 h-6" />
