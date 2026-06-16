@@ -51,6 +51,8 @@ _vite_backup/
 # temporary files
 output.txt
 debug.txt
+lint-output.txt
+lint_output.txt
 
 # Harness Telemetry Logs
 harness_execution.log
