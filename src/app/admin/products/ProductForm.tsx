@@ -196,7 +196,7 @@ const uploadPreviewFilesAsync = async (
 
       if (resolvedContentType === 'text/html') {
         let textContent = await fileObj.file.text();
-        textContent += `<script>document.addEventListener('click', function(e) { const a = e.target.closest('a'); if(a) { e.preventDefault(); console.log('Mock link disabled in preview mode.'); } });</script>`;
+        textContent += `<script>document.addEventListener('click', function(e) { const a = e.target.closest('a'); if(a) { e.preventDefault(); /* Mock link disabled */ } });</script>`;
         uploadTarget = new Blob([textContent], { type: 'text/html' });
       }
 

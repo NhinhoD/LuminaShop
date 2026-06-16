@@ -9,6 +9,7 @@ import { SupabaseAuthRepository } from './repositories/SupabaseAuthRepository';
 import { SupabaseLanguageRepository } from './repositories/SupabaseLanguageRepository';
 import { SupabaseTranslationRepository } from './repositories/SupabaseTranslationRepository';
 import { SupabaseDashboardRepository } from './repositories/SupabaseDashboardRepository';
+import { SupabasePaymentRepository } from './repositories/SupabasePaymentRepository';
 import { IAuthRepository } from '@/domain/repositories/IAuthRepository';
 
 import { AddToCartUseCase } from '@/application/use-cases/cart/AddToCart';
@@ -27,7 +28,10 @@ import { UpdateProductUseCase } from '@/application/use-cases/products/UpdatePro
 import { GetProductByIdUseCase } from '@/application/use-cases/products/GetProductById';
 import { GetProductsUseCase } from '@/application/use-cases/products/GetProducts';
 import { ProcessPaymentUseCase } from '@/application/use-cases/payment/ProcessPayment';
+import { HandlePayOSWebhookUseCase } from '@/application/use-cases/payment/HandlePayOSWebhook';
 import { CODPaymentGateway } from './gateways/CODPaymentGateway';
+import { PayOSGateway } from './gateways/PayOSGateway';
+import { CompositePaymentGateway } from './gateways/CompositePaymentGateway';
 
 import { LoginUseCase } from '@/application/use-cases/auth/LoginUseCase';
 import { SignupUseCase } from '@/application/use-cases/auth/SignupUseCase';
@@ -80,6 +84,11 @@ export async function makeTranslationRepository() {
 export async function makeDashboardRepository() {
   const supabase = await makeSupabaseClient();
   return new SupabaseDashboardRepository(supabase);
+}
+
+export async function makePaymentRepository() {
+  const supabase = await makeSupabaseClient();
+  return new SupabasePaymentRepository(supabase);
 }
 
 // Use Case Factories
@@ -163,10 +172,36 @@ export async function makeCODPaymentGateway() {
   return new CODPaymentGateway(supabase);
 }
 
+export async function makePayOSGateway() {
+  const supabase = await makeSupabaseClient();
+  return new PayOSGateway(supabase);
+}
+
 export async function makeProcessPaymentUseCase() {
-  const gateway = await makeCODPaymentGateway(); // default to COD for now, ideally dynamically chosen
+  const codGateway = await makeCODPaymentGateway();
+  const payosGateway = await makePayOSGateway();
+  
+  const compositeGateway = new CompositePaymentGateway({
+    cod: codGateway,
+    payos: payosGateway
+  });
+
   const orderRepo = await makeOrderRepository();
-  return new ProcessPaymentUseCase(gateway, orderRepo);
+  return new ProcessPaymentUseCase(compositeGateway, orderRepo);
+}
+
+export async function makeHandlePayOSWebhookUseCase() {
+  const orderRepo = await makeOrderRepository();
+  const paymentRepo = await makePaymentRepository();
+  return new HandlePayOSWebhookUseCase(orderRepo, paymentRepo);
+}
+
+export async function makeVerifyOrderPaymentUseCase() {
+  const orderRepo = await makeOrderRepository();
+  const paymentRepo = await makePaymentRepository();
+  const payosGateway = await makePayOSGateway();
+  const { VerifyOrderPaymentUseCase } = await import('@/application/use-cases/payment/VerifyOrderPayment');
+  return new VerifyOrderPaymentUseCase(orderRepo, paymentRepo, payosGateway);
 }
 
 // Language Factories

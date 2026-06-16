@@ -19,7 +19,7 @@ export class ProcessPaymentUseCase {
       const result = await this.paymentGateway.processPayment(data.orderId, data.amount, data.method);
       
       if (result.success) {
-        const paymentStatus = data.method === 'cod' ? 'unpaid' : 'paid';
+        const paymentStatus = (data.method === 'cod' || data.method === 'payos') ? 'unpaid' : 'paid';
         await this.orderRepo.updatePaymentStatus(data.orderId, paymentStatus);
       } else {
         await this.orderRepo.updatePaymentStatus(data.orderId, 'failed');

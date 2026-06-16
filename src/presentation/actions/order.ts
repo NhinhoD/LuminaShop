@@ -228,11 +228,10 @@ export async function cancelOrderAction(orderId: string): Promise<ActionResponse
     }
 
     if (
-      orderResult.data.status === OrderStatus.SHIPPED || 
-      orderResult.data.status === OrderStatus.DELIVERED || 
+      orderResult.data.status === OrderStatus.COMPLETED || 
       orderResult.data.status === OrderStatus.CANCELLED
     ) {
-      return { success: false, error: "Chỉ có thể hủy đơn hàng đang chờ xác nhận hoặc đang xử lý." };
+      return { success: false, error: "Chỉ có thể hủy đơn hàng đang chờ thanh toán." };
     }
 
     const result = await useCase.execute({

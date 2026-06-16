@@ -1,15 +1,14 @@
 export enum OrderStatus {
   PENDING = 'pending',
-  PROCESSING = 'processing',
-  SHIPPED = 'shipped',
-  DELIVERED = 'delivered',
+  COMPLETED = 'completed',
   CANCELLED = 'cancelled'
 }
 
 export enum PaymentMethod {
   COD = 'cod',
   VNPAY = 'vnpay',
-  MOMO = 'momo'
+  MOMO = 'momo',
+  PAYOS = 'payos'
 }
 export type PaymentStatus = 'unpaid' | 'paid' | 'failed' | 'refunded';
 

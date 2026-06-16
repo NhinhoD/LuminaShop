@@ -59,7 +59,7 @@ export default function CheckoutPage() {
     email: "",
     contactHandle: "",
     notes: "",
-    paymentMethod: PaymentMethod.COD
+    paymentMethod: PaymentMethod.PAYOS
   });
   
   const [validationErrors, setValidationErrors] = useState<Partial<Record<keyof CheckoutFormData, string>>>({});
@@ -134,11 +134,12 @@ export default function CheckoutPage() {
       }
 
       if (currentOrderId) {
-        // COD payment represents manual bank transfer; payment remains unpaid until approved
         const paymentResult = await processPaymentAction(currentOrderId, subtotal, formData.paymentMethod);
         
         if (paymentResult.error) {
           router.push(`/orders/${currentOrderId}/failed`);
+        } else if (paymentResult.data?.checkoutUrl) {
+          window.location.href = paymentResult.data.checkoutUrl;
         } else {
           router.push(`/orders/${currentOrderId}/success`);
         }
@@ -466,6 +467,30 @@ export default function CheckoutPage() {
                     </h2>
                     
                     <div className="grid grid-cols-1 gap-4">
+                      {/* PayOS Panel */}
+                      <label 
+                        onClick={() => setFormData(prev => ({ ...prev, paymentMethod: PaymentMethod.PAYOS }))}
+                        className={`
+                          relative flex items-start gap-4 p-5 rounded-2xl border-2 cursor-pointer transition-all duration-300 select-none
+                          ${formData.paymentMethod === PaymentMethod.PAYOS 
+                            ? 'border-[#0051d5] bg-blue-50/10 shadow-sm' 
+                            : 'border-slate-100 hover:border-slate-200 hover:bg-slate-50/20'
+                          }
+                        `}
+                      >
+                        <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all mt-0.5 ${formData.paymentMethod === PaymentMethod.PAYOS ? 'border-[#0051d5]' : 'border-slate-300'}`}>
+                          {formData.paymentMethod === PaymentMethod.PAYOS && <div className="w-2.5 h-2.5 rounded-full bg-[#0051d5] animate-scale-up" />}
+                        </div>
+                        <div>
+                          <p className="font-extrabold text-slate-800 text-[13.5px] flex items-center gap-2">
+                            Quét mã VietQR (Tự động)
+                            <span className="text-[8px] bg-[#0051d5] text-white px-2 py-0.5 rounded font-black tracking-wide">MỚI</span>
+                          </p>
+                          <p className="text-xs text-slate-400 mt-1">Hệ thống chuyển khoản tự động bằng PayOS. Bản quyền được kích hoạt ngay lập tức.</p>
+                        </div>
+                        <QrCode className={`w-6 h-6 ml-auto transition-colors duration-300 ${formData.paymentMethod === PaymentMethod.PAYOS ? 'text-[#0051d5]' : 'text-slate-400'}`} />
+                      </label>
+
                       {/* Bank Transfer Panel */}
                       <label 
                         onClick={() => setFormData(prev => ({ ...prev, paymentMethod: PaymentMethod.COD }))}
@@ -482,12 +507,12 @@ export default function CheckoutPage() {
                         </div>
                         <div>
                           <p className="font-extrabold text-slate-800 text-[13.5px] flex items-center gap-2">
-                            Chuyển khoản Ngân hàng Thủ công (VietQR)
-                            <span className="text-[8px] bg-blue-50 text-[#0051d5] px-2 py-0.5 rounded font-black tracking-wide">Khuyên dùng</span>
+                            Chuyển khoản Ngân hàng Thủ công
+                            <span className="text-[8px] bg-slate-100 text-slate-500 px-2 py-0.5 rounded font-black tracking-wide">Chậm</span>
                           </p>
-                          <p className="text-xs text-slate-400 mt-1">Hệ thống sẽ hiển thị mã VietQR chuyển khoản ngân hàng ở bước tiếp theo. Bản quyền được kích hoạt ngay sau khi admin duyệt giao dịch.</p>
+                          <p className="text-xs text-slate-400 mt-1">Hệ thống sẽ hiển thị tài khoản ngân hàng. Bản quyền được kích hoạt sau khi admin duyệt (1-2 giờ).</p>
                         </div>
-                        <QrCode className={`w-6 h-6 ml-auto transition-colors duration-300 ${formData.paymentMethod === PaymentMethod.COD ? 'text-[#0051d5]' : 'text-slate-400'}`} />
+                        <CreditCard className={`w-6 h-6 ml-auto transition-colors duration-300 ${formData.paymentMethod === PaymentMethod.COD ? 'text-[#0051d5]' : 'text-slate-400'}`} />
                       </label>
                       
                       {/* VNPay Panel (Disabled) */}
@@ -578,7 +603,10 @@ export default function CheckoutPage() {
                           <CreditCard className="w-3.5 h-3.5" /> Phương thức thanh toán
                         </h3>
                         <p className="font-bold text-slate-800 text-[13px]">
-                          Chuyển khoản Ngân hàng VietQR (Xác minh thủ công)
+                          {formData.paymentMethod === PaymentMethod.PAYOS 
+                            ? 'Quét mã VietQR (Tự động PayOS)'
+                            : 'Chuyển khoản Ngân hàng (Xác minh thủ công)'
+                          }
                         </p>
                       </div>
 

@@ -43,9 +43,7 @@ export default async function AdminLayout({
       <nav className="h-screen w-64 fixed left-0 top-0 border-r border-slate-200 dark:border-slate-800 shadow-none bg-slate-50 dark:bg-slate-950 font-manrope text-sm font-medium z-50">
         <div className="flex flex-col h-full p-4">
           <div className="mb-8 px-4 flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-[#0051d5] flex items-center justify-center text-white">
-              <span className="material-symbols-outlined text-xl" style={{ fontVariationSettings: "'FILL' 1" }}>storefront</span>
-            </div>
+            <img src="/LogoKhoUI.png" alt="KhoUI Logo" className="h-10 w-auto object-contain" />
             <div>
               <h2 className="text-xl font-bold text-slate-900 dark:text-slate-50 tracking-tight">Admin Panel</h2>
               <p className="text-slate-500 text-xs">E-commerce Suite</p>

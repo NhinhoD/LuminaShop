@@ -1,13 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { OrderStatus, Order, OrderItem } from "@/domain/entities/Order";
 import { getOrderAction, updateOrderStatusAction, approveManualPaymentAction } from "@/presentation/actions/order";
 import { StatusBadge } from "@/presentation/components/orders/StatusBadge";
 import { formatPrice, formatDate, cn } from "@/presentation/utils";
 import { X, Package, MapPin, CreditCard, CheckCircle, AlertCircle, FileText } from "lucide-react";
 import { toast } from "react-hot-toast";
-import Image from "next/image";
+import { ImageWithFallback } from "@/presentation/components/common/ImageWithFallback";
 import { motion, AnimatePresence } from "framer-motion";
 import { getLocalizedText } from "@/presentation/utils/locale";
 
@@ -16,18 +16,16 @@ interface OrderDetailModalProps {
   onClose: () => void;
 }
 
-export function OrderDetailModal({ orderId, onClose }: OrderDetailModalProps) {
+export function OrderDetailModal({ orderId, onClose }: OrderDetailModalProps): React.ReactElement | null {
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
-  const [newStatus, setNewStatus] = useState<OrderStatus | "">("");
 
   useEffect(() => {
     async function loadOrder() {
       const response = await getOrderAction(orderId);
       if (response.success && response.data) {
         setOrder(response.data);
-        setNewStatus(response.data.status);
       } else {
         toast.error("Không thể tải thông tin đơn hàng");
         onClose();
@@ -37,47 +35,6 @@ export function OrderDetailModal({ orderId, onClose }: OrderDetailModalProps) {
     loadOrder();
   }, [orderId, onClose]);
 
-  const isValidTransition = (current: OrderStatus, next: OrderStatus) => {
-    if (current === next) return true;
-    switch (current) {
-      case OrderStatus.PENDING:
-        return next === OrderStatus.PROCESSING || next === OrderStatus.CANCELLED;
-      case OrderStatus.PROCESSING:
-        return next === OrderStatus.SHIPPED || next === OrderStatus.CANCELLED;
-      case OrderStatus.SHIPPED:
-        return next === OrderStatus.DELIVERED;
-      case OrderStatus.DELIVERED:
-      case OrderStatus.CANCELLED:
-        return false;
-      default:
-        return false;
-    }
-  };
-
-  const handleUpdateStatus = async () => {
-    if (!order || !newStatus || newStatus === order.status) return;
-
-    if (!isValidTransition(order.status, newStatus as OrderStatus)) {
-      toast.error(`Không thể chuyển trạng thái từ ${order.status} sang ${newStatus}`);
-      return;
-    }
-
-    setUpdating(true);
-    try {
-      const response = await updateOrderStatusAction(orderId, newStatus as OrderStatus);
-      if (response.success && response.data) {
-        toast.success("Cập nhật trạng thái thành công");
-        setOrder(response.data);
-      } else {
-        toast.error(response.error || "Cập nhật thất bại");
-      }
-    } catch {
-      toast.error("Đã có lỗi xảy ra");
-    } finally {
-      setUpdating(false);
-    }
-  };
-
   const handleApprovePayment = async () => {
     if (!order) return;
     setUpdating(true);
@@ -86,7 +43,6 @@ export function OrderDetailModal({ orderId, onClose }: OrderDetailModalProps) {
       if (response.success && response.data) {
         toast.success("Đã phê duyệt thanh toán & kích hoạt bản quyền tải về!");
         setOrder(response.data);
-        setNewStatus(response.data.status);
       } else {
         toast.error(response.error || "Phê duyệt thất bại");
       }
@@ -185,39 +141,7 @@ export function OrderDetailModal({ orderId, onClose }: OrderDetailModalProps) {
                 )}
               </div>
 
-              {/* Status Update */}
-              <div className="space-y-6">
-                <section className="bg-slate-900 text-white p-6 rounded-3xl shadow-xl">
-                  <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-4">
-                    Cập nhật trạng thái
-                  </h3>
-                  <div className="space-y-4">
-                    <select
-                      value={newStatus}
-                      onChange={(e) => setNewStatus(e.target.value as OrderStatus)}
-                      className="w-full bg-slate-800 border-none rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-primary"
-                    >
-                      {Object.values(OrderStatus).map((status) => (
-                        <option key={status} value={status} disabled={!isValidTransition(order.status, status)}>
-                          {status.toUpperCase()} {status === order.status ? "(Hiện tại)" : ""}
-                        </option>
-                      ))}
-                    </select>
-                    <button
-                      onClick={handleUpdateStatus}
-                      disabled={updating || newStatus === order.status}
-                      className="w-full bg-primary hover:bg-primary-hover disabled:bg-slate-700 text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-primary/20"
-                    >
-                      {updating ? "Đang xử lý..." : "Cập nhật ngay"}
-                    </button>
-                    {!isValidTransition(order.status, newStatus as OrderStatus) && newStatus !== "" && (
-                      <p className="text-[10px] text-red-400 flex items-center gap-1">
-                        <AlertCircle className="w-3 h-3" /> Chuyển trạng thái không hợp lệ
-                      </p>
-                    )}
-                  </div>
-                </section>
-              </div>
+              {/* Removed Status Update Section */}
             </div>
 
             {/* Items */}
@@ -227,14 +151,15 @@ export function OrderDetailModal({ orderId, onClose }: OrderDetailModalProps) {
               </h3>
               <div className="border border-slate-100 rounded-2xl overflow-hidden divide-y divide-slate-50">
                 {order.items?.map((item: OrderItem) => (
-                  <div key={item.id} className="p-4 flex items-center gap-4 bg-white">
-                    <div className="w-12 h-12 bg-slate-100 rounded-lg flex-shrink-0 flex items-center justify-center text-slate-300 relative overflow-hidden">
+                   <div key={item.id} className="p-4 flex items-center gap-4 bg-white">
+                    <div className="relative w-12 h-12 bg-slate-100 rounded-lg flex-shrink-0 flex items-center justify-center text-slate-300 overflow-hidden">
                        {item.productSnapshot?.image_url || item.productSnapshot?.image ? (
-                         <Image 
+                         <ImageWithFallback 
                            src={item.productSnapshot.image_url || item.productSnapshot.image || ""} 
                            alt={getLocalizedText(item.productTitle as unknown as Record<string, string>, 'vi') || "Product"}
                            fill
                            className="object-cover"
+                           fallbackElement={<Package className="w-6 h-6" />}
                          />
                        ) : (
                          <Package className="w-6 h-6" />

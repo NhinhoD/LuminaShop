@@ -5,24 +5,26 @@ import { Product, ProductVariant } from "@/domain/entities/Product";
 import { formatCurrency } from "@/lib/utils";
 import { Heart, Download, CreditCard, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { simulatePurchaseAction } from "@/presentation/actions/order";
 import { createClient } from "@/infrastructure/supabase/client";
 import { useLocale } from "@/presentation/hooks/useLocale";
 import { getLocalizedText } from "@/presentation/utils/locale";
+import { useCart } from "@/presentation/hooks/useCart";
 
 interface ProductSelectionProps {
   product: Product;
   hasPurchased?: boolean;
 }
 
-export default function ProductSelection({ product, hasPurchased }: ProductSelectionProps) {
+export default function ProductSelection({ product, hasPurchased }: ProductSelectionProps): React.ReactElement | null {
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(
     product.variants && product.variants.length > 0 ? product.variants[0] : null
   );
   const locale = useLocale();
+  const { addItem } = useCart();
 
   const router = useRouter();
   const [isProcessing, setIsProcessing] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   const currentPrice = useMemo(() => {
     if (!selectedVariant) return product.price;
@@ -103,6 +105,11 @@ export default function ProductSelection({ product, hasPurchased }: ProductSelec
       )}
 
       {/* Add to Cart Actions */}
+      {errorMsg && (
+        <div className="bg-red-50 text-red-600 text-sm p-3 rounded-lg border border-red-100">
+          {errorMsg}
+        </div>
+      )}
       <div className="space-y-3 pt-2">
         <button
           onClick={async () => {
@@ -112,25 +119,29 @@ export default function ProductSelection({ product, hasPurchased }: ProductSelec
             }
 
             setIsProcessing(true);
+            setErrorMsg(null);
             try {
               const supabase = createClient();
               const { data: { session } } = await supabase.auth.getSession();
               if (!session) {
-                alert("Bạn cần đăng nhập để mua template này.");
+                setErrorMsg("Bạn cần đăng nhập để mua template này.");
                 router.push("/login");
                 return;
               }
 
-              const res = await simulatePurchaseAction(product.id, currentPrice, getLocalizedText(product.title as unknown as Record<string, string>, locale));
-              if (res.success) {
-                alert("Thanh toán thành công! Bạn đã có quyền tải xuống.");
-                router.refresh();
-              } else {
-                alert(res.error || "Lỗi thanh toán.");
-              }
+              await addItem({
+                productId: product.id,
+                variantId: selectedVariant?.id,
+                variantName: selectedVariant?.name,
+                quantity: 1,
+                title: product.title as unknown as Record<string, string>,
+                price: currentPrice,
+                imageUrl: product.imageUrl
+              });
+
+              router.push("/checkout");
             } catch (err) {
-              console.error(err);
-              alert("Đã xảy ra lỗi hệ thống.");
+              setErrorMsg(err instanceof Error ? err.message : "Đã xảy ra lỗi hệ thống.");
             } finally {
               setIsProcessing(false);
             }

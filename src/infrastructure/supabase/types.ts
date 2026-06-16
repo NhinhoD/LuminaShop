@@ -44,12 +44,12 @@ export interface InventoryItemRow {
 export interface OrderRow {
   id: string;
   user_id: string | null;
-  status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
+  status: 'pending' | 'completed' | 'cancelled';
   total_amount: string | number;
   contact_email: string | null;
   contact_phone: string | null;
   shipping_address: unknown;
-  payment_method: 'cod' | 'vnpay' | 'momo';
+  payment_method: 'cod' | 'vnpay' | 'momo' | 'payos';
   payment_status: string;
   notes: string | null;
   created_at: string;
@@ -97,4 +97,15 @@ export interface CategoryRow {
   created_at: string;
   updated_at: string;
   products?: { count: number }[];
+}
+
+export interface PaymentRow {
+  id: string;
+  order_id: string;
+  method: string;
+  status: string;
+  amount: number | string;
+  transaction_id?: string | null;
+  webhook_payload?: unknown;
+  created_at: string;
 }
