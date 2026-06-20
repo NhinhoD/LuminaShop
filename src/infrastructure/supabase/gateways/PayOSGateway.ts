@@ -28,7 +28,24 @@ export class PayOSGateway implements IPaymentGateway {
       // Generate a unique numeric ID for PayOS orderCode
       const orderCode = Number(String(Date.now()).slice(-9)) * 100 + Math.floor(Math.random() * 100);
       
-      const baseUrl = process.env.APP_URL || 'http://localhost:3000';
+      let baseUrl = process.env.NEXT_PUBLIC_SITE_URL || process.env.APP_URL;
+      
+      if (!baseUrl) {
+        try {
+          const { headers } = await import('next/headers');
+          const headersList = await headers();
+          const host = headersList.get('host');
+          const protocol = headersList.get('x-forwarded-proto') || 'https';
+          if (host) {
+            baseUrl = `${protocol}://${host}`;
+          }
+        } catch (error) {
+          // Fallback if not in a Next.js request context
+          baseUrl = 'http://localhost:3000';
+        }
+      }
+
+      baseUrl = baseUrl || 'http://localhost:3000';
       
       const body = {
         orderCode: orderCode,
