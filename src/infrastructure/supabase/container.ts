@@ -211,10 +211,10 @@ export async function makeGetLanguagesUseCase() {
   return new GetLanguagesUseCase(repo);
 }
 
-export async function makeToggleLanguageStatusUseCase() {
+export async function makeSetDefaultLanguageUseCase() {
   const repo = await makeLanguageRepository();
-  const { ToggleLanguageStatusUseCase } = await import('@/application/use-cases/languages/ToggleLanguageStatus');
-  return new ToggleLanguageStatusUseCase(repo);
+  const { SetDefaultLanguageUseCase } = await import('@/application/use-cases/languages/SetDefaultLanguage');
+  return new SetDefaultLanguageUseCase(repo);
 }
 
 // Dashboard Factories

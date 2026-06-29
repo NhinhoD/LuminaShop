@@ -28,32 +28,36 @@ export class PayOSGateway implements IPaymentGateway {
       // Generate a unique numeric ID for PayOS orderCode
       const orderCode = Number(String(Date.now()).slice(-9)) * 100 + Math.floor(Math.random() * 100);
       
-      let envUrl = process.env.NEXT_PUBLIC_SITE_URL || process.env.APP_URL;
-      if (envUrl && envUrl.endsWith('/')) {
-        envUrl = envUrl.slice(0, -1);
-      }
-
+      const envUrl = process.env.NEXT_PUBLIC_SITE_URL || process.env.APP_URL;
       let baseUrl = '';
 
       // Priority 1: env var cứng, đáng tin nhất
       if (envUrl) {
-        baseUrl = envUrl;
-        
-        // Host spoofing detection for logging
         try {
-          const { headers } = await import('next/headers');
-          const headersList = await headers();
-          const rawHost = headersList.get('host');
-          if (rawHost) {
+          const parsedUrl = new URL(envUrl);
+          if (process.env.NODE_ENV === 'production' && parsedUrl.protocol !== 'https:') {
+            console.warn('[PayOSGateway] Security Warning: Non-HTTPS envUrl in production is not allowed.');
+          } else {
+            baseUrl = parsedUrl.origin;
+            
+            // Host spoofing detection for logging
             try {
-              const expectedHost = new URL(envUrl).host;
-              if (rawHost !== expectedHost) {
-                console.warn(`[PayOSGateway] Security Warning: Host header mismatch. Expected ${expectedHost}, got ${rawHost}. Falling back to env var.`);
+              const { headers } = await import('next/headers');
+              const headersList = await headers();
+              const rawHost = headersList.get('host');
+              if (rawHost && rawHost !== parsedUrl.host) {
+                console.warn(`[PayOSGateway] Security Warning: Host header mismatch. Expected ${parsedUrl.host}, got ${rawHost}. Falling back to env var.`);
               }
-            } catch(e) {}
+            } catch {
+              // Ignore if headers are not available
+            }
           }
-        } catch(e) {}
-      } else {
+        } catch {
+          console.warn('[PayOSGateway] Invalid envUrl format.');
+        }
+      } 
+      
+      if (!baseUrl) {
         // Priority 2: Dynamic header (chỉ nếu host khớp whitelist)
         try {
           const { headers } = await import('next/headers');
@@ -74,7 +78,7 @@ export class PayOSGateway implements IPaymentGateway {
               console.warn(`[PayOSGateway] Security Warning: Rejecting untrusted host header: ${rawHost}. No env var fallback available.`);
             }
           }
-        } catch (error) {
+        } catch {
           // Fallback if not in a Next.js request context
         }
       }

@@ -86,7 +86,12 @@ export default function HomePageClient({ featuredProducts, categories, dict }: H
   const locale = useLocale();
 
   const displayCategories = [
-    { name: "Tất cả", filter: "all", count: "Premium & Free", icon: Layout },
+    { 
+      name: dict?.categories?.all || "Tất cả", 
+      filter: "all", 
+      count: dict?.categories?.premiumAndFree || "Premium & Free", 
+      icon: Layout 
+    },
     ...categories.map(cat => {
       let icon = Monitor;
       if (cat.slug === 'e-commerce') icon = ShoppingCart;
@@ -94,8 +99,8 @@ export default function HomePageClient({ featuredProducts, categories, dict }: H
       else if (cat.slug === 'portfolio') icon = Code2;
       return {
         name: getLocalizedText(cat.name as unknown as Record<string, string>, locale),
-        filter: cat.slug,
-        count: cat.productCount ? `${cat.productCount} templates` : "Premium",
+        filter: cat.id,
+        count: cat.productCount != null ? `${cat.productCount} templates` : (dict?.categories?.premium || "Premium"),
         icon: icon
       };
     })
@@ -106,9 +111,9 @@ export default function HomePageClient({ featuredProducts, categories, dict }: H
     const titleText = getLocalizedText(product.title as unknown as Record<string, string>, locale);
     const descText = getLocalizedText(product.description as unknown as Record<string, string>, locale);
     return (
-      product.categoryId?.toLowerCase().includes(activeCategory) ||
-      titleText.toLowerCase().includes(activeCategory) ||
-      descText.toLowerCase().includes(activeCategory)
+      product.categoryId === activeCategory ||
+      titleText.toLowerCase().includes(activeCategory.toLowerCase()) ||
+      descText.toLowerCase().includes(activeCategory.toLowerCase())
     );
   });
 

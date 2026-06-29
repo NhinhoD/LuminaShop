@@ -1,4 +1,4 @@
-import { getLanguagesAction, toggleLanguageAction } from '@/presentation/actions/languageActions';
+import { getLanguagesAction, setDefaultLanguageAction } from '@/presentation/actions/languageActions';
 import { Globe, CheckCircle2, XCircle } from 'lucide-react';
 import { revalidatePath } from 'next/cache';
 
@@ -7,9 +7,9 @@ export const dynamic = 'force-dynamic';
 export default async function AdminLanguagesPage() {
   const languages = await getLanguagesAction();
 
-  async function toggleStatus(code: string, currentStatus: boolean) {
+  async function setDefault(code: string) {
     'use server';
-    await toggleLanguageAction(code, !currentStatus);
+    await setDefaultLanguageAction(code);
     revalidatePath('/admin/languages');
   }
 
@@ -55,7 +55,7 @@ export default async function AdminLanguagesPage() {
                     )}
                   </td>
                   <td className="px-6 py-4 text-right">
-                    <form action={toggleStatus.bind(null, lang.code, false)}>
+                    <form action={setDefault.bind(null, lang.code)}>
                       <button 
                         disabled={lang.isDefault}
                         className="text-sm font-medium px-3 py-1.5 rounded-lg border border-outline-variant hover:bg-surface-container transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
