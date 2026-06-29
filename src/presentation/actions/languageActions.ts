@@ -1,6 +1,6 @@
 'use server';
 
-import { makeGetLanguagesUseCase, makeToggleLanguageStatusUseCase } from '@/infrastructure/supabase/container';
+import { makeGetLanguagesUseCase, makeSetDefaultLanguageUseCase } from '@/infrastructure/supabase/container';
 import { cookies } from 'next/headers';
 import { revalidatePath } from 'next/cache';
 import { Language } from '@/domain/entities/Language';
@@ -15,14 +15,14 @@ export async function getLanguagesAction(): Promise<Language[]> {
   }
 }
 
-export async function toggleLanguageAction(code: string, isActive: boolean) {
+export async function setDefaultLanguageAction(code: string) {
   try {
-    const useCase = await makeToggleLanguageStatusUseCase();
-    await useCase.execute(code, isActive);
+    const useCase = await makeSetDefaultLanguageUseCase();
+    await useCase.execute(code);
     revalidatePath('/admin/languages');
     return { success: true };
   } catch (error: unknown) {
-    console.error('Failed to toggle language status:', error);
+    console.error('Failed to set default language:', error);
     return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
   }
 }

@@ -28,7 +28,69 @@ export class PayOSGateway implements IPaymentGateway {
       // Generate a unique numeric ID for PayOS orderCode
       const orderCode = Number(String(Date.now()).slice(-9)) * 100 + Math.floor(Math.random() * 100);
       
-      const baseUrl = process.env.APP_URL || 'http://localhost:3000';
+      const envUrl = process.env.NEXT_PUBLIC_SITE_URL || process.env.APP_URL;
+      let baseUrl = '';
+
+      // Priority 1: env var cứng, đáng tin nhất
+      if (envUrl) {
+        try {
+          const parsedUrl = new URL(envUrl);
+          if (process.env.NODE_ENV === 'production' && parsedUrl.protocol !== 'https:') {
+            console.warn('[PayOSGateway] Security Warning: Non-HTTPS envUrl in production is not allowed.');
+          } else {
+            baseUrl = parsedUrl.origin;
+            
+            // Host spoofing detection for logging
+            try {
+              const { headers } = await import('next/headers');
+              const headersList = await headers();
+              const rawHost = headersList.get('host');
+              if (rawHost && rawHost !== parsedUrl.host) {
+                console.warn(`[PayOSGateway] Security Warning: Host header mismatch. Expected ${parsedUrl.host}, got ${rawHost}. Falling back to env var.`);
+              }
+            } catch {
+              // Ignore if headers are not available
+            }
+          }
+        } catch {
+          console.warn('[PayOSGateway] Invalid envUrl format.');
+        }
+      } 
+      
+      if (!baseUrl) {
+        // Priority 2: Dynamic header (chỉ nếu host khớp whitelist)
+        try {
+          const { headers } = await import('next/headers');
+          const headersList = await headers();
+          const rawHost = headersList.get('host');
+          
+          if (rawHost) {
+            // Whitelist validation & Không bao giờ dùng raw header value trực tiếp
+            const isLocal = rawHost.startsWith('localhost') || rawHost.startsWith('127.0.0.1');
+            
+            if (process.env.VERCEL_PROJECT_PRODUCTION_URL && rawHost === process.env.VERCEL_PROJECT_PRODUCTION_URL) {
+              baseUrl = `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
+            } else if (process.env.VERCEL_URL && rawHost === process.env.VERCEL_URL) {
+              baseUrl = `https://${process.env.VERCEL_URL}`;
+            } else if (isLocal && process.env.NODE_ENV !== 'production') {
+              baseUrl = `http://localhost:3000`;
+            } else {
+              console.warn(`[PayOSGateway] Security Warning: Rejecting untrusted host header: ${rawHost}. No env var fallback available.`);
+            }
+          }
+        } catch {
+          // Fallback if not in a Next.js request context
+        }
+      }
+
+      // Priority 3: Guard clause & Fallback localhost
+      if (!baseUrl) {
+        if (process.env.NODE_ENV === 'production') {
+          throw new Error('[PayOSGateway] Security Guard: No valid baseUrl found for production environment. Please set NEXT_PUBLIC_SITE_URL.');
+        }
+        console.warn('[PayOSGateway] Warning: Using fallback http://localhost:3000 for baseUrl');
+        baseUrl = 'http://localhost:3000';
+      }
       
       const body = {
         orderCode: orderCode,

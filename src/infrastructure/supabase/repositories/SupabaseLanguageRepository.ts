@@ -38,6 +38,35 @@ export class SupabaseLanguageRepository implements ILanguageRepository {
     };
   }
 
+  async setDefaultLanguage(code: string): Promise<void> {
+    // 1. Verify language exists
+    const { data: lang, error: findError } = await this.supabase
+      .from('languages')
+      .select('code')
+      .eq('code', code)
+      .single();
+
+    if (findError || !lang) {
+      throw new Error('Ngôn ngữ không tồn tại');
+    }
+
+    // 2. Clear other defaults
+    const { error: err1 } = await this.supabase
+      .from('languages')
+      .update({ is_default: false })
+      .neq('code', code);
+    
+    if (err1) throw new Error(err1.message);
+
+    // 3. Set new default
+    const { error: err2 } = await this.supabase
+      .from('languages')
+      .update({ is_default: true })
+      .eq('code', code);
+
+    if (err2) throw new Error(err2.message);
+  }
+
   async fetchTranslations(locale: Locale): Promise<Record<string, string>> {
     const { data, error } = await this.supabase
       .from('site_translations')

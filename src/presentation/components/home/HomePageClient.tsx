@@ -11,6 +11,7 @@ import { getLocalizedText } from "@/presentation/utils/locale";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Product } from "@/domain/entities/Product";
+import { Category } from "@/domain/entities/Category";
 import {
   Star,
   Zap,
@@ -32,6 +33,7 @@ if (typeof window !== "undefined") {
 
 interface HomePageClientProps {
   readonly featuredProducts: readonly Product[];
+  readonly categories: readonly Category[];
   readonly dict: Record<string, Record<string, string>>;
 }
 
@@ -44,14 +46,6 @@ const MARQUEE_ITEMS = [
   "Clean Architecture Clean Code",
   "Supabase PostgreSQL + Auth",
   "SEO Optimized Templates",
-];
-
-const CATEGORIES = [
-  { name: "Tất cả", filter: "all", count: "Premium & Free", icon: Layout },
-  { name: "Landing Page", filter: "landing-page", count: "Trang đơn chuyển đổi", icon: Monitor },
-  { name: "E-Commerce", filter: "e-commerce", count: "Cửa hàng trực tuyến", icon: ShoppingCart },
-  { name: "Admin Dashboard", filter: "admin-dashboard", count: "Hệ quản trị nội bộ", icon: Cpu },
-  { name: "Portfolio", filter: "portfolio", count: "Hồ sơ cá nhân sáng tạo", icon: Code2 },
 ];
 
 const ADVANTAGES = [
@@ -81,7 +75,7 @@ const JOURNEY_STEPS = [
   { year: "Bước 3", title: "Tải về & Triển khai", desc: "Tải ngay file .zip chứa toàn bộ code gốc, hướng dẫn cài đặt và sẵn sàng deploy chỉ trong 5 phút." },
 ];
 
-export default function HomePageClient({ featuredProducts, dict }: HomePageClientProps) {
+export default function HomePageClient({ featuredProducts, categories, dict }: HomePageClientProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const categoriesRef = useRef<HTMLDivElement>(null);
   const advantagesRef = useRef<HTMLElement>(null);
@@ -91,14 +85,35 @@ export default function HomePageClient({ featuredProducts, dict }: HomePageClien
   const [activeCategory, setActiveCategory] = useState("all");
   const locale = useLocale();
 
+  const displayCategories = [
+    { 
+      name: dict?.categories?.all || "Tất cả", 
+      filter: "all", 
+      count: dict?.categories?.premiumAndFree || "Premium & Free", 
+      icon: Layout 
+    },
+    ...categories.map(cat => {
+      let icon = Monitor;
+      if (cat.slug === 'e-commerce') icon = ShoppingCart;
+      else if (cat.slug === 'admin-dashboard') icon = Cpu;
+      else if (cat.slug === 'portfolio') icon = Code2;
+      return {
+        name: getLocalizedText(cat.name as unknown as Record<string, string>, locale),
+        filter: cat.id,
+        count: cat.productCount != null ? `${cat.productCount} templates` : (dict?.categories?.premium || "Premium"),
+        icon: icon
+      };
+    })
+  ];
+
   const filteredProducts = featuredProducts.filter((product) => {
     if (activeCategory === "all") return true;
     const titleText = getLocalizedText(product.title as unknown as Record<string, string>, locale);
     const descText = getLocalizedText(product.description as unknown as Record<string, string>, locale);
     return (
-      product.categoryId?.toLowerCase().includes(activeCategory) ||
-      titleText.toLowerCase().includes(activeCategory) ||
-      descText.toLowerCase().includes(activeCategory)
+      product.categoryId === activeCategory ||
+      titleText.toLowerCase().includes(activeCategory.toLowerCase()) ||
+      descText.toLowerCase().includes(activeCategory.toLowerCase())
     );
   });
 
@@ -356,7 +371,7 @@ export default function HomePageClient({ featuredProducts, dict }: HomePageClien
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 justify-center">
-            {CATEGORIES.map((cat) => {
+            {displayCategories.map((cat) => {
               const Icon = cat.icon;
               return (
                 <button

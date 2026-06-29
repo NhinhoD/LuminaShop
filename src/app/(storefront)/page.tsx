@@ -1,5 +1,5 @@
 import React from "react";
-import { makeProductRepository, makeLanguageRepository } from "@/infrastructure/supabase/container";
+import { makeProductRepository, makeLanguageRepository, makeCategoryRepository } from "@/infrastructure/supabase/container";
 import HomePageClient from "@/presentation/components/home/HomePageClient";
 import { getDictionary } from "@/i18n/getDictionary";
 
@@ -41,9 +41,12 @@ export default async function HomePage(): Promise<React.ReactElement> {
   const { products: rawProducts } = await productRepository.findAll({ limit: 4 });
   const featuredProducts = z.array(productSchema).parse(rawProducts);
 
+  const categoryRepository = await makeCategoryRepository();
+  const { categories } = await categoryRepository.findAll();
+
   return (
     <main className="flex flex-col min-h-screen">
-      <HomePageClient featuredProducts={featuredProducts} dict={(dictionary.home as Record<string, Record<string, string>>) || {}} />
+      <HomePageClient featuredProducts={featuredProducts} categories={categories} dict={(dictionary.home as Record<string, Record<string, string>>) || {}} />
     </main>
   );
 }
