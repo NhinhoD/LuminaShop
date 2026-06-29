@@ -38,6 +38,22 @@ export class SupabaseLanguageRepository implements ILanguageRepository {
     };
   }
 
+  async setDefaultLanguage(code: string): Promise<void> {
+    const { error: err1 } = await this.supabase
+      .from('languages')
+      .update({ is_default: false })
+      .neq('code', code);
+    
+    if (err1) throw new Error(err1.message);
+
+    const { error: err2 } = await this.supabase
+      .from('languages')
+      .update({ is_default: true })
+      .eq('code', code);
+
+    if (err2) throw new Error(err2.message);
+  }
+
   async fetchTranslations(locale: Locale): Promise<Record<string, string>> {
     const { data, error } = await this.supabase
       .from('site_translations')

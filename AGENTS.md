@@ -291,12 +291,18 @@ chore: install supabase agent skills
   - Database: Created `languages` and `site_translations` tables in Supabase via MCP with 'vi' and 'en' records.
   - Implemented Domain, Infrastructure (`SupabaseLanguageRepository`, `SupabaseTranslationRepository`), Application (Use Cases), and Presentation (Server Actions & Admin UI).
   - Replaced static dictionaries with dynamic database-driven translations.
+- **System Stability & Solopreneur Roadmap**:
+  - Fixed Language Switcher cache invalidation by enforcing hard reloads.
+  - Repaired Admin Language Manager to correctly save default language settings to Supabase.
+  - Updated Homepage Template Categories to dynamically fetch and render categories from the database instead of using hardcoded arrays.
+  - Created a complete 5-Epic Solopreneur MVP Roadmap (Payment, Digital Delivery, Email, Analytics, SEO) natively tracked via GitHub Issues.
+- **Payment Gateway Integration (Epic 1)**: Hooked up a live VietQR/PayOS dynamic payment API so users can purchase these premium templates using real fiat money.
 
 ### 🔄 In Progress:
 - None currently.
 
 ### ⏳ Next Tasks (recommended order):
-1. **Payment Gateway Integration**: Hook up a live VietQR/PayOS dynamic payment API so users can purchase these premium templates using real fiat money.
+- None currently.
 
 ### ⚠️ Known Issues:
 - None currently

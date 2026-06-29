@@ -15,7 +15,7 @@ export function LanguageSwitcher({ initialLocale = "vi" }: { initialLocale?: "vi
     setLocale(nextLocale);
     startTransition(async () => {
       await setLanguageAction(nextLocale);
-      router.refresh();
+      window.location.reload();
     });
   };
 
