@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
 @import "tailwindcss";
 
 @theme inline {
@@ -16,10 +17,10 @@
   --color-on-surface: #1a1a1a;
   --color-error: #ba1a1a;
 
-  --font-poppins: "Poppins", sans-serif;
-  --font-playfair: "Playfair Display", serif;
-  --font-dancing: "Dancing Script", cursive;
-  --font-manrope: "Manrope", sans-serif;
+  --font-poppins: var(--font-poppins, "Poppins", sans-serif);
+  --font-playfair: var(--font-playfair, "Playfair Display", serif);
+  --font-dancing: var(--font-dancing, "Dancing Script", cursive);
+  --font-manrope: var(--font-manrope, "Manrope", sans-serif);
   --font-bricolage: var(--font-bricolage, sans-serif);
 
   --spacing-gutter: 24px;

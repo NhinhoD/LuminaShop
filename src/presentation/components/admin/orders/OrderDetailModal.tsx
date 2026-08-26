@@ -1,11 +1,11 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { OrderStatus, Order, OrderItem } from "@/domain/entities/Order";
-import { getOrderAction, updateOrderStatusAction, approveManualPaymentAction } from "@/presentation/actions/order";
+import { Order, OrderItem } from "@/domain/entities/Order";
+import { getOrderAction, approveManualPaymentAction } from "@/presentation/actions/order";
 import { StatusBadge } from "@/presentation/components/orders/StatusBadge";
 import { formatPrice, formatDate, cn } from "@/presentation/utils";
-import { X, Package, MapPin, CreditCard, CheckCircle, AlertCircle, FileText } from "lucide-react";
+import { X, Package, CreditCard, CheckCircle, FileText } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { ImageWithFallback } from "@/presentation/components/common/ImageWithFallback";
 import { motion, AnimatePresence } from "framer-motion";

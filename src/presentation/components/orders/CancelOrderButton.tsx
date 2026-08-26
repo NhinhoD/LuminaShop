@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { OrderStatus } from "@/domain/entities/Order";
 import { cancelOrderAction } from "@/presentation/actions/order";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
@@ -26,7 +25,7 @@ export function CancelOrderButton({ orderId }: CancelOrderButtonProps) {
       } else {
         toast.error(result.error || "Không thể hủy đơn hàng.");
       }
-    } catch (_e) {
+    } catch {
       toast.error("Đã có lỗi xảy ra.");
     } finally {
       setLoading(false);

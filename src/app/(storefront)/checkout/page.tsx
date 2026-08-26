@@ -8,6 +8,7 @@ import { useLocale } from "@/presentation/hooks/useLocale";
 import { getLocalizedText } from "@/presentation/utils/locale";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { PaymentMethod } from "@/domain/entities/Order";
 import { z } from "zod";
 import { motion, AnimatePresence } from "framer-motion";
@@ -288,7 +289,7 @@ export default function CheckoutPage() {
                       <div key={item.id} className="flex gap-5 py-5 first:pt-0 last:pb-0 group">
                         {item.imageUrl && (
                           <div className="w-20 h-16 rounded-xl overflow-hidden border border-slate-100 bg-slate-50 relative flex-shrink-0">
-                            <img src={item.imageUrl} alt={getLocalizedText(item.title as unknown as Record<string, string>, locale) || "Product"} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                            <Image src={item.imageUrl} alt={getLocalizedText(item.title as unknown as Record<string, string>, locale) || "Product"} fill sizes="80px" className="object-cover group-hover:scale-105 transition-transform duration-300" />
                           </div>
                         )}
                         <div className="flex-1 flex flex-col justify-between">

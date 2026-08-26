@@ -424,10 +424,12 @@ export default function HomePageClient({ featuredProducts, categories, dict }: H
                   {/* Visual Frame */}
                   <div className="relative overflow-hidden aspect-[4/3] bg-[#fbfaf6]">
                     {product.imageUrl ? (
-                      <img
+                      <Image
                         src={product.imageUrl}
                         alt={getLocalizedText(product.title as unknown as Record<string, string>, locale)}
-                        className="w-full h-full object-cover"
+                        fill
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        className="object-cover"
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-slate-300">

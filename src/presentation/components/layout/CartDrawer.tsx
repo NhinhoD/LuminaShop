@@ -4,6 +4,7 @@ import { useCart } from "@/presentation/hooks/useCart";
 import { useCartDrawerStore } from "@/presentation/hooks/useCartDrawerStore";
 import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
+import Image from "next/image";
 import { ROUTES } from "@/presentation/constants";
 import { useLocale } from "@/presentation/hooks/useLocale";
 import { getLocalizedText } from "@/presentation/utils/locale";
@@ -122,10 +123,12 @@ export default function CartDrawer() {
                       >
                         <div className="w-20 h-24 bg-slate-50 overflow-hidden relative flex-shrink-0">
                           {item.imageUrl ? (
-                            <img 
+                            <Image 
                               src={item.imageUrl} 
                               alt={getLocalizedText(item.title as unknown as Record<string, string>, locale) || "Product"} 
-                              className="w-full h-full object-cover grayscale opacity-90 transition-transform duration-700 group-hover:scale-105 group-hover:grayscale-0"
+                              fill
+                              sizes="80px"
+                              className="object-cover grayscale opacity-90 transition-transform duration-700 group-hover:scale-105 group-hover:grayscale-0"
                             />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center text-slate-300">

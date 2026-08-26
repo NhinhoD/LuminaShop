@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useCart } from "@/presentation/hooks/useCart";
 import { useLocale } from "@/presentation/hooks/useLocale";
 import { getLocalizedText } from "@/presentation/utils/locale";
@@ -42,12 +43,14 @@ export default function CartPage() {
           <div className="space-y-12">
             {items.map((item) => (
               <div key={item.id} className="flex gap-8 group">
-                <div className="w-32 h-40 bg-slate-50 rounded-lg overflow-hidden flex-shrink-0">
+                <div className="w-32 h-40 bg-slate-50 rounded-lg overflow-hidden flex-shrink-0 relative">
                   {item.imageUrl ? (
-                    <img 
+                    <Image 
                       alt={getLocalizedText(item.title as unknown as Record<string, string>, locale)} 
-                      className="w-full h-full object-cover mix-blend-multiply opacity-90" 
+                      className="object-cover mix-blend-multiply opacity-90" 
                       src={item.imageUrl} 
+                      fill
+                      sizes="128px"
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-slate-300">

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { ROUTES } from "@/presentation/constants";
 import { MapPin, Phone, Mail, Clock, ChevronRight, Globe, Camera, MessageCircle, Play } from "lucide-react";
 
@@ -40,7 +41,7 @@ export function Footer() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12">
           {/* Brand Column */}
           <div>
-            <img src="/LogoKhoUI.png" alt="KhoUI Logo" className="h-12 w-auto object-contain mb-4" />
+            <Image src="/LogoKhoUI.png" alt="KhoUI Logo" width={140} height={48} className="h-12 w-auto object-contain mb-4" />
             <p className="text-[#999] text-sm leading-relaxed mb-6">
               Exclusive, high-quality website templates and themes built with Next.js, Tailwind CSS, and GSAP. Download instantly.
             </p>

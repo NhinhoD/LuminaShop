@@ -1,8 +1,8 @@
 import { IProductRepository } from '@/domain/repositories/IProductRepository';
 import { Product, CreateProductDTO, UpdateProductDTO, ProductVariant } from '@/domain/entities/Product';
-import { ProductRow, ProductVariantRow } from '../types';
+import { ProductRow } from '../types';
 import { SupabaseClient } from '@supabase/supabase-js';
-import { generateSlug, generateSKU } from '@/lib/utils';
+import { generateSlug } from '@/lib/utils';
 
 interface ProductDTO {
   category_id?: string;
@@ -178,7 +178,7 @@ export class SupabaseProductRepository implements IProductRepository {
     if (error) throw new Error(`Database error: ${error.message}`);
   }
 
-  async addVariant(productId: string, variant: Omit<ProductVariant, 'id' | 'productId' | 'createdAt' | 'updatedAt'>): Promise<void> {
+  async addVariant(_productId: string, _variant: Omit<ProductVariant, 'id' | 'productId' | 'createdAt' | 'updatedAt'>): Promise<void> {
     // No-op for digital marketplace, but keep interface compatibility
     return;
   }

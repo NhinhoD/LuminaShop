@@ -8,12 +8,40 @@ export const metadata: Metadata = {
 
 import { BreadcrumbProvider } from "@/presentation/components/common/BreadcrumbContext";
 
-import { Bricolage_Grotesque } from 'next/font/google';
+import { Bricolage_Grotesque, Poppins, Playfair_Display, Dancing_Script, Manrope } from 'next/font/google';
 
 const bricolageGrotesque = Bricolage_Grotesque({
   subsets: ['latin'],
   weight: ['300', '400', '500', '600', '700', '800'],
   variable: '--font-bricolage',
+  display: 'swap',
+});
+
+const poppins = Poppins({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700'],
+  variable: '--font-poppins',
+  display: 'swap',
+});
+
+const playfairDisplay = Playfair_Display({
+  subsets: ['latin'],
+  weight: ['400', '700', '900'],
+  variable: '--font-playfair',
+  display: 'swap',
+});
+
+const dancingScript = Dancing_Script({
+  subsets: ['latin'],
+  weight: ['700'],
+  variable: '--font-dancing',
+  display: 'swap',
+});
+
+const manrope = Manrope({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700', '800'],
+  variable: '--font-manrope',
   display: 'swap',
 });
 
@@ -27,14 +55,10 @@ export default async function RootLayout({
   const cookieStore = await cookies();
   const locale = cookieStore.get("NEXT_LOCALE")?.value || "vi";
 
+  const fontClasses = `${bricolageGrotesque.variable} ${poppins.variable} ${playfairDisplay.variable} ${dancingScript.variable} ${manrope.variable}`;
+
   return (
-    <html lang={locale} className={`light ${bricolageGrotesque.variable}`}>
-      <head>
-        <link href="https://fonts.googleapis.com" rel="preconnect" />
-        <link crossOrigin="anonymous" href="https://fonts.gstatic.com" rel="preconnect" />
-        <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Poppins:wght@300;400;500;600;700&family=Dancing+Script:wght@700&family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
-        <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
-      </head>
+    <html lang={locale} className={`light ${fontClasses}`}>
       <body className="bg-background text-on-background font-bricolage antialiased">
         <BreadcrumbProvider>
           {children}

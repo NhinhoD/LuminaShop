@@ -1,12 +1,10 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useState, useTransition, useEffect } from "react";
+import { useState, useTransition } from "react";
 import { setLanguageAction } from "@/presentation/actions/i18n";
 import { Globe } from "lucide-react";
 
 export function LanguageSwitcher({ initialLocale = "vi" }: { initialLocale?: "vi" | "en" }) {
-  const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [locale, setLocale] = useState<"vi" | "en">(initialLocale);
 

@@ -1,9 +1,9 @@
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { createClient } from '@/infrastructure/supabase/server';
 import { signout } from '@/presentation/actions/auth';
 import { ROUTES } from '@/presentation/constants';
-import { StatusBadge } from '@/presentation/components/orders/StatusBadge';
 
 export default async function ProfilePage() {
   const supabase = await createClient();
@@ -31,11 +31,13 @@ export default async function ProfilePage() {
             <div className="bg-white rounded-3xl border border-slate-100 p-8 shadow-sm">
               {/* User Identity */}
               <div className="flex flex-col items-center text-center mb-10">
-                <div className="w-20 h-20 rounded-full overflow-hidden mb-4 border-2 border-slate-50 shadow-sm">
-                  <img 
+                <div className="w-20 h-20 rounded-full overflow-hidden mb-4 border-2 border-slate-50 shadow-sm relative">
+                  <Image 
                     alt="Profile" 
-                    className="w-full h-full object-cover" 
-                    src={profile?.avatar_url || `https://ui-avatars.com/api/?name=${profile?.full_name || user.email}&background=0051d5&color=fff&size=128`} 
+                    className="object-cover" 
+                    src={profile?.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(profile?.full_name || user.email || 'User')}&background=0051d5&color=fff&size=128`} 
+                    fill
+                    sizes="80px"
                   />
                 </div>
                 <h2 className="text-base font-extrabold text-slate-900 leading-snug">{profile?.full_name || 'Khách hàng Lumina'}</h2>

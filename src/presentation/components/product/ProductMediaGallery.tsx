@@ -151,15 +151,17 @@ export default function ProductMediaGallery({ productId, title, imageUrl, demoUr
         ) : (
           <div className="w-full h-full relative">
             {imageUrl ? (
-              <img
+              <Image
                 alt={title}
                 className="w-full h-full object-cover"
                 src={imageUrl}
-
+                fill
+                priority
+                sizes="(max-width: 1024px) 100vw, 50vw"
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center text-[#ccc] text-6xl">
-                🍽️
+                💻
               </div>
             )}
           </div>

@@ -1,7 +1,7 @@
 "use client";
 
 import { OrderStatus } from "@/domain/entities/Order";
-import { Check, Clock, Package, Truck, Home, XCircle } from "lucide-react";
+import { Check, Clock, Home, XCircle } from "lucide-react";
 import { cn } from "@/presentation/utils";
 
 interface OrderTimelineProps {

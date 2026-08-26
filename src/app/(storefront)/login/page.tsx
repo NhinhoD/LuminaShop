@@ -1,6 +1,7 @@
 import Link from "next/link";
+import Image from "next/image";
 import { login } from "@/presentation/actions/auth";
-import { ROUTES, BRAND_NAME, UI_LABELS, PLACEHOLDERS } from "@/presentation/constants";
+import { ROUTES, UI_LABELS, PLACEHOLDERS } from "@/presentation/constants";
 
 export default async function LoginPage({ searchParams }: { searchParams: { error?: string } }) {
   const params = await searchParams;
@@ -9,7 +10,7 @@ export default async function LoginPage({ searchParams }: { searchParams: { erro
     <div className="min-h-screen bg-[#f8f9fa] flex flex-col items-center justify-center py-20 px-4">
       {/* Brand Header */}
       <Link href={ROUTES.HOME} className="mb-12">
-        <img src="/LogoKhoUI.png" alt="KhoUI Logo" className="h-16 w-auto object-contain" />
+        <Image src="/LogoKhoUI.png" alt="KhoUI Logo" width={180} height={64} priority className="h-16 w-auto object-contain" />
       </Link>
 
       {/* Login Card */}

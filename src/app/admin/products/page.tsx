@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { makeGetProductsUseCase, makeGetCategoriesUseCase, makeLanguageRepository } from "@/infrastructure/supabase/container";
 import { formatCurrency } from "@/lib/utils";
 import { ProductDeleteButton } from "@/app/admin/products/ProductDeleteButton";
@@ -117,9 +118,9 @@ export default async function AdminProductsPage({
                   </td>
                   <td className="p-4">
                     <div className="flex items-center gap-4">
-                      <div className="w-14 h-14 rounded-lg border border-slate-100 bg-slate-50 flex-shrink-0 overflow-hidden shadow-sm">
+                      <div className="w-14 h-14 rounded-lg border border-slate-100 bg-slate-50 flex-shrink-0 overflow-hidden shadow-sm relative">
                         {product.imageUrl ? (
-                          <img alt={getLocalizedText(product.title as unknown as Record<string, string>, locale)} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" src={product.imageUrl} />
+                          <Image alt={getLocalizedText(product.title as unknown as Record<string, string>, locale)} className="object-cover group-hover:scale-105 transition-transform duration-300" src={product.imageUrl} fill sizes="56px" />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center text-slate-300">
                             <span className="material-symbols-outlined">image</span>

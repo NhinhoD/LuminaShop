@@ -1,5 +1,6 @@
 import { notFound, redirect } from "next/navigation";
 import { cookies } from "next/headers";
+import Image from "next/image";
 // Justification: Next.js App Router Server Components require direct cookie access for session validation.
 // We alias createClient to createServerSupabaseClient to make the infrastructure coupling explicit.
 import { createClient as createServerSupabaseClient } from "@/infrastructure/supabase/server";
@@ -43,7 +44,7 @@ export default async function AdminLayout({
       <nav className="h-screen w-64 fixed left-0 top-0 border-r border-slate-200 dark:border-slate-800 shadow-none bg-slate-50 dark:bg-slate-950 font-manrope text-sm font-medium z-50">
         <div className="flex flex-col h-full p-4">
           <div className="mb-8 px-4 flex items-center gap-3">
-            <img src="/LogoKhoUI.png" alt="KhoUI Logo" className="h-10 w-auto object-contain" />
+            <Image src="/LogoKhoUI.png" alt="KhoUI Logo" width={100} height={40} priority className="h-10 w-auto object-contain" />
             <div>
               <h2 className="text-xl font-bold text-slate-900 dark:text-slate-50 tracking-tight">Admin Panel</h2>
               <p className="text-slate-500 text-xs">E-commerce Suite</p>

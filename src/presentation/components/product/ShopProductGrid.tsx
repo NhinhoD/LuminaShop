@@ -22,7 +22,7 @@ interface ShopProductGridProps {
   initialCategory?: string;
 }
 
-export default function ShopProductGrid({ initialProducts, currentSearch, currentSort, currentCategory, initialCategory }: ShopProductGridProps) {
+export default function ShopProductGrid({ initialProducts, currentSearch, currentSort, currentCategory }: ShopProductGridProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -31,7 +31,6 @@ export default function ShopProductGrid({ initialProducts, currentSearch, curren
   const [searchQuery, setSearchQuery] = useState(currentSearch);
   const [maxPrice, setMaxPrice] = useState<number>(10000000);
   const [selectedTech, setSelectedTech] = useState<readonly string[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<string>(initialCategory || currentCategory || 'all');
   const [isLoading, setIsLoading] = useState(false);
   const gridRef = useRef<HTMLDivElement>(null);
   const loadingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -85,7 +84,6 @@ export default function ShopProductGrid({ initialProducts, currentSearch, curren
   }, 500);
 
   const handleCategorySelect = (category: string) => {
-    setSelectedCategory(category);
     updateUrl({ category });
   };
 
@@ -294,10 +292,12 @@ export default function ShopProductGrid({ initialProducts, currentSearch, curren
                         {/* Visual Frame */}
                         <div className="relative overflow-hidden aspect-[4/3] bg-[#fbfaf6]">
                           {product.imageUrl ? (
-                            <img
+                            <Image
                               src={product.imageUrl}
                               alt={getLocalizedText(product.title as unknown as Record<string, string>, locale)}
-                              className="w-full h-full object-cover"
+                              fill
+                              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                              className="object-cover"
                             />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center text-slate-300">

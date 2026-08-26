@@ -1,6 +1,5 @@
 import { IPaymentGateway, PaymentResult } from '@/domain/repositories/IPaymentGateway';
 import { IOrderRepository } from '@/domain/repositories/IOrderRepository';
-import { OrderStatus } from '@/domain/entities/Order';
 
 export interface ProcessPaymentDTO {
   orderId: string;

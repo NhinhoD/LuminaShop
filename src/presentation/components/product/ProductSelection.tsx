@@ -5,9 +5,6 @@ import { Product, ProductVariant } from "@/domain/entities/Product";
 import { formatCurrency } from "@/lib/utils";
 import { Heart, Download, CreditCard, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { createClient } from "@/infrastructure/supabase/client";
-import { useLocale } from "@/presentation/hooks/useLocale";
-import { getLocalizedText } from "@/presentation/utils/locale";
 import { useCart } from "@/presentation/hooks/useCart";
 
 interface ProductSelectionProps {
@@ -19,7 +16,6 @@ export default function ProductSelection({ product, hasPurchased }: ProductSelec
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(
     product.variants && product.variants.length > 0 ? product.variants[0] : null
   );
-  const locale = useLocale();
   const { addItem } = useCart();
 
   const router = useRouter();
@@ -121,14 +117,6 @@ export default function ProductSelection({ product, hasPurchased }: ProductSelec
             setIsProcessing(true);
             setErrorMsg(null);
             try {
-              const supabase = createClient();
-              const { data: { session } } = await supabase.auth.getSession();
-              if (!session) {
-                setErrorMsg("Bạn cần đăng nhập để mua template này.");
-                router.push("/login");
-                return;
-              }
-
               await addItem({
                 productId: product.id,
                 variantId: selectedVariant?.id,

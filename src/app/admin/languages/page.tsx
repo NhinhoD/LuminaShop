@@ -1,5 +1,5 @@
 import { getLanguagesAction, setDefaultLanguageAction } from '@/presentation/actions/languageActions';
-import { Globe, CheckCircle2, XCircle } from 'lucide-react';
+import { Globe } from 'lucide-react';
 import { revalidatePath } from 'next/cache';
 
 export const dynamic = 'force-dynamic';

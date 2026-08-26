@@ -47,7 +47,7 @@ async function isUserAdmin() {
         claimsData?.claims?.user_role === ROLES.ADMIN) {
       return true;
     }
-  } catch (_e) {
+  } catch {
     // Ignore error and fall back
   }
 

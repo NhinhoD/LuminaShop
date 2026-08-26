@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useEffect, useState, useRef } from "react";
 
 import { ROUTES } from "@/presentation/constants";
@@ -87,7 +88,7 @@ export default function NavbarClient({ user, navLinks, dict }: NavbarClientProps
         <div className="max-w-[1200px] mx-auto px-4 flex justify-between items-center h-[68px]">
           {/* Logo */}
           <Link ref={logoRef} href={ROUTES.HOME} className="flex items-center gap-2.5 group">
-            <img src="/LogoKhoUI.png" alt="KhoUI Logo" className="h-12 w-auto object-contain" />
+            <Image src="/LogoKhoUI.png" alt="KhoUI Logo" width={140} height={48} priority className="h-12 w-auto object-contain" />
           </Link>
 
           {/* Desktop Nav Links */}
