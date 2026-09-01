@@ -2,6 +2,8 @@
 
 import { deleteProductAction } from "@/presentation/actions/product";
 import { useState } from "react";
+import { Trash2, Loader2 } from "lucide-react";
+import { toast } from "@/presentation/hooks/useToastStore";
 
 export function ProductDeleteButton({ id }: { id: string }) {
   const [isDeleting, setIsDeleting] = useState(false);
@@ -13,8 +15,10 @@ export function ProductDeleteButton({ id }: { id: string }) {
     const result = await deleteProductAction(id);
     setIsDeleting(false);
 
-    if (result.error) {
-      alert(result.error);
+    if (result.success) {
+      toast.success("Đã xóa sản phẩm thành công!");
+    } else {
+      toast.error("Không thể xóa sản phẩm", result.error || "Vui lòng thử lại sau.");
     }
   };
 
@@ -22,11 +26,15 @@ export function ProductDeleteButton({ id }: { id: string }) {
     <button 
       onClick={handleDelete}
       disabled={isDeleting}
-      className="inline-flex p-1.5 text-on-surface-variant hover:text-error transition-colors rounded-md hover:bg-error-container/50 disabled:opacity-50"
+      type="button"
+      className="inline-flex p-2 text-slate-400 hover:text-red-500 transition-colors rounded-lg hover:bg-red-50 disabled:opacity-50 cursor-pointer"
+      title="Xóa sản phẩm"
     >
-      <span className="material-symbols-outlined text-[20px]">
-        {isDeleting ? "sync" : "delete"}
-      </span>
+      {isDeleting ? (
+        <Loader2 size={18} className="animate-spin text-slate-400" />
+      ) : (
+        <Trash2 size={18} />
+      )}
     </button>
   );
 }

@@ -1,42 +1,56 @@
 import Link from "next/link";
 import Image from "next/image";
 import { login } from "@/presentation/actions/auth";
-import { ROUTES, UI_LABELS, PLACEHOLDERS } from "@/presentation/constants";
+import { ROUTES } from "@/presentation/constants";
+import { getDictionary, getLocale } from "@/i18n/getDictionary";
+import { makeLanguageRepository } from "@/infrastructure/supabase/container";
+import { Mail, Lock, ArrowRight } from "lucide-react";
+import { AuthErrorToast } from "@/presentation/components/auth/AuthErrorToast";
 
-export default async function LoginPage({ searchParams }: { searchParams: { error?: string } }) {
+export default async function LoginPage({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
   const params = await searchParams;
+  const locale = await getLocale();
+  const langRepo = await makeLanguageRepository();
+  const dict = await getDictionary(langRepo);
+  const authDict = (dict?.auth as Record<string, string>) || {};
 
   return (
-    <div className="min-h-screen bg-[#f8f9fa] flex flex-col items-center justify-center py-20 px-4">
+    <div className="min-h-screen bg-[#f8f9fa] flex flex-col items-center justify-center py-20 px-4 font-manrope">
+      <AuthErrorToast locale={locale} />
+      
       {/* Brand Header */}
       <Link href={ROUTES.HOME} className="mb-12">
         <Image src="/LogoKhoUI.png" alt="KhoUI Logo" width={180} height={64} priority className="h-16 w-auto object-contain" />
       </Link>
 
       {/* Login Card */}
-      <div className="w-full max-w-[480px] bg-white rounded-xl shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-slate-100 p-10 md:p-12">
+      <div className="w-full max-w-[480px] bg-white rounded-2xl shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-slate-100 p-10 md:p-12">
         <div className="text-center mb-10">
-          <h2 className="text-2xl font-bold text-slate-900 mb-2">{UI_LABELS.LOG_IN}</h2>
-          <p className="text-slate-500 text-sm">Welcome back. Please enter your details.</p>
+          <h2 className="text-2xl font-bold text-slate-900 mb-2 font-playfair">
+            {authDict.loginTitle || (locale === "vi" ? "Đăng nhập tài khoản" : "Sign In to KhoUI")}
+          </h2>
+          <p className="text-slate-500 text-sm">
+            {authDict.loginSubtitle || (locale === "vi" ? "Chào mừng bạn quay lại. Vui lòng nhập thông tin để tiếp tục." : "Welcome back. Please enter your credentials to continue.")}
+          </p>
           {params?.error && (
-            <p className="text-red-500 text-xs mt-4 font-medium bg-red-50 py-2 rounded-sm">Invalid email or password.</p>
+            <p className="text-red-500 text-xs mt-4 font-medium bg-red-50 py-2 rounded-lg">
+              {authDict.loginError || (locale === "vi" ? "Email hoặc mật khẩu không chính xác." : "Invalid email address or password.")}
+            </p>
           )}
         </div>
 
         <form action={login} className="space-y-6">
           <div>
             <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-2" htmlFor="email">
-              Email Address
+              {authDict.emailLabel || (locale === "vi" ? "Địa chỉ Email" : "Email Address")}
             </label>
             <div className="relative group">
-              <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[#0051d5] transition-colors text-[20px]">
-                mail
-              </span>
+              <Mail size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[#0051d5] transition-colors" />
               <input 
-                className="w-full h-12 pl-12 pr-4 bg-white border border-slate-200 rounded-sm text-sm focus:border-[#0051d5] focus:ring-1 focus:ring-[#0051d5] outline-none transition-all placeholder:text-slate-300"
+                className="w-full h-12 pl-12 pr-4 bg-white border border-slate-200 rounded-xl text-sm focus:border-[#0051d5] focus:ring-1 focus:ring-[#0051d5] outline-none transition-all placeholder:text-slate-300"
                 id="email" 
                 name="email" 
-                placeholder={PLACEHOLDERS.EMAIL}
+                placeholder="example@gmail.com"
                 required 
                 type="email" 
               />
@@ -46,19 +60,19 @@ export default async function LoginPage({ searchParams }: { searchParams: { erro
           <div>
             <div className="flex justify-between items-center mb-2">
               <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider" htmlFor="password">
-                Password
+                {authDict.passwordLabel || (locale === "vi" ? "Mật khẩu" : "Password")}
               </label>
-              <Link href="#" className="text-[10px] font-bold text-[#0051d5] uppercase tracking-wider hover:underline">Forgot password?</Link>
+              <Link href="#" className="text-[10px] font-bold text-[#0051d5] uppercase tracking-wider hover:underline">
+                {authDict.forgotPassword || (locale === "vi" ? "Quên mật khẩu?" : "Forgot password?")}
+              </Link>
             </div>
             <div className="relative group">
-              <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[#0051d5] transition-colors text-[20px]">
-                lock
-              </span>
+              <Lock size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[#0051d5] transition-colors" />
               <input 
-                className="w-full h-12 pl-12 pr-4 bg-white border border-slate-200 rounded-sm text-sm focus:border-[#0051d5] focus:ring-1 focus:ring-[#0051d5] outline-none transition-all placeholder:text-slate-300"
+                className="w-full h-12 pl-12 pr-4 bg-white border border-slate-200 rounded-xl text-sm focus:border-[#0051d5] focus:ring-1 focus:ring-[#0051d5] outline-none transition-all placeholder:text-slate-300"
                 id="password" 
                 name="password" 
-                placeholder={PLACEHOLDERS.PASSWORD}
+                placeholder="••••••••"
                 required 
                 type="password" 
               />
@@ -67,10 +81,10 @@ export default async function LoginPage({ searchParams }: { searchParams: { erro
 
           <button 
             type="submit"
-            className="w-full h-12 bg-[#0051d5] text-white font-bold rounded-sm hover:bg-[#0041ac] transition-all flex items-center justify-center gap-2 group shadow-lg active:scale-[0.98]"
+            className="w-full h-12 bg-[#0051d5] text-white font-bold rounded-xl hover:bg-[#0041ac] transition-all flex items-center justify-center gap-2 group shadow-lg active:scale-[0.98] cursor-pointer text-xs uppercase tracking-wider"
           >
-            {UI_LABELS.LOG_IN}
-            <span className="material-symbols-outlined text-[20px] transition-transform group-hover:translate-x-1">arrow_forward</span>
+            <span>{authDict.loginButton || (locale === "vi" ? "Đăng nhập" : "Sign In")}</span>
+            <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
           </button>
         </form>
 
@@ -79,12 +93,15 @@ export default async function LoginPage({ searchParams }: { searchParams: { erro
             <div className="w-full border-t border-slate-100"></div>
           </div>
           <div className="relative flex justify-center text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400">
-            <span className="bg-white px-4">Or</span>
+            <span className="bg-white px-4">{authDict.orText || (locale === "vi" ? "Hoặc" : "Or")}</span>
           </div>
         </div>
 
         <div className="text-center text-sm text-slate-500">
-          Don&apos;t have an account? <Link href={ROUTES.REGISTER} className="text-slate-950 font-black hover:underline underline-offset-4">Sign Up</Link>
+          {authDict.noAccount || (locale === "vi" ? "Chưa có tài khoản?" : "Don't have an account?")}{" "}
+          <Link href={ROUTES.REGISTER} className="text-[#0051d5] font-black hover:underline underline-offset-4">
+            {authDict.signUpNow || (locale === "vi" ? "Đăng ký ngay" : "Sign Up Now")}
+          </Link>
         </div>
       </div>
     </div>

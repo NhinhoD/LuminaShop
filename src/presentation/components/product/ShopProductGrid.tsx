@@ -11,7 +11,7 @@ import { formatCurrency } from "@/lib/utils";
 import gsap from "gsap";
 import { Heart, Search, SlidersHorizontal, Monitor } from "lucide-react";
 import { useDebouncedCallback } from "use-debounce";
-import { useLocale } from "@/presentation/hooks/useLocale";
+import { useI18n } from "@/presentation/components/common/I18nContext";
 import { getLocalizedText } from "@/presentation/utils/locale";
 
 interface ShopProductGridProps {
@@ -26,7 +26,7 @@ export default function ShopProductGrid({ initialProducts, currentSearch, curren
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const locale = useLocale();
+  const { dict, locale } = useI18n();
 
   const [searchQuery, setSearchQuery] = useState(currentSearch);
   const [maxPrice, setMaxPrice] = useState<number>(10000000);
@@ -36,7 +36,7 @@ export default function ShopProductGrid({ initialProducts, currentSearch, curren
   const loadingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const categories = [
-    { label: "Tất cả", value: "all" },
+    { label: dict?.shop?.allCategories || (locale === "vi" ? "Tất cả" : "All"), value: "all" },
     { label: "Landing Page", value: "landing-page" },
     { label: "E-Commerce", value: "e-commerce" },
     { label: "Admin Dashboard", value: "admin-dashboard" },
@@ -171,7 +171,7 @@ export default function ShopProductGrid({ initialProducts, currentSearch, curren
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <input
               type="text"
-              placeholder="Tìm kiếm giao diện..."
+              placeholder={dict?.shop?.searchPlaceholder || (locale === "vi" ? "Tìm kiếm giao diện..." : "Search templates...")}
               className="w-full pl-9 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-[#0051d5] transition-all"
               value={searchQuery}
               onChange={(e) => {
@@ -181,22 +181,24 @@ export default function ShopProductGrid({ initialProducts, currentSearch, curren
             />
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest hidden sm:inline">Sắp xếp:</span>
+            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest hidden sm:inline">
+              {dict?.shop?.sortLabel || (locale === "vi" ? "Sắp xếp:" : "Sort by:")}
+            </span>
             <select 
               className="bg-transparent text-sm font-bold text-slate-900 focus:outline-none cursor-pointer py-2 pl-2 pr-6 border border-slate-200 rounded-xl"
               value={currentSort}
               onChange={(e) => handleSortSelect(e.target.value)}
             >
-              <option value="newest">Mới nhất</option>
-              <option value="price_asc">Giá: Thấp đến Cao</option>
-              <option value="price_desc">Giá: Cao đến Thấp</option>
+              <option value="newest">{dict?.shop?.sortNewest || (locale === "vi" ? "Mới nhất" : "Newest")}</option>
+              <option value="price_asc">{dict?.shop?.sortPriceAsc || (locale === "vi" ? "Giá: Thấp đến Cao" : "Price: Low to High")}</option>
+              <option value="price_desc">{dict?.shop?.sortPriceDesc || (locale === "vi" ? "Giá: Cao đến Thấp" : "Price: High to Low")}</option>
             </select>
           </div>
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="max-w-[1200px] mx-auto px-4 pb-20">
+      <div className="max-w-[1200px] mx-auto px-4 pb-20 pt-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
 
           {/* Sidebar Filters */}
@@ -206,7 +208,7 @@ export default function ShopProductGrid({ initialProducts, currentSearch, curren
             <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm">
               <h3 className="flex items-center gap-2 text-xs font-black text-slate-900 mb-4 uppercase tracking-widest">
                 <SlidersHorizontal size={14} className="text-[#0051d5]" />
-                Khoảng giá bản quyền
+                {dict?.shop?.filterPrice || (locale === "vi" ? "Khoảng giá bản quyền" : "License Price Range")}
               </h3>
               <input
                 type="range"
@@ -222,9 +224,9 @@ export default function ShopProductGrid({ initialProducts, currentSearch, curren
                 className="w-full h-1.5 bg-[#eee] rounded-lg appearance-none cursor-pointer accent-[#0051d5]"
               />
               <div className="flex justify-between mt-3 text-[10px] text-slate-400 font-bold uppercase tracking-wider">
-                <span>Min: 0đ</span>
+                <span>Min: {formatCurrency(0, locale)}</span>
                 <span className="font-extrabold text-slate-800">
-                  Max: {formatCurrency(maxPrice)}
+                  Max: {formatCurrency(maxPrice, locale)}
                 </span>
               </div>
             </div>
@@ -233,7 +235,7 @@ export default function ShopProductGrid({ initialProducts, currentSearch, curren
             <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm">
               <h3 className="flex items-center gap-2 text-xs font-black text-slate-900 mb-4 uppercase tracking-widest">
                 <Search size={14} className="text-[#0051d5]" />
-                Công nghệ tích hợp
+                {dict?.shop?.filterTech || (locale === "vi" ? "Công nghệ tích hợp" : "Integrated Tech Stack")}
               </h3>
               <div className="flex flex-wrap gap-1.5">
                 {techFilters.map((tech) => {
@@ -275,8 +277,12 @@ export default function ShopProductGrid({ initialProducts, currentSearch, curren
             ) : filteredProducts.length === 0 ? (
               <div className="bg-white border border-slate-100 rounded-3xl p-16 text-center shadow-sm">
                 <Search size={48} className="text-slate-200 mx-auto mb-4" />
-                <h3 className="text-base font-extrabold text-slate-800 mb-2">Không tìm thấy mã nguồn phù hợp</h3>
-                <p className="text-slate-400 text-xs">Hãy thử thay đổi bộ lọc hoặc mở rộng khoảng giá của bạn.</p>
+                <h3 className="text-base font-extrabold text-slate-800 mb-2">
+                  {dict?.shop?.emptyTitle || (locale === "vi" ? "Không tìm thấy mã nguồn phù hợp" : "No matching source code found")}
+                </h3>
+                <p className="text-slate-400 text-xs">
+                  {dict?.shop?.emptyDesc || (locale === "vi" ? "Hãy thử thay đổi bộ lọc hoặc mở rộng khoảng giá của bạn." : "Try adjusting your search query or expanding your price filter range.")}
+                </p>
               </div>
             ) : (
               <div ref={gridRef} className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
@@ -305,7 +311,7 @@ export default function ShopProductGrid({ initialProducts, currentSearch, curren
                             </div>
                           )}
                           <div className="absolute top-3 left-3 bg-[#0b1c30] text-white rounded-lg px-2.5 py-0.5 text-[8px] font-black tracking-widest uppercase">
-                            {isFree ? "Miễn phí" : "Premium"}
+                            {isFree ? (dict?.common?.free || (locale === "vi" ? "Miễn phí" : "Free")) : (dict?.common?.premium || "Premium")}
                           </div>
                           <div className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white flex items-center justify-center text-slate-400 cursor-pointer hover:text-red-500 hover:scale-115 transition-all shadow-sm">
                             <Heart size={13} />
@@ -336,15 +342,17 @@ export default function ShopProductGrid({ initialProducts, currentSearch, curren
                             </h3>
                           </Link>
                           <p className="text-slate-400 text-xs line-clamp-2 leading-relaxed h-8">
-                            {getLocalizedText(product.description as unknown as Record<string, string>, locale) || "Giao diện website cao cấp được thiết kế tỉ mỉ, đầy đủ công nghệ hiện đại."}
+                            {getLocalizedText(product.description as unknown as Record<string, string>, locale) || (locale === "vi" ? "Giao diện website cao cấp được thiết kế tỉ mỉ, đầy đủ công nghệ hiện đại." : "High-fidelity website template engineered with state-of-the-art modern technologies.")}
                           </p>
                         </div>
 
                         <div className="flex justify-between items-center pt-3 border-t border-slate-100 mt-auto">
                           <div>
-                            <div className="text-[9px] text-slate-400 font-bold uppercase tracking-wider">Giá bản quyền</div>
+                            <div className="text-[9px] text-slate-400 font-bold uppercase tracking-wider">
+                              {dict?.shop?.priceLabel || (locale === "vi" ? "Giá bản quyền" : "License Price")}
+                            </div>
                             <div className="text-base font-extrabold text-[#0051d5] font-playfair">
-                              {isFree ? "MIỄN PHÍ" : formatCurrency(product.price)}
+                              {isFree ? (dict?.common?.free?.toUpperCase() || (locale === "vi" ? "MIỄN PHÍ" : "FREE")) : formatCurrency(product.price, locale)}
                             </div>
                           </div>
 
@@ -356,7 +364,7 @@ export default function ShopProductGrid({ initialProducts, currentSearch, curren
                                 rel="noopener noreferrer"
                                 className="bg-slate-900 text-white text-[10px] font-bold px-4 py-2 rounded-lg hover:bg-slate-800 transition-colors flex items-center justify-center shadow-md"
                               >
-                                Xem Demo
+                                {dict?.shop?.demoButton || (locale === "vi" ? "Xem Demo" : "Live Demo")}
                               </Link>
                             )}
                             <QuickAddButton

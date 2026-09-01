@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from "react";
 
 import { ROUTES } from "@/presentation/constants";
 import { formatCurrency } from "@/lib/utils";
-import { useLocale } from "@/presentation/hooks/useLocale";
+import { useI18n } from "@/presentation/components/common/I18nContext";
 import { getLocalizedText } from "@/presentation/utils/locale";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -26,6 +26,7 @@ import {
   Flame,
   Layout,
 } from "lucide-react";
+import { toast } from "@/presentation/hooks/useToastStore";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -34,10 +35,9 @@ if (typeof window !== "undefined") {
 interface HomePageClientProps {
   readonly featuredProducts: readonly Product[];
   readonly categories: readonly Category[];
-  readonly dict: Record<string, Record<string, string>>;
+  readonly dict?: Record<string, Record<string, string>>;
 }
 
-/* ─── Digital Marketplace Static Data ─── */
 const MARQUEE_ITEMS = [
   "Next.js 15 App Router",
   "Tailwind CSS v4.0",
@@ -48,34 +48,7 @@ const MARQUEE_ITEMS = [
   "SEO Optimized Templates",
 ];
 
-const ADVANTAGES = [
-  {
-    icon: Code2,
-    color: "text-[#0051d5] bg-blue-50/50",
-    title: "Mã nguồn chuẩn Clean Architecture",
-    desc: "Tổ chức layer rõ ràng từ Domain, Application đến Infrastructure. Dễ bảo trì và mở rộng.",
-  },
-  {
-    icon: Flame,
-    color: "text-amber-500 bg-amber-50/50",
-    title: "Hiệu ứng GSAP & Tailwind 4 đỉnh cao",
-    desc: "Mượt mà 60fps trên mọi thiết bị. Giao diện chuẩn Sarab Spec thời thượng, sang trọng.",
-  },
-  {
-    icon: Zap,
-    color: "text-emerald-500 bg-emerald-50/50",
-    title: "Tối ưu SEO & Tải trang tức thì",
-    desc: "Cấu trúc HTML5 semantic chuẩn, Next.js Server Components giúp đạt điểm tối đa Core Web Vitals.",
-  },
-];
-
-const JOURNEY_STEPS = [
-  { year: "Bước 1", title: "Lựa chọn Template", desc: "Khám phá bộ sưu tập mã nguồn đa dạng từ Landing Page đến E-Commerce được thiết kế tỉ mỉ." },
-  { year: "Bước 2", title: "Thanh toán bảo mật", desc: "Chuyển khoản VietQR/Manual nhanh chóng. Hệ thống tự động xác nhận đơn hàng." },
-  { year: "Bước 3", title: "Tải về & Triển khai", desc: "Tải ngay file .zip chứa toàn bộ code gốc, hướng dẫn cài đặt và sẵn sàng deploy chỉ trong 5 phút." },
-];
-
-export default function HomePageClient({ featuredProducts, categories, dict }: HomePageClientProps) {
+export default function HomePageClient({ featuredProducts, categories }: HomePageClientProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const categoriesRef = useRef<HTMLDivElement>(null);
   const advantagesRef = useRef<HTMLElement>(null);
@@ -83,13 +56,52 @@ export default function HomePageClient({ featuredProducts, categories, dict }: H
   const journeyRef = useRef<HTMLElement>(null);
 
   const [activeCategory, setActiveCategory] = useState("all");
-  const locale = useLocale();
+  const { dict, locale } = useI18n();
+
+  const advantages = [
+    {
+      icon: Code2,
+      color: "text-[#0051d5] bg-blue-50/50",
+      title: dict?.home?.advantages?.item1Title || (locale === "vi" ? "Mã nguồn chuẩn Clean Architecture" : "Clean Architecture Standard"),
+      desc: dict?.home?.advantages?.item1Desc || (locale === "vi" ? "Tổ chức layer rõ ràng từ Domain, Application đến Infrastructure. Dễ bảo trì và mở rộng." : "Strict layer separation from Domain, Application to Infrastructure. Highly maintainable and extensible."),
+    },
+    {
+      icon: Flame,
+      color: "text-amber-500 bg-amber-50/50",
+      title: dict?.home?.advantages?.item2Title || (locale === "vi" ? "Hiệu ứng GSAP & Tailwind 4 đỉnh cao" : "Top-Tier GSAP & Tailwind 4 Visuals"),
+      desc: dict?.home?.advantages?.item2Desc || (locale === "vi" ? "Mượt mà 60fps trên mọi thiết bị. Giao diện chuẩn Sarab Spec thời thượng, sang trọng." : "Silky-smooth 60fps animations across all devices. Modern editorial aesthetic inspired by Sarab Spec."),
+    },
+    {
+      icon: Zap,
+      color: "text-emerald-500 bg-emerald-50/50",
+      title: dict?.home?.advantages?.item3Title || (locale === "vi" ? "Tối ưu SEO & Tải trang tức thì" : "SEO Optimized & Instant Page Loads"),
+      desc: dict?.home?.advantages?.item3Desc || (locale === "vi" ? "Cấu trúc HTML5 semantic chuẩn, Next.js Server Components giúp đạt điểm tối đa Core Web Vitals." : "Semantic HTML5 structure and Next.js Server Components for maximum Core Web Vitals scores."),
+    },
+  ];
+
+  const journeySteps = [
+    {
+      year: dict?.home?.journey?.step1Year || (locale === "vi" ? "Bước 1" : "Step 1"),
+      title: dict?.home?.journey?.step1Title || (locale === "vi" ? "Lựa chọn Template" : "Choose Your Template"),
+      desc: dict?.home?.journey?.step1Desc || (locale === "vi" ? "Khám phá bộ sưu tập mã nguồn đa dạng từ Landing Page đến E-Commerce được thiết kế tỉ mỉ." : "Explore our rich catalog of meticulously designed landing pages, dashboards, and e-commerce templates."),
+    },
+    {
+      year: dict?.home?.journey?.step2Year || (locale === "vi" ? "Bước 2" : "Step 2"),
+      title: dict?.home?.journey?.step2Title || (locale === "vi" ? "Thanh toán bảo mật" : "Instant Secure Payment"),
+      desc: dict?.home?.journey?.step2Desc || (locale === "vi" ? "Chuyển khoản VietQR/PayOS tức thì. Hệ thống tự động xác nhận và duyệt đơn hàng trong vài giây." : "Pay effortlessly via VietQR/PayOS. The system automatically confirms and validates your order within seconds."),
+    },
+    {
+      year: dict?.home?.journey?.step3Year || (locale === "vi" ? "Bước 3" : "Step 3"),
+      title: dict?.home?.journey?.step3Title || (locale === "vi" ? "Tải về & Triển khai" : "Download & Deploy"),
+      desc: dict?.home?.journey?.step3Desc || (locale === "vi" ? "Tải ngay file .zip chứa toàn bộ code gốc, tài liệu hướng dẫn cài đặt và sẵn sàng deploy chỉ trong 5 phút." : "Instantly download the .zip archive containing complete source code and setup documentation, ready to deploy in 5 minutes."),
+    },
+  ];
 
   const displayCategories = [
     { 
-      name: dict?.categories?.all || "Tất cả", 
+      name: dict?.home?.categories?.all || (locale === "vi" ? "Tất cả" : "All"), 
       filter: "all", 
-      count: dict?.categories?.premiumAndFree || "Premium & Free", 
+      count: dict?.home?.categories?.premiumAndFree || (locale === "vi" ? "Premium & Miễn phí" : "Premium & Free"), 
       icon: Layout 
     },
     ...categories.map(cat => {
@@ -100,7 +112,7 @@ export default function HomePageClient({ featuredProducts, categories, dict }: H
       return {
         name: getLocalizedText(cat.name as unknown as Record<string, string>, locale),
         filter: cat.id,
-        count: cat.productCount != null ? `${cat.productCount} templates` : (dict?.categories?.premium || "Premium"),
+        count: cat.productCount != null ? `${cat.productCount} templates` : (dict?.home?.categories?.premium || "Premium"),
         icon: icon
       };
     })
@@ -208,39 +220,41 @@ export default function HomePageClient({ featuredProducts, categories, dict }: H
             <div className="lg:col-span-7 space-y-6">
               <div className="hero-badge inline-flex items-center gap-2 bg-white rounded-full px-4 py-1.5 shadow-[0_4px_24px_rgba(0,0,0,0.03)] border border-slate-100/60">
                 <span className="flex h-2 w-2 rounded-full bg-[#0051d5] animate-pulse" />
-                <span className="text-[11px] font-extrabold tracking-wider uppercase text-slate-700">{dict?.hero?.badge || 'Chợ Mua Bán Website Template Cao Cấp Việt Nam'}</span>
+                <span className="text-[11px] font-extrabold tracking-wider uppercase text-slate-700">
+                  {dict?.home?.hero?.badge || (locale === "vi" ? "Chợ Mua Bán Website Template Cao Cấp Việt Nam" : "Vietnam's Premium Website Template Marketplace")}
+                </span>
               </div>
 
               <h1 className="hero-title text-[clamp(2.4rem,5.5vw,4.2rem)] font-extrabold leading-[1.08] text-slate-950 font-playfair">
-                {dict?.hero?.title1 || 'Xây dựng thương hiệu số'} <br />
+                {dict?.home?.hero?.title1 || (locale === "vi" ? "Xây dựng thương hiệu số" : "Build your digital brand")} <br />
                 <span className="text-[#0051d5] relative inline-block">
-                  {dict?.hero?.title2 || 'Đẳng cấp & Mượt mà'}
+                  {dict?.home?.hero?.title2 || (locale === "vi" ? "Đẳng cấp & Mượt mà" : "Premium & Ultra-smooth")}
                   <span className="absolute bottom-[3px] left-0 right-0 h-[6px] bg-blue-100 rounded z-[-1]" />
                 </span>
-                <br />{dict?.hero?.title3 || 'chỉ trong 5 phút.'}
+                <br />{dict?.home?.hero?.title3 || (locale === "vi" ? "chỉ trong 5 phút." : "in just 5 minutes.")}
               </h1>
 
               <p className="hero-desc text-base text-slate-500 leading-relaxed max-w-[540px]">
-                {dict?.hero?.desc || 'Sở hữu trọn bộ mã nguồn (Next.js 15, Tailwind v4, GSAP) chuẩn Clean Architecture được lập trình tối ưu bởi các lập trình viên kỳ cựu. Bàn giao nhanh chóng, an toàn, hỗ trợ deploy lên Vercel/Netlify miễn phí.'}
+                {dict?.home?.hero?.desc || (locale === "vi" ? "Sở hữu trọn bộ mã nguồn (Next.js 15, Tailwind v4, GSAP) chuẩn Clean Architecture được lập trình tối ưu bởi các lập trình viên kỳ cựu. Bàn giao nhanh chóng, an toàn, hỗ trợ deploy lên Vercel/Netlify miễn phí." : "Get full source code packages (Next.js 15, Tailwind v4, GSAP) following Clean Architecture, engineered by senior developers. Fast delivery, secure licensing, and free deployment support.")}
               </p>
 
               <div className="hero-cta flex flex-wrap gap-4 pt-2">
                 <Link href={ROUTES.SHOP} className="inline-flex items-center gap-2 bg-[#0051d5] hover:bg-[#0041ac] text-white px-8 py-4 rounded-xl font-bold transition-all shadow-lg shadow-blue-900/10 active:scale-95 group text-sm">
-                  <span>{dict?.hero?.cta1 || 'Khám phá Template'}</span>
+                  <span>{dict?.home?.hero?.cta1 || (locale === "vi" ? "Khám phá Template" : "Explore Templates")}</span>
                   <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
                 </Link>
                 <a href="#advantages" className="inline-flex items-center gap-2 bg-white hover:bg-slate-50 text-slate-800 border border-slate-200 px-8 py-4 rounded-xl font-bold transition-all active:scale-95 text-sm">
-                  {dict?.hero?.cta2 || 'Tại sao chọn KhoUI?'}
+                  {dict?.home?.hero?.cta2 || (locale === "vi" ? "Tại sao chọn KhoUI?" : "Why Choose KhoUI?")}
                 </a>
               </div>
 
               {/* Metrics */}
               <div className="hero-stats flex flex-wrap gap-x-8 gap-y-4 pt-6 border-t border-slate-200/50">
                 {[
-                  { num: "50+", suffix: "Template", label: "Giao diện độc quyền" },
-                  { num: "98%", suffix: "Score", label: "Tối ưu Core Web Vitals" },
-                  { num: "1,200+", suffix: "Devs", label: "Đã và đang tin dùng" },
-                  { num: "24/7", suffix: "", label: "Hỗ trợ cài đặt kỹ thuật" },
+                  { num: dict?.home?.hero?.stat1Num || "50+", suffix: dict?.home?.hero?.stat1Suffix || (locale === "vi" ? "Template" : "Templates"), label: dict?.home?.hero?.stat1Label || (locale === "vi" ? "Giao diện độc quyền" : "Exclusive Designs") },
+                  { num: dict?.home?.hero?.stat2Num || "98%", suffix: dict?.home?.hero?.stat2Suffix || "Score", label: dict?.home?.hero?.stat2Label || (locale === "vi" ? "Tối ưu Core Web Vitals" : "Optimized Core Web Vitals") },
+                  { num: dict?.home?.hero?.stat3Num || "1,200+", suffix: dict?.home?.hero?.stat3Suffix || "Devs", label: dict?.home?.hero?.stat3Label || (locale === "vi" ? "Đã và đang tin dùng" : "Trusted by Developers") },
+                  { num: dict?.home?.hero?.stat4Num || "24/7", suffix: dict?.home?.hero?.stat4Suffix || "", label: dict?.home?.hero?.stat4Label || (locale === "vi" ? "Hỗ trợ cài đặt kỹ thuật" : "Setup & Tech Support") },
                 ].map((stat) => (
                   <div key={stat.label} className="min-w-[120px]">
                     <span className="font-playfair text-2xl font-black text-slate-900 block">
@@ -268,7 +282,9 @@ export default function HomePageClient({ featuredProducts, categories, dict }: H
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent flex flex-col justify-end p-6 text-white rounded-2xl">
                     <span className="text-[10px] font-bold tracking-widest text-amber-400 uppercase mb-1">BEST SELLER</span>
                     <h3 className="text-xl font-bold font-playfair mb-1">KhoUI Creative Editorial Portfolio</h3>
-                    <p className="text-xs text-slate-300">Tích hợp sẵn GSAP ScrollTrigger & Smooth Scroll.</p>
+                    <p className="text-xs text-slate-300">
+                      {locale === "vi" ? "Tích hợp sẵn GSAP ScrollTrigger & Smooth Scroll." : "Pre-configured with GSAP ScrollTrigger & Smooth Scroll."}
+                    </p>
                   </div>
                 </div>
 
@@ -278,8 +294,12 @@ export default function HomePageClient({ featuredProducts, categories, dict }: H
                     <Monitor size={18} />
                   </div>
                   <div>
-                    <span className="block font-extrabold text-xs text-slate-800 leading-none">Responsive</span>
-                    <span className="text-[9px] text-slate-400 font-semibold uppercase tracking-wider">Mobile & Desktop</span>
+                    <span className="block font-extrabold text-xs text-slate-800 leading-none">
+                      {dict?.home?.hero?.float1Title || (locale === "vi" ? "Chuẩn Responsive" : "Fully Responsive")}
+                    </span>
+                    <span className="text-[9px] text-slate-400 font-semibold uppercase tracking-wider">
+                      {dict?.home?.hero?.float1Subtitle || (locale === "vi" ? "Di động & Máy tính" : "Mobile & Desktop Ready")}
+                    </span>
                   </div>
                 </div>
 
@@ -288,8 +308,12 @@ export default function HomePageClient({ featuredProducts, categories, dict }: H
                     <Star size={18} fill="currentColor" />
                   </div>
                   <div>
-                    <span className="block font-extrabold text-xs text-slate-800 leading-none">Lĩnh vực</span>
-                    <span className="text-[9px] text-slate-400 font-semibold uppercase tracking-wider">Mọi ngành nghề</span>
+                    <span className="block font-extrabold text-xs text-slate-800 leading-none">
+                      {dict?.home?.hero?.float2Title || (locale === "vi" ? "Đa lĩnh vực" : "Multi-Industry")}
+                    </span>
+                    <span className="text-[9px] text-slate-400 font-semibold uppercase tracking-wider">
+                      {dict?.home?.hero?.float2Subtitle || (locale === "vi" ? "Mọi ngành nghề kinh doanh" : "For Every Business Niche")}
+                    </span>
                   </div>
                 </div>
 
@@ -298,8 +322,12 @@ export default function HomePageClient({ featuredProducts, categories, dict }: H
                     <Code2 size={18} />
                   </div>
                   <div>
-                    <span className="block font-extrabold text-xs text-slate-800 leading-none">React 19 Ready</span>
-                    <span className="text-[9px] text-slate-400 font-semibold uppercase tracking-wider">Next.js 16 Compatible</span>
+                    <span className="block font-extrabold text-xs text-slate-800 leading-none">
+                      {dict?.home?.hero?.float3Title || "React 19 Ready"}
+                    </span>
+                    <span className="text-[9px] text-slate-400 font-semibold uppercase tracking-wider">
+                      {dict?.home?.hero?.float3Subtitle || "Next.js 16 Compatible"}
+                    </span>
                   </div>
                 </div>
 
@@ -329,16 +357,20 @@ export default function HomePageClient({ featuredProducts, categories, dict }: H
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 items-center">
 
             <div className="lg:col-span-1 space-y-4">
-              <span className="text-[10px] font-black tracking-widest text-[#0051d5] uppercase block">ƯU ĐIỂM VƯỢT TRỘI</span>
-              <h2 className="text-3xl font-bold font-playfair leading-tight text-slate-950">Tại sao nên chọn mã nguồn tại KhoUI?</h2>
+              <span className="text-[10px] font-black tracking-widest text-[#0051d5] uppercase block">
+                {dict?.home?.advantages?.tag || (locale === "vi" ? "ƯU ĐIỂM VƯỢT TRỘI" : "KEY ADVANTAGES")}
+              </span>
+              <h2 className="text-3xl font-bold font-playfair leading-tight text-slate-950">
+                {dict?.home?.advantages?.title || (locale === "vi" ? "Tại sao nên chọn mã nguồn tại KhoUI?" : "Why choose source code from KhoUI?")}
+              </h2>
               <div className="h-1.5 w-16 bg-[#0051d5] rounded-full" />
               <p className="text-slate-500 text-sm leading-relaxed">
-                Chúng tôi cung cấp các website template cao cấp với chất lượng tốt nhất trên thị trường Việt Nam, cấu hình dễ dàng và tích hợp sẵn đầy đủ hạ tầng hiện đại.
+                {dict?.home?.advantages?.desc || (locale === "vi" ? "Chúng tôi cung cấp các website template cao cấp với chất lượng tốt nhất trên thị trường, cấu hình dễ dàng và tích hợp sẵn đầy đủ hạ tầng hiện đại." : "We provide high-end website templates with industry-leading code quality, seamless configuration, and modern full-stack infrastructure.")}
               </p>
             </div>
 
             <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-6">
-              {ADVANTAGES.map((adv) => {
+              {advantages.map((adv) => {
                 const Icon = adv.icon;
                 return (
                   <div key={adv.title} className="adv-card bg-slate-50 border border-slate-100 rounded-3xl p-8 hover:shadow-xl hover:bg-white transition-all duration-300">
@@ -362,11 +394,15 @@ export default function HomePageClient({ featuredProducts, categories, dict }: H
         <div className="max-w-[1440px] mx-auto px-8 md:px-12">
 
           <div className="text-center max-w-2xl mx-auto mb-16 space-y-3">
-            <span className="text-[10px] font-black tracking-widest text-[#0051d5] uppercase block">BỘ SƯU TẬP TEMPLATE</span>
-            <h2 className="text-3xl font-extrabold font-playfair text-slate-950">Tìm kiếm mẫu website phù hợp</h2>
+            <span className="text-[10px] font-black tracking-widest text-[#0051d5] uppercase block">
+              {dict?.home?.categories?.tag || (locale === "vi" ? "BỘ SƯU TẬP TEMPLATE" : "TEMPLATE COLLECTIONS")}
+            </span>
+            <h2 className="text-3xl font-extrabold font-playfair text-slate-950">
+              {dict?.home?.categories?.title || (locale === "vi" ? "Tìm kiếm mẫu website phù hợp" : "Find the perfect template for your project")}
+            </h2>
             <div className="h-1 w-16 bg-[#0051d5] mx-auto rounded-full" />
             <p className="text-slate-500 text-sm">
-              Chọn lựa mẫu thiết kế chuyên nghiệp trong hệ sinh thái của chúng tôi để nâng cấp doanh nghiệp của bạn.
+              {dict?.home?.categories?.desc || (locale === "vi" ? "Chọn lựa mẫu thiết kế chuyên nghiệp trong hệ sinh thái của chúng tôi để nâng cấp doanh nghiệp của bạn." : "Select a high-fidelity design from our ecosystem to elevate your digital presence.")}
             </p>
           </div>
 
@@ -404,11 +440,15 @@ export default function HomePageClient({ featuredProducts, categories, dict }: H
 
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 border-b border-slate-100 pb-8">
             <div className="space-y-2">
-              <span className="text-[10px] font-black tracking-widest text-[#0051d5] uppercase block">DỰ ÁN NỔI BẬT</span>
-              <h2 className="text-3xl font-extrabold font-playfair text-slate-950">Giao diện sẵn sàng kích hoạt</h2>
+              <span className="text-[10px] font-black tracking-widest text-[#0051d5] uppercase block">
+                {dict?.home?.showcase?.tag || (locale === "vi" ? "DỰ ÁN NỔI BẬT" : "FEATURED TEMPLATES")}
+              </span>
+              <h2 className="text-3xl font-extrabold font-playfair text-slate-950">
+                {dict?.home?.showcase?.title || (locale === "vi" ? "Giao diện sẵn sàng kích hoạt" : "Ready-to-Deploy Codebases")}
+              </h2>
             </div>
             <Link href={ROUTES.SHOP} className="text-[#0051d5] hover:text-[#0041ac] font-bold text-xs uppercase tracking-widest mt-4 md:mt-0 flex items-center gap-1">
-              Xem toàn bộ template <ArrowRight size={12} />
+              {dict?.home?.showcase?.viewAll || (locale === "vi" ? "Xem toàn bộ template" : "View All Templates")} <ArrowRight size={12} />
             </Link>
           </div>
 
@@ -440,7 +480,7 @@ export default function HomePageClient({ featuredProducts, categories, dict }: H
                     {/* Category Label / Status */}
                     <div className="absolute top-4 left-4 flex gap-2">
                       <span className="bg-[#0b1c30] text-white rounded-lg px-3 py-1 text-[9px] font-black tracking-widest uppercase">
-                        {isFree ? "Miễn phí" : "Premium"}
+                        {isFree ? (dict?.home?.showcase?.freeBadge || (locale === "vi" ? "Miễn phí" : "Free")) : (dict?.home?.showcase?.premiumBadge || "Premium")}
                       </span>
                     </div>
 
@@ -473,15 +513,17 @@ export default function HomePageClient({ featuredProducts, categories, dict }: H
                         </h3>
                       </Link>
                       <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed h-8">
-                        {getLocalizedText(product.description as unknown as Record<string, string>, locale) || "Website Template chất lượng cao, tích hợp đầy đủ công nghệ hiện đại nhất hiện nay."}
+                        {getLocalizedText(product.description as unknown as Record<string, string>, locale) || (locale === "vi" ? "Website Template chất lượng cao, tích hợp đầy đủ công nghệ hiện đại nhất hiện nay." : "High-fidelity website template engineered with state-of-the-art modern technologies.")}
                       </p>
                     </div>
 
                     <div className="flex justify-between items-center pt-4 border-t border-slate-100/60 mt-auto">
                       <div>
-                        <div className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Đơn giá bản quyền</div>
+                        <div className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">
+                          {dict?.home?.showcase?.priceLabel || (locale === "vi" ? "Đơn giá bản quyền" : "License Price")}
+                        </div>
                         <div className="text-lg font-extrabold text-[#0051d5] font-playfair">
-                          {isFree ? "MIỄN PHÍ" : formatCurrency(product.price)}
+                          {isFree ? (dict?.common?.free?.toUpperCase() || (locale === "vi" ? "MIỄN PHÍ" : "FREE")) : formatCurrency(product.price, locale)}
                         </div>
                       </div>
 
@@ -493,7 +535,7 @@ export default function HomePageClient({ featuredProducts, categories, dict }: H
                             rel="noopener noreferrer"
                             className="bg-slate-50 hover:bg-slate-100 text-slate-700 px-3.5 py-2 rounded-xl text-xs font-bold transition-all border border-slate-200"
                           >
-                            Demo
+                            {dict?.home?.showcase?.liveDemo || (locale === "vi" ? "Xem Demo" : "Live Demo")}
                           </a>
                         )}
                         <Link
@@ -514,7 +556,9 @@ export default function HomePageClient({ featuredProducts, categories, dict }: H
           {filteredProducts.length === 0 && (
             <div className="text-center py-16 border border-dashed border-slate-200 rounded-3xl">
               <Code2 size={48} className="mx-auto text-slate-300 mb-3" />
-              <p className="text-slate-400 font-semibold text-sm">Không tìm thấy mẫu nào trong mục này. Vui lòng chọn danh mục khác!</p>
+              <p className="text-slate-400 font-semibold text-sm">
+                {dict?.home?.showcase?.noProducts || (locale === "vi" ? "Không tìm thấy mẫu nào trong mục này. Vui lòng chọn danh mục khác!" : "No templates found in this category. Please select another one!")}
+              </p>
             </div>
           )}
 
@@ -526,13 +570,17 @@ export default function HomePageClient({ featuredProducts, categories, dict }: H
         <div className="max-w-[1440px] mx-auto px-8 md:px-12">
 
           <div className="text-center max-w-2xl mx-auto mb-16 space-y-3">
-            <span className="text-[10px] font-black tracking-widest text-[#0051d5] uppercase block">QUY TRÌNH MUA HÀNG</span>
-            <h2 className="text-3xl font-extrabold font-playfair text-slate-950">Nhận Source Code chỉ trong 3 bước</h2>
+            <span className="text-[10px] font-black tracking-widest text-[#0051d5] uppercase block">
+              {dict?.home?.journey?.tag || (locale === "vi" ? "QUY TRÌNH MUA HÀNG" : "PURCHASE WORKFLOW")}
+            </span>
+            <h2 className="text-3xl font-extrabold font-playfair text-slate-950">
+              {dict?.home?.journey?.title || (locale === "vi" ? "Nhận Source Code chỉ trong 3 bước" : "Get Source Code in 3 Simple Steps")}
+            </h2>
             <div className="h-1 w-16 bg-[#0051d5] mx-auto rounded-full" />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {JOURNEY_STEPS.map((step, idx) => (
+            {journeySteps.map((step, idx) => (
               <div key={step.year} className="jr-step bg-white border border-slate-100 rounded-3xl p-8 shadow-sm flex gap-5 items-start">
                 <div className="w-12 h-12 bg-blue-50 text-[#0051d5] font-extrabold text-sm rounded-2xl flex items-center justify-center flex-shrink-0">
                   {idx + 1}
@@ -555,30 +603,56 @@ export default function HomePageClient({ featuredProducts, categories, dict }: H
         <div className="max-w-[1440px] mx-auto px-8 md:px-12 relative z-10">
 
           <div className="bg-white/5 border border-slate-800 rounded-3xl p-10 md:p-16 text-center max-w-3xl mx-auto backdrop-blur-sm space-y-6">
-            <span className="text-[10px] font-black tracking-widest text-blue-400 uppercase block">ĐĂNG KÝ BẢN TIN</span>
+            <span className="text-[10px] font-black tracking-widest text-blue-400 uppercase block">
+              {dict?.home?.newsletter?.tag || (locale === "vi" ? "ĐĂNG KÝ BẢN TIN" : "NEWSLETTER")}
+            </span>
             <h2 className="text-white text-3xl font-extrabold font-playfair">
-              Nhận thông báo khi có <span className="text-[#0051d5]">Template</span> mới
+              {dict?.home?.newsletter?.titlePrefix || (locale === "vi" ? "Nhận thông báo khi có" : "Get notified when new")}{" "}
+              <span className="text-[#0051d5]">{dict?.home?.newsletter?.titleHighlight || "Template"}</span>{" "}
+              {dict?.home?.newsletter?.titleSuffix || (locale === "vi" ? "mới" : "arrive")}
             </h2>
             <p className="text-slate-300 text-sm max-w-md mx-auto">
-              Đăng ký email để nhận thông tin về các template mới nhất, mã giảm giá đặc quyền và các bài chia sẻ công nghệ hữu ích từ KhoUI.
+              {dict?.home?.newsletter?.desc || (locale === "vi" ? "Đăng ký email để nhận thông tin về các template mới nhất, mã giảm giá đặc quyền và các bài chia sẻ công nghệ hữu ích từ KhoUI." : "Subscribe to receive updates on newly launched templates, exclusive discounts, and frontend development guides from KhoUI.")}
             </p>
 
             <form
-              onSubmit={(e) => e.preventDefault()}
+              onSubmit={(e) => {
+                e.preventDefault();
+                const form = e.currentTarget;
+                const emailInput = form.elements.namedItem("newsletter_email") as HTMLInputElement;
+                const emailVal = emailInput?.value?.trim();
+                if (!emailVal || !emailVal.includes("@")) {
+                  toast.warning(
+                    locale === "vi" ? "Email không hợp lệ" : "Invalid email",
+                    locale === "vi" ? "Vui lòng nhập địa chỉ email chính xác để nhận tin." : "Please enter a valid email address."
+                  );
+                  return;
+                }
+                toast.success(
+                  locale === "vi" ? "Đăng ký nhận tin thành công!" : "Subscribed successfully!",
+                  locale === "vi" ? "Cảm ơn bạn! Chúng tôi sẽ gửi thông báo khi có template mới." : "Thank you! We will notify you when new templates arrive."
+                );
+                form.reset();
+              }}
               className="flex flex-col sm:flex-row gap-3 max-w-lg mx-auto"
             >
               <input
                 type="email"
-                placeholder="Địa chỉ email của bạn..."
+                name="newsletter_email"
+                required
+                placeholder={dict?.home?.newsletter?.placeholder || (locale === "vi" ? "Địa chỉ email của bạn..." : "Your email address...")}
                 className="flex-grow bg-slate-900/60 border border-slate-700/80 rounded-xl px-5 py-3 text-white placeholder:text-slate-500 outline-none focus:border-[#0051d5] focus:ring-2 focus:ring-[#0051d5]/20 transition-all text-xs font-semibold"
               />
-              <button className="bg-[#0051d5] hover:bg-[#0041ac] text-white px-6 py-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-lg shadow-blue-900/20 active:scale-95">
-                <Send size={12} /> Đăng ký
+              <button 
+                type="submit"
+                className="bg-[#0051d5] hover:bg-[#0041ac] text-white px-6 py-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-lg shadow-blue-900/20 active:scale-95"
+              >
+                <Send size={12} /> {dict?.home?.newsletter?.button || (locale === "vi" ? "Đăng ký" : "Subscribe")}
               </button>
             </form>
 
             <p className="text-slate-500 text-[10px] flex items-center justify-center gap-1">
-              <Lock size={10} /> Cam kết bảo mật thông tin, không gửi thư rác.
+              <Lock size={10} /> {dict?.home?.newsletter?.privacy || (locale === "vi" ? "Cam kết bảo mật thông tin, không gửi thư rác." : "Strictly spam-free. We respect your privacy.")}
             </p>
           </div>
 

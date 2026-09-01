@@ -1,8 +1,9 @@
 import Link from "next/link";
-import { makeProductRepository } from "@/infrastructure/supabase/container";
+import { makeProductRepository, makeLanguageRepository } from "@/infrastructure/supabase/container";
 import { ROUTES } from "@/presentation/constants";
 import ShopProductGrid from "@/presentation/components/product/ShopProductGrid";
 import { PaginationControls } from "@/presentation/components/common/PaginationControls";
+import { getDictionary, getLocale } from "@/i18n/getDictionary";
 
 interface ShopPageProps {
   searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -16,6 +17,11 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
   const search = typeof params?.q === 'string' ? params.q : undefined;
   const categorySlug = typeof params?.category === 'string' ? params.category : undefined;
   
+  const locale = await getLocale();
+  const langRepo = await makeLanguageRepository();
+  const dict = await getDictionary(langRepo);
+  const shopDict = (dict?.shop as Record<string, string>) || {};
+
   let categoryId: string | undefined = undefined;
   if (categorySlug && categorySlug !== 'all') {
     const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(categorySlug);
@@ -61,12 +67,21 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
         <div className="flex flex-col md:flex-row justify-between items-end mb-12 border-b border-slate-100 pb-8">
           <div>
             <nav className="flex items-center gap-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4">
-              <Link href={ROUTES.HOME} className="hover:text-slate-900 transition-colors">HOME</Link>
+              <Link href={ROUTES.HOME} className="hover:text-slate-900 transition-colors">
+                {shopDict.breadcrumbsHome || (locale === "vi" ? "TRANG CHỦ" : "HOME")}
+              </Link>
               <span>/</span>
-              <span className="text-slate-900">SHOP ALL</span>
+              <span className="text-slate-900">
+                {shopDict.breadcrumbsShop || (locale === "vi" ? "CỬA HÀNG TEMPLATE" : "TEMPLATE CATALOG")}
+              </span>
             </nav>
-            <h1 className="text-4xl font-bold text-slate-950 mb-2">Our Collection</h1>
-            <p className="text-slate-500 text-sm">Discover pieces designed for modern life. ({total} templates)</p>
+            <h1 className="text-4xl font-bold text-slate-950 mb-2 font-playfair">
+              {shopDict.title || (locale === "vi" ? "Bộ Sưu Tập Giao Diện" : "Template Collection")}
+            </h1>
+            <p className="text-slate-500 text-sm font-manrope">
+              {shopDict.subtitle || (locale === "vi" ? "Khám phá các mẫu website chất lượng cao được thiết kế cho cuộc sống hiện đại." : "Discover high-performance web templates engineered for modern digital applications.")}{" "}
+              ({total} {shopDict.templateCount || "templates"})
+            </p>
           </div>
         </div>
 

@@ -1,19 +1,8 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useI18n } from "@/presentation/components/common/I18nContext";
 
-export function useLocale() {
-  const [locale, setLocale] = useState<'vi' | 'en'>('vi');
-
-  useEffect(() => {
-    // Read from document.cookie on the client side
-    const match = document.cookie.match(new RegExp('(^| )NEXT_LOCALE=([^;]+)'));
-    if (match) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setLocale(match[2] as 'vi' | 'en');
-    }
-  }, []);
-
+export function useLocale(): "vi" | "en" {
+  const { locale } = useI18n();
   return locale;
 }
-

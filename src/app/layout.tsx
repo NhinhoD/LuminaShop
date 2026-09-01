@@ -7,6 +7,10 @@ export const metadata: Metadata = {
 };
 
 import { BreadcrumbProvider } from "@/presentation/components/common/BreadcrumbContext";
+import { I18nProvider, Locale } from "@/presentation/components/common/I18nContext";
+import { makeLanguageRepository } from "@/infrastructure/supabase/container";
+import { getDictionary } from "@/i18n/getDictionary";
+import { ToastContainer } from "@/presentation/components/common/ToastContainer";
 
 import { Bricolage_Grotesque, Poppins, Playfair_Display, Dancing_Script, Manrope } from 'next/font/google';
 
@@ -53,16 +57,22 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const cookieStore = await cookies();
-  const locale = cookieStore.get("NEXT_LOCALE")?.value || "vi";
+  const locale = (cookieStore.get("NEXT_LOCALE")?.value as Locale) || "vi";
+
+  const repo = await makeLanguageRepository();
+  const dict = await getDictionary(repo);
 
   const fontClasses = `${bricolageGrotesque.variable} ${poppins.variable} ${playfairDisplay.variable} ${dancingScript.variable} ${manrope.variable}`;
 
   return (
     <html lang={locale} className={`light ${fontClasses}`}>
       <body className="bg-background text-on-background font-bricolage antialiased">
-        <BreadcrumbProvider>
-          {children}
-        </BreadcrumbProvider>
+        <I18nProvider locale={locale} customDict={dict as unknown as Record<string, unknown>}>
+          <BreadcrumbProvider>
+            {children}
+            <ToastContainer />
+          </BreadcrumbProvider>
+        </I18nProvider>
       </body>
     </html>
   );

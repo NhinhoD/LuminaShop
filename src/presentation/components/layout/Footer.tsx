@@ -1,30 +1,35 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
 import { ROUTES } from "@/presentation/constants";
 import { MapPin, Phone, Mail, Clock, ChevronRight, Globe, Camera, MessageCircle, Play } from "lucide-react";
+import { useI18n } from "@/presentation/components/common/I18nContext";
 
 export function Footer() {
+  const { dict } = useI18n();
+
   const quickLinks = [
-    { label: "Home", href: ROUTES.HOME },
-    { label: "Our Menu", href: ROUTES.SHOP },
-    { label: "About Us", href: "#about" },
-    { label: "Contact", href: "#contact" },
+    { label: dict?.footer?.home || "Home", href: ROUTES.HOME },
+    { label: dict?.footer?.templates || "Collection", href: ROUTES.SHOP },
+    { label: dict?.footer?.aboutUs || "About Us", href: "#about" },
+    { label: dict?.footer?.contact || "Contact", href: "#contact" },
   ];
 
   const menuLinks = [
-    { label: "Landing Page", href: `${ROUTES.SHOP}?category=landing-page` },
-    { label: "E-Commerce", href: `${ROUTES.SHOP}?category=e-commerce` },
-    { label: "Admin Dashboard", href: `${ROUTES.SHOP}?category=admin-dashboard` },
-    { label: "Portfolio", href: `${ROUTES.SHOP}?category=portfolio` },
-    { label: "Corporate", href: `${ROUTES.SHOP}?category=corporate` },
-    { label: "Blog & Magazine", href: `${ROUTES.SHOP}?category=blog` },
+    { label: dict?.footer?.landingPage || "Landing Page", href: `${ROUTES.SHOP}?category=landing-page` },
+    { label: dict?.footer?.ecommerce || "E-Commerce", href: `${ROUTES.SHOP}?category=e-commerce` },
+    { label: dict?.footer?.adminDashboard || "Admin Dashboard", href: `${ROUTES.SHOP}?category=admin-dashboard` },
+    { label: dict?.footer?.portfolio || "Portfolio", href: `${ROUTES.SHOP}?category=portfolio` },
+    { label: dict?.footer?.corporate || "Corporate", href: `${ROUTES.SHOP}?category=corporate` },
+    { label: dict?.footer?.blog || "Blog & News", href: `${ROUTES.SHOP}?category=blog` },
   ];
 
   const contactInfo = [
-    { icon: MapPin, label: "Address", value: "Ho Chi Minh City, Vietnam" },
-    { icon: Phone, label: "Phone", value: "0987 654 321" },
-    { icon: Mail, label: "Email", value: "contact@khoui.com" },
-    { icon: Clock, label: "Support", value: "24/7 Digital Delivery" },
+    { icon: MapPin, label: dict?.footer?.addressLabel || "Address", value: dict?.footer?.addressValue || "Ho Chi Minh City, Vietnam" },
+    { icon: Phone, label: dict?.footer?.phoneLabel || "Phone", value: dict?.nav?.contactPhone || "0987 654 321" },
+    { icon: Mail, label: dict?.footer?.emailLabel || "Email", value: dict?.nav?.contactEmail || "contact@khoui.com" },
+    { icon: Clock, label: dict?.footer?.supportLabel || "Support", value: dict?.footer?.supportValue || "24/7 Digital Delivery" },
   ];
 
   const socialLinks = [
@@ -43,7 +48,7 @@ export function Footer() {
           <div>
             <Image src="/LogoKhoUI.png" alt="KhoUI Logo" width={140} height={48} className="h-12 w-auto object-contain mb-4" />
             <p className="text-[#999] text-sm leading-relaxed mb-6">
-              Exclusive, high-quality website templates and themes built with Next.js, Tailwind CSS, and GSAP. Download instantly.
+              {dict?.footer?.brandDesc || "Exclusive, high-quality website templates and themes built with Next.js, Tailwind CSS, and GSAP. Download instantly."}
             </p>
             <div className="flex gap-2">
               {socialLinks.map(({ key, Icon, href }) => (
@@ -61,7 +66,7 @@ export function Footer() {
           {/* Quick Links */}
           <div>
             <h4 className="text-white text-base font-semibold font-poppins mb-5 relative pb-3 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-[30px] after:h-[3px] after:bg-primary after:rounded">
-              Quick Links
+              {dict?.footer?.quickLinks || "Quick Links"}
             </h4>
             <ul className="list-none space-y-3">
               {quickLinks.map((link) => (
@@ -81,7 +86,7 @@ export function Footer() {
           {/* Menu Links */}
           <div>
             <h4 className="text-white text-base font-semibold font-poppins mb-5 relative pb-3 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-[30px] after:h-[3px] after:bg-[#0051d5] after:rounded">
-              Categories
+              {dict?.footer?.categories || "Categories"}
             </h4>
             <ul className="list-none space-y-3">
               {menuLinks.map((link) => (
@@ -101,7 +106,7 @@ export function Footer() {
           {/* Contact Info */}
           <div>
             <h4 className="text-white text-base font-semibold font-poppins mb-5 relative pb-3 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-[30px] after:h-[3px] after:bg-primary after:rounded">
-              Get In Touch
+              {dict?.footer?.getInTouch || "Get In Touch"}
             </h4>
             <div className="space-y-4">
               {contactInfo.map((item) => (
@@ -126,12 +131,12 @@ export function Footer() {
       <div className="border-t border-[rgba(255,255,255,0.08)] py-5">
         <div className="max-w-[1200px] mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-3 text-[0.8rem] text-[#777]">
           <p>
-            &copy; 2026 <span className="text-[#0051d5] font-semibold">KhoUI</span>. All Rights Reserved.
+            &copy; {dict?.footer?.copyright || "2026 KhoUI. All Rights Reserved."}
           </p>
           <div className="flex gap-5">
-            <Link href="#" className="text-[#777] hover:text-primary transition-colors">Privacy Policy</Link>
-            <Link href="#" className="text-[#777] hover:text-primary transition-colors">Terms</Link>
-            <Link href="#" className="text-[#777] hover:text-primary transition-colors">Cookies</Link>
+            <Link href="#" className="text-[#777] hover:text-primary transition-colors">{dict?.footer?.privacyPolicy || "Privacy Policy"}</Link>
+            <Link href="#" className="text-[#777] hover:text-primary transition-colors">{dict?.footer?.terms || "Terms"}</Link>
+            <Link href="#" className="text-[#777] hover:text-primary transition-colors">{dict?.footer?.cookies || "Cookies"}</Link>
           </div>
         </div>
       </div>

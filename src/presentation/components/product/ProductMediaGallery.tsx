@@ -5,6 +5,7 @@ import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { Monitor, Image as ImageIcon, ExternalLink } from "lucide-react";
 import Link from "next/link";
+import { useI18n } from "@/presentation/components/common/I18nContext";
 
 interface ProductMediaGalleryProps {
   productId: string;
@@ -29,6 +30,7 @@ export default function ProductMediaGallery({ productId, title, imageUrl, demoUr
   const [activeTab, setActiveTab] = useState<"image" | "live">(demoUrl ? "live" : "image");
   const [iframeLoading, setIframeLoading] = useState(true);
   const [prevDemoUrl, setPrevDemoUrl] = useState(demoUrl);
+  const { dict } = useI18n();
 
   if (demoUrl !== prevDemoUrl) {
     setPrevDemoUrl(demoUrl);
@@ -53,7 +55,7 @@ export default function ProductMediaGallery({ productId, title, imageUrl, demoUr
                 }`}
             >
               <Monitor size={14} />
-              <span>Live Interactive Demo</span>
+              <span>{dict?.media?.liveDemo}</span>
               {activeTab === "live" && (
                 <motion.div
                   layoutId="activeMediaTab"
@@ -69,7 +71,7 @@ export default function ProductMediaGallery({ productId, title, imageUrl, demoUr
                 }`}
             >
               <ImageIcon size={14} />
-              <span>Bản vẽ thiết kế</span>
+              <span>{dict?.media?.designMockup}</span>
               {activeTab === "image" && (
                 <motion.div
                   layoutId="activeMediaTab"
@@ -86,7 +88,7 @@ export default function ProductMediaGallery({ productId, title, imageUrl, demoUr
             rel="noopener noreferrer"
             className="flex items-center gap-1.5 bg-slate-900 hover:bg-black text-white px-4 py-2 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-colors shadow-md -mt-2"
           >
-            <span>Live Preview</span>
+            <span>{dict?.media?.openFullscreen}</span>
             <ExternalLink size={14} />
           </Link>
         </div>
@@ -138,10 +140,10 @@ export default function ProductMediaGallery({ productId, title, imageUrl, demoUr
                   </div>
                   <div className="flex flex-col items-center text-center">
                     <p className="text-xs font-semibold text-slate-200 uppercase tracking-widest font-poppins">
-                      Loading Live Preview
+                      {dict?.media?.loadingPreview}
                     </p>
                     <p className="text-[9px] text-slate-500 font-mono mt-1 select-none">
-                      rendering high-fidelity template designs...
+                      {dict?.media?.renderingTemplates}
                     </p>
                   </div>
                 </motion.div>
@@ -171,7 +173,7 @@ export default function ProductMediaGallery({ productId, title, imageUrl, demoUr
       {/* Extra helper notice for live frame */}
       {activeTab === "live" && demoUrl && (
         <p className="text-[10px] text-slate-400 font-medium text-center italic">
-          💡 Bạn có thể trực tiếp cuộn, di chuột và tương tác với hiệu ứng GSAP trong hộp preview ở trên.
+          {dict?.media?.interactiveHint}
         </p>
       )}
     </div>

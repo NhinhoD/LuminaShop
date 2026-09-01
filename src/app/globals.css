@@ -44,138 +44,148 @@
     color: var(--color-on-background);
     font-family: var(--font-poppins);
     overflow-x: hidden;
-    @apply antialiased;
   }
 
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-playfair);
     color: var(--color-dark);
-    @apply font-bold tracking-tight;
-  }
-
-  a {
-    text-decoration: none;
-    transition: all 0.3s;
-  }
-
-  img {
-    max-width: 100%;
-  }
-
-  ::-webkit-scrollbar {
-    width: 5px;
-  }
-
-  ::-webkit-scrollbar-thumb {
-    background: var(--color-primary);
-    border-radius: 10px;
   }
 }
 
-/* ─── Sarab Utility Classes ─── */
-
-/* Section heading label (Dancing Script cursive) */
-.section-label {
-  font-family: var(--font-dancing);
-  font-size: 1.35rem;
-  color: var(--color-primary);
-  display: block;
-  margin-bottom: 4px;
-}
-
-/* Section title */
-.section-title {
-  font-size: clamp(1.9rem, 4vw, 2.7rem);
-  font-weight: 900;
-  line-height: 1.2;
-  margin-bottom: 12px;
-}
-
-.section-title span {
-  color: var(--color-primary);
-}
-
-/* Section decorative line */
-.section-line {
-  width: 58px;
-  height: 4px;
-  border-radius: 4px;
-  background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
-  margin: 0 auto 12px;
-}
-
-.section-line-left {
-  width: 58px;
-  height: 4px;
-  border-radius: 4px;
-  background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
-  margin: 0 0 12px;
-}
-
-/* Section description */
-.section-desc {
-  color: #777;
-  font-size: 0.93rem;
-  line-height: 1.8;
-}
-
-/* Primary CTA button */
-.btn-primary-sarab {
-  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
-  color: #fff;
-  border: none;
-  border-radius: 50px;
-  padding: 14px 32px;
-  font-weight: 600;
-  font-size: 0.93rem;
-  box-shadow: 0 8px 24px rgba(232, 40, 26, 0.35);
-  transition: 0.3s;
-  display: inline-flex;
-  align-items: center;
-  gap: 9px;
-  cursor: pointer;
-  font-family: var(--font-poppins);
-}
-
-.btn-primary-sarab:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 14px 34px rgba(232, 40, 26, 0.45);
-  color: #fff;
-}
-
-/* Tag badge */
-.tag-badge {
-  background: var(--color-primary);
-  color: #fff;
-  padding: 2px 10px;
-  border-radius: 20px;
-  font-size: 0.7rem;
-  font-weight: 600;
-  text-transform: uppercase;
-}
-
-/* Marquee animation */
+/* ─── Marquee Animations ─── */
 @keyframes marquee-scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes marquee-reverse {
+  0% { transform: translateX(-50%); }
+  100% { transform: translateX(0); }
+}
+
+.animate-marquee {
+  animation: marquee-scroll 35s linear infinite;
+}
+
+.animate-marquee-fast {
+  animation: marquee-scroll 20s linear infinite;
+}
+
+.animate-marquee-reverse {
+  animation: marquee-reverse 35s linear infinite;
+}
+
+.animate-marquee:hover,
+.animate-marquee-reverse:hover {
+  animation-play-state: paused;
+}
+
+/* ─── Smooth Floating & Pulse Effects ─── */
+@keyframes float-slow {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-12px) rotate(1.5deg); }
+}
+
+@keyframes float-medium {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-8px) rotate(-1deg); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(232, 40, 26, 0.35); }
+  50% { box-shadow: 0 0 0 14px rgba(232, 40, 26, 0); }
+}
+
+.animate-float-slow {
+  animation: float-slow 6s ease-in-out infinite;
+}
+
+.animate-float-medium {
+  animation: float-medium 4.5s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2.5s infinite;
+}
+
+/* ─── Sarab Spec Utilities ─── */
+.font-script {
+  font-family: var(--font-dancing);
+}
+
+.bg-pattern-dots {
+  background-image: radial-gradient(#e8281a 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+.clip-diagonal {
+  clip-path: polygon(0 0, 100% 0, 100% 88%, 0 100%);
+}
+
+.clip-diagonal-reverse {
+  clip-path: polygon(0 12%, 100% 0, 100% 100%, 0 100%);
+}
+
+/* Glassmorphism */
+.glass-header {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f9f5f0;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #d4a373;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #e8281a;
+}
+
+/* ─── Sarab Template CSS Animations ─── */
+@keyframes fadeInUp {
   from {
-    transform: translateX(0);
+    opacity: 0;
+    transform: translateY(30px);
   }
   to {
-    transform: translateX(-50%);
-  }
-}
-
-/* Floating card bounce */
-@keyframes float-card {
-  0%, 100% {
+    opacity: 1;
     transform: translateY(0);
   }
-  50% {
-    transform: translateY(-9px);
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
-/* Hero shape float */
-@keyframes hero-shape-float {
+@keyframes zoomIn {
+  from {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes floatUpDown {
   0%, 100% {
     transform: translateY(0);
   }
@@ -197,6 +207,18 @@
 
 /* ─── Backward-compatible utilities (used in admin/checkout/profile) ─── */
 .material-symbols-outlined {
+  font-family: 'Material Symbols Outlined';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-smoothing: antialiased;
   font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
 }
 

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Monitor, Smartphone, Tablet } from "lucide-react";
 import { cookies } from "next/headers";
 import { getLocalizedText } from "@/presentation/utils/locale";
+import { getStaticDictionary } from "@/i18n/getDictionary";
 
 interface DemoPageProps {
   params: Promise<{ id: string }>;
@@ -12,6 +13,9 @@ interface DemoPageProps {
 export default async function DemoPage({ params }: DemoPageProps) {
   const cookieStore = await cookies();
   const locale = (cookieStore.get('NEXT_LOCALE')?.value as 'vi' | 'en') || 'vi';
+  const dict = getStaticDictionary(locale);
+  const demoDict = (dict?.demo as Record<string, string>) || {};
+
   const { id } = await params;
   const productRepository = await makeProductRepository();
   const product = await productRepository.findById(id);
@@ -41,13 +45,13 @@ export default async function DemoPage({ params }: DemoPageProps) {
         </div>
         
         <div className="hidden md:flex items-center gap-4 text-[#888]">
-          <button className="hover:text-white transition-colors" title="Desktop View">
+          <button className="hover:text-white transition-colors cursor-pointer" title="Desktop View">
             <Monitor size={18} />
           </button>
-          <button className="hover:text-white transition-colors" title="Tablet View">
+          <button className="hover:text-white transition-colors cursor-pointer" title="Tablet View">
             <Tablet size={18} />
           </button>
-          <button className="hover:text-white transition-colors" title="Mobile View">
+          <button className="hover:text-white transition-colors cursor-pointer" title="Mobile View">
             <Smartphone size={18} />
           </button>
         </div>
@@ -55,9 +59,9 @@ export default async function DemoPage({ params }: DemoPageProps) {
         <div className="flex items-center gap-4">
           <Link 
             href={`/product/${product.id}`}
-            className="bg-[#0051d5] hover:bg-[#0041ab] text-white text-xs font-bold px-5 py-2.5 rounded-lg transition-colors shadow-lg shadow-blue-900/20"
+            className="bg-[#0051d5] hover:bg-[#0041ac] text-white text-xs font-bold px-5 py-2.5 rounded-lg transition-colors shadow-lg shadow-blue-900/20"
           >
-            Buy Now
+            {demoDict.buyNow || "Buy Now"}
           </Link>
         </div>
       </div>

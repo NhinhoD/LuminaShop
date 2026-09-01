@@ -9,6 +9,7 @@ import NavbarCartIcon from "./NavbarCartIcon";
 import gsap from "gsap";
 import { Menu, X, Search, User, ChevronDown } from "lucide-react";
 import { LanguageSwitcher } from "../common/LanguageSwitcher";
+import { useI18n } from "../common/I18nContext";
 
 interface NavbarClientProps {
   readonly user: unknown;
@@ -17,12 +18,13 @@ interface NavbarClientProps {
   readonly dict: Record<string, Record<string, string>>;
 }
 
-export default function NavbarClient({ user, navLinks, dict }: NavbarClientProps) {
+export default function NavbarClient({ user, navLinks }: NavbarClientProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const headerRef = useRef<HTMLElement>(null);
   const logoRef = useRef<HTMLAnchorElement>(null);
   const linksRef = useRef<HTMLDivElement>(null);
+  const { dict, locale } = useI18n();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -59,18 +61,18 @@ export default function NavbarClient({ user, navLinks, dict }: NavbarClientProps
         <div className="max-w-[1200px] mx-auto px-4 flex justify-between items-center flex-wrap gap-2">
           <div className="flex flex-wrap gap-4">
             <span className="text-[#aaa]">
-              <span className="text-secondary mr-1">📞</span>0987 654 321
+              <span className="text-secondary mr-1">📞</span>{dict?.nav?.contactPhone || "0987 654 321"}
             </span>
             <span className="text-[#aaa]">
-              <span className="text-secondary mr-1">✉</span>contact@khoui.com
+              <span className="text-secondary mr-1">✉</span>{dict?.nav?.contactEmail || "contact@khoui.com"}
             </span>
             <span className="text-[#aaa]">
-              <span className="text-secondary mr-1">📍</span>Ho Chi Minh City, Vietnam
+              <span className="text-secondary mr-1">📍</span>{dict?.nav?.contactLocation || (locale === "vi" ? "TP. Hồ Chí Minh, Việt Nam" : "Ho Chi Minh City, Vietnam")}
             </span>
           </div>
           <div className="flex items-center gap-3">
             <span className="tag-badge">
-              🚀 Instant Digital Delivery!
+              {dict?.nav?.instantDelivery || "🚀 Instant Digital Delivery!"}
             </span>
           </div>
         </div>
@@ -107,17 +109,19 @@ export default function NavbarClient({ user, navLinks, dict }: NavbarClientProps
 
           {/* Right Actions */}
           <div className="flex items-center gap-1">
-            <button
+            <Link
+              href={ROUTES.SHOP}
               className="bg-transparent border-none cursor-pointer text-[#555] text-base p-2 rounded-lg hover:bg-[rgba(232,40,26,0.08)] hover:text-primary transition-colors"
-              title="Search"
+              title={dict?.nav?.searchTitle || "Search"}
             >
               <Search size={18} />
-            </button>
+            </Link>
 
             {user ? (
               <Link
                 href={ROUTES.PROFILE}
                 className="p-2 rounded-lg text-[#555] hover:bg-[rgba(232,40,26,0.08)] hover:text-primary transition-colors"
+                title={dict?.nav?.profile || "Profile"}
               >
                 <User size={18} />
               </Link>
@@ -125,6 +129,7 @@ export default function NavbarClient({ user, navLinks, dict }: NavbarClientProps
               <Link
                 href={ROUTES.LOGIN}
                 className="p-2 rounded-lg text-[#555] hover:bg-[rgba(232,40,26,0.08)] hover:text-primary transition-colors"
+                title={dict?.nav?.login || "Login"}
               >
                 <User size={18} />
               </Link>
@@ -143,7 +148,7 @@ export default function NavbarClient({ user, navLinks, dict }: NavbarClientProps
               className="hidden sm:inline-flex items-center gap-2 bg-[#0051d5] text-white rounded-lg px-5 py-2.5 text-[0.84rem] font-semibold shadow-[0_4px_15px_rgba(0,81,213,0.3)] ml-1.5 hover:-translate-y-0.5 hover:shadow-[0_8px_22px_rgba(0,81,213,0.4)] transition-all"
             >
               <ChevronDown size={14} />
-              {dict?.nav?.explore || "Explore Themes"}
+              {dict?.nav?.explore || "Explore"}
             </Link>
 
             {/* Mobile toggle */}
@@ -174,7 +179,7 @@ export default function NavbarClient({ user, navLinks, dict }: NavbarClientProps
               className="mt-2 justify-center text-center px-4 py-3 bg-[#0051d5] text-white rounded-lg font-bold hover:bg-[#0041ab]"
               onClick={() => setIsMobileMenuOpen(false)}
             >
-              ✨ {dict?.nav?.explore || "Explore Themes"}
+              ✨ {dict?.nav?.explore || "Explore"}
             </Link>
             <div className="mt-4 flex justify-center pb-2 border-t border-slate-100 pt-4">
               <LanguageSwitcher />

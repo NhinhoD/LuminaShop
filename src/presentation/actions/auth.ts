@@ -10,6 +10,7 @@ import {
   makeResendOtpUseCase, 
   makeSignoutUseCase 
 } from '@/infrastructure/supabase/container'
+import { createClient } from '@/infrastructure/supabase/server'
 import { z } from 'zod'
 import { unstable_rethrow } from 'next/navigation'
 
@@ -53,7 +54,6 @@ export async function login(formData: FormData): Promise<never> {
     redirect('/profile')
   } catch (error: unknown) {
     unstable_rethrow(error)
-    console.error('Login action server error:', error)
     redirect('/login?error=ServerError')
   }
 }
@@ -100,7 +100,6 @@ export async function signup(formData: FormData): Promise<never> {
     redirect('/verify-otp')
   } catch (error: unknown) {
     unstable_rethrow(error)
-    console.error('Signup action server error:', error)
     redirect('/register?error=ServerError')
   }
 }
@@ -139,7 +138,6 @@ export async function verifySignupOtpAction(formData: FormData): Promise<{ error
     redirect('/')
   } catch (error: unknown) {
     unstable_rethrow(error)
-    console.error('Verify OTP action server error:', error)
     return { error: 'Lỗi máy chủ khi xác nhận mã OTP' }
   }
 }
@@ -171,9 +169,36 @@ export async function resendOtpAction(): Promise<{ success?: boolean; error?: st
     })
 
     return { success: true }
-  } catch (error: unknown) {
-    console.error('Resend OTP action server error:', error)
+  } catch {
     return { error: 'Lỗi máy chủ khi gửi lại mã OTP' }
+  }
+}
+
+export async function updateProfileAction(fullName: string, phone: string): Promise<{ success: boolean; error?: string }> {
+  try {
+    const supabase = await createClient();
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    if (userError || !user) {
+      return { success: false, error: "Vui lòng đăng nhập lại để cập nhật thông tin." };
+    }
+
+    const { error: updateError } = await supabase
+      .from('profiles')
+      .update({
+        full_name: fullName,
+        phone: phone,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', user.id);
+
+    if (updateError) {
+      return { success: false, error: updateError.message };
+    }
+
+    revalidatePath('/profile');
+    return { success: true };
+  } catch {
+    return { success: false, error: "Đã có lỗi xảy ra khi cập nhật hồ sơ." };
   }
 }
 
@@ -190,7 +215,6 @@ export async function signout(): Promise<never> {
     redirect('/')
   } catch (error: unknown) {
     unstable_rethrow(error)
-    console.error('Signout action server error:', error)
     redirect('/')
   }
 }

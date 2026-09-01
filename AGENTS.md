@@ -187,15 +187,24 @@ domain/ → application/ → infrastructure/ → presentation/
 - main: production-ready only, merge via GitHub PR
 - Dev: active development, write all code here
 
+### ⛔ STRICT COMMIT & PUSH POLICY (CRITICAL):
+- **NEVER run `git commit` or `git push` automatically.**
+- Agent must **ONLY commit or push when the USER explicitly requests or confirms it** (e.g., "please commit", "commit code now", "push to remote", etc.).
+- Even during automated loops, `/goal` sessions, or PR review checklists, do NOT create commits unless the user explicitly gave the command.
+
 ### Daily workflow:
 
 Step 1 — Always work on Dev branch:
 git checkout Dev
 git pull origin Dev
 
-Step 2 — Write code directly on Dev branch
+Step 2 — Write and edit code directly on Dev branch
 
-Step 3 — Commit regularly:
+Step 3 — Run validation (lint & build) to verify quality:
+npm run lint
+npm run build
+
+Step 4 — Commit & Push (ONLY when explicitly requested by user):
 git add .
 git commit -m "type: description"
 git push origin Dev
@@ -287,16 +296,12 @@ chore: install supabase agent skills
 - **Task 5 (UI Evolution)**: Successfully migrated the storefront into an elegant, high-contrast editorial look inspired by the Sarab Spec, configured via local assets.
 - **Digital Product Refactoring**: Transitioned core entities (`Product`, `Order`) from physical inventory tracking to digital download licensing models.
 - **Autonomous AI Template Pipeline**: Engineered native zippers, AI design blueprints (with GSAP scroll triggers and interactive mouse followers), server-side storage handlers, and admin auto-population dashboard interfaces.
-- **Multi-Language Localization**:
-  - Database: Created `languages` and `site_translations` tables in Supabase via MCP with 'vi' and 'en' records.
-  - Implemented Domain, Infrastructure (`SupabaseLanguageRepository`, `SupabaseTranslationRepository`), Application (Use Cases), and Presentation (Server Actions & Admin UI).
-  - Replaced static dictionaries with dynamic database-driven translations.
-- **System Stability & Solopreneur Roadmap**:
-  - Fixed Language Switcher cache invalidation by enforcing hard reloads.
-  - Repaired Admin Language Manager to correctly save default language settings to Supabase.
-  - Updated Homepage Template Categories to dynamically fetch and render categories from the database instead of using hardcoded arrays.
-  - Created a complete 5-Epic Solopreneur MVP Roadmap (Payment, Digital Delivery, Email, Analytics, SEO) natively tracked via GitHub Issues.
-- **Payment Gateway Integration (Epic 1)**: Hooked up a live VietQR/PayOS dynamic payment API so users can purchase these premium templates using real fiat money.
+- **Centralized Shared Translation & Localization Architecture (i18n)**:
+  - Centralized single-source-of-truth dictionaries in `src/i18n/dictionaries/vi.ts` and `src/i18n/dictionaries/en.ts`. Modifying any string in the central dictionary automatically updates all components across the entire codebase without searching or editing individual files.
+  - Built Live Admin Translation Management (`/admin/translations`) with namespace filters, search, inline editing, and a "Sync Dictionary" feature to bulk-upsert all static keys directly into Supabase `site_translations`.
+  - Built React Context `I18nProvider` & `useI18n()` hook, wrapping the root layout for instant client & server reactivity with zero hydration mismatches.
+  - Localized 100% of storefront and transaction flows: Navbar, Topbar, Footer, Homepage (Hero, Advantages, Categories, Showcase, Journey, Newsletter), Shop Catalog (filters, search, sorts), Product Detail (reviews, instant download badges, accordions, licensing tiers), Cart page & CartDrawer, 3-Step Checkout with localized Zod validation messages, Auth (Login, Registration, OTP), Order Outcomes (Success, Failed), Demo Fullscreen Preview, 404 Page, and User Profile / Purchased Template Downloads.
+  - Added full locale support to currency and date formatters (`formatCurrency`, `formatDate`).
 
 ### 🔄 In Progress:
 - None currently.
@@ -328,4 +333,5 @@ and send me the URL.
 - **Strict Architecture Boundaries**: Strictly respect the 4-layer boundaries (Clean Architecture). Do not employ runtime workarounds (such as dynamic `require` or runtime import bypasses) to bypass import restrictions from the Presentation/Application layers into the Infrastructure layer.
 - **Idempotent Order Logic**: Ensure order creation processes are safely wrapped in `try/catch/finally` blocks. Release any loading states and clear active carts immediately upon receiving a successful Order ID to prevent duplicate submissions.
 - **Enterprise Static Gate**: Before opening a Pull Request, the agent MUST programmatically verify that NO `console.log` or explicit `: any` types exist in the `src/` directory. If found, they must be stripped or refactored into descriptive TypeScript interfaces automatically.
+- **Strict No-Auto-Commit**: The agent MUST NEVER execute `git commit` or `git push` autonomously. Commits and pushes may only be performed upon direct and explicit instruction from the user.
 - **Automatic Rollback Policy**: If a feature integration causes fatal compilation breaks that cannot be healed within 5 attempts, the agent must execute `git checkout -- .` on the affected files to preserve codebase stability and prevent corrupted states on the `Dev` branch.

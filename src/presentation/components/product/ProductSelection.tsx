@@ -6,6 +6,7 @@ import { formatCurrency } from "@/lib/utils";
 import { Heart, Download, CreditCard, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/presentation/hooks/useCart";
+import { useI18n } from "@/presentation/components/common/I18nContext";
 
 interface ProductSelectionProps {
   product: Product;
@@ -17,6 +18,7 @@ export default function ProductSelection({ product, hasPurchased }: ProductSelec
     product.variants && product.variants.length > 0 ? product.variants[0] : null
   );
   const { addItem } = useCart();
+  const { dict, locale } = useI18n();
 
   const router = useRouter();
   const [isProcessing, setIsProcessing] = useState(false);
@@ -41,7 +43,7 @@ export default function ProductSelection({ product, hasPurchased }: ProductSelec
       <div>
         <div className="flex items-center gap-5 mb-2">
           <span className="text-3xl font-black text-primary font-playfair">
-            {formatCurrency(currentPrice)}
+            {isFree ? (dict?.common?.free?.toUpperCase() || (locale === "vi" ? "MIỄN PHÍ" : "FREE")) : formatCurrency(currentPrice, locale)}
           </span>
           <span
             className={`text-[0.7rem] font-bold px-3 py-1 rounded-full uppercase tracking-wider ${
@@ -50,12 +52,15 @@ export default function ProductSelection({ product, hasPurchased }: ProductSelec
                 : "text-[#e8281a] bg-[rgba(232,40,26,0.1)]"
             }`}
           >
-            {isInStock ? "In Stock" : "Out of Stock"}
+            {isInStock 
+              ? (dict?.product?.inStock || (locale === "vi" ? "Có sẵn" : "In Stock"))
+              : (dict?.product?.outOfStock || (locale === "vi" ? "Tạm hết" : "Out of Stock"))}
           </span>
         </div>
         {selectedVariant && (
           <p className="text-xs text-[#999]">
-            Selected: <strong className="text-dark">{selectedVariant.name}</strong> (SKU: {selectedVariant.sku})
+            {dict?.product?.selectedOption || (locale === "vi" ? "Đã chọn:" : "Selected:")}{" "}
+            <strong className="text-dark">{selectedVariant.name}</strong> (SKU: {selectedVariant.sku})
           </p>
         )}
       </div>
@@ -66,7 +71,7 @@ export default function ProductSelection({ product, hasPurchased }: ProductSelec
           <div>
             <div className="flex justify-between mb-4">
               <span className="text-sm font-bold text-dark uppercase tracking-wider font-poppins">
-                Choose Option
+                {dict?.product?.chooseOption || (locale === "vi" ? "Lựa chọn gói bản quyền" : "Choose License Option")}
               </span>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
@@ -89,7 +94,7 @@ export default function ProductSelection({ product, hasPurchased }: ProductSelec
                         }`}
                       >
                         {variant.priceAdjustment > 0 ? "+" : ""}
-                        {formatCurrency(variant.priceAdjustment)}
+                        {formatCurrency(variant.priceAdjustment, locale)}
                       </span>
                     )}
                   </div>
@@ -129,7 +134,7 @@ export default function ProductSelection({ product, hasPurchased }: ProductSelec
 
               router.push("/checkout");
             } catch (err) {
-              setErrorMsg(err instanceof Error ? err.message : "Đã xảy ra lỗi hệ thống.");
+              setErrorMsg(err instanceof Error ? err.message : (locale === "vi" ? "Đã xảy ra lỗi hệ thống." : "A system error occurred."));
             } finally {
               setIsProcessing(false);
             }
@@ -140,16 +145,16 @@ export default function ProductSelection({ product, hasPurchased }: ProductSelec
           {isProcessing ? (
             <Loader2 size={18} className="animate-spin" />
           ) : isFree ? (
-            <><Download size={18} /> TẢI XUỐNG MIỄN PHÍ</>
+            <><Download size={18} /> {dict?.product?.freeDownload || (locale === "vi" ? "TẢI XUỐNG MIỄN PHÍ" : "FREE DOWNLOAD")}</>
           ) : hasPurchased ? (
-            <><Download size={18} /> DOWNLOAD ZIP</>
+            <><Download size={18} /> {dict?.product?.downloadZip || (locale === "vi" ? "TẢI FILE SOURCE CODE (.ZIP)" : "DOWNLOAD SOURCE CODE (.ZIP)")}</>
           ) : (
-            <><CreditCard size={18} /> PAY TO PURCHASE</>
+            <><CreditCard size={18} /> {dict?.product?.payToPurchase || (locale === "vi" ? "MUA BẢN QUYỀN NGAY" : "PURCHASE LICENSE NOW")}</>
           )}
         </button>
         <button className="w-full py-4 rounded-full border-2 border-dark text-dark font-bold text-sm uppercase tracking-wider hover:bg-dark hover:text-white transition-all cursor-pointer flex items-center justify-center gap-2 font-poppins">
           <Heart size={16} />
-          Add to Wishlist
+          {dict?.product?.addToWishlist || (locale === "vi" ? "Thêm vào yêu thích" : "Add to Wishlist")}
         </button>
       </div>
     </div>

@@ -7,6 +7,7 @@ import { Category } from "@/domain/entities/Category";
 import { CreateProductDTO, UpdateProductDTO, Product } from "@/domain/entities/Product";
 import { createClient } from "@/infrastructure/supabase/client";
 import { UploadCloud, CheckCircle, FileArchive, ImageIcon, Loader2 } from "lucide-react";
+import { toast } from "@/presentation/hooks/useToastStore";
 
 interface ProductFormProps {
   categories: Category[];
@@ -451,9 +452,11 @@ export function ProductForm({ categories, initialData }: ProductFormProps) {
 
       setFormData(prev => ({ ...prev, imageUrl: publicUrl }));
       setImageUploadSuccess(true);
+      toast.success("Tải lên ảnh bìa thành công!");
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);
       setError(`Lỗi upload ảnh bìa: ${msg}`);
+      toast.error("Tải ảnh bìa thất bại", msg);
     } finally {
       setImageUploading(false);
     }
@@ -486,9 +489,11 @@ export function ProductForm({ categories, initialData }: ProductFormProps) {
 
       setFormData(prev => ({ ...prev, sourceCodeUrl: publicUrl }));
       setZipUploadSuccess(true);
+      toast.success("Tải lên mã nguồn .zip thành công!");
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);
       setError(`Lỗi upload file mã nguồn: ${msg}`);
+      toast.error("Tải mã nguồn thất bại", msg);
     } finally {
       setZipUploading(false);
     }
@@ -528,7 +533,9 @@ export function ProductForm({ categories, initialData }: ProductFormProps) {
     setLoading(false);
     if (result.error) {
       setError(result.error);
+      toast.error("Không thể lưu template", result.error);
     } else {
+      toast.success(initialData?.id ? "Cập nhật template thành công!" : "Tạo template mới thành công!");
       router.push("/admin/products");
     }
   };
