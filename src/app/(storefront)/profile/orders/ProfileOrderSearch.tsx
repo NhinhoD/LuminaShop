@@ -4,12 +4,14 @@ import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { Search } from "lucide-react";
 import { useDebouncedCallback } from "use-debounce";
 import { useState } from "react";
+import { useI18n } from "@/presentation/components/common/I18nContext";
 
 export function ProfileOrderSearch({ currentSearch }: { currentSearch: string }) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [searchTerm, setSearchTerm] = useState(currentSearch);
+  const { dict } = useI18n();
 
   const handleSearch = useDebouncedCallback((term: string) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -27,7 +29,7 @@ export function ProfileOrderSearch({ currentSearch }: { currentSearch: string })
       <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
       <input
         type="text"
-        placeholder="Tìm kiếm tên giao diện..."
+        placeholder={dict?.shop?.searchPlaceholder || "Search..."}
         value={searchTerm}
         onChange={(e) => {
           setSearchTerm(e.target.value);

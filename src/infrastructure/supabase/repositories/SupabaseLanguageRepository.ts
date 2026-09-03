@@ -73,7 +73,6 @@ export class SupabaseLanguageRepository implements ILanguageRepository {
       .select(`key, ${locale}`);
 
     if (error) {
-      console.error('Error fetching translations:', error);
       return {};
     }
 

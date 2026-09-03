@@ -3,6 +3,10 @@
 import React, { useState } from 'react';
 import { useCart } from '@/presentation/hooks/useCart';
 import { CartItem } from '@/presentation/hooks/useCartStore';
+import { useI18n } from '@/presentation/components/common/I18nContext';
+import { toast } from '@/presentation/hooks/useToastStore';
+import { getLocalizedText } from '@/presentation/utils/locale';
+import { Check, ShoppingBag } from 'lucide-react';
 
 interface AddToCartButtonProps {
   product: CartItem;
@@ -12,44 +16,50 @@ export default function AddToCartButton({ product }: AddToCartButtonProps) {
   const { addItem } = useCart();
   const [isAdding, setIsAdding] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const { dict, locale } = useI18n();
 
   const handleAdd = () => {
     setIsAdding(true);
     
-    // Simulate a bit of loading for UX feel
     setTimeout(() => {
       addItem({ ...product, title: product.title as unknown as Record<string, string> });
       setIsAdding(false);
       setIsSuccess(true);
       
-      // Reset success state after 2 seconds
+      const title = getLocalizedText(product.title as unknown as Record<string, string>, locale);
+      toast.success(
+        locale === "vi" ? "Đã thêm vào giỏ hàng!" : "Added to Cart!",
+        title ? `${title}` : undefined
+      );
+
       setTimeout(() => {
         setIsSuccess(false);
       }, 2000);
-    }, 400);
+    }, 200);
   };
 
   return (
     <button 
       onClick={handleAdd}
       disabled={isAdding}
-      className={`w-full py-5 rounded-lg font-bold text-xs uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-3 shadow-xl ${
+      type="button"
+      className={`w-full py-3 rounded-lg font-semibold text-xs transition-colors flex items-center justify-center gap-2 shadow-xs cursor-pointer ${
         isSuccess 
-          ? "bg-green-600 text-white" 
-          : "bg-slate-950 text-white hover:bg-[#0051d5]"
-      } ${isAdding ? "opacity-80" : ""}`}
+          ? "bg-emerald-600 text-white" 
+          : "bg-primary text-white hover:bg-primary-dark"
+      } ${isAdding ? "opacity-75" : ""} active:scale-98`}
     >
       {isAdding ? (
-        <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+        <span className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
       ) : isSuccess ? (
         <>
-          <span className="material-symbols-outlined text-[18px]">check</span>
-          Added to Bag
+          <Check size={14} />
+          <span>{locale === "vi" ? "Đã thêm vào giỏ" : "Added to Cart"}</span>
         </>
       ) : (
         <>
-          <span className="material-symbols-outlined text-[18px]">shopping_bag</span>
-          Add to Bag
+          <ShoppingBag size={14} />
+          <span>{dict?.shop?.addToCart || (locale === "vi" ? "Thêm vào giỏ" : "Add to Cart")}</span>
         </>
       )}
     </button>

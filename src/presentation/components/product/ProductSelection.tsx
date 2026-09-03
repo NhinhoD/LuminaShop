@@ -5,10 +5,8 @@ import { Product, ProductVariant } from "@/domain/entities/Product";
 import { formatCurrency } from "@/lib/utils";
 import { Heart, Download, CreditCard, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { createClient } from "@/infrastructure/supabase/client";
-import { useLocale } from "@/presentation/hooks/useLocale";
-import { getLocalizedText } from "@/presentation/utils/locale";
 import { useCart } from "@/presentation/hooks/useCart";
+import { useI18n } from "@/presentation/components/common/I18nContext";
 
 interface ProductSelectionProps {
   product: Product;
@@ -19,8 +17,8 @@ export default function ProductSelection({ product, hasPurchased }: ProductSelec
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(
     product.variants && product.variants.length > 0 ? product.variants[0] : null
   );
-  const locale = useLocale();
   const { addItem } = useCart();
+  const { dict, locale } = useI18n();
 
   const router = useRouter();
   const [isProcessing, setIsProcessing] = useState(false);
@@ -40,77 +38,76 @@ export default function ProductSelection({ product, hasPurchased }: ProductSelec
   const isFree = currentPrice === 0;
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 font-sans">
       {/* Price and Stock Status */}
       <div>
-        <div className="flex items-center gap-5 mb-2">
-          <span className="text-3xl font-black text-primary font-playfair">
-            {formatCurrency(currentPrice)}
+        <div className="flex items-center gap-3 mb-1">
+          <span className="text-2xl sm:text-3xl font-bold text-slate-900 font-mono">
+            {isFree ? (dict?.common?.free?.toUpperCase() || (locale === "vi" ? "MIỄN PHÍ" : "FREE")) : formatCurrency(currentPrice, locale)}
           </span>
           <span
-            className={`text-[0.7rem] font-bold px-3 py-1 rounded-full uppercase tracking-wider ${
+            className={`text-xs font-medium px-2.5 py-0.5 rounded-md ${
               isInStock
-                ? "text-green bg-[rgba(45,106,79,0.1)]"
-                : "text-[#e8281a] bg-[rgba(232,40,26,0.1)]"
+                ? "text-emerald-700 bg-emerald-50"
+                : "text-red-700 bg-red-50"
             }`}
           >
-            {isInStock ? "In Stock" : "Out of Stock"}
+            {isInStock 
+              ? (dict?.product?.inStock || (locale === "vi" ? "Có sẵn" : "In Stock"))
+              : (dict?.product?.outOfStock || (locale === "vi" ? "Tạm hết" : "Out of Stock"))}
           </span>
         </div>
         {selectedVariant && (
-          <p className="text-xs text-[#999]">
-            Selected: <strong className="text-dark">{selectedVariant.name}</strong> (SKU: {selectedVariant.sku})
+          <p className="text-xs text-slate-500 font-normal">
+            {dict?.product?.selectedOption || (locale === "vi" ? "Đã chọn gói:" : "Selected license:")}{" "}
+            <strong className="font-semibold text-slate-800">{selectedVariant.name}</strong>
           </p>
         )}
       </div>
 
       {/* Variant Selection */}
       {product.variants && product.variants.length > 0 && (
-        <div className="space-y-4">
-          <div>
-            <div className="flex justify-between mb-4">
-              <span className="text-sm font-bold text-dark uppercase tracking-wider font-poppins">
-                Choose Option
-              </span>
-            </div>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-              {product.variants.map((variant) => (
+        <div className="space-y-2.5">
+          <label className="block text-xs font-semibold text-slate-800 uppercase tracking-wider">
+            {dict?.product?.chooseOption || (locale === "vi" ? "Lựa chọn gói bản quyền" : "Choose License Option")}
+          </label>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+            {product.variants.map((variant) => {
+              const isSelected = selectedVariant?.id === variant.id;
+              return (
                 <button
                   key={variant.id}
                   onClick={() => setSelectedVariant(variant)}
-                  className={`py-4 px-3 rounded-xl font-bold text-xs transition-all border-2 cursor-pointer font-poppins ${
-                    selectedVariant?.id === variant.id
-                      ? "bg-primary text-white border-primary shadow-[0_4px_15px_rgba(232,40,26,0.3)]"
-                      : "bg-white text-[#666] border-[#e5e5e5] hover:border-primary hover:text-primary"
+                  type="button"
+                  className={`p-3 rounded-lg text-left transition-all border cursor-pointer ${
+                    isSelected
+                      ? "bg-primary/5 text-primary border-primary font-semibold"
+                      : "bg-white text-slate-700 border-slate-200/80 hover:border-slate-300 font-medium"
                   }`}
                 >
-                  <div className="flex flex-col items-center gap-1">
-                    <span>{variant.name}</span>
-                    {variant.priceAdjustment !== 0 && (
-                      <span
-                        className={`text-[9px] ${
-                          selectedVariant?.id === variant.id ? "text-[rgba(255,255,255,0.7)]" : "text-[#aaa]"
-                        }`}
-                      >
-                        {variant.priceAdjustment > 0 ? "+" : ""}
-                        {formatCurrency(variant.priceAdjustment)}
-                      </span>
-                    )}
-                  </div>
+                  <div className="text-xs font-semibold">{variant.name}</div>
+                  {variant.priceAdjustment !== 0 && (
+                    <div className={`text-[11px] font-mono mt-0.5 ${isSelected ? "text-primary" : "text-slate-500"}`}>
+                      {variant.priceAdjustment > 0 ? "+" : ""}
+                      {formatCurrency(variant.priceAdjustment, locale)}
+                    </div>
+                  )}
                 </button>
-              ))}
-            </div>
+              );
+            })}
           </div>
         </div>
       )}
 
-      {/* Add to Cart Actions */}
+      {/* Error Notice */}
       {errorMsg && (
-        <div className="bg-red-50 text-red-600 text-sm p-3 rounded-lg border border-red-100">
+        <div className="bg-red-50 text-red-600 text-xs p-3 rounded-lg border border-red-100 font-medium">
           {errorMsg}
         </div>
       )}
-      <div className="space-y-3 pt-2">
+
+      {/* Add to Cart Actions */}
+      <div className="space-y-2.5 pt-1">
         <button
           onClick={async () => {
             if (isFree || hasPurchased) {
@@ -121,14 +118,6 @@ export default function ProductSelection({ product, hasPurchased }: ProductSelec
             setIsProcessing(true);
             setErrorMsg(null);
             try {
-              const supabase = createClient();
-              const { data: { session } } = await supabase.auth.getSession();
-              if (!session) {
-                setErrorMsg("Bạn cần đăng nhập để mua template này.");
-                router.push("/login");
-                return;
-              }
-
               await addItem({
                 productId: product.id,
                 variantId: selectedVariant?.id,
@@ -141,27 +130,31 @@ export default function ProductSelection({ product, hasPurchased }: ProductSelec
 
               router.push("/checkout");
             } catch (err) {
-              setErrorMsg(err instanceof Error ? err.message : "Đã xảy ra lỗi hệ thống.");
+              setErrorMsg(err instanceof Error ? err.message : (locale === "vi" ? "Đã xảy ra lỗi hệ thống." : "A system error occurred."));
             } finally {
               setIsProcessing(false);
             }
           }}
           disabled={isProcessing}
-          className="w-full py-4 rounded-full bg-[#0051d5] text-white font-bold text-sm uppercase tracking-wider hover:bg-[#0041ab] transition-all shadow-lg shadow-blue-900/20 cursor-pointer flex items-center justify-center gap-2 font-poppins disabled:opacity-70 disabled:cursor-not-allowed"
+          className="w-full py-3.5 rounded-xl bg-primary hover:bg-primary-dark text-white font-semibold text-xs sm:text-sm transition-colors shadow-xs cursor-pointer flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
         >
           {isProcessing ? (
-            <Loader2 size={18} className="animate-spin" />
+            <Loader2 size={16} className="animate-spin" />
           ) : isFree ? (
-            <><Download size={18} /> TẢI XUỐNG MIỄN PHÍ</>
+            <><Download size={16} /> {dict?.product?.freeDownload || (locale === "vi" ? "Tải xuống miễn phí" : "Free Download")}</>
           ) : hasPurchased ? (
-            <><Download size={18} /> DOWNLOAD ZIP</>
+            <><Download size={16} /> {dict?.product?.downloadZip || (locale === "vi" ? "Tải file source code (.zip)" : "Download Source Code (.zip)")}</>
           ) : (
-            <><CreditCard size={18} /> PAY TO PURCHASE</>
+            <><CreditCard size={16} /> {dict?.product?.payToPurchase || (locale === "vi" ? "Mua bản quyền ngay" : "Purchase License Now")}</>
           )}
         </button>
-        <button className="w-full py-4 rounded-full border-2 border-dark text-dark font-bold text-sm uppercase tracking-wider hover:bg-dark hover:text-white transition-all cursor-pointer flex items-center justify-center gap-2 font-poppins">
-          <Heart size={16} />
-          Add to Wishlist
+
+        <button 
+          type="button"
+          className="w-full py-3 rounded-xl border border-slate-200 hover:border-slate-300 text-slate-700 font-medium text-xs sm:text-sm hover:bg-slate-50 transition-colors cursor-pointer flex items-center justify-center gap-1.5"
+        >
+          <Heart size={15} />
+          <span>{dict?.product?.addToWishlist || (locale === "vi" ? "Thêm vào danh sách yêu thích" : "Add to Wishlist")}</span>
         </button>
       </div>
     </div>

@@ -21,12 +21,12 @@ export class SupabaseDashboardRepository implements IDashboardRepository {
     }
 
     // 2. Total Orders
-    const { count: totalOrders, error: ordersError } = await supabase
+    const { count: totalOrders } = await supabase
       .from('orders')
       .select('*', { count: 'exact', head: true });
 
     // 3. New Customers (profiles created recently, or just total profiles for now)
-    const { count: newCustomers, error: customersError } = await supabase
+    const { count: newCustomers } = await supabase
       .from('profiles')
       .select('*', { count: 'exact', head: true });
 

@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { OrderStatus } from "@/domain/entities/Order";
 import { cancelOrderAction } from "@/presentation/actions/order";
-import { toast } from "react-hot-toast";
+import { toast } from "@/presentation/hooks/useToastStore";
 import { useRouter } from "next/navigation";
+import { useI18n } from "@/presentation/components/common/I18nContext";
 
 interface CancelOrderButtonProps {
   orderId: string;
@@ -13,21 +13,23 @@ interface CancelOrderButtonProps {
 export function CancelOrderButton({ orderId }: CancelOrderButtonProps) {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const { dict } = useI18n();
 
   const handleCancel = async () => {
-    if (!confirm("Bạn có chắc chắn muốn hủy đơn hàng này?")) return;
+    const confirmMsg = dict?.orders?.cancelConfirm || "Are you sure you want to cancel this order?";
+    if (!confirm(confirmMsg)) return;
 
     setLoading(true);
     try {
       const result = await cancelOrderAction(orderId);
       if (result.success) {
-        toast.success("Đã hủy đơn hàng thành công.");
+        toast.success(dict?.orders?.cancelSuccess || "Order cancelled successfully.");
         router.refresh();
       } else {
-        toast.error(result.error || "Không thể hủy đơn hàng.");
+        toast.error(result.error || dict?.orders?.cancelError || "Unable to cancel order.");
       }
-    } catch (_e) {
-      toast.error("Đã có lỗi xảy ra.");
+    } catch {
+      toast.error(dict?.common?.error || "An error occurred.");
     } finally {
       setLoading(false);
     }
@@ -37,9 +39,12 @@ export function CancelOrderButton({ orderId }: CancelOrderButtonProps) {
     <button
       onClick={handleCancel}
       disabled={loading}
-      className="px-4 py-2 border border-red-200 text-red-600 rounded-xl hover:bg-red-50 transition-colors text-sm font-medium disabled:opacity-50"
+      type="button"
+      className="px-4 py-2 border border-red-200 text-red-600 rounded-xl hover:bg-red-50 transition-colors text-xs font-bold uppercase tracking-wider disabled:opacity-50 cursor-pointer"
     >
-      {loading ? "Đang xử lý..." : "Hủy đơn hàng"}
+      {loading 
+        ? (dict?.common?.loading || "Processing...") 
+        : (dict?.orders?.cancelOrder || "Cancel Order")}
     </button>
   );
 }

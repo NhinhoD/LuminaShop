@@ -3,6 +3,8 @@
 import { useState, useTransition } from "react";
 import { updateTranslationAction } from "@/presentation/actions/i18n";
 import { TranslationEntry } from "@/domain/repositories/ITranslationRepository";
+import { Edit3 } from "lucide-react";
+import { toast } from "@/presentation/hooks/useToastStore";
 
 export default function LanguageTableClient({ initialTranslations }: { initialTranslations: TranslationEntry[] }) {
   const [translations, setTranslations] = useState(initialTranslations);
@@ -23,35 +25,36 @@ export default function LanguageTableClient({ initialTranslations }: { initialTr
       if (res.success) {
         setTranslations(prev => prev.map(t => t.key === key ? { ...t, vi: editVi, en: editEn } : t));
         setEditingKey(null);
+        toast.success("Lưu bản dịch thành công!", `Đã cập nhật khóa: ${key}`);
       } else {
-        alert("Failed to update translation: " + res.error);
+        toast.error("Không thể lưu bản dịch", res.error || "Vui lòng thử lại sau.");
       }
     });
   };
 
   return (
-    <div className="bg-white border border-slate-100 rounded-2xl shadow-sm overflow-hidden">
+    <div className="bg-white border border-slate-100 rounded-3xl shadow-sm overflow-hidden font-sans">
       <div className="overflow-x-auto">
-        <table className="w-full text-left border-collapse">
+        <table className="w-full text-left border-collapse min-w-[700px]">
           <thead>
-            <tr className="bg-slate-50 border-b border-slate-100 text-xs font-bold text-slate-400 uppercase tracking-wider">
+            <tr className="bg-slate-50 border-b border-slate-100 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
               <th className="p-4 pl-6">Key (Mã)</th>
               <th className="p-4 w-1/3">Tiếng Việt (VI)</th>
               <th className="p-4 w-1/3">Tiếng Anh (EN)</th>
               <th className="p-4 pr-6 text-right">Thao tác</th>
             </tr>
           </thead>
-          <tbody className="text-sm text-slate-700 divide-y divide-slate-100">
+          <tbody className="text-xs text-slate-700 divide-y divide-slate-100">
             {translations.map((entry) => (
               <tr key={entry.key} className="hover:bg-slate-50 transition-colors group">
-                <td className="p-4 pl-6 font-medium text-slate-500 text-xs">
+                <td className="p-4 pl-6 font-mono font-bold text-slate-800 text-xs">
                   <span className="bg-slate-100 px-2 py-1 rounded-md">{entry.key}</span>
                 </td>
                 
                 <td className="p-4">
                   {editingKey === entry.key ? (
                     <textarea 
-                      className="w-full border border-slate-300 rounded-md p-2 focus:border-[#0051d5] outline-none text-sm"
+                      className="w-full border border-slate-300 rounded-lg p-2 focus:border-[#0051d5] outline-none text-xs resize-none"
                       rows={2}
                       value={editVi}
                       onChange={(e) => setEditVi(e.target.value)}
@@ -64,7 +67,7 @@ export default function LanguageTableClient({ initialTranslations }: { initialTr
                 <td className="p-4">
                   {editingKey === entry.key ? (
                     <textarea 
-                      className="w-full border border-slate-300 rounded-md p-2 focus:border-[#0051d5] outline-none text-sm"
+                      className="w-full border border-slate-300 rounded-lg p-2 focus:border-[#0051d5] outline-none text-xs resize-none"
                       rows={2}
                       value={editEn}
                       onChange={(e) => setEditEn(e.target.value)}
@@ -80,14 +83,16 @@ export default function LanguageTableClient({ initialTranslations }: { initialTr
                       <button 
                         onClick={() => setEditingKey(null)}
                         disabled={isPending}
-                        className="text-slate-500 hover:text-slate-700 font-medium px-3 py-1.5 rounded-lg border border-slate-200"
+                        type="button"
+                        className="text-slate-500 hover:text-slate-700 font-semibold px-3 py-1.5 rounded-lg border border-slate-200 cursor-pointer"
                       >
                         Hủy
                       </button>
                       <button 
                         onClick={() => handleSave(entry.key)}
                         disabled={isPending}
-                        className="bg-[#0051d5] text-white font-medium px-4 py-1.5 rounded-lg hover:bg-[#0041ab]"
+                        type="button"
+                        className="bg-[#0051d5] text-white font-bold px-4 py-1.5 rounded-lg hover:bg-[#0041ab] cursor-pointer"
                       >
                         {isPending ? "Đang lưu..." : "Lưu"}
                       </button>
@@ -95,9 +100,11 @@ export default function LanguageTableClient({ initialTranslations }: { initialTr
                   ) : (
                     <button 
                       onClick={() => handleEdit(entry)}
-                      className="text-slate-400 hover:text-[#0051d5] p-2 rounded-lg hover:bg-blue-50 transition-colors"
+                      type="button"
+                      className="text-slate-400 hover:text-[#0051d5] p-2 rounded-lg hover:bg-blue-50 transition-colors cursor-pointer"
+                      title="Chỉnh sửa"
                     >
-                      <span className="material-symbols-outlined text-[20px]">edit</span>
+                      <Edit3 size={16} />
                     </button>
                   )}
                 </td>
@@ -109,3 +116,4 @@ export default function LanguageTableClient({ initialTranslations }: { initialTr
     </div>
   );
 }
+

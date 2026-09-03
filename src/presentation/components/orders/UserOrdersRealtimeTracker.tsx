@@ -26,8 +26,7 @@ export function UserOrdersRealtimeTracker({ userId }: UserOrdersRealtimeTrackerP
           table: 'orders',
           filter: `user_id=eq.${userId}`,
         },
-        (payload) => {
-
+        () => {
           router.refresh();
         }
       )

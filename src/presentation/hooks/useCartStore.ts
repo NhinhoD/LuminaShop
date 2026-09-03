@@ -53,7 +53,7 @@ const customStorage = {
         window.localStorage.setItem(name, value);
         window.sessionStorage.removeItem(name);
       }
-    } catch (_e) {
+    } catch {
       window.sessionStorage.setItem(name, value);
     }
   },

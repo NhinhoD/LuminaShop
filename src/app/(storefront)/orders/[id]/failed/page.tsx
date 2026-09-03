@@ -1,73 +1,49 @@
 import { getOrderAction } from "@/presentation/actions/order";
-import { OrderItem } from "@/domain/entities/Order";
-import { formatCurrency } from "@/lib/utils";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { XCircle } from "lucide-react";
-import { getLocale } from "@/i18n/getDictionary";
-import { getLocalizedText } from "@/presentation/utils/locale";
+import { AlertCircle } from "lucide-react";
+import { getDictionary, getLocale } from "@/i18n/getDictionary";
+import { makeLanguageRepository } from "@/infrastructure/supabase/container";
 
 export default async function OrderFailedPage(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
   const result = await getOrderAction(params.id);
   const order = result.data;
   const locale = await getLocale();
+  const langRepo = await makeLanguageRepository();
+  const dict = await getDictionary(langRepo);
+  const orderDict = (dict?.orders as Record<string, string>) || {};
 
   if (!order) {
     redirect("/");
   }
 
   return (
-    <div className="max-w-[800px] mx-auto px-6 py-20 text-center">
+    <div className="max-w-[800px] mx-auto px-6 py-20 text-center font-sans">
       <div className="flex justify-center mb-6">
-        <XCircle className="w-24 h-24 text-error" />
+        <AlertCircle className="w-24 h-24 text-red-500" />
       </div>
       
-      <h1 className="text-display-sm font-bold mb-4">Thanh toán thất bại!</h1>
-      <p className="text-on-surface-variant text-lg mb-8">
-        Đã có lỗi xảy ra trong quá trình thanh toán đơn hàng <strong>#{order.id.split("-")[0].toUpperCase()}</strong>.
-        Vui lòng thử lại.
+      <h1 className="text-3xl font-bold mb-4 font-sans text-slate-900">
+        {orderDict.failedTitle || (locale === "vi" ? "Thanh toán chưa hoàn tất!" : "Payment Incomplete!")}
+      </h1>
+      <p className="text-slate-500 text-base mb-8 max-w-md mx-auto">
+        {orderDict.failedSubtitle || (locale === "vi" ? "Đã có lỗi hoặc giao dịch chưa được xác nhận cho đơn hàng" : "An error occurred or payment verification is still pending for order")}{" "}
+        <strong>#{order.id.split("-")[0].toUpperCase()}</strong>.
       </p>
-
-      <div className="bg-surface-container-lowest p-8 rounded-2xl border border-outline-variant/30 text-left mb-10 shadow-sm max-w-[500px] mx-auto">
-        <h2 className="font-bold text-h4 mb-6 pb-4 border-b border-outline-variant">Tóm tắt đơn hàng</h2>
-        
-        <div className="space-y-4 mb-6">
-          {order.items.map((item: OrderItem) => (
-            <div key={item.id} className="flex justify-between items-center text-sm">
-              <div className="flex-1">
-                <p className="font-bold">{getLocalizedText(item.productSnapshot?.title as unknown as Record<string, string>, locale) || getLocalizedText(item.productTitle as unknown as Record<string, string>, locale) || 'Sản phẩm'}</p>
-                <p className="text-on-surface-variant">Số lượng: {item.quantity}</p>
-              </div>
-              <span className="font-medium">{formatCurrency(item.priceAtPurchase * item.quantity)}</span>
-            </div>
-          ))}
-        </div>
-
-        <div className="pt-4 border-t border-outline-variant space-y-2 text-sm">
-          <div className="flex justify-between">
-            <span className="text-on-surface-variant">Phương thức thanh toán:</span>
-            <span className="font-bold uppercase">{order.paymentMethod}</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="text-on-surface-variant">Tổng cộng:</span>
-            <span className="font-bold text-primary text-xl">{formatCurrency(order.totalAmount)}</span>
-          </div>
-        </div>
-      </div>
 
       <div className="flex flex-col sm:flex-row justify-center gap-4">
         <Link 
-          href={`/profile`} 
-          className="px-8 py-4 bg-primary text-on-primary rounded-full font-bold hover:bg-inverse-surface transition-all"
+          href={`/checkout`} 
+          className="px-8 py-4 bg-[#0051d5] text-white rounded-xl font-bold hover:bg-[#0041ac] transition-all text-xs uppercase tracking-wider shadow-md"
         >
-          Xem đơn hàng của bạn
+          {orderDict.retryPayment || (locale === "vi" ? "Thử thanh toán lại" : "Retry Payment")}
         </Link>
         <Link 
-          href="/" 
-          className="px-8 py-4 bg-surface-container text-on-surface rounded-full font-bold hover:bg-outline-variant/20 transition-all"
+          href="/shop" 
+          className="px-8 py-4 bg-slate-100 text-slate-800 rounded-xl font-bold hover:bg-slate-200 transition-all text-xs uppercase tracking-wider"
         >
-          Quay về trang chủ
+          {orderDict.continueShoppingButton || (locale === "vi" ? "Tiếp tục mua sắm" : "Continue Browsing")}
         </Link>
       </div>
     </div>

@@ -55,7 +55,7 @@ export async function updateCartItemAction(itemId: string, quantity: number) {
     await cartRepo.updateItem(itemId, quantity);
     revalidatePath("/cart");
     return { success: true };
-  } catch (_error: unknown) {
+  } catch {
     return { success: false, error: 'Failed to update cart item' };
   }
 }
@@ -66,7 +66,7 @@ export async function removeCartItemAction(itemId: string) {
     await cartRepo.removeItem(itemId);
     revalidatePath("/cart");
     return { success: true };
-  } catch (error: unknown) {
+  } catch {
     return { error: "Không thể xóa sản phẩm khỏi giỏ hàng." };
   }
 }

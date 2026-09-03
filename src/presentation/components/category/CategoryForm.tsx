@@ -49,7 +49,7 @@ export function CategoryForm({ category, onSuccess, onCancel }: CategoryFormProp
           onSuccess();
         }
       }
-    } catch (err) {
+    } catch {
       setError("Đã có lỗi xảy ra. Vui lòng thử lại.");
     } finally {
       setLoading(false);

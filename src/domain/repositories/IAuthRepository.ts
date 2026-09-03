@@ -8,4 +8,6 @@ export interface IAuthRepository {
   signOut(): Promise<Result<void>>;
   getOtpRateLimit(email: string): Promise<Result<Date | null>>;
   upsertOtpRateLimit(email: string, date: Date): Promise<Result<void>>;
+  getCurrentUser(): Promise<{ id: string; email?: string } | null>;
+  getProfile(userId: string): Promise<{ id: string; fullName?: string; phone?: string; avatarUrl?: string } | null>;
 }

@@ -1,5 +1,5 @@
 /**
- * Global Constants for LuminaShop (Sarab F&B Design)
+ * Global Constants for KhoUI (Digital Template & Source Code Marketplace)
  * Used to avoid hardcoding strings and values throughout the application.
  */
 
@@ -27,8 +27,8 @@ export const ROLES = {
 } as const;
 
 export const UI_CONFIG = {
-  MAX_WIDTH: "1440px",
-  ACCENT_COLOR: "#e8281a",
+  MAX_WIDTH: "1400px",
+  ACCENT_COLOR: "#0051d5",
   NAVBAR_HEIGHT: "0px",
 } as const;
 
@@ -42,8 +42,8 @@ export const CATEGORIES = {
 } as const;
 
 export const LAYOUT_CLASSES = {
-  CONTAINER: `max-w-[${UI_CONFIG.MAX_WIDTH}] mx-auto px-8 md:px-12`,
-  SECTION_SPACING: "py-10 mb-20",
+  CONTAINER: "max-w-[1400px] mx-auto px-6 sm:px-8 lg:px-12",
+  SECTION_SPACING: "py-16 md:py-24",
 } as const;
 
 export const UI_LABELS = {
@@ -61,8 +61,8 @@ export const UI_LABELS = {
 } as const;
 
 export const PLACEHOLDERS = {
-  FIRST_NAME: "Jane",
-  LAST_NAME: "Doe",
-  EMAIL: "jane.doe@example.com",
+  FIRST_NAME: "Minh",
+  LAST_NAME: "Tuan",
+  EMAIL: "contact@khoui.com",
   PASSWORD: "••••••••",
 } as const;
