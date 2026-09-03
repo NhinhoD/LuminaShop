@@ -22,10 +22,13 @@ When starting ANY new session, always do this first — no exceptions:
 6. Read @src/presentation — understand UI layer
 7. Read @public/stitch_e_commerce_ux_ui_design — UI design references
 8. Read @.agents/skills/supabase/ — Supabase & Postgres best practices
-9. Read @.agents/skills/stitch/ — Stitch UX/UI design patterns
+9. Read @.agents/skills/stitch/ — Stitch UX/UI design patterns & stitch-skill
 10. Read @.agents/skills/gsap/ — GSAP core, timeline, and performance core competencies
-11. Read @.agents/skills/design/ — Design taste, layout morphing & prompt enhancements
-12. Read @.agents/skills/react-components — React & Tailwind 4 execution rules
+11. Read @.agents/skills/design/ — Design taste, brandkit, layout morphing & prompt enhancements
+12. Read @.agents/skills/taste/ — Anti-slop frontend taste, motion dials (8/6/4), minimalism, brutalism, soft UI
+13. Read @.agents/skills/impeccable/ — Impeccable design harness, critique, distill, polish, harden
+14. Read @.agents/skills/imagegen/ — AI UI & mockup image generation (web & mobile)
+15. Read @.agents/skills/react-components — React & Tailwind 4 execution rules
 
 After reading, report to user:
 - ✅ What is DONE

@@ -175,10 +175,10 @@ export default function CheckoutPage() {
 
   if (items.length === 0 && step === 1) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50/50 font-manrope">
+      <div className="min-h-screen flex items-center justify-center bg-slate-50/50 font-sans">
         <div className="max-w-md w-full text-center px-6 py-12 backdrop-blur-md bg-white/70 border border-slate-100 rounded-3xl shadow-xl">
           <ShoppingCart className="w-16 h-16 mx-auto text-slate-300 mb-6" />
-          <h2 className="text-xl font-bold text-slate-800 mb-2 font-playfair">
+          <h2 className="text-xl font-bold text-slate-800 mb-2 font-sans">
             {dict?.checkout?.emptyCartTitle || (locale === "vi" ? "Giỏ hàng trống" : "Your cart is empty")}
           </h2>
           <p className="text-sm text-slate-400 mb-8">
@@ -196,7 +196,7 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50/30 py-24 px-4 sm:px-6 lg:px-8 font-manrope">
+    <div className="min-h-screen bg-slate-50/30 py-24 px-4 sm:px-6 lg:px-8 font-sans">
       <div className="max-w-[1100px] mx-auto">
         
         {/* Progress Steps Tracker */}
@@ -265,7 +265,7 @@ export default function CheckoutPage() {
 
         {/* Page Title */}
         <div className="text-center mb-12">
-          <h1 className="text-3xl font-extrabold tracking-tight text-slate-950 font-playfair">
+          <h1 className="text-3xl font-extrabold tracking-tight text-slate-950 font-sans">
             {step === 1 && (dict?.checkout?.pageHeading1 || (locale === "vi" ? "Xác nhận mã nguồn" : "Review Selected Codebases"))}
             {step === 2 && (dict?.checkout?.pageHeading2 || (locale === "vi" ? "Thông tin nhận mã nguồn" : "Digital Delivery Details"))}
             {step === 3 && (dict?.checkout?.pageHeading3 || (locale === "vi" ? "Xác nhận đơn hàng" : "Order Confirmation"))}
@@ -335,7 +335,7 @@ export default function CheckoutPage() {
                 {/* Sticky Order Summary Card */}
                 <div className="lg:col-span-1">
                   <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm sticky top-24">
-                    <h2 className="text-base font-bold text-slate-900 mb-6 font-playfair">
+                    <h2 className="text-base font-bold text-slate-900 mb-6 font-sans">
                       {dict?.checkout?.summaryTitle || (locale === "vi" ? "Tóm tắt thanh toán" : "Payment Summary")}
                     </h2>
                     <div className="space-y-4 border-b border-slate-100 pb-6 mb-6">
@@ -354,7 +354,7 @@ export default function CheckoutPage() {
                       <span className="text-sm font-bold text-slate-800">
                         {dict?.checkout?.totalPayment || (locale === "vi" ? "Tổng thanh toán" : "Total Payment")}
                       </span>
-                      <span className="text-2xl font-black text-[#0051d5] font-playfair">{formatCurrency(subtotal, locale)}</span>
+                      <span className="text-2xl font-black text-[#0051d5] font-sans">{formatCurrency(subtotal, locale)}</span>
                     </div>
                     
                     <button 
@@ -373,7 +373,7 @@ export default function CheckoutPage() {
             {step === 2 && (
               <div className="max-w-2xl mx-auto bg-white border border-slate-100 rounded-3xl p-6 md:p-10 shadow-sm">
                 <div className="mb-8">
-                  <h2 className="text-xl font-bold text-slate-900 font-playfair">
+                  <h2 className="text-xl font-bold text-slate-900 font-sans">
                     {dict?.checkout?.infoCardTitle || (locale === "vi" ? "Thông tin người nhận bàn giao số" : "Digital Delivery Recipient Information")}
                   </h2>
                   <p className="text-slate-400 text-xs mt-1">
@@ -490,7 +490,7 @@ export default function CheckoutPage() {
             {step === 3 && (
               <div className="max-w-2xl mx-auto bg-white border border-slate-100 rounded-3xl p-6 md:p-10 shadow-sm space-y-8">
                 <div>
-                  <h2 className="text-xl font-bold text-slate-900 font-playfair">
+                  <h2 className="text-xl font-bold text-slate-900 font-sans">
                     {dict?.checkout?.reviewOrderTitle || (locale === "vi" ? "Kiểm tra lại thông tin đơn hàng" : "Review Order & Complete Payment")}
                   </h2>
                   <p className="text-slate-400 text-xs mt-1">
@@ -605,3 +605,4 @@ export default function CheckoutPage() {
     </div>
   );
 }
+

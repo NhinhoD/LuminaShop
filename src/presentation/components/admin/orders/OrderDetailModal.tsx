@@ -57,7 +57,7 @@ export function OrderDetailModal({ orderId, onClose }: OrderDetailModalProps): R
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 font-manrope">
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 font-sans">
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -74,7 +74,7 @@ export function OrderDetailModal({ orderId, onClose }: OrderDetailModalProps): R
           {/* Header */}
           <div className="p-6 border-b border-slate-100 flex items-center justify-between bg-white sticky top-0 z-10">
             <div>
-              <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2 font-playfair">
+              <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2 font-sans">
                 Đơn hàng #{order.id.slice(0, 8).toUpperCase()}
                 <StatusBadge status={order.status} />
               </h2>
@@ -179,7 +179,7 @@ export function OrderDetailModal({ orderId, onClose }: OrderDetailModalProps): R
               <div className="mt-4 flex justify-end">
                 <div className="text-right">
                   <p className="text-xs text-slate-400 font-bold uppercase tracking-wider">Tổng cộng</p>
-                  <p className="text-xl font-black text-[#0051d5] font-playfair">{formatPrice(order.totalAmount)}</p>
+                  <p className="text-xl font-black text-[#0051d5] font-sans">{formatPrice(order.totalAmount)}</p>
                 </div>
               </div>
             </section>
@@ -189,3 +189,4 @@ export function OrderDetailModal({ orderId, onClose }: OrderDetailModalProps): R
     </AnimatePresence>
   );
 }
+

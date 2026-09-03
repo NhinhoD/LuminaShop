@@ -135,7 +135,7 @@ export default function VerifyOtpForm({ email }: VerifyOtpFormProps) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: "easeOut" }}
-      className="w-full max-w-[480px] bg-white rounded-2xl shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-slate-100 p-10 md:p-12 text-center font-manrope"
+      className="w-full max-w-[480px] bg-white rounded-2xl shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-slate-100 p-10 md:p-12 text-center font-sans"
     >
       <div className="mb-8 flex justify-center">
         <div className="w-16 h-16 rounded-full bg-blue-50 text-[#0051d5] flex items-center justify-center shadow-inner">
@@ -143,7 +143,7 @@ export default function VerifyOtpForm({ email }: VerifyOtpFormProps) {
         </div>
       </div>
 
-      <h2 className="text-2xl font-bold text-slate-900 mb-2 font-playfair">
+      <h2 className="text-2xl font-bold text-slate-900 mb-2 font-sans">
         {dict?.auth?.verifyEmailTitle}
       </h2>
       <p className="text-slate-500 text-sm mb-8">
@@ -217,3 +217,4 @@ export default function VerifyOtpForm({ email }: VerifyOtpFormProps) {
     </motion.div>
   )
 }
+

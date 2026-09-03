@@ -25,7 +25,7 @@ export function PaginationControls({ currentPage, totalPages }: PaginationContro
   const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
 
   return (
-    <div className="flex items-center justify-center gap-2 mt-12 mb-8 font-bricolage">
+    <div className="flex items-center justify-center gap-2 mt-12 mb-8 font-sans">
       <Link
         href={createPageUrl(Math.max(1, currentPage - 1))}
         className={`flex items-center justify-center w-10 h-10 rounded-full transition-all duration-300 ${
@@ -76,3 +76,4 @@ export function PaginationControls({ currentPage, totalPages }: PaginationContro
     </div>
   );
 }
+

@@ -33,7 +33,7 @@ export default function LanguageTableClient({ initialTranslations }: { initialTr
   };
 
   return (
-    <div className="bg-white border border-slate-100 rounded-3xl shadow-sm overflow-hidden font-manrope">
+    <div className="bg-white border border-slate-100 rounded-3xl shadow-sm overflow-hidden font-sans">
       <div className="overflow-x-auto">
         <table className="w-full text-left border-collapse min-w-[700px]">
           <thead>
@@ -116,3 +116,4 @@ export default function LanguageTableClient({ initialTranslations }: { initialTr
     </div>
   );
 }
+

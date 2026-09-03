@@ -22,65 +22,64 @@ export default async function NotFound() {
   const browseShopText = notFoundDict.browseShop || (locale === "vi" ? "Khám phá giao diện" : "Browse Templates");
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#fcfbf9] text-slate-900 font-manrope selection:bg-blue-100">
+    <div className="flex flex-col min-h-screen bg-background-subtle text-slate-900 font-sans selection:bg-primary/10 selection:text-primary">
       <Navbar />
       <CartDrawer />
 
       {/* ─── Main 404 Hero Container ─── */}
-      <main className="flex-grow flex items-center justify-center px-6 py-24 md:py-32 relative overflow-hidden">
+      <main className="flex-grow flex items-center justify-center px-6 py-20 md:py-28 relative overflow-hidden">
         {/* Soft atmospheric background lights */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[550px] h-[550px] bg-[radial-gradient(circle,rgba(0,81,213,0.06),transparent_65%)] pointer-events-none rounded-full blur-3xl" />
-        <div className="absolute top-1/4 right-1/4 w-[350px] h-[350px] bg-[radial-gradient(circle,rgba(245,158,11,0.04),transparent_65%)] pointer-events-none rounded-full blur-2xl" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-primary/[0.04] pointer-events-none rounded-full blur-3xl" />
 
         <div className="relative z-10 w-full max-w-2xl text-center flex flex-col items-center">
           {/* Subtle Status Pill */}
-          <div className="inline-flex items-center gap-2 bg-white/90 backdrop-blur-md rounded-full px-4 py-1.5 shadow-[0_4px_20px_rgba(0,0,0,0.04)] border border-slate-100 mb-6">
+          <div className="inline-flex items-center gap-2 bg-white rounded-full px-3.5 py-1.5 shadow-sm border border-slate-200/80 mb-6">
             <span className="flex h-2 w-2 rounded-full bg-red-500 animate-pulse" />
-            <span className="text-[11px] font-extrabold tracking-widest uppercase text-slate-600">
+            <span className="text-[10px] font-extrabold tracking-widest uppercase text-slate-600">
               Error 404 • {locale === "vi" ? "Đường dẫn không hợp lệ" : "Page Not Found"}
             </span>
           </div>
 
           {/* Large Stylized 404 */}
-          <h1 className="font-playfair font-black text-[clamp(4.5rem,12vw,8rem)] leading-none text-slate-950 tracking-tight mb-2 select-none">
-            4<span className="text-[#0051d5]">0</span>4
+          <h1 className="font-extrabold text-[clamp(4.5rem,10vw,7rem)] leading-none text-slate-950 tracking-tight mb-2 select-none">
+            4<span className="text-primary">0</span>4
           </h1>
 
           {/* Headline */}
-          <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-3 font-playfair">
+          <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-3 tracking-tight">
             {title}
           </h2>
 
           {/* Description */}
-          <p className="text-slate-500 text-sm md:text-base max-w-lg leading-relaxed mb-10">
+          <p className="text-slate-500 text-sm max-w-md leading-relaxed mb-8">
             {desc1} <br className="hidden sm:inline" />
             {desc2}
           </p>
 
           {/* Action CTAs */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full max-w-md">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 w-full max-w-sm">
             <Link
               href="/"
-              className="w-full sm:w-auto flex-1 inline-flex items-center justify-center gap-2 bg-[#0051d5] hover:bg-[#0041ac] text-white px-7 py-3.5 rounded-xl font-bold text-xs uppercase tracking-wider shadow-lg shadow-blue-900/15 active:scale-95 transition-all"
+              className="w-full sm:w-auto flex-1 inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary-dark text-white px-6 py-3.5 rounded-xl font-bold text-xs uppercase tracking-wider shadow-sm active:scale-95 transition-all"
             >
-              <Home size={15} />
+              <Home size={14} />
               <span>{backHomeText}</span>
             </Link>
 
             <Link
               href="/shop"
-              className="w-full sm:w-auto flex-1 inline-flex items-center justify-center gap-2 bg-white hover:bg-slate-50 text-slate-800 border border-slate-200/90 px-7 py-3.5 rounded-xl font-bold text-xs uppercase tracking-wider active:scale-95 transition-all shadow-sm hover:border-slate-300"
+              className="w-full sm:w-auto flex-1 inline-flex items-center justify-center gap-2 bg-white hover:bg-slate-50 text-slate-800 border border-slate-200 px-6 py-3.5 rounded-xl font-bold text-xs uppercase tracking-wider active:scale-95 transition-all shadow-sm"
             >
-              <ShoppingBag size={15} />
+              <ShoppingBag size={14} />
               <span>{browseShopText}</span>
             </Link>
           </div>
 
           {/* Quick Helper Link */}
-          <div className="mt-12 pt-6 border-t border-slate-200/60 w-full max-w-xs flex justify-center">
+          <div className="mt-10 pt-5 border-t border-slate-200/60 w-full max-w-xs flex justify-center">
             <Link
               href="/"
-              className="inline-flex items-center gap-1.5 text-slate-400 hover:text-[#0051d5] text-xs font-semibold transition-colors"
+              className="inline-flex items-center gap-1.5 text-slate-400 hover:text-primary text-xs font-semibold transition-colors"
             >
               <ArrowLeft size={13} />
               <span>{locale === "vi" ? "Quay lại trang trước" : "Return to Homepage"}</span>

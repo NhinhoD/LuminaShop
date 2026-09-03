@@ -12,41 +12,13 @@ import { makeLanguageRepository } from "@/infrastructure/supabase/container";
 import { getDictionary } from "@/i18n/getDictionary";
 import { ToastContainer } from "@/presentation/components/common/ToastContainer";
 
-import { Bricolage_Grotesque, Poppins, Playfair_Display, Dancing_Script, Manrope } from 'next/font/google';
+import { Plus_Jakarta_Sans } from "next/font/google";
 
-const bricolageGrotesque = Bricolage_Grotesque({
-  subsets: ['latin'],
-  weight: ['300', '400', '500', '600', '700', '800'],
-  variable: '--font-bricolage',
-  display: 'swap',
-});
-
-const poppins = Poppins({
-  subsets: ['latin'],
-  weight: ['300', '400', '500', '600', '700'],
-  variable: '--font-poppins',
-  display: 'swap',
-});
-
-const playfairDisplay = Playfair_Display({
-  subsets: ['latin'],
-  weight: ['400', '700', '900'],
-  variable: '--font-playfair',
-  display: 'swap',
-});
-
-const dancingScript = Dancing_Script({
-  subsets: ['latin'],
-  weight: ['700'],
-  variable: '--font-dancing',
-  display: 'swap',
-});
-
-const manrope = Manrope({
-  subsets: ['latin'],
-  weight: ['300', '400', '500', '600', '700', '800'],
-  variable: '--font-manrope',
-  display: 'swap',
+const plusJakartaSans = Plus_Jakarta_Sans({
+  subsets: ["latin", "vietnamese"],
+  weight: ["300", "400", "500", "600", "700", "800"],
+  variable: "--font-jakarta",
+  display: "swap",
 });
 
 import { cookies } from "next/headers";
@@ -62,11 +34,9 @@ export default async function RootLayout({
   const repo = await makeLanguageRepository();
   const dict = await getDictionary(repo);
 
-  const fontClasses = `${bricolageGrotesque.variable} ${poppins.variable} ${playfairDisplay.variable} ${dancingScript.variable} ${manrope.variable}`;
-
   return (
-    <html lang={locale} className={`light ${fontClasses}`}>
-      <body className="bg-background text-on-background font-bricolage antialiased">
+    <html lang={locale} className={`light ${plusJakartaSans.variable}`}>
+      <body className="bg-background text-on-background font-sans antialiased selection:bg-primary/10 selection:text-primary">
         <I18nProvider locale={locale} customDict={dict as unknown as Record<string, unknown>}>
           <BreadcrumbProvider>
             {children}

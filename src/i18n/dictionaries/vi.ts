@@ -64,11 +64,11 @@ export const vi = {
   },
   home: {
     hero: {
-      badge: "Chợ Mua Bán Website Template Cao Cấp Việt Nam",
-      title1: "Xây dựng thương hiệu số",
-      title2: "Đẳng cấp & Mượt mà",
-      title3: "chỉ trong 5 phút.",
-      desc: "Sở hữu trọn bộ mã nguồn (Next.js 15, Tailwind v4, GSAP) chuẩn Clean Architecture được lập trình tối ưu bởi các lập trình viên kỳ cựu. Bàn giao nhanh chóng, an toàn, hỗ trợ deploy lên Vercel/Netlify miễn phí.",
+      badge: "Chợ Mua Bán Website Template & Mã Nguồn Cao Cấp",
+      title1: "Sở Hữu Website Template Đỉnh Cao,",
+      title2: "Sẵn Sàng Triển Khai Cho Dự Án Đột Phá",
+      title3: "",
+      desc: "Sở hữu trọn bộ mã nguồn (Next.js 16, Tailwind v4, GSAP) chuẩn Clean Architecture được lập trình tối ưu bởi các Senior Engineers. Bàn giao nhanh chóng, an toàn, hỗ trợ deploy lên Vercel/Netlify miễn phí.",
       cta1: "Khám phá Template",
       cta2: "Tại sao chọn KhoUI?",
       stat1Num: "50+",

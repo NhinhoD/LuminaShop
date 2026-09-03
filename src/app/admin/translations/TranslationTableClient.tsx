@@ -104,7 +104,7 @@ export default function TranslationTableClient({ initialTranslations }: { initia
   }
 
   return (
-    <div className="space-y-6 font-manrope">
+    <div className="space-y-6 font-sans">
       {/* Top Controls: Search + Sync Button + Add Key */}
       <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
         <div className="relative flex-1 w-full">
@@ -208,7 +208,7 @@ export default function TranslationTableClient({ initialTranslations }: { initia
               {filtered.length === 0 && !adding ? (
                 <tr>
                   <td colSpan={5} className="px-6 py-12 text-center text-slate-400">
-                    <p className="font-bold text-sm font-playfair text-slate-700">Không tìm thấy từ khóa dịch nào phù hợp.</p>
+                    <p className="font-bold text-sm font-sans text-slate-700">Không tìm thấy từ khóa dịch nào phù hợp.</p>
                     <p className="text-xs mt-1">Hãy thử nhấn nút <strong>&quot;Đồng bộ từ điển&quot;</strong> ở trên để nạp toàn bộ từ khóa vào hệ thống.</p>
                   </td>
                 </tr>
@@ -272,3 +272,4 @@ export default function TranslationTableClient({ initialTranslations }: { initia
     </div>
   );
 }
+

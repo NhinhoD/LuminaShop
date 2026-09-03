@@ -19,12 +19,12 @@ export default async function OrderFailedPage(props: { params: Promise<{ id: str
   }
 
   return (
-    <div className="max-w-[800px] mx-auto px-6 py-20 text-center font-manrope">
+    <div className="max-w-[800px] mx-auto px-6 py-20 text-center font-sans">
       <div className="flex justify-center mb-6">
         <AlertCircle className="w-24 h-24 text-red-500" />
       </div>
       
-      <h1 className="text-3xl font-bold mb-4 font-playfair text-slate-900">
+      <h1 className="text-3xl font-bold mb-4 font-sans text-slate-900">
         {orderDict.failedTitle || (locale === "vi" ? "Thanh toán chưa hoàn tất!" : "Payment Incomplete!")}
       </h1>
       <p className="text-slate-500 text-base mb-8 max-w-md mx-auto">

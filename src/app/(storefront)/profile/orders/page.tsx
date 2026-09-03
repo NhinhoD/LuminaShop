@@ -3,12 +3,11 @@ import Image from "next/image";
 import { Download, Package, ShoppingBag, ArrowRight } from "lucide-react";
 import { Metadata } from "next";
 import { cookies } from "next/headers";
-import { createClient } from "@/infrastructure/supabase/server";
+import { makeAuthRepository, makeLanguageRepository, makeSupabaseClient } from "@/infrastructure/supabase/container";
 import { PaginationControls } from "@/presentation/components/common/PaginationControls";
 import { ProfileOrderSearch } from "./ProfileOrderSearch";
 import { getLocalizedText } from "@/presentation/utils/locale";
 import { getDictionary } from "@/i18n/getDictionary";
-import { makeLanguageRepository } from "@/infrastructure/supabase/container";
 import { formatDate } from "@/lib/utils";
 
 export const metadata: Metadata = {
@@ -28,12 +27,12 @@ export default async function OrderHistoryPage({ searchParams }: OrderHistoryPag
   const orderDict = (dict?.orders as Record<string, string>) || {};
   const commonDict = (dict?.common as Record<string, string>) || {};
 
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const authRepo = await makeAuthRepository();
+  const user = await authRepo.getCurrentUser();
 
   if (!user) {
     return (
-      <div className="container mx-auto px-4 py-16 font-manrope">
+      <div className="container mx-auto px-4 py-16">
         <div className="bg-red-50 text-red-700 p-6 rounded-2xl border border-red-100 max-w-lg mx-auto text-center font-bold text-sm">
           {locale === "vi" ? "Bạn cần đăng nhập để xem kho giao diện." : "You must be signed in to view your templates."}
         </div>
@@ -43,10 +42,11 @@ export default async function OrderHistoryPage({ searchParams }: OrderHistoryPag
 
   const params = await searchParams;
   const currentPage = parseInt(params.page || "1", 10);
-  const itemsPerPage = 9; // 3x3 grid
+  const itemsPerPage = 9;
   const offset = (currentPage - 1) * itemsPerPage;
   const search = typeof params.q === 'string' ? params.q : undefined;
 
+  const supabase = await makeSupabaseClient();
   let query = supabase
     .from('order_items')
     .select(`
@@ -75,18 +75,18 @@ export default async function OrderHistoryPage({ searchParams }: OrderHistoryPag
 
   if (error) {
     return (
-      <div className="container mx-auto px-4 py-16 max-w-7xl font-manrope">
-        <div className="text-center py-24 bg-white rounded-[32px] shadow-sm border border-red-100 max-w-3xl mx-auto">
+      <div className="container mx-auto px-4 py-16 max-w-7xl">
+        <div className="text-center py-20 bg-white rounded-3xl shadow-sm border border-red-100 max-w-2xl mx-auto">
           <Package className="w-16 h-16 text-red-300 mx-auto mb-6" />
-          <h2 className="text-2xl font-extrabold text-red-900 font-playfair mb-3">
+          <h2 className="text-2xl font-extrabold text-red-900 mb-3">
             {commonDict.error || (locale === "vi" ? "Lỗi tải dữ liệu" : "Error Loading Data")}
           </h2>
-          <p className="text-slate-500 mb-10 max-w-sm mx-auto text-sm">
+          <p className="text-slate-500 mb-8 max-w-sm mx-auto text-sm">
             {locale === "vi" ? "Đã có lỗi xảy ra khi lấy danh sách giao diện đã mua. Vui lòng thử lại sau." : "An error occurred while retrieving your purchased templates. Please try again."}
           </p>
           <Link
             href="/profile/orders"
-            className="inline-flex items-center justify-center px-8 py-4 text-xs font-bold rounded-xl text-white bg-red-600 hover:bg-red-700 transition-all shadow-lg shadow-red-900/20 active:scale-95 uppercase tracking-wider"
+            className="inline-flex items-center justify-center px-8 py-3 text-xs font-bold rounded-xl text-white bg-red-600 hover:bg-red-700 transition-all shadow-md active:scale-95 uppercase tracking-wider"
           >
             {commonDict.retry || (locale === "vi" ? "Thử lại" : "Retry")}
           </Link>
@@ -114,12 +114,12 @@ export default async function OrderHistoryPage({ searchParams }: OrderHistoryPag
   });
 
   return (
-    <div className="container mx-auto px-4 py-20 max-w-7xl font-manrope">
+    <div className="container mx-auto px-4 py-16 max-w-7xl">
       <div className="flex flex-col items-center justify-center text-center mb-12">
-        <span className="text-[10px] font-black tracking-widest text-[#0051d5] uppercase block mb-2">
+        <span className="text-[11px] font-extrabold tracking-widest text-primary uppercase block mb-2">
           {orderDict.profileOrdersTag || (locale === "vi" ? "TÀI SẢN KỸ THUẬT SỐ" : "DIGITAL ASSETS")}
         </span>
-        <h1 className="text-3xl md:text-4xl font-extrabold text-slate-950 font-playfair tracking-tight mb-3">
+        <h1 className="text-3xl md:text-4xl font-extrabold text-slate-950 tracking-tight mb-3">
           {orderDict.profileOrdersTitle || (locale === "vi" ? "Kho Giao Diện" : "My Templates")}
         </h1>
         <p className="text-slate-500 max-w-lg font-medium text-sm">
@@ -132,19 +132,19 @@ export default async function OrderHistoryPage({ searchParams }: OrderHistoryPag
       </div>
 
       {items.length === 0 ? (
-        <div className="text-center py-24 bg-white rounded-3xl shadow-sm border border-slate-100 max-w-3xl mx-auto">
+        <div className="text-center py-20 bg-white rounded-2xl shadow-sm border border-slate-200/80 max-w-2xl mx-auto">
           <ShoppingBag className="w-16 h-16 text-slate-200 mx-auto mb-6" />
-          <h2 className="text-2xl font-extrabold text-slate-900 font-playfair mb-3">
+          <h2 className="text-2xl font-extrabold text-slate-900 mb-3">
             {orderDict.emptyOrdersTitle || (locale === "vi" ? "Không tìm thấy giao diện" : "No Templates Found")}
           </h2>
-          <p className="text-slate-500 mb-10 max-w-sm mx-auto text-sm">
+          <p className="text-slate-500 mb-8 max-w-sm mx-auto text-sm">
             {search 
               ? (locale === "vi" ? `Không có mẫu template nào khớp với từ khóa "${search}".` : `No templates found matching "${search}".`)
               : (orderDict.emptyOrdersDesc || (locale === "vi" ? "Bạn chưa sở hữu bản quyền template nào. Hãy khám phá thư viện cao cấp của chúng tôi ngay hôm nay." : "You don't own any licensed templates yet. Explore our premium catalog today."))}
           </p>
           <Link
             href="/shop"
-            className="inline-flex items-center justify-center px-8 py-4 text-xs font-bold rounded-xl text-white bg-[#0051d5] hover:bg-[#0041ab] transition-all shadow-lg shadow-blue-900/20 active:scale-95 uppercase tracking-wider"
+            className="inline-flex items-center justify-center px-8 py-3.5 text-xs font-bold rounded-xl text-white bg-primary hover:bg-primary-dark transition-all shadow-md active:scale-95 uppercase tracking-wider"
           >
             {orderDict.exploreShop || (locale === "vi" ? "Khám phá cửa hàng" : "Explore Catalog")}
           </Link>
@@ -157,9 +157,9 @@ export default async function OrderHistoryPage({ searchParams }: OrderHistoryPag
             return (
               <div
                 key={idx}
-                className="bg-white rounded-3xl border border-slate-200/60 shadow-sm hover:shadow-xl hover:-translate-y-1 hover:border-slate-300 transition-all duration-300 flex flex-col overflow-hidden group"
+                className="bg-white rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-xl hover:-translate-y-1 hover:border-primary/30 transition-all duration-300 flex flex-col overflow-hidden group"
               >
-                <Link href={`/product/${item.product_id}`} className="relative aspect-[4/3] bg-slate-50 overflow-hidden block">
+                <Link href={`/product/${item.product_id}`} className="relative aspect-[16/10] bg-slate-50 overflow-hidden block">
                   {product.image_url ? (
                     <Image 
                       src={product.image_url} 
@@ -173,42 +173,42 @@ export default async function OrderHistoryPage({ searchParams }: OrderHistoryPag
                       <Package className="w-12 h-12 text-slate-300" />
                     </div>
                   )}
-                  <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-full shadow-sm">
-                    <span className="text-[9px] font-black text-slate-900 uppercase tracking-widest flex items-center gap-1.5">
-                      <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+                  <div className="absolute top-4 right-4 bg-white/95 backdrop-blur-md px-3 py-1 rounded-full shadow-sm">
+                    <span className="text-[10px] font-black text-slate-900 uppercase tracking-widest flex items-center gap-1.5">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                       {orderDict.licenseActive || (locale === "vi" ? "Bản quyền" : "Licensed")}
                     </span>
                   </div>
                 </Link>
                 
-                <div className="p-6 md:p-8 flex flex-col flex-grow">
+                <div className="p-6 flex flex-col flex-grow">
                   <div className="flex-grow">
                     <Link href={`/product/${item.product_id}`}>
-                      <h3 className="font-bold text-slate-900 text-lg font-playfair leading-snug mb-2 group-hover:text-[#0051d5] transition-colors line-clamp-2">
+                      <h3 className="font-extrabold text-slate-900 text-base leading-snug mb-2 group-hover:text-primary transition-colors line-clamp-2">
                         {getLocalizedText(product.title as Record<string, string>, locale)}
                       </h3>
                     </Link>
-                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-6">
+                    <p className="text-[11px] text-slate-400 font-bold uppercase tracking-wider mb-6">
                       {orderDict.purchasedDate || (locale === "vi" ? "Đã mua:" : "Purchased on:")}{" "}
                       {formatDate(item.order_created_at, locale)}
                     </p>
                   </div>
                   
-                  <div className="pt-6 border-t border-slate-100 flex gap-3">
+                  <div className="pt-4 border-t border-slate-100 flex gap-3">
                     <a
                       href={product.source_code_url || "#"}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex-1 flex items-center justify-center gap-2.5 bg-[#0b1c30] text-white py-3.5 rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-slate-900 transition-all active:scale-95 shadow-md shadow-slate-900/10"
+                      className="flex-1 flex items-center justify-center gap-2 bg-slate-900 text-white py-3 rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-primary transition-all active:scale-95 shadow-sm"
                     >
-                      <Download size={16} />
+                      <Download size={15} />
                       <span>{orderDict.downloadSourceCode || (locale === "vi" ? "Tải source code" : "Download Source Code")}</span>
                     </a>
                     <Link
                       href={`/product/${item.product_id}`}
-                      className="flex items-center justify-center w-[52px] h-[52px] bg-slate-50 text-slate-600 rounded-xl hover:bg-slate-100 hover:text-slate-900 transition-all group-hover:bg-[#0051d5]/5 group-hover:text-[#0051d5]"
+                      className="flex items-center justify-center w-11 h-11 bg-slate-50 text-slate-600 rounded-xl hover:bg-slate-100 hover:text-slate-950 transition-all"
                     >
-                      <ArrowRight size={18} />
+                      <ArrowRight size={16} />
                     </Link>
                   </div>
                 </div>

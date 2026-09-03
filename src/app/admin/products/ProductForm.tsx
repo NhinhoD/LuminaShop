@@ -541,7 +541,7 @@ export function ProductForm({ categories, initialData }: ProductFormProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-8 font-manrope">
+    <form onSubmit={handleSubmit} className="space-y-8 font-sans">
       {error && (
         <div className="p-4 bg-red-50 text-red-700 border border-red-100 rounded-2xl text-xs font-semibold">
           {error}
@@ -864,3 +864,4 @@ export function ProductForm({ categories, initialData }: ProductFormProps) {
     </form>
   );
 }
+

@@ -3,35 +3,24 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useBreadcrumbs } from "./BreadcrumbContext";
-import { ROUTES, UI_CONFIG } from "@/presentation/constants";
+import { ROUTES } from "@/presentation/constants";
+import { ChevronRight } from "lucide-react";
 
-/**
- * AutoBreadcrumbs Component
- * Automatically generates breadcrumbs based on the current URL path.
- * Format: Home > Segment 1 > Segment 2 ...
- */
 export function AutoBreadcrumbs() {
   const pathname = usePathname();
   const router = useRouter();
   const { customLabels } = useBreadcrumbs();
-  // Don't show breadcrumbs on the homepage
+  
   if (pathname === ROUTES.HOME) return null;
 
-  // Split path into segments and filter out empty ones
   const segments = pathname.split("/").filter((v) => v.length > 0);
   
-  // Create breadcrumb items
   const breadcrumbs = [
     { label: "Home", href: ROUTES.HOME },
     ...segments.map((segment, index) => {
       const href = "/" + segments.slice(0, index + 1).join("/");
-      
-      // Use custom label if available, otherwise format the segment
       let label = customLabels[href] || (segment.charAt(0).toUpperCase() + segment.slice(1).replace(/-/g, " "));
-      
-      // Fallback for long technical segments
       if (!customLabels[href] && segment.length > 20) label = "Detail"; 
-
       return { label, href };
     }),
   ];
@@ -44,15 +33,15 @@ export function AutoBreadcrumbs() {
   };
 
   return (
-    <div className="bg-white border-b border-slate-50">
-      <nav className={`max-w-[${UI_CONFIG.MAX_WIDTH}] mx-auto px-8 md:px-12 flex items-center space-x-3 text-[13px] py-4 text-slate-500 font-medium`}>
+    <div className="bg-slate-50/80 border-b border-slate-200/80 font-sans">
+      <nav className="max-w-[1400px] mx-auto px-6 sm:px-8 lg:px-12 flex items-center space-x-2 text-xs py-3 text-slate-500 font-medium">
         {breadcrumbs.map((item, index) => {
           const isLast = index === breadcrumbs.length - 1;
           
           return (
-            <div key={item.href} className="flex items-center space-x-3">
+            <div key={item.href} className="flex items-center space-x-2">
               {index > 0 && (
-                <span className="text-slate-300 font-normal select-none">{'>'}</span>
+                <ChevronRight size={13} className="text-slate-400 select-none flex-shrink-0" />
               )}
               
               {isLast ? (
@@ -63,7 +52,7 @@ export function AutoBreadcrumbs() {
                 <Link 
                   href={item.href}
                   onClick={(e) => handleClick(e, item.href)}
-                  className={`hover:text-[${UI_CONFIG.ACCENT_COLOR}] hover:underline transition-all underline-offset-4`}
+                  className="hover:text-primary transition-colors text-slate-600 font-medium"
                 >
                   {item.label}
                 </Link>

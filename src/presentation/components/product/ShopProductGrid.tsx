@@ -9,7 +9,7 @@ import { Product } from "@/domain/entities/Product";
 import { ROUTES } from "@/presentation/constants";
 import { formatCurrency } from "@/lib/utils";
 import gsap from "gsap";
-import { Heart, Search, SlidersHorizontal, Monitor } from "lucide-react";
+import { Search, SlidersHorizontal, Monitor, ExternalLink } from "lucide-react";
 import { useDebouncedCallback } from "use-debounce";
 import { useI18n } from "@/presentation/components/common/I18nContext";
 import { getLocalizedText } from "@/presentation/utils/locale";
@@ -43,7 +43,7 @@ export default function ShopProductGrid({ initialProducts, currentSearch, curren
     { label: "Portfolio", value: "portfolio" },
   ];
 
-  const techFilters = ["Next.js 15", "Tailwind 4", "GSAP", "Framer Motion", "React 19"];
+  const techFilters = ["Next.js 16", "Next.js 15", "Tailwind 4", "GSAP", "Framer Motion", "React 19"];
 
   // Clear timeout on unmount
   useEffect(() => {
@@ -76,12 +76,12 @@ export default function ShopProductGrid({ initialProducts, currentSearch, curren
     params.set("page", "1");
     router.push(`${pathname}?${params.toString()}`);
     if (loadingTimeoutRef.current) clearTimeout(loadingTimeoutRef.current);
-    loadingTimeoutRef.current = setTimeout(() => setIsLoading(false), 500);
+    loadingTimeoutRef.current = setTimeout(() => setIsLoading(false), 400);
   };
 
   const handleSearch = useDebouncedCallback((term: string) => {
     updateUrl({ q: term });
-  }, 500);
+  }, 400);
 
   const handleCategorySelect = (category: string) => {
     updateUrl({ category });
@@ -97,10 +97,9 @@ export default function ShopProductGrid({ initialProducts, currentSearch, curren
       prev.includes(tech) ? prev.filter((t) => t !== tech) : [...prev, tech]
     );
     if (loadingTimeoutRef.current) clearTimeout(loadingTimeoutRef.current);
-    loadingTimeoutRef.current = setTimeout(() => setIsLoading(false), 300);
+    loadingTimeoutRef.current = setTimeout(() => setIsLoading(false), 250);
   };
 
-  // Local price & tech filters, applied on top of server results for immediate UX
   const filteredProducts = initialProducts.filter(product => {
     if (product.price > maxPrice) return false;
     if (selectedTech.length > 0) {
@@ -126,14 +125,14 @@ export default function ShopProductGrid({ initialProducts, currentSearch, curren
         gsap.killTweensOf(items);
         gsap.fromTo(
           items,
-          { opacity: 0, y: 25, scale: 0.98 },
+          { opacity: 0, y: 20, scale: 0.99 },
           {
             opacity: 1,
             y: 0,
             scale: 1,
-            duration: 0.6,
+            duration: 0.5,
             ease: "power3.out",
-            stagger: 0.05,
+            stagger: 0.04,
             overwrite: "auto",
           }
         );
@@ -148,31 +147,32 @@ export default function ShopProductGrid({ initialProducts, currentSearch, curren
   }, [isLoading, filteredProducts, initialProducts]);
 
   return (
-    <div className="bg-[#fcfbf9] text-slate-800 font-manrope rounded-3xl overflow-hidden shadow-sm border border-slate-100">
+    <div className="bg-white text-slate-800 font-sans rounded-2xl overflow-hidden shadow-sm border border-slate-200/80">
       {/* Top Filter & Sort Bar */}
-      <div className="bg-white p-6 border-b border-slate-100 flex flex-col md:flex-row justify-between gap-6 items-center">
-        <div className="flex flex-wrap items-center gap-2.5">
+      <div className="bg-slate-50/70 p-5 sm:p-6 border-b border-slate-200/80 flex flex-col md:flex-row justify-between gap-4 items-center">
+        <div className="flex flex-wrap items-center gap-2">
           {categories.map((cat) => (
             <button
               key={cat.value}
               onClick={() => handleCategorySelect(cat.value)}
-              className={`rounded-xl px-5 py-2.5 text-xs font-bold transition-all border cursor-pointer ${currentCategory === cat.value
-                  ? "bg-[#0051d5] border-[#0051d5] text-white shadow-lg shadow-blue-900/10"
-                  : "bg-white border-slate-200 text-slate-600 hover:border-slate-400 hover:text-slate-800"
-                }`}
+              className={`rounded-xl px-4 py-2 text-xs font-bold transition-all border cursor-pointer ${
+                currentCategory === cat.value
+                  ? "bg-primary border-primary text-white shadow-sm"
+                  : "bg-white border-slate-200 text-slate-700 hover:border-primary/40 hover:text-slate-900"
+              }`}
             >
               {cat.label}
             </button>
           ))}
         </div>
 
-        <div className="flex items-center gap-4 w-full md:w-auto">
+        <div className="flex items-center gap-3 w-full md:w-auto">
           <div className="relative flex-grow md:w-64">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <input
               type="text"
               placeholder={dict?.shop?.searchPlaceholder || (locale === "vi" ? "Tìm kiếm giao diện..." : "Search templates...")}
-              className="w-full pl-9 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-[#0051d5] transition-all"
+              className="w-full pl-9 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
               value={searchQuery}
               onChange={(e) => {
                 setSearchQuery(e.target.value);
@@ -180,12 +180,12 @@ export default function ShopProductGrid({ initialProducts, currentSearch, curren
               }}
             />
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 flex-shrink-0">
             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest hidden sm:inline">
-              {dict?.shop?.sortLabel || (locale === "vi" ? "Sắp xếp:" : "Sort by:")}
+              {dict?.shop?.sortLabel || (locale === "vi" ? "Sắp xếp:" : "Sort:")}
             </span>
             <select 
-              className="bg-transparent text-sm font-bold text-slate-900 focus:outline-none cursor-pointer py-2 pl-2 pr-6 border border-slate-200 rounded-xl"
+              className="bg-white text-xs font-bold text-slate-800 focus:outline-none cursor-pointer py-2 pl-2.5 pr-6 border border-slate-200 rounded-xl"
               value={currentSort}
               onChange={(e) => handleSortSelect(e.target.value)}
             >
@@ -198,16 +198,16 @@ export default function ShopProductGrid({ initialProducts, currentSearch, curren
       </div>
 
       {/* Main Content */}
-      <div className="max-w-[1200px] mx-auto px-4 pb-20 pt-8">
+      <div className="max-w-[1400px] mx-auto px-6 sm:px-8 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
 
           {/* Sidebar Filters */}
           <aside className="lg:col-span-3 space-y-6">
 
             {/* Price Filter */}
-            <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm">
-              <h3 className="flex items-center gap-2 text-xs font-black text-slate-900 mb-4 uppercase tracking-widest">
-                <SlidersHorizontal size={14} className="text-[#0051d5]" />
+            <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm">
+              <h3 className="flex items-center gap-2 text-xs font-extrabold text-slate-900 mb-4 uppercase tracking-wider">
+                <SlidersHorizontal size={14} className="text-primary" />
                 {dict?.shop?.filterPrice || (locale === "vi" ? "Khoảng giá bản quyền" : "License Price Range")}
               </h3>
               <input
@@ -221,21 +221,21 @@ export default function ShopProductGrid({ initialProducts, currentSearch, curren
                   setMaxPrice(Number(e.target.value));
                   setTimeout(() => setIsLoading(false), 200);
                 }}
-                className="w-full h-1.5 bg-[#eee] rounded-lg appearance-none cursor-pointer accent-[#0051d5]"
+                className="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-primary"
               />
-              <div className="flex justify-between mt-3 text-[10px] text-slate-400 font-bold uppercase tracking-wider">
+              <div className="flex justify-between mt-3 text-[10px] text-slate-500 font-bold uppercase tracking-wider">
                 <span>Min: {formatCurrency(0, locale)}</span>
-                <span className="font-extrabold text-slate-800">
+                <span className="font-extrabold text-primary">
                   Max: {formatCurrency(maxPrice, locale)}
                 </span>
               </div>
             </div>
 
             {/* Tech Stack Filters */}
-            <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm">
-              <h3 className="flex items-center gap-2 text-xs font-black text-slate-900 mb-4 uppercase tracking-widest">
-                <Search size={14} className="text-[#0051d5]" />
-                {dict?.shop?.filterTech || (locale === "vi" ? "Công nghệ tích hợp" : "Integrated Tech Stack")}
+            <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm">
+              <h3 className="flex items-center gap-2 text-xs font-extrabold text-slate-900 mb-4 uppercase tracking-wider">
+                <Search size={14} className="text-primary" />
+                {dict?.shop?.filterTech || (locale === "vi" ? "Công nghệ tích hợp" : "Tech Stack")}
               </h3>
               <div className="flex flex-wrap gap-1.5">
                 {techFilters.map((tech) => {
@@ -244,10 +244,11 @@ export default function ShopProductGrid({ initialProducts, currentSearch, curren
                     <button
                       key={tech}
                       onClick={() => toggleTech(tech)}
-                      className={`px-3 py-1.5 text-[10px] font-bold rounded-lg cursor-pointer transition-all ${isSelected
-                          ? "bg-[#0051d5] text-white shadow-md shadow-blue-900/10"
-                          : "bg-slate-50 border border-slate-200 text-slate-500 hover:bg-slate-100 hover:text-slate-800"
-                        }`}
+                      className={`px-3 py-1.5 text-[11px] font-bold rounded-lg cursor-pointer transition-all ${
+                        isSelected
+                          ? "bg-primary text-white shadow-sm"
+                          : "bg-slate-50 border border-slate-200 text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+                      }`}
                     >
                       {tech}
                     </button>
@@ -263,9 +264,9 @@ export default function ShopProductGrid({ initialProducts, currentSearch, curren
             {isLoading ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
                 {[1, 2, 3, 4, 5, 6].map((i) => (
-                  <div key={i} className="bg-white rounded-3xl border border-slate-100 overflow-hidden shadow-sm animate-pulse">
-                    <div className="aspect-[4/3] bg-slate-100" />
-                    <div className="p-6 space-y-3">
+                  <div key={i} className="bg-white rounded-2xl border border-slate-100 overflow-hidden shadow-sm animate-pulse">
+                    <div className="aspect-[16/10] bg-slate-100" />
+                    <div className="p-5 space-y-3">
                       <div className="h-2.5 bg-slate-100 w-1/3 rounded" />
                       <div className="h-4 bg-slate-100 w-3/4 rounded" />
                       <div className="h-2.5 bg-slate-100 w-full rounded" />
@@ -275,12 +276,12 @@ export default function ShopProductGrid({ initialProducts, currentSearch, curren
                 ))}
               </div>
             ) : filteredProducts.length === 0 ? (
-              <div className="bg-white border border-slate-100 rounded-3xl p-16 text-center shadow-sm">
-                <Search size={48} className="text-slate-200 mx-auto mb-4" />
-                <h3 className="text-base font-extrabold text-slate-800 mb-2">
+              <div className="bg-white border border-slate-200/80 rounded-2xl p-16 text-center shadow-sm">
+                <Search size={40} className="text-slate-300 mx-auto mb-3" />
+                <h3 className="text-base font-extrabold text-slate-900 mb-1">
                   {dict?.shop?.emptyTitle || (locale === "vi" ? "Không tìm thấy mã nguồn phù hợp" : "No matching source code found")}
                 </h3>
-                <p className="text-slate-400 text-xs">
+                <p className="text-slate-500 text-xs">
                   {dict?.shop?.emptyDesc || (locale === "vi" ? "Hãy thử thay đổi bộ lọc hoặc mở rộng khoảng giá của bạn." : "Try adjusting your search query or expanding your price filter range.")}
                 </p>
               </div>
@@ -292,56 +293,53 @@ export default function ShopProductGrid({ initialProducts, currentSearch, curren
                   return (
                     <div
                       key={product.id}
-                      className="product-card-anim bg-white rounded-3xl border border-slate-100 overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 group flex flex-col h-full"
+                      className="product-card-anim bg-white rounded-2xl border border-slate-200/80 overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1.5 hover:border-primary/30 transition-all duration-300 group flex flex-col h-full"
                     >
                       <Link href={`${ROUTES.PRODUCT}/${product.id}`}>
                         {/* Visual Frame */}
-                        <div className="relative overflow-hidden aspect-[4/3] bg-[#fbfaf6]">
+                        <div className="relative overflow-hidden aspect-[16/10] bg-slate-50">
                           {product.imageUrl ? (
                             <Image
                               src={product.imageUrl}
                               alt={getLocalizedText(product.title as unknown as Record<string, string>, locale)}
                               fill
                               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                              className="object-cover"
+                              className="object-cover transition-transform duration-700 group-hover:scale-105"
                             />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center text-slate-300">
                               <Monitor size={30} />
                             </div>
                           )}
-                          <div className="absolute top-3 left-3 bg-[#0b1c30] text-white rounded-lg px-2.5 py-0.5 text-[8px] font-black tracking-widest uppercase">
+                          <div className="absolute top-3 left-3 bg-dark text-white rounded-md px-2.5 py-0.5 text-[9px] font-black tracking-widest uppercase">
                             {isFree ? (dict?.common?.free || (locale === "vi" ? "Miễn phí" : "Free")) : (dict?.common?.premium || "Premium")}
-                          </div>
-                          <div className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white flex items-center justify-center text-slate-400 cursor-pointer hover:text-red-500 hover:scale-115 transition-all shadow-sm">
-                            <Heart size={13} />
                           </div>
                         </div>
                       </Link>
 
                       {/* Info Body */}
                       <div className="p-5 flex flex-col flex-grow space-y-3.5">
-                        <div className="space-y-1">
+                        <div className="space-y-1.5">
                           <div className="flex flex-wrap gap-1">
                             {product.techStack && product.techStack.length > 0 ? (
                               product.techStack.map((tech) => (
-                                <span key={tech} className="bg-slate-100 text-slate-500 text-[8px] font-bold px-1.5 py-0.5 rounded">
+                                <span key={tech} className="bg-slate-100 text-slate-600 text-[9px] font-bold px-1.5 py-0.5 rounded">
                                   {tech}
                                 </span>
                               ))
                             ) : (
                               <>
-                                <span className="bg-slate-100 text-slate-500 text-[8px] font-bold px-1.5 py-0.5 rounded">Next.js 15</span>
-                                <span className="bg-slate-100 text-slate-500 text-[8px] font-bold px-1.5 py-0.5 rounded">Tailwind 4</span>
+                                <span className="bg-slate-100 text-slate-600 text-[9px] font-bold px-1.5 py-0.5 rounded">Next.js 16</span>
+                                <span className="bg-slate-100 text-slate-600 text-[9px] font-bold px-1.5 py-0.5 rounded">Tailwind 4</span>
                               </>
                             )}
                           </div>
                           <Link href={`${ROUTES.PRODUCT}/${product.id}`}>
-                            <h3 className="text-xl font-bold text-slate-900 group-hover:text-[#0051d5] transition-colors line-clamp-1">
+                            <h3 className="text-base font-extrabold text-slate-950 group-hover:text-primary transition-colors line-clamp-1">
                               {getLocalizedText(product.title as unknown as Record<string, string>, locale)}
                             </h3>
                           </Link>
-                          <p className="text-slate-400 text-xs line-clamp-2 leading-relaxed h-8">
+                          <p className="text-slate-500 text-xs line-clamp-2 leading-relaxed h-8">
                             {getLocalizedText(product.description as unknown as Record<string, string>, locale) || (locale === "vi" ? "Giao diện website cao cấp được thiết kế tỉ mỉ, đầy đủ công nghệ hiện đại." : "High-fidelity website template engineered with state-of-the-art modern technologies.")}
                           </p>
                         </div>
@@ -351,20 +349,21 @@ export default function ShopProductGrid({ initialProducts, currentSearch, curren
                             <div className="text-[9px] text-slate-400 font-bold uppercase tracking-wider">
                               {dict?.shop?.priceLabel || (locale === "vi" ? "Giá bản quyền" : "License Price")}
                             </div>
-                            <div className="text-base font-extrabold text-[#0051d5] font-playfair">
+                            <div className="text-base font-extrabold text-primary">
                               {isFree ? (dict?.common?.free?.toUpperCase() || (locale === "vi" ? "MIỄN PHÍ" : "FREE")) : formatCurrency(product.price, locale)}
                             </div>
                           </div>
 
-                          <div className="flex gap-2">
+                          <div className="flex gap-2 items-center">
                             {product.demoUrl && (
                               <Link 
                                 href={`/demo/${product.id}`} 
                                 target="_blank" 
                                 rel="noopener noreferrer"
-                                className="bg-slate-900 text-white text-[10px] font-bold px-4 py-2 rounded-lg hover:bg-slate-800 transition-colors flex items-center justify-center shadow-md"
+                                className="bg-slate-50 hover:bg-slate-100 text-slate-700 text-[11px] font-bold px-3 py-2 rounded-xl transition-all border border-slate-200 flex items-center gap-1"
                               >
-                                {dict?.shop?.demoButton || (locale === "vi" ? "Xem Demo" : "Live Demo")}
+                                <span>{dict?.shop?.demoButton || (locale === "vi" ? "Demo" : "Demo")}</span>
+                                <ExternalLink size={12} />
                               </Link>
                             )}
                             <QuickAddButton

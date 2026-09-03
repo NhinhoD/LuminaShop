@@ -1,31 +1,33 @@
-@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
 @import "tailwindcss";
 
 @theme inline {
-  /* ─── Sarab F&B Design System ─── */
-  --color-primary: #e8281a;
-  --color-primary-dark: #c01e12;
-  --color-secondary: #f6a623;
-  --color-dark: #1a1a1a;
-  --color-green: #2d6a4f;
-  --color-cream: #fff8f0;
-  --color-cream-2: #fef0dc;
-  --color-light: #f9f5f0;
+  /* ─── KhoUI Premium Digital Marketplace Tokens ─── */
+  --color-primary: #0051d5;
+  --color-primary-dark: #003ea8;
+  --color-primary-light: #e8f0fe;
+  --color-accent: #4f46e5;
+  --color-accent-light: #eef2ff;
+  --color-secondary: #0ea5e9;
+  --color-dark: #090d16;
+  --color-dark-surface: #111827;
   --color-background: #ffffff;
-  --color-on-background: #444444;
+  --color-background-subtle: #f8fafc;
+  --color-on-background: #334155;
   --color-surface: #ffffff;
-  --color-on-surface: #1a1a1a;
-  --color-error: #ba1a1a;
+  --color-on-surface: #0f172a;
+  --color-border: #e2e8f0;
+  --color-border-subtle: #f1f5f9;
+  --color-error: #ef4444;
+  --color-success: #10b981;
 
-  --font-poppins: var(--font-poppins, "Poppins", sans-serif);
-  --font-playfair: var(--font-playfair, "Playfair Display", serif);
-  --font-dancing: var(--font-dancing, "Dancing Script", cursive);
-  --font-manrope: var(--font-manrope, "Manrope", sans-serif);
-  --font-bricolage: var(--font-bricolage, sans-serif);
+  --font-jakarta: var(--font-jakarta, "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
   --spacing-gutter: 24px;
-  --shadow-card: 0 8px 40px rgba(0, 0, 0, 0.1);
-  --shadow-card-lg: 0 20px 60px rgba(0, 0, 0, 0.18);
+  --shadow-subtle: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
+  --shadow-card: 0 10px 30px -5px rgba(15, 23, 42, 0.06), 0 4px 12px -2px rgba(15, 23, 42, 0.03);
+  --shadow-card-hover: 0 20px 40px -10px rgba(0, 81, 213, 0.12), 0 8px 16px -4px rgba(15, 23, 42, 0.06);
+  --shadow-glow: 0 0 35px -5px rgba(0, 81, 213, 0.3);
 }
 
 @layer base {
@@ -42,13 +44,17 @@
   body {
     background-color: var(--color-background);
     color: var(--color-on-background);
-    font-family: var(--font-poppins);
+    font-family: var(--font-jakarta);
     overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-playfair);
+    font-family: var(--font-jakarta);
     color: var(--color-dark);
+    font-weight: 700;
+    letter-spacing: -0.025em;
   }
 }
 
@@ -80,152 +86,100 @@
   animation-play-state: paused;
 }
 
-/* ─── Smooth Floating & Pulse Effects ─── */
-@keyframes float-slow {
-  0%, 100% { transform: translateY(0px) rotate(0deg); }
-  50% { transform: translateY(-12px) rotate(1.5deg); }
+/* ─── Micro-Interactions & Ambient Effects ─── */
+@keyframes float-subtle {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
 }
 
-@keyframes float-medium {
-  0%, 100% { transform: translateY(0px) rotate(0deg); }
-  50% { transform: translateY(-8px) rotate(-1deg); }
+@keyframes pulse-soft {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.85; transform: scale(0.98); }
 }
 
-@keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(232, 40, 26, 0.35); }
-  50% { box-shadow: 0 0 0 14px rgba(232, 40, 26, 0); }
+@keyframes scanline {
+  0% { top: 0%; opacity: 0; }
+  25% { opacity: 1; }
+  75% { opacity: 1; }
+  100% { top: 100%; opacity: 0; }
 }
 
-.animate-float-slow {
-  animation: float-slow 6s ease-in-out infinite;
+@keyframes equalizer-bar {
+  0%, 100% { transform: scaleY(0.3); }
+  50% { transform: scaleY(1); }
 }
 
-.animate-float-medium {
-  animation: float-medium 4.5s ease-in-out infinite;
+.animate-float {
+  animation: float-subtle 4.5s ease-in-out infinite;
 }
 
-.animate-pulse-glow {
-  animation: pulse-glow 2.5s infinite;
+.animate-pulse-soft {
+  animation: pulse-soft 3s ease-in-out infinite;
 }
 
-/* ─── Sarab Spec Utilities ─── */
-.font-script {
-  font-family: var(--font-dancing);
+.animate-scanline {
+  animation: scanline 2.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
 
-.bg-pattern-dots {
-  background-image: radial-gradient(#e8281a 1px, transparent 1px);
-  background-size: 24px 24px;
-}
-
-.clip-diagonal {
-  clip-path: polygon(0 0, 100% 0, 100% 88%, 0 100%);
-}
-
-.clip-diagonal-reverse {
-  clip-path: polygon(0 12%, 100% 0, 100% 100%, 0 100%);
-}
-
-/* Glassmorphism */
+/* ─── Glassmorphism & High-End Card Specs ─── */
 .glass-header {
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(226, 232, 240, 0.8);
 }
 
-/* Custom Scrollbar */
+.glass-dark {
+  background: rgba(9, 13, 22, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.card-hover-lift {
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease;
+}
+
+.card-hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-card-hover);
+  border-color: rgba(0, 81, 213, 0.3);
+}
+
+/* ─── Custom Scrollbar ─── */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f9f5f0;
+  background: #f8fafc;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #d4a373;
-  border-radius: 4px;
+  background: #cbd5e1;
+  border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #e8281a;
+  background: #0051d5;
 }
 
-/* ─── Sarab Template CSS Animations ─── */
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+/* ─── Grid & Dots Patterns ─── */
+.bg-tech-grid {
+  background-size: 32px 32px;
+  background-image: 
+    linear-gradient(to right, rgba(226, 232, 240, 0.6) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(226, 232, 240, 0.6) 1px, transparent 1px);
 }
 
-@keyframes fadeInDown {
-  from {
-    opacity: 0;
-    transform: translateY(-30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes zoomIn {
-  from {
-    opacity: 0;
-    transform: scale(0.85);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-@keyframes floatUpDown {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-28px);
-  }
-}
-
-/* Card hover shadow */
-.card-hover-shadow {
-  box-shadow: 0 4px 22px rgba(0, 0, 0, 0.07);
-  transition: 0.4s;
-}
-
-.card-hover-shadow:hover {
-  transform: translateY(-9px);
-  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.13);
-}
-
-/* ─── Backward-compatible utilities (used in admin/checkout/profile) ─── */
-.material-symbols-outlined {
-  font-family: 'Material Symbols Outlined';
-  font-weight: normal;
-  font-style: normal;
-  font-size: 24px;
-  line-height: 1;
-  letter-spacing: normal;
-  text-transform: none;
-  display: inline-block;
-  white-space: nowrap;
-  word-wrap: normal;
-  direction: ltr;
-  -webkit-font-smoothing: antialiased;
-  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-}
-
-.soft-elevation {
-  box-shadow: 0px 20px 40px rgba(15, 23, 42, 0.05);
-}
-
-.image-overlay {
-  background: linear-gradient(to top, rgba(11, 28, 48, 0.8) 0%, rgba(11, 28, 48, 0) 100%);
+.bg-tech-dots {
+  background-image: radial-gradient(rgba(0, 81, 213, 0.15) 1px, transparent 1px);
+  background-size: 20px 20px;
 }

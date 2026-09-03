@@ -15,7 +15,7 @@ export default async function RegisterPage({ searchParams }: { searchParams: Pro
   const authDict = (dict?.auth as Record<string, string>) || {};
 
   return (
-    <div className="min-h-screen bg-[#f8f9fa] flex flex-col items-center justify-center py-20 px-4 font-manrope">
+    <div className="min-h-screen bg-[#f8f9fa] flex flex-col items-center justify-center py-20 px-4 font-sans">
       <AuthErrorToast locale={locale} />
 
       {/* Brand Header */}
@@ -26,7 +26,7 @@ export default async function RegisterPage({ searchParams }: { searchParams: Pro
       {/* Registration Card */}
       <div className="w-full max-w-[540px] bg-white rounded-2xl shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-slate-100 p-10 md:p-12">
         <div className="text-center mb-10">
-          <h2 className="text-2xl font-bold text-slate-900 mb-2 font-playfair">
+          <h2 className="text-2xl font-bold text-slate-900 mb-2 font-sans">
             {authDict.registerTitle || (locale === "vi" ? "Tạo tài khoản mới" : "Create an Account")}
           </h2>
           <p className="text-slate-500 text-sm max-w-[80%] mx-auto">
@@ -152,3 +152,4 @@ export default async function RegisterPage({ searchParams }: { searchParams: Pro
     </div>
   );
 }
+

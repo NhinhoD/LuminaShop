@@ -42,12 +42,12 @@ export default async function AdminLayout({
   return (
     <div className="h-screen overflow-hidden flex w-full">
       {/* SideNavBar Component */}
-      <nav className="h-screen w-64 fixed left-0 top-0 border-r border-slate-200 shadow-none bg-slate-50 font-manrope text-sm font-medium z-50">
+      <nav className="h-screen w-64 fixed left-0 top-0 border-r border-slate-200 shadow-none bg-slate-50 font-sans text-sm font-medium z-50">
         <div className="flex flex-col h-full p-4">
           <div className="mb-8 px-4 flex items-center gap-3">
             <Image src="/LogoKhoUI.png" alt="KhoUI Logo" width={100} height={40} priority className="h-10 w-auto object-contain" />
             <div>
-              <h2 className="text-lg font-extrabold text-slate-900 tracking-tight font-playfair">Admin Panel</h2>
+              <h2 className="text-lg font-extrabold text-slate-900 tracking-tight font-sans">Admin Panel</h2>
               <p className="text-slate-500 text-[10px] uppercase tracking-wider font-bold">E-commerce Suite</p>
             </div>
           </div>
@@ -65,7 +65,7 @@ export default async function AdminLayout({
       </nav>
 
       {/* TopAppBar Component */}
-      <header className="fixed top-0 right-0 left-64 h-16 border-b z-40 border-slate-200 shadow-sm bg-white/90 backdrop-blur-md font-manrope text-base text-slate-900">
+      <header className="fixed top-0 right-0 left-64 h-16 border-b z-40 border-slate-200 shadow-sm bg-white/90 backdrop-blur-md font-sans text-base text-slate-900">
         <div className="flex justify-between items-center px-8 w-full max-w-full h-full">
           <div className="flex items-center gap-4 w-1/3">
             <div className="relative w-full max-w-md flex items-center">
@@ -73,7 +73,7 @@ export default async function AdminLayout({
               <input className="w-full pl-10 pr-4 py-2 bg-slate-100 border-none rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-[#0051d5]/20 text-slate-900" placeholder="Search across store..." type="text" />
             </div>
           </div>
-          <div className="hidden text-xl font-bold text-slate-900 tracking-tight font-playfair">Admin Console</div>
+          <div className="hidden text-xl font-bold text-slate-900 tracking-tight font-sans">Admin Console</div>
           <div className="flex items-center gap-4">
             <div className="mr-2">
               <LanguageSwitcher initialLocale={initialLocale} />
@@ -98,3 +98,4 @@ export default async function AdminLayout({
     </div>
   );
 }
+

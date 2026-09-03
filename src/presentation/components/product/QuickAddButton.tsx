@@ -35,28 +35,22 @@ export default function QuickAddButton({ product, hasVariants = false }: QuickAd
     }
   };
 
-  const chooseOptionText = dict?.shop?.chooseOption || "Choose Option";
-  const addToCartText = dict?.shop?.addToCart || "Add to Cart";
+  const chooseOptionText = dict?.shop?.chooseOption || (locale === "vi" ? "Chọn gói" : "Choose Option");
+  const addToCartText = dict?.shop?.addToCart || (locale === "vi" ? "Thêm vào giỏ" : "Add to Cart");
 
   return (
-    <div className="absolute bottom-4 right-4 z-10 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 group/tooltip">
-      {hasVariants && (
-        <div className="absolute bottom-12 right-0 bg-slate-900/95 backdrop-blur-md text-white text-[10px] font-bold py-2 px-3.5 rounded-lg shadow-xl uppercase tracking-widest opacity-0 pointer-events-none group-hover/tooltip:opacity-100 transition-all duration-300 translate-y-1 group-hover/tooltip:translate-y-0 whitespace-nowrap border border-white/10">
-          {chooseOptionText}
-          <div className="absolute bottom-[-4px] right-4 w-2 h-2 bg-slate-900 rotate-45 border-r border-b border-white/10"></div>
-        </div>
-      )}
+    <div className="absolute bottom-3 right-3 z-10 opacity-0 group-hover:opacity-100 transition-all duration-200 transform translate-y-1 group-hover:translate-y-0">
       <button 
         onClick={handleAdd}
-        className="w-10 h-10 bg-white text-slate-950 rounded-full flex items-center justify-center shadow-xl hover:bg-black hover:text-white active:scale-90 transition-all cursor-pointer"
+        className="w-8 h-8 bg-white text-slate-900 rounded-lg flex items-center justify-center shadow-md hover:bg-primary hover:text-white active:scale-95 transition-colors cursor-pointer border border-slate-100"
         aria-label={hasVariants ? chooseOptionText : addToCartText}
         title={hasVariants ? chooseOptionText : addToCartText}
         type="button"
       >
         {hasVariants ? (
-          <ArrowRight size={18} />
+          <ArrowRight size={14} />
         ) : (
-          <Plus size={18} />
+          <Plus size={14} />
         )}
       </button>
     </div>

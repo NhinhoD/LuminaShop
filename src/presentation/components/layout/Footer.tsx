@@ -3,33 +3,46 @@
 import Link from "next/link";
 import Image from "next/image";
 import { ROUTES } from "@/presentation/constants";
-import { MapPin, Phone, Mail, Clock, ChevronRight, Globe, Camera, MessageCircle, Play } from "lucide-react";
+import { 
+  MapPin, 
+  Phone, 
+  Mail, 
+  Clock, 
+  ChevronRight, 
+  Globe, 
+  Camera, 
+  MessageCircle, 
+  Play, 
+  ShieldCheck, 
+  Zap, 
+  Code2, 
+  Layers 
+} from "lucide-react";
 import { useI18n } from "@/presentation/components/common/I18nContext";
 
 export function Footer() {
-  const { dict } = useI18n();
+  const { dict, locale } = useI18n();
 
   const quickLinks = [
-    { label: dict?.footer?.home || "Home", href: ROUTES.HOME },
-    { label: dict?.footer?.templates || "Collection", href: ROUTES.SHOP },
-    { label: dict?.footer?.aboutUs || "About Us", href: "#about" },
-    { label: dict?.footer?.contact || "Contact", href: "#contact" },
+    { label: dict?.footer?.home || (locale === "vi" ? "Trang chủ" : "Home"), href: ROUTES.HOME },
+    { label: dict?.footer?.templates || (locale === "vi" ? "Kho Template" : "Templates"), href: ROUTES.SHOP },
+    { label: dict?.footer?.aboutUs || (locale === "vi" ? "Về KhoUI" : "About KhoUI"), href: "#advantages" },
+    { label: dict?.footer?.contact || (locale === "vi" ? "Liên hệ hỗ trợ" : "Technical Support"), href: "mailto:contact@khoui.com" },
   ];
 
   const menuLinks = [
-    { label: dict?.footer?.landingPage || "Landing Page", href: `${ROUTES.SHOP}?category=landing-page` },
-    { label: dict?.footer?.ecommerce || "E-Commerce", href: `${ROUTES.SHOP}?category=e-commerce` },
-    { label: dict?.footer?.adminDashboard || "Admin Dashboard", href: `${ROUTES.SHOP}?category=admin-dashboard` },
-    { label: dict?.footer?.portfolio || "Portfolio", href: `${ROUTES.SHOP}?category=portfolio` },
-    { label: dict?.footer?.corporate || "Corporate", href: `${ROUTES.SHOP}?category=corporate` },
-    { label: dict?.footer?.blog || "Blog & News", href: `${ROUTES.SHOP}?category=blog` },
+    { label: "Landing Page", href: `${ROUTES.SHOP}?category=landing-page` },
+    { label: "E-Commerce", href: `${ROUTES.SHOP}?category=e-commerce` },
+    { label: "Admin Dashboard", href: `${ROUTES.SHOP}?category=admin-dashboard` },
+    { label: "Portfolio", href: `${ROUTES.SHOP}?category=portfolio` },
+    { label: locale === "vi" ? "Mẫu miễn phí" : "Free Templates", href: `${ROUTES.SHOP}?category=free` },
   ];
 
   const contactInfo = [
-    { icon: MapPin, label: dict?.footer?.addressLabel || "Address", value: dict?.footer?.addressValue || "Ho Chi Minh City, Vietnam" },
-    { icon: Phone, label: dict?.footer?.phoneLabel || "Phone", value: dict?.nav?.contactPhone || "0987 654 321" },
-    { icon: Mail, label: dict?.footer?.emailLabel || "Email", value: dict?.nav?.contactEmail || "contact@khoui.com" },
-    { icon: Clock, label: dict?.footer?.supportLabel || "Support", value: dict?.footer?.supportValue || "24/7 Digital Delivery" },
+    { icon: MapPin, label: dict?.footer?.addressLabel || (locale === "vi" ? "Địa chỉ" : "Address"), value: dict?.footer?.addressValue || "TP. Hồ Chí Minh, Việt Nam" },
+    { icon: Phone, label: dict?.footer?.phoneLabel || (locale === "vi" ? "Hotline" : "Hotline"), value: dict?.nav?.contactPhone || "0987 654 321" },
+    { icon: Mail, label: dict?.footer?.emailLabel || (locale === "vi" ? "Email" : "Email"), value: dict?.nav?.contactEmail || "contact@khoui.com" },
+    { icon: Clock, label: dict?.footer?.supportLabel || (locale === "vi" ? "Hỗ trợ" : "Fulfillment"), value: dict?.footer?.supportValue || "Tự động bàn giao 24/7" },
   ];
 
   const socialLinks = [
@@ -39,23 +52,57 @@ export function Footer() {
     { key: "youtube", Icon: Play, href: "#" },
   ];
 
+  const techBadges = [
+    { icon: Code2, title: "Next.js 16 App Router", desc: "Turbopack Ready" },
+    { icon: Layers, title: "Clean Architecture", desc: "Strict 4-Layers" },
+    { icon: Zap, title: "VietQR Instant Pay", desc: "Automated Webhook" },
+    { icon: ShieldCheck, title: "Commercial License", desc: "Client Ready" },
+  ];
+
   return (
-    <footer className="bg-[#1a1a1a] text-white mt-auto">
-      {/* Main Footer */}
-      <div className="max-w-[1200px] mx-auto px-4 py-16">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12">
+    <footer className="bg-slate-950 text-white border-t border-slate-800/40 mt-auto font-sans">
+      
+      {/* ─── Technology & Quality Trust Bar ─── */}
+      <div className="border-b border-slate-900 bg-slate-900/40 py-6">
+        <div className="max-w-[1360px] mx-auto px-6 sm:px-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
+            {techBadges.map((badge, idx) => {
+              const Icon = badge.icon;
+              return (
+                <div key={idx} className="flex items-center gap-3 p-2.5 rounded-xl bg-white/[0.02] border border-slate-800/40">
+                  <div className="w-8 h-8 rounded-lg bg-primary/15 text-primary flex items-center justify-center flex-shrink-0">
+                    <Icon size={16} />
+                  </div>
+                  <div>
+                    <h5 className="font-semibold text-xs text-white leading-tight">{badge.title}</h5>
+                    <p className="text-[10px] text-slate-400 font-normal mt-0.5">{badge.desc}</p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
+      {/* ─── Main Footer ─── */}
+      <div className="max-w-[1360px] mx-auto px-6 sm:px-8 py-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
+          
           {/* Brand Column */}
-          <div>
-            <Image src="/LogoKhoUI.png" alt="KhoUI Logo" width={140} height={48} className="h-12 w-auto object-contain mb-4" />
-            <p className="text-[#999] text-sm leading-relaxed mb-6">
-              {dict?.footer?.brandDesc || "Exclusive, high-quality website templates and themes built with Next.js, Tailwind CSS, and GSAP. Download instantly."}
+          <div className="space-y-3">
+            <Link href={ROUTES.HOME} className="inline-block">
+              <Image src="/LogoKhoUI.png" alt="KhoUI Logo" width={120} height={40} className="h-9 w-auto object-contain mb-1.5" />
+            </Link>
+            <p className="text-slate-400 text-xs leading-relaxed max-w-sm font-normal">
+              {dict?.footer?.brandDesc || "Nền tảng cung cấp mã nguồn website template cao cấp xây dựng bằng Next.js 16, Tailwind CSS v4 và GSAP 3.15. Tải về tức thì sau thanh toán."}
             </p>
-            <div className="flex gap-2">
+            <div className="flex gap-2 pt-1">
               {socialLinks.map(({ key, Icon, href }) => (
                 <Link
                   key={key}
                   href={href}
-                  className="w-[36px] h-[36px] rounded-full bg-[rgba(255,255,255,0.08)] flex items-center justify-center text-[#bbb] text-sm hover:bg-primary hover:text-white transition-colors"
+                  className="w-8 h-8 rounded-lg bg-slate-900 border border-slate-800/60 flex items-center justify-center text-slate-400 hover:bg-primary hover:text-white transition-colors"
+                  aria-label={key}
                 >
                   <Icon size={14} />
                 </Link>
@@ -65,18 +112,18 @@ export function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h4 className="text-white text-base font-semibold font-poppins mb-5 relative pb-3 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-[30px] after:h-[3px] after:bg-primary after:rounded">
-              {dict?.footer?.quickLinks || "Quick Links"}
+            <h4 className="text-white text-xs font-semibold uppercase tracking-wider mb-4">
+              {dict?.footer?.quickLinks || (locale === "vi" ? "Liên kết nhanh" : "Quick Links")}
             </h4>
-            <ul className="list-none space-y-3">
+            <ul className="list-none space-y-2">
               {quickLinks.map((link) => (
                 <li key={link.label}>
                   <Link
                     href={link.href}
-                    className="text-[#aaa] text-sm flex items-center gap-2 hover:text-primary hover:pl-1 transition-all"
+                    className="text-slate-400 text-xs flex items-center gap-1 hover:text-primary transition-colors font-normal"
                   >
-                    <ChevronRight size={12} className="text-primary" />
-                    {link.label}
+                    <ChevronRight size={12} className="text-slate-600" />
+                    <span>{link.label}</span>
                   </Link>
                 </li>
               ))}
@@ -85,18 +132,18 @@ export function Footer() {
 
           {/* Menu Links */}
           <div>
-            <h4 className="text-white text-base font-semibold font-poppins mb-5 relative pb-3 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-[30px] after:h-[3px] after:bg-[#0051d5] after:rounded">
-              {dict?.footer?.categories || "Categories"}
+            <h4 className="text-white text-xs font-semibold uppercase tracking-wider mb-4">
+              {dict?.footer?.categories || (locale === "vi" ? "Danh mục template" : "Categories")}
             </h4>
-            <ul className="list-none space-y-3">
+            <ul className="list-none space-y-2">
               {menuLinks.map((link) => (
                 <li key={link.label}>
                   <Link
                     href={link.href}
-                    className="text-[#aaa] text-sm flex items-center gap-2 hover:text-primary hover:pl-1 transition-all"
+                    className="text-slate-400 text-xs flex items-center gap-1 hover:text-primary transition-colors font-normal"
                   >
-                    <ChevronRight size={12} className="text-primary" />
-                    {link.label}
+                    <ChevronRight size={12} className="text-slate-600" />
+                    <span>{link.label}</span>
                   </Link>
                 </li>
               ))}
@@ -105,41 +152,43 @@ export function Footer() {
 
           {/* Contact Info */}
           <div>
-            <h4 className="text-white text-base font-semibold font-poppins mb-5 relative pb-3 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-[30px] after:h-[3px] after:bg-primary after:rounded">
-              {dict?.footer?.getInTouch || "Get In Touch"}
+            <h4 className="text-white text-xs font-semibold uppercase tracking-wider mb-4">
+              {dict?.footer?.getInTouch || (locale === "vi" ? "Thông tin liên hệ" : "Get In Touch")}
             </h4>
-            <div className="space-y-4">
+            <div className="space-y-3">
               {contactInfo.map((item) => (
-                <div key={item.label} className="flex items-start gap-3">
-                  <div className="w-[38px] h-[38px] rounded-lg bg-[rgba(232,40,26,0.15)] flex items-center justify-center text-primary flex-shrink-0 mt-0.5">
-                    <item.icon size={16} />
+                <div key={item.label} className="flex items-start gap-2.5">
+                  <div className="w-7 h-7 rounded-md bg-primary/10 text-primary flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <item.icon size={13} />
                   </div>
                   <div>
-                    <strong className="block text-[#ccc] text-[0.72rem] uppercase tracking-wider mb-0.5">
+                    <strong className="block text-slate-500 text-[10px] uppercase tracking-wider font-normal">
                       {item.label}
                     </strong>
-                    <span className="text-white text-[0.83rem]">{item.value}</span>
+                    <span className="text-slate-200 text-xs font-medium">{item.value}</span>
                   </div>
                 </div>
               ))}
             </div>
           </div>
+
         </div>
       </div>
 
-      {/* Bottom Bar */}
-      <div className="border-t border-[rgba(255,255,255,0.08)] py-5">
-        <div className="max-w-[1200px] mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-3 text-[0.8rem] text-[#777]">
+      {/* ─── Bottom Copyright Bar ─── */}
+      <div className="border-t border-slate-900 py-4 bg-slate-950">
+        <div className="max-w-[1360px] mx-auto px-6 sm:px-8 flex flex-col sm:flex-row justify-between items-center gap-2 text-xs text-slate-500 font-normal">
           <p>
-            &copy; {dict?.footer?.copyright || "2026 KhoUI. All Rights Reserved."}
+            &copy; {dict?.footer?.copyright || "2026 KhoUI. Bảo lưu mọi quyền."}
           </p>
-          <div className="flex gap-5">
-            <Link href="#" className="text-[#777] hover:text-primary transition-colors">{dict?.footer?.privacyPolicy || "Privacy Policy"}</Link>
-            <Link href="#" className="text-[#777] hover:text-primary transition-colors">{dict?.footer?.terms || "Terms"}</Link>
-            <Link href="#" className="text-[#777] hover:text-primary transition-colors">{dict?.footer?.cookies || "Cookies"}</Link>
+          <div className="flex gap-5 text-[11px]">
+            <Link href="#" className="hover:text-slate-300 transition-colors">{dict?.footer?.privacyPolicy || "Chính sách bảo mật"}</Link>
+            <Link href="#" className="hover:text-slate-300 transition-colors">{dict?.footer?.terms || "Điều khoản dịch vụ"}</Link>
+            <Link href="#" className="hover:text-slate-300 transition-colors">{dict?.footer?.cookies || "Bản quyền giấy phép"}</Link>
           </div>
         </div>
       </div>
+
     </footer>
   );
 }

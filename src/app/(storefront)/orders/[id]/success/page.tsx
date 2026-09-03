@@ -27,12 +27,12 @@ export default async function OrderSuccessPage(props: { params: Promise<{ id: st
   }
 
   return (
-    <div className="max-w-[800px] mx-auto px-6 py-20 text-center font-manrope">
+    <div className="max-w-[800px] mx-auto px-6 py-20 text-center font-sans">
       <div className="flex justify-center mb-6">
         <CheckCircle2 className="w-24 h-24 text-emerald-600" />
       </div>
       
-      <h1 className="text-3xl font-bold mb-4 font-playfair text-slate-900">
+      <h1 className="text-3xl font-bold mb-4 font-sans text-slate-900">
         {orderDict.successTitle || (locale === "vi" ? "Đặt hàng thành công!" : "Order Placed Successfully!")}
       </h1>
       <p className="text-slate-500 text-base mb-8">
@@ -41,7 +41,7 @@ export default async function OrderSuccessPage(props: { params: Promise<{ id: st
       </p>
 
       <div className="bg-white p-8 rounded-3xl border border-slate-100 text-left mb-10 shadow-sm max-w-[500px] mx-auto">
-        <h2 className="font-bold text-lg mb-6 pb-4 border-b border-slate-100 font-playfair text-slate-900">
+        <h2 className="font-bold text-lg mb-6 pb-4 border-b border-slate-100 font-sans text-slate-900">
           {orderDict.summaryTitle || (locale === "vi" ? "Tóm tắt đơn hàng" : "Order Summary")}
         </h2>
         
@@ -74,7 +74,7 @@ export default async function OrderSuccessPage(props: { params: Promise<{ id: st
 
         <div className="pt-4 mt-4 border-t border-slate-100 flex justify-between font-bold text-lg">
           <span className="text-slate-900">{orderDict.total || (locale === "vi" ? "Tổng cộng" : "Total Amount")}</span>
-          <span className="text-[#0051d5] font-playfair font-black">{formatCurrency(order.totalAmount, locale)}</span>
+          <span className="text-[#0051d5] font-sans font-black">{formatCurrency(order.totalAmount, locale)}</span>
         </div>
       </div>
 

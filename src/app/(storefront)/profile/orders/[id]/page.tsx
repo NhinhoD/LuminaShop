@@ -33,9 +33,9 @@ export default async function OrderDetailPage({ params }: PageProps) {
 
   if (!response.success) {
     return (
-      <div className="container mx-auto px-4 py-16 text-center font-manrope">
+      <div className="container mx-auto px-4 py-16 text-center font-sans">
         <div className="bg-red-50 text-red-700 p-8 rounded-3xl border border-red-100 max-w-lg mx-auto">
-          <h2 className="text-xl font-bold font-playfair mb-2">
+          <h2 className="text-xl font-bold font-sans mb-2">
             {orderDict.orderNotFound || (locale === "vi" ? "Không tìm thấy đơn hàng" : "Order Not Found")}
           </h2>
           <p className="text-sm text-red-600 mb-6">{response.error}</p>
@@ -51,9 +51,9 @@ export default async function OrderDetailPage({ params }: PageProps) {
   
   if (!order) {
     return (
-      <div className="container mx-auto px-4 py-16 text-center font-manrope">
+      <div className="container mx-auto px-4 py-16 text-center font-sans">
         <div className="bg-red-50 text-red-700 p-8 rounded-3xl border border-red-100 max-w-lg mx-auto">
-          <h2 className="text-xl font-bold font-playfair mb-2">
+          <h2 className="text-xl font-bold font-sans mb-2">
             {commonDict.error || (locale === "vi" ? "Lỗi dữ liệu" : "Data Error")}
           </h2>
           <p className="text-sm text-red-600 mb-6">{locale === "vi" ? "Không thể tải thông tin chi tiết đơn hàng." : "Unable to load order details."}</p>
@@ -91,7 +91,7 @@ export default async function OrderDetailPage({ params }: PageProps) {
   const isOrderPaid = order.paymentStatus === 'paid' || order.status === OrderStatus.COMPLETED;
 
   return (
-    <div className="container mx-auto px-4 py-24 max-w-5xl font-manrope">
+    <div className="container mx-auto px-4 py-24 max-w-5xl font-sans">
       <OrderRealtimeTracker orderId={order.id} initialStatus={order.status} />
       
       <div className="mb-6">
@@ -107,7 +107,7 @@ export default async function OrderDetailPage({ params }: PageProps) {
           <div className="bg-white p-6 md:p-8 rounded-3xl border border-slate-100 shadow-sm">
             <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
               <div>
-                <h1 className="text-2xl font-bold text-slate-950 font-playfair">
+                <h1 className="text-2xl font-bold text-slate-950 font-sans">
                   {orderDict.orderDetailsTitle || (locale === "vi" ? "Chi tiết đơn hàng" : "Order Details")} #{order.id.slice(0, 8).toUpperCase()}
                 </h1>
                 <div className="flex items-center gap-4 mt-1 text-xs text-slate-400 font-bold">
@@ -139,7 +139,7 @@ export default async function OrderDetailPage({ params }: PageProps) {
           <div className="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
             <div className="p-6 border-b border-slate-50 flex items-center gap-2">
               <ShoppingBag className="w-5 h-5 text-[#0051d5]" />
-              <h2 className="font-extrabold text-slate-900 text-sm font-playfair">
+              <h2 className="font-extrabold text-slate-900 text-sm font-sans">
                 {orderDict.ownedSourcePackages || (locale === "vi" ? "Gói mã nguồn sở hữu" : "Owned Source Code Packages")}
               </h2>
             </div>
@@ -231,7 +231,7 @@ export default async function OrderDetailPage({ params }: PageProps) {
               </div>
               <div className="flex justify-between items-center pt-3 border-t border-slate-200">
                 <span className="font-extrabold text-slate-900 text-sm">{orderDict.total || (locale === "vi" ? "Tổng cộng" : "Total Amount")}</span>
-                <span className="text-2xl font-black text-[#0051d5] font-playfair">
+                <span className="text-2xl font-black text-[#0051d5] font-sans">
                   {formatCurrency(order.totalAmount, locale)}
                 </span>
               </div>
@@ -246,7 +246,7 @@ export default async function OrderDetailPage({ params }: PageProps) {
           <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
             <div className="flex items-center gap-2 mb-4">
               <MapPin className="w-5 h-5 text-[#0051d5]" />
-              <h2 className="font-extrabold text-slate-900 text-sm font-playfair">
+              <h2 className="font-extrabold text-slate-900 text-sm font-sans">
                 {orderDict.accountDeliverInfo || (locale === "vi" ? "Thông tin tài khoản nhận mã nguồn" : "Source Code Recipient Account")}
               </h2>
             </div>
@@ -268,7 +268,7 @@ export default async function OrderDetailPage({ params }: PageProps) {
           <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
             <div className="flex items-center gap-2 mb-4">
               <CreditCard className="w-5 h-5 text-[#0051d5]" />
-              <h2 className="font-extrabold text-slate-900 text-sm font-playfair">
+              <h2 className="font-extrabold text-slate-900 text-sm font-sans">
                 {orderDict.paymentMethod || (locale === "vi" ? "Thanh toán" : "Payment Details")}
               </h2>
             </div>
@@ -302,7 +302,7 @@ export default async function OrderDetailPage({ params }: PageProps) {
             <div className="bg-white border border-slate-100 p-6 rounded-3xl shadow-sm space-y-4">
               <div className="flex items-center gap-2">
                 <QrCode className="w-5 h-5 text-amber-500" />
-                <h3 className="font-extrabold text-slate-900 text-sm font-playfair">
+                <h3 className="font-extrabold text-slate-900 text-sm font-sans">
                   {orderDict.bankTransferGuide || (locale === "vi" ? "Hướng dẫn chuyển khoản" : "Bank Transfer Instructions")}
                 </h3>
               </div>
@@ -331,7 +331,7 @@ export default async function OrderDetailPage({ params }: PageProps) {
           <div className="bg-gradient-to-br from-[#0051d5] to-[#0041ac] p-6 rounded-3xl shadow-lg shadow-blue-500/10 text-white">
             <div className="flex items-center gap-2 mb-4">
               <ShoppingBag className="w-6 h-6" />
-              <h2 className="font-extrabold text-sm font-playfair">
+              <h2 className="font-extrabold text-sm font-sans">
                 {orderDict.sourceDeliveryTitle || (locale === "vi" ? "Bàn giao mã nguồn" : "Source Code Handover")}
               </h2>
             </div>

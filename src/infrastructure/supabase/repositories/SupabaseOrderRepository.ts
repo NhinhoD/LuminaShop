@@ -136,6 +136,19 @@ export class SupabaseOrderRepository implements IOrderRepository {
     if (error) throw new Error(error.message);
   }
 
+  async hasPurchasedProduct(userId: string, productId: string): Promise<boolean> {
+    const { data, error } = await this.supabase
+      .from('order_items')
+      .select('order_id, orders!inner(user_id, payment_status)')
+      .eq('product_id', productId)
+      .eq('orders.user_id', userId)
+      .eq('orders.payment_status', 'paid')
+      .limit(1);
+
+    if (error || !data) return false;
+    return data.length > 0;
+  }
+
   private mapToEntity(row: OrderRow): Order {
     const items = (row.items || []) as OrderItemRow[];
 

@@ -64,11 +64,11 @@ export const en = {
   },
   home: {
     hero: {
-      badge: "Vietnam's Premium Website Template Marketplace",
-      title1: "Build your digital brand",
-      title2: "Premium & Ultra-smooth",
-      title3: "in just 5 minutes.",
-      desc: "Get full source code packages (Next.js 15, Tailwind v4, GSAP) following Clean Architecture, engineered by senior developers. Fast delivery, secure licensing, and free deployment support.",
+      badge: "Vietnam's Premium Website Template & Source Code Marketplace",
+      title1: "Own Top-Tier Website Templates,",
+      title2: "Production-Ready for Breakthrough Projects",
+      title3: "",
+      desc: "Get full source code packages (Next.js 16, Tailwind v4, GSAP) following Clean Architecture, engineered by senior developers. Fast delivery, secure licensing, and free deployment support.",
       cta1: "Explore Templates",
       cta2: "Why Choose KhoUI?",
       stat1Num: "50+",

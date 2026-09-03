@@ -7,4 +7,5 @@ export interface IOrderRepository {
   create(order: Omit<Order, 'id' | 'createdAt' | 'updatedAt' | 'items'>, items: Omit<OrderItem, 'id' | 'orderId'>[]): Promise<Order>;
   updateStatus(id: string, status: OrderStatus): Promise<void>;
   updatePaymentStatus(id: string, paymentStatus: PaymentStatus): Promise<void>;
+  hasPurchasedProduct(userId: string, productId: string): Promise<boolean>;
 }

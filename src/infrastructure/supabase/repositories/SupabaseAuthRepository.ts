@@ -125,4 +125,34 @@ export class SupabaseAuthRepository implements IAuthRepository {
       return fail(err instanceof Error ? err : new Error('Lỗi hệ thống khi cập nhật hạn mức OTP'));
     }
   }
+
+  async getCurrentUser(): Promise<{ id: string; email?: string } | null> {
+    try {
+      const { data: { user } } = await this.supabase.auth.getUser();
+      if (!user) return null;
+      return { id: user.id, email: user.email };
+    } catch {
+      return null;
+    }
+  }
+
+  async getProfile(userId: string): Promise<{ id: string; fullName?: string; phone?: string; avatarUrl?: string } | null> {
+    try {
+      const { data } = await this.supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', userId)
+        .maybeSingle();
+
+      if (!data) return null;
+      return {
+        id: data.id,
+        fullName: data.full_name,
+        phone: data.phone,
+        avatarUrl: data.avatar_url,
+      };
+    } catch {
+      return null;
+    }
+  }
 }

@@ -46,11 +46,11 @@ export default async function AdminProductsPage({
   const totalPages = Math.ceil(total / limit);
 
   return (
-    <div className="max-w-[1600px] mx-auto w-full space-y-8 font-manrope">
+    <div className="max-w-[1600px] mx-auto w-full space-y-8 font-sans">
       {/* Page Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h2 className="text-2xl md:text-3xl font-extrabold text-slate-950 font-playfair">{dict.title || "Quản lý sản phẩm"}</h2>
+          <h2 className="text-2xl md:text-3xl font-extrabold text-slate-950 font-sans">{dict.title || "Quản lý sản phẩm"}</h2>
           <p className="text-sm text-slate-500 mt-1">{dict.subtitle || "Danh sách mẫu template hiện có"} ({total})</p>
         </div>
         <Link 
@@ -184,3 +184,4 @@ export default async function AdminProductsPage({
     </div>
   );
 }
+

@@ -36,9 +36,10 @@ export function BackButton({ className = "" }: BackButtonProps) {
       <div className="flex items-center justify-center w-8 h-8 rounded-full bg-slate-100 group-hover:bg-slate-200 transition-colors">
         <ArrowLeft size={16} className="transition-transform group-hover:-translate-x-0.5" />
       </div>
-      <span className="text-xs font-bold tracking-[0.1em] uppercase hidden sm:inline font-manrope">
+      <span className="text-xs font-bold tracking-[0.1em] uppercase hidden sm:inline font-sans">
         {dict?.common?.back || "Back"}
       </span>
     </button>
   );
 }
+

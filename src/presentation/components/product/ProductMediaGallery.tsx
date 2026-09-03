@@ -30,7 +30,7 @@ export default function ProductMediaGallery({ productId, title, imageUrl, demoUr
   const [activeTab, setActiveTab] = useState<"image" | "live">(demoUrl ? "live" : "image");
   const [iframeLoading, setIframeLoading] = useState(true);
   const [prevDemoUrl, setPrevDemoUrl] = useState(demoUrl);
-  const { dict } = useI18n();
+  const { dict, locale } = useI18n();
 
   if (demoUrl !== prevDemoUrl) {
     setPrevDemoUrl(demoUrl);
@@ -40,43 +40,45 @@ export default function ProductMediaGallery({ productId, title, imageUrl, demoUr
   const resolvedIframeSrc = demoUrl ? getProxiedPreviewUrl(demoUrl) : "";
 
   return (
-    <div className="space-y-6">
-      {/* Tab Selectors (Only shown if demoUrl exists) */}
+    <div className="space-y-4 font-sans">
+      {/* Tab Selectors */}
       {demoUrl && (
-        <div className="flex items-center justify-between border-b border-[#f0f0f0] pb-2">
-          <div className="flex gap-8 font-poppins">
+        <div className="flex items-center justify-between border-b border-slate-100 pb-1.5">
+          <div className="flex gap-4">
             <button
               onClick={() => {
                 setActiveTab("live");
                 setIframeLoading(true);
               }}
               type="button"
-              className={`flex items-center gap-2 pb-3 text-xs font-bold uppercase tracking-wider relative cursor-pointer transition-colors ${activeTab === "live" ? "text-primary" : "text-[#999] hover:text-dark"
-                }`}
+              className={`flex items-center gap-1.5 pb-2 text-xs font-medium relative cursor-pointer transition-colors ${
+                activeTab === "live" ? "text-primary font-semibold" : "text-slate-500 hover:text-slate-900"
+              }`}
             >
-              <Monitor size={14} />
-              <span>{dict?.media?.liveDemo}</span>
+              <Monitor size={13} />
+              <span>{dict?.media?.liveDemo || (locale === "vi" ? "Trải nghiệm trực tiếp" : "Live Demo")}</span>
               {activeTab === "live" && (
                 <motion.div
                   layoutId="activeMediaTab"
-                  className="absolute bottom-0 left-0 right-0 h-[2px] bg-primary"
-                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                  className="absolute bottom-0 left-0 right-0 h-[2px] bg-primary rounded-full"
+                  transition={{ type: "spring", stiffness: 400, damping: 30 }}
                 />
               )}
             </button>
             <button
               onClick={() => setActiveTab("image")}
               type="button"
-              className={`flex items-center gap-2 pb-3 text-xs font-bold uppercase tracking-wider relative cursor-pointer transition-colors ${activeTab === "image" ? "text-primary" : "text-[#999] hover:text-dark"
-                }`}
+              className={`flex items-center gap-1.5 pb-2 text-xs font-medium relative cursor-pointer transition-colors ${
+                activeTab === "image" ? "text-primary font-semibold" : "text-slate-500 hover:text-slate-900"
+              }`}
             >
-              <ImageIcon size={14} />
-              <span>{dict?.media?.designMockup}</span>
+              <ImageIcon size={13} />
+              <span>{dict?.media?.designMockup || (locale === "vi" ? "Ảnh giao diện" : "Design Mockup")}</span>
               {activeTab === "image" && (
                 <motion.div
                   layoutId="activeMediaTab"
-                  className="absolute bottom-0 left-0 right-0 h-[2px] bg-primary"
-                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                  className="absolute bottom-0 left-0 right-0 h-[2px] bg-primary rounded-full"
+                  transition={{ type: "spring", stiffness: 400, damping: 30 }}
                 />
               )}
             </button>
@@ -86,66 +88,57 @@ export default function ProductMediaGallery({ productId, title, imageUrl, demoUr
             href={`/demo/${productId}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-1.5 bg-slate-900 hover:bg-black text-white px-4 py-2 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-colors shadow-md -mt-2"
+            className="flex items-center gap-1.5 bg-slate-900 hover:bg-slate-800 text-white px-3 py-1.5 rounded-lg text-xs font-medium transition-colors shadow-2xs -mt-1.5"
           >
-            <span>{dict?.media?.openFullscreen}</span>
-            <ExternalLink size={14} />
+            <span>{dict?.media?.openFullscreen || (locale === "vi" ? "Toàn màn hình" : "Fullscreen")}</span>
+            <ExternalLink size={12} />
           </Link>
         </div>
       )}
 
       {/* Media Window Container */}
-      <div className={`bg-cream rounded-2xl overflow-hidden shadow-[0_8px_40px_rgba(0,0,0,0.06)] border border-[#ece9e6] relative transition-all duration-500 ${activeTab === "live" && demoUrl
-          ? "w-full h-[75vh] min-h-[500px]"
-          : "aspect-[4/3] sm:aspect-[16/10]"
-        }`}>
+      <div className={`rounded-xl overflow-hidden shadow-xs border border-slate-200/70 relative transition-all duration-300 ${
+        activeTab === "live" && demoUrl
+          ? "w-full h-[65vh] min-h-[460px]"
+          : "aspect-[4/3] sm:aspect-[16/10] bg-slate-900"
+      }`}>
         {activeTab === "live" && demoUrl ? (
           <div className="w-full h-full relative bg-slate-950">
             {/* Top Browser Bar Mock */}
-            <div className="h-9 bg-[#1e1e24] border-b border-slate-800 flex items-center px-4 gap-2 select-none">
+            <div className="h-8 bg-slate-900 border-b border-slate-800/60 flex items-center px-3.5 gap-2 select-none">
               <div className="flex gap-1.5">
-                <span className="w-2.5 h-2.5 rounded-full bg-[#ff5f56]" />
-                <span className="w-2.5 h-2.5 rounded-full bg-[#ffbd2e]" />
-                <span className="w-2.5 h-2.5 rounded-full bg-[#27c93f]" />
+                <span className="w-2.5 h-2.5 rounded-full bg-red-500/70" />
+                <span className="w-2.5 h-2.5 rounded-full bg-amber-500/70" />
+                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500/70" />
               </div>
-              <div className="flex-grow mx-12 bg-[#2d2d34] h-5 rounded-md flex items-center px-3 text-[9px] text-slate-400 font-mono overflow-hidden whitespace-nowrap text-ellipsis">
+              <div className="flex-grow mx-8 bg-slate-950 h-5 rounded flex items-center px-2.5 text-[10px] text-slate-400 font-mono overflow-hidden whitespace-nowrap text-ellipsis border border-slate-800/40">
                 {demoUrl}
               </div>
             </div>
 
-            {/* Embedded Live Iframe sandbox */}
+            {/* Embedded Live Iframe */}
             <iframe
               src={resolvedIframeSrc}
               title={`Live Preview of ${title}`}
-              className="w-full h-[calc(100%-36px)] border-0 bg-white"
+              className="w-full h-[calc(100%-32px)] border-0 bg-white"
               sandbox="allow-scripts allow-same-origin allow-popups"
               allow="autoplay; fullscreen; clipboard-read; clipboard-write; encrypted-media"
               onLoad={() => setIframeLoading(false)}
             />
 
-            {/* Premium Loader Overlay */}
+            {/* Loader Overlay */}
             <AnimatePresence>
               {iframeLoading && (
                 <motion.div
                   initial={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  transition={{ duration: 0.3 }}
-                  className="absolute inset-x-0 bottom-0 top-9 bg-[#0b0e14]/90 backdrop-blur-sm flex flex-col items-center justify-center gap-4 z-10"
+                  transition={{ duration: 0.2 }}
+                  className="absolute inset-x-0 bottom-0 top-8 bg-slate-950/80 backdrop-blur-xs flex flex-col items-center justify-center gap-3 z-10"
                 >
-                  <div className="relative flex items-center justify-center">
-                    <span className="flex h-10 w-10 relative">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
-                      <span className="relative inline-flex rounded-full h-10 w-10 border-4 border-indigo-600 border-t-transparent animate-spin"></span>
-                    </span>
-                  </div>
-                  <div className="flex flex-col items-center text-center">
-                    <p className="text-xs font-semibold text-slate-200 uppercase tracking-widest font-poppins">
-                      {dict?.media?.loadingPreview}
-                    </p>
-                    <p className="text-[9px] text-slate-500 font-mono mt-1 select-none">
-                      {dict?.media?.renderingTemplates}
-                    </p>
-                  </div>
+                  <div className="w-6 h-6 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+                  <p className="text-xs text-slate-300 font-normal">
+                    {dict?.media?.loadingPreview || (locale === "vi" ? "Đang tải giao diện trực tiếp..." : "Loading live preview...")}
+                  </p>
                 </motion.div>
               )}
             </AnimatePresence>
@@ -162,8 +155,8 @@ export default function ProductMediaGallery({ productId, title, imageUrl, demoUr
                 sizes="(max-width: 1024px) 100vw, 50vw"
               />
             ) : (
-              <div className="w-full h-full flex items-center justify-center text-[#ccc] text-6xl">
-                💻
+              <div className="w-full h-full flex items-center justify-center text-slate-500 text-sm">
+                Live Blueprint
               </div>
             )}
           </div>
@@ -172,8 +165,8 @@ export default function ProductMediaGallery({ productId, title, imageUrl, demoUr
 
       {/* Extra helper notice for live frame */}
       {activeTab === "live" && demoUrl && (
-        <p className="text-[10px] text-slate-400 font-medium text-center italic">
-          {dict?.media?.interactiveHint}
+        <p className="text-[11px] text-slate-400 font-normal text-center">
+          {dict?.media?.interactiveHint || (locale === "vi" ? "Bạn có thể tương tác trực tiếp bên trong khung xem trước." : "You can interact directly inside the preview window.")}
         </p>
       )}
     </div>

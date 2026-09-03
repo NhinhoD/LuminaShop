@@ -50,11 +50,11 @@ export function CategoryList({ initialCategories, search }: CategoryListProps) {
   };
 
   return (
-    <div className="space-y-8 max-w-7xl mx-auto px-4 pb-4 font-manrope">
+    <div className="space-y-8 max-w-7xl mx-auto px-4 pb-4 font-sans">
       {/* Header Section */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h1 className="text-2xl md:text-3xl font-extrabold text-slate-950 tracking-tight font-playfair">Category Management</h1>
+          <h1 className="text-2xl md:text-3xl font-extrabold text-slate-950 tracking-tight font-sans">Category Management</h1>
           <p className="text-sm text-slate-500 font-medium mt-1">Create and organize your product collections</p>
         </div>
         <div className="flex items-center gap-4 w-full md:w-auto">
@@ -128,10 +128,11 @@ export function CategoryList({ initialCategories, search }: CategoryListProps) {
           <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm text-slate-300">
             <SearchX size={32} />
           </div>
-          <h3 className="text-base font-bold text-slate-900 font-playfair">No categories found</h3>
+          <h3 className="text-base font-bold text-slate-900 font-sans">No categories found</h3>
           <p className="text-xs text-slate-400 font-medium">Try adjusting your search terms</p>
         </div>
       )}
     </div>
   );
 }
+

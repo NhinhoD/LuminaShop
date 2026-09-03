@@ -42,11 +42,11 @@ const TOAST_CONFIGS: Record<
   },
   info: {
     icon: Info,
-    iconColor: "text-[#0051d5]",
+    iconColor: "text-primary",
     bgColor: "bg-white/95 dark:bg-slate-900/95",
-    borderColor: "border-blue-500/30",
-    badgeColor: "bg-blue-500/10 text-[#0051d5]",
-    progressBarColor: "bg-[#0051d5]",
+    borderColor: "border-primary/30",
+    badgeColor: "bg-primary/10 text-primary",
+    progressBarColor: "bg-primary",
   },
 };
 
@@ -61,7 +61,7 @@ function ToastMessage({ toast, onRemove }: { toast: ToastItem; onRemove: (id: st
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, x: 100, scale: 0.9 }}
       transition={{ type: "spring", stiffness: 400, damping: 28 }}
-      className={`relative overflow-hidden w-full sm:w-[380px] p-4 rounded-2xl shadow-2xl backdrop-blur-xl border ${config.borderColor} ${config.bgColor} font-manrope pointer-events-auto flex items-start gap-3.5 group`}
+      className={`relative overflow-hidden w-full sm:w-[380px] p-4 rounded-2xl shadow-2xl backdrop-blur-xl border ${config.borderColor} ${config.bgColor} font-sans pointer-events-auto flex items-start gap-3.5 group`}
     >
       {/* Icon Container */}
       <div className={`p-2 rounded-xl ${config.badgeColor} flex-shrink-0 mt-0.5`}>
