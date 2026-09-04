@@ -12,6 +12,7 @@ import { clearDictionaryCache } from "@/i18n/getDictionary";
 import { vi } from "@/i18n/dictionaries/vi";
 import { en } from "@/i18n/dictionaries/en";
 import { TranslationEntry } from "@/domain/repositories/ITranslationRepository";
+import { assertAdmin } from "./authGuards";
 
 export async function setLanguageAction(locale: "vi" | "en") {
   const cookieStore = await cookies();
@@ -27,6 +28,7 @@ export async function getTranslationsAction() {
 
 export async function addTranslationAction(key: string, namespace: string, vi: string, en: string) {
   try {
+    await assertAdmin();
     const useCase = await makeAddTranslationUseCase();
     await useCase.execute(key, namespace, vi, en);
     clearDictionaryCache();
@@ -39,6 +41,7 @@ export async function addTranslationAction(key: string, namespace: string, vi: s
 
 export async function updateTranslationAction(key: string, vi: string, en: string) {
   try {
+    await assertAdmin();
     const useCase = await makeUpdateTranslationUseCase();
     await useCase.execute(key, vi, en);
     clearDictionaryCache();
@@ -51,6 +54,7 @@ export async function updateTranslationAction(key: string, vi: string, en: strin
 
 export async function deleteTranslationAction(key: string) {
   try {
+    await assertAdmin();
     const useCase = await makeDeleteTranslationUseCase();
     await useCase.execute(key);
     clearDictionaryCache();
@@ -77,6 +81,7 @@ function flattenDict(obj: Record<string, unknown>, prefix = ""): Record<string, 
 
 export async function syncAllTranslationsAction() {
   try {
+    await assertAdmin();
     const flatVi = flattenDict(vi as unknown as Record<string, unknown>);
     const flatEn = flattenDict(en as unknown as Record<string, unknown>);
 

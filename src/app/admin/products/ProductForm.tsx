@@ -551,21 +551,21 @@ export function ProductForm({ categories, initialData }: ProductFormProps) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         
         {/* Title */}
-        <div className="space-y-2 md:col-span-2">
-          <div className="flex justify-between items-center mb-2">
-            <label className="text-xs font-extrabold uppercase tracking-wider text-slate-700">Tên Template *</label>
-            <div className="flex bg-slate-100 p-1 rounded-lg">
+        <div className="space-y-1.5 md:col-span-2">
+          <div className="flex justify-between items-center mb-1">
+            <label className="text-xs font-medium text-slate-700">Tên Template *</label>
+            <div className="flex bg-slate-100 p-0.5 rounded-lg">
               <button 
                 type="button"
                 onClick={() => setCurrentLang('vi')}
-                className={`px-3 py-1 text-xs font-bold rounded-md transition-colors ${currentLang === 'vi' ? 'bg-white shadow-sm text-[#0051d5]' : 'text-slate-500'}`}
+                className={`px-3 py-1 text-xs font-medium rounded-md transition-colors ${currentLang === 'vi' ? 'bg-white shadow-xs text-primary' : 'text-slate-500'}`}
               >
                 Tiếng Việt
               </button>
               <button 
                 type="button"
                 onClick={() => setCurrentLang('en')}
-                className={`px-3 py-1 text-xs font-bold rounded-md transition-colors ${currentLang === 'en' ? 'bg-white shadow-sm text-[#0051d5]' : 'text-slate-500'}`}
+                className={`px-3 py-1 text-xs font-medium rounded-md transition-colors ${currentLang === 'en' ? 'bg-white shadow-xs text-primary' : 'text-slate-500'}`}
               >
                 English
               </button>
@@ -577,20 +577,20 @@ export function ProductForm({ categories, initialData }: ProductFormProps) {
             disabled={loading}
             value={formData.title[currentLang] || ''}
             onChange={handleChange}
-            className="w-full px-4 py-3 border border-slate-200 focus:border-[#0051d5] rounded-xl outline-none text-xs font-semibold bg-white disabled:bg-slate-50 disabled:text-slate-400"
+            className="w-full h-10 px-3.5 border border-slate-200 focus:border-primary rounded-xl outline-none text-sm font-normal bg-white disabled:bg-slate-50 disabled:text-slate-400"
             placeholder={currentLang === 'vi' ? "Ví dụ: Lumina Creative Editorial Portfolio" : "Example: Lumina Creative Editorial Portfolio"}
           />
         </div>
 
         {/* Category */}
-        <div className="space-y-2">
-          <label className="text-xs font-extrabold uppercase tracking-wider text-slate-700">Danh mục *</label>
+        <div className="space-y-1.5">
+          <label className="text-xs font-medium text-slate-700">Danh mục *</label>
           <select
             name="categoryId"
             disabled={loading}
             value={formData.categoryId}
             onChange={handleChange}
-            className="w-full px-4 py-3 border border-slate-200 focus:border-[#0051d5] rounded-xl outline-none text-xs font-semibold bg-white disabled:bg-slate-50 disabled:text-slate-400"
+            className="w-full h-10 px-3.5 border border-slate-200 focus:border-primary rounded-xl outline-none text-sm font-normal bg-white disabled:bg-slate-50 disabled:text-slate-400"
           >
             {categories.map(c => (
               <option key={c.id} value={c.id}>{c.name?.vi || c.name?.en || 'Danh mục'}</option>
@@ -599,8 +599,8 @@ export function ProductForm({ categories, initialData }: ProductFormProps) {
         </div>
 
         {/* Basic Price */}
-        <div className="space-y-2">
-          <label className="text-xs font-extrabold uppercase tracking-wider text-slate-700">Đơn giá bản quyền (VND) *</label>
+        <div className="space-y-1.5">
+          <label className="text-xs font-medium text-slate-700">Đơn giá bản quyền (VND) *</label>
           <input
             required
             type="number"
@@ -608,42 +608,42 @@ export function ProductForm({ categories, initialData }: ProductFormProps) {
             disabled={loading}
             value={formData.price}
             onChange={handleChange}
-            className="w-full px-4 py-3 border border-slate-200 focus:border-[#0051d5] rounded-xl outline-none text-xs font-semibold bg-white disabled:bg-slate-50 disabled:text-slate-400"
+            className="w-full h-10 px-3.5 border border-slate-200 focus:border-primary rounded-xl outline-none text-sm font-normal bg-white font-mono disabled:bg-slate-50 disabled:text-slate-400"
             placeholder="Ví dụ: 250000"
           />
         </div>
 
         {/* Tech Stack Tags */}
-        <div className="space-y-2">
-          <label className="text-xs font-extrabold uppercase tracking-wider text-slate-700">Công nghệ tích hợp (Cách nhau bằng dấu phẩy) *</label>
+        <div className="space-y-1.5">
+          <label className="text-xs font-medium text-slate-700">Công nghệ tích hợp (Cách nhau bằng dấu phẩy) *</label>
           <input
             required
             name="techStack"
             disabled={loading}
             value={formData.techStack}
             onChange={handleChange}
-            className="w-full px-4 py-3 border border-slate-200 focus:border-[#0051d5] rounded-xl outline-none text-xs font-semibold bg-white disabled:bg-slate-50 disabled:text-slate-400"
+            className="w-full h-10 px-3.5 border border-slate-200 focus:border-primary rounded-xl outline-none text-sm font-normal bg-white disabled:bg-slate-50 disabled:text-slate-400"
             placeholder="Next.js 15, Tailwind 4, GSAP, Framer Motion"
           />
         </div>
 
         {/* Demo URL */}
-        <div className="space-y-2">
-          <label className="text-xs font-extrabold uppercase tracking-wider text-slate-700">Link Live Demo URL *</label>
+        <div className="space-y-1.5">
+          <label className="text-xs font-medium text-slate-700">Link Live Demo URL *</label>
           <input
             required
             name="demoUrl"
             disabled={loading}
             value={formData.demoUrl}
             onChange={handleChange}
-            className="w-full px-4 py-3 border border-slate-200 focus:border-[#0051d5] rounded-xl outline-none text-xs font-semibold bg-white disabled:bg-slate-50 disabled:text-slate-400"
+            className="w-full h-10 px-3.5 border border-slate-200 focus:border-primary rounded-xl outline-none text-sm font-normal bg-white disabled:bg-slate-50 disabled:text-slate-400 font-mono"
             placeholder="Ví dụ: https://demo.khoui.vn/my-template hoặc link Stitch public preview"
           />
         </div>
 
         {/* Static Preview Folder Drag-and-Drop */}
-        <div className="space-y-2">
-          <label className="text-xs font-extrabold uppercase tracking-wider text-slate-700">Tải lên thư mục Preview tĩnh (HTML/CSS/JS) *</label>
+        <div className="space-y-1.5">
+          <label className="text-xs font-medium text-slate-700">Tải lên thư mục Preview tĩnh (HTML/CSS/JS) *</label>
           <input
             type="file"
             ref={previewFolderInputRef}
@@ -659,34 +659,34 @@ export function ProductForm({ categories, initialData }: ProductFormProps) {
             onDrop={handlePreviewFolderDrop}
             className={`border-2 border-dashed rounded-xl p-4 flex flex-col items-center justify-center cursor-pointer transition-colors min-h-[96px] text-center ${
               isPreviewFolderDragging
-                ? "border-[#0051d5] bg-blue-50/50"
-                : "border-slate-200 hover:border-[#0051d5] bg-white"
+                ? "border-primary bg-primary/5"
+                : "border-slate-200 hover:border-primary bg-white"
             }`}
           >
             {previewFolderUploading ? (
               <div className="flex flex-col items-center gap-1">
-                <Loader2 className="h-6 w-6 text-[#0051d5] animate-spin" />
-                <span className="text-[10px] font-bold text-slate-500">Đang tải lên thư mục ({previewFolderFileCount} files)...</span>
+                <Loader2 className="h-6 w-6 text-primary animate-spin" />
+                <span className="text-xs font-medium text-slate-500">Đang tải lên thư mục ({previewFolderFileCount} files)...</span>
               </div>
             ) : previewFolderUploadSuccess || formData.demoUrl ? (
               <div className="flex flex-col items-center gap-1">
                 <CheckCircle className="h-6 w-6 text-emerald-500" />
-                <span className="text-[10px] font-bold text-slate-800">Thư mục preview đã tải lên</span>
-                <span className="text-[9px] text-[#999] break-all max-w-[200px] overflow-hidden whitespace-nowrap text-ellipsis">{formData.demoUrl}</span>
+                <span className="text-xs font-medium text-slate-800">Thư mục preview đã tải lên</span>
+                <span className="text-xs text-slate-400 break-all max-w-[200px] overflow-hidden whitespace-nowrap text-ellipsis font-mono">{formData.demoUrl}</span>
               </div>
             ) : (
               <div className="flex flex-col items-center gap-1">
                 <UploadCloud className="h-6 w-6 text-slate-400" />
-                <span className="text-[10px] font-bold text-slate-600">Chọn hoặc kéo thả thư mục chứa index.html</span>
-                <span className="text-[9px] text-slate-400">Tự động cấu hình MIME-types tĩnh</span>
+                <span className="text-xs font-medium text-slate-600">Chọn hoặc kéo thả thư mục chứa index.html</span>
+                <span className="text-xs text-slate-400 font-normal">Tự động cấu hình MIME-types tĩnh</span>
               </div>
             )}
           </div>
         </div>
 
         {/* Source Code File Drag-and-Drop */}
-        <div className="space-y-2">
-          <label className="text-xs font-extrabold uppercase tracking-wider text-slate-700">Mã nguồn dạng nén (.zip) *</label>
+        <div className="space-y-1.5">
+          <label className="text-xs font-medium text-slate-700">Mã nguồn dạng nén (.zip) *</label>
           <input
             type="file"
             ref={zipInputRef}
@@ -704,34 +704,34 @@ export function ProductForm({ categories, initialData }: ProductFormProps) {
             onDrop={handleZipDrop}
             className={`border-2 border-dashed rounded-xl p-4 flex flex-col items-center justify-center cursor-pointer transition-colors min-h-[96px] text-center ${
               isZipDragging
-                ? "border-[#0051d5] bg-blue-50/50"
-                : "border-slate-200 hover:border-[#0051d5] bg-white"
+                ? "border-primary bg-primary/5"
+                : "border-slate-200 hover:border-primary bg-white"
             }`}
           >
             {zipUploading ? (
               <div className="flex flex-col items-center gap-1">
-                <Loader2 className="h-6 w-6 text-[#0051d5] animate-spin" />
-                <span className="text-[10px] font-bold text-slate-500">Đang truyền tải tệp tin .zip...</span>
+                <Loader2 className="h-6 w-6 text-primary animate-spin" />
+                <span className="text-xs font-medium text-slate-500">Đang truyền tải tệp tin .zip...</span>
               </div>
             ) : zipUploadSuccess || formData.sourceCodeUrl ? (
               <div className="flex flex-col items-center gap-1">
                 <CheckCircle className="h-6 w-6 text-emerald-500" />
-                <span className="text-[10px] font-bold text-slate-800">Tệp zip đã được kết nối</span>
-                <span className="text-[9px] text-[#999] break-all max-w-[200px] overflow-hidden whitespace-nowrap text-ellipsis">{formData.sourceCodeUrl}</span>
+                <span className="text-xs font-medium text-slate-800">Tệp zip đã được kết nối</span>
+                <span className="text-xs text-slate-400 break-all max-w-[200px] overflow-hidden whitespace-nowrap text-ellipsis font-mono">{formData.sourceCodeUrl}</span>
               </div>
             ) : (
               <div className="flex flex-col items-center gap-1">
                 <FileArchive className="h-6 w-6 text-slate-400" />
-                <span className="text-[10px] font-bold text-slate-600">Chọn hoặc kéo thả tệp mã nguồn (.zip)</span>
-                <span className="text-[9px] text-slate-400">Đặt tên: lumina-[name]-[timestamp].zip</span>
+                <span className="text-xs font-medium text-slate-600">Chọn hoặc kéo thả tệp mã nguồn (.zip)</span>
+                <span className="text-xs text-slate-400 font-normal">Đặt tên: lumina-[name]-[timestamp].zip</span>
               </div>
             )}
           </div>
         </div>
 
         {/* Image Drag-and-Drop Dropzone & Preview URL */}
-        <div className="space-y-2 md:col-span-2">
-          <label className="text-xs font-extrabold uppercase tracking-wider text-slate-700">Hình ảnh ảnh bìa preview *</label>
+        <div className="space-y-1.5 md:col-span-2">
+          <label className="text-xs font-medium text-slate-700">Hình ảnh ảnh bìa preview *</label>
           <input
             type="file"
             ref={imageInputRef}
@@ -750,26 +750,26 @@ export function ProductForm({ categories, initialData }: ProductFormProps) {
               onDrop={handleImageDrop}
               className={`sm:col-span-8 border-2 border-dashed rounded-xl p-6 flex flex-col items-center justify-center cursor-pointer transition-colors min-h-[120px] text-center ${
                 isImageDragging
-                  ? "border-[#0051d5] bg-blue-50/50"
-                  : "border-slate-200 hover:border-[#0051d5] bg-white"
+                  ? "border-primary bg-primary/5"
+                  : "border-slate-200 hover:border-primary bg-white"
               }`}
             >
               {imageUploading ? (
                 <div className="flex flex-col items-center gap-1">
-                  <Loader2 className="h-8 w-8 text-[#0051d5] animate-spin" />
-                  <span className="text-[10px] font-bold text-slate-500">Đang truyền tải ảnh bìa lên đám mây...</span>
+                  <Loader2 className="h-8 w-8 text-primary animate-spin" />
+                  <span className="text-xs font-medium text-slate-500">Đang truyền tải ảnh bìa lên đám mây...</span>
                 </div>
               ) : imageUploadSuccess || formData.imageUrl ? (
                 <div className="flex flex-col items-center gap-1">
                   <CheckCircle className="h-8 w-8 text-emerald-500" />
-                  <span className="text-[10px] font-bold text-slate-800">Ảnh bìa đã tải lên thành công</span>
-                  <span className="text-[9px] text-[#999] break-all max-w-[300px] overflow-hidden whitespace-nowrap text-ellipsis">{formData.imageUrl}</span>
+                  <span className="text-xs font-medium text-slate-800">Ảnh bìa đã tải lên thành công</span>
+                  <span className="text-xs text-slate-400 break-all max-w-[300px] overflow-hidden whitespace-nowrap text-ellipsis font-mono">{formData.imageUrl}</span>
                 </div>
               ) : (
                 <div className="flex flex-col items-center gap-1">
                   <UploadCloud className="h-8 w-8 text-slate-400" />
-                  <span className="text-[10px] font-bold text-slate-600">Chọn hoặc thả ảnh preview (.png, .jpg, .webp)</span>
-                  <span className="text-[9px] text-slate-400">File dung lượng tối đa 10MB</span>
+                  <span className="text-xs font-medium text-slate-600">Chọn hoặc thả ảnh preview (.png, .jpg, .webp)</span>
+                  <span className="text-xs text-slate-400 font-normal">File dung lượng tối đa 10MB</span>
                 </div>
               )}
             </div>
@@ -784,9 +784,9 @@ export function ProductForm({ categories, initialData }: ProductFormProps) {
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <div className="flex flex-col items-center gap-1 text-[#bbb]">
+                <div className="flex flex-col items-center gap-1 text-slate-300">
                   <ImageIcon size={28} />
-                  <span className="text-[9px] font-bold uppercase tracking-wider">No Preview</span>
+                  <span className="text-xs font-medium text-slate-400">No Preview</span>
                 </div>
               )}
             </div>
@@ -794,21 +794,21 @@ export function ProductForm({ categories, initialData }: ProductFormProps) {
         </div>
 
         {/* Description */}
-        <div className="space-y-2 md:col-span-2">
-          <div className="flex justify-between items-center mb-2">
-            <label className="text-xs font-extrabold uppercase tracking-wider text-slate-700">Mô tả tính năng chi tiết *</label>
-            <div className="flex bg-slate-100 p-1 rounded-lg">
+        <div className="space-y-1.5 md:col-span-2">
+          <div className="flex justify-between items-center mb-1">
+            <label className="text-xs font-medium text-slate-700">Mô tả tính năng chi tiết *</label>
+            <div className="flex bg-slate-100 p-0.5 rounded-lg">
               <button 
                 type="button"
                 onClick={() => setCurrentLang('vi')}
-                className={`px-3 py-1 text-xs font-bold rounded-md transition-colors ${currentLang === 'vi' ? 'bg-white shadow-sm text-[#0051d5]' : 'text-slate-500'}`}
+                className={`px-3 py-1 text-xs font-medium rounded-md transition-colors ${currentLang === 'vi' ? 'bg-white shadow-xs text-primary' : 'text-slate-500'}`}
               >
                 Tiếng Việt
               </button>
               <button 
                 type="button"
                 onClick={() => setCurrentLang('en')}
-                className={`px-3 py-1 text-xs font-bold rounded-md transition-colors ${currentLang === 'en' ? 'bg-white shadow-sm text-[#0051d5]' : 'text-slate-500'}`}
+                className={`px-3 py-1 text-xs font-medium rounded-md transition-colors ${currentLang === 'en' ? 'bg-white shadow-xs text-primary' : 'text-slate-500'}`}
               >
                 English
               </button>
@@ -821,13 +821,13 @@ export function ProductForm({ categories, initialData }: ProductFormProps) {
             value={formData.description[currentLang] || ''}
             onChange={handleChange}
             rows={5}
-            className="w-full px-4 py-3 border border-slate-200 focus:border-[#0051d5] rounded-xl outline-none text-xs font-semibold bg-white resize-none disabled:bg-slate-50 disabled:text-slate-400"
+            className="w-full p-3.5 border border-slate-200 focus:border-primary rounded-xl outline-none text-sm font-normal bg-white resize-none disabled:bg-slate-50 disabled:text-slate-400"
             placeholder={currentLang === 'vi' ? "Mô tả các tính năng chính, hiệu ứng GSAP nổi bật..." : "Describe main features, GSAP effects..."}
           />
         </div>
 
         {/* Status Toggle */}
-        <div className="md:col-span-2 flex items-center gap-3 py-2">
+        <div className="md:col-span-2 flex items-center gap-2.5 py-1">
           <input
             type="checkbox"
             id="isActive"
@@ -835,9 +835,9 @@ export function ProductForm({ categories, initialData }: ProductFormProps) {
             disabled={loading}
             checked={formData.isActive}
             onChange={handleCheckboxChange}
-            className="h-4 w-4 rounded border-slate-300 text-[#0051d5] focus:ring-[#0051d5] cursor-pointer disabled:cursor-not-allowed"
+            className="h-4 w-4 rounded border-slate-300 text-primary focus:ring-primary cursor-pointer disabled:cursor-not-allowed"
           />
-          <label htmlFor="isActive" className="text-xs font-bold text-slate-700 select-none cursor-pointer disabled:text-slate-400">
+          <label htmlFor="isActive" className="text-xs font-medium text-slate-700 select-none cursor-pointer disabled:text-slate-400">
             Cho phép hiển thị bán công khai trên chợ giao diện (Active)
           </label>
         </div>
@@ -849,14 +849,14 @@ export function ProductForm({ categories, initialData }: ProductFormProps) {
           type="button"
           disabled={loading}
           onClick={() => router.back()}
-          className="px-6 py-2.5 border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors text-xs font-bold text-slate-700 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+          className="px-5 py-2.5 border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors text-sm font-medium text-slate-700 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Hủy bỏ
         </button>
         <button
           type="submit"
           disabled={loading}
-          className="px-6 py-2.5 bg-[#0051d5] hover:bg-[#0041ac] text-white rounded-xl transition-all shadow-md shadow-blue-900/10 text-xs font-bold active:scale-95 cursor-pointer disabled:opacity-50"
+          className="px-6 py-2.5 bg-primary hover:bg-primary-dark text-white rounded-xl transition-all shadow-xs text-sm font-medium active:scale-95 cursor-pointer disabled:opacity-50"
         >
           {loading ? "Đang lưu..." : "Lưu Template số"}
         </button>

@@ -35,7 +35,7 @@ export function ProfileOrderSearch({ currentSearch }: { currentSearch: string })
           setSearchTerm(e.target.value);
           handleSearch(e.target.value);
         }}
-        className="w-full pl-11 pr-4 py-3 bg-white border border-slate-200 rounded-2xl text-sm focus:ring-4 focus:ring-blue-500/10 focus:border-[#0051d5] outline-none transition-all shadow-sm"
+        className="w-full pl-11 pr-4 py-3 bg-white border border-slate-200/80 rounded-xl text-xs font-medium focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all shadow-xs placeholder:text-slate-400"
       />
     </div>
   );

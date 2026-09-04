@@ -114,15 +114,15 @@ export default async function OrderHistoryPage({ searchParams }: OrderHistoryPag
   });
 
   return (
-    <div className="container mx-auto px-4 py-16 max-w-7xl">
+    <div className="container mx-auto px-4 py-16 max-w-7xl font-sans">
       <div className="flex flex-col items-center justify-center text-center mb-12">
-        <span className="text-[11px] font-extrabold tracking-widest text-primary uppercase block mb-2">
+        <span className="text-xs font-semibold tracking-wider text-primary uppercase block mb-2">
           {orderDict.profileOrdersTag || (locale === "vi" ? "TÀI SẢN KỸ THUẬT SỐ" : "DIGITAL ASSETS")}
         </span>
-        <h1 className="text-3xl md:text-4xl font-extrabold text-slate-950 tracking-tight mb-3">
+        <h1 className="text-2xl md:text-3xl font-bold text-slate-900 tracking-tight mb-2">
           {orderDict.profileOrdersTitle || (locale === "vi" ? "Kho Giao Diện" : "My Templates")}
         </h1>
-        <p className="text-slate-500 max-w-lg font-medium text-sm">
+        <p className="text-slate-500 max-w-lg font-normal text-xs">
           {orderDict.profileOrdersSubtitle || (locale === "vi" ? "Quản lý và tải xuống toàn bộ mã nguồn các mẫu template mà bạn đã sở hữu bản quyền hợp lệ." : "Manage and download full source code packages for all templates you have licensed.")}
         </p>
       </div>
@@ -132,32 +132,32 @@ export default async function OrderHistoryPage({ searchParams }: OrderHistoryPag
       </div>
 
       {items.length === 0 ? (
-        <div className="text-center py-20 bg-white rounded-2xl shadow-sm border border-slate-200/80 max-w-2xl mx-auto">
-          <ShoppingBag className="w-16 h-16 text-slate-200 mx-auto mb-6" />
-          <h2 className="text-2xl font-extrabold text-slate-900 mb-3">
+        <div className="text-center py-16 bg-white rounded-3xl shadow-xs border border-slate-100 max-w-2xl mx-auto">
+          <ShoppingBag className="w-12 h-12 text-slate-200 mx-auto mb-4" />
+          <h2 className="text-xl font-bold text-slate-900 mb-2 tracking-tight">
             {orderDict.emptyOrdersTitle || (locale === "vi" ? "Không tìm thấy giao diện" : "No Templates Found")}
           </h2>
-          <p className="text-slate-500 mb-8 max-w-sm mx-auto text-sm">
+          <p className="text-slate-500 mb-6 max-w-sm mx-auto text-xs font-normal">
             {search 
               ? (locale === "vi" ? `Không có mẫu template nào khớp với từ khóa "${search}".` : `No templates found matching "${search}".`)
               : (orderDict.emptyOrdersDesc || (locale === "vi" ? "Bạn chưa sở hữu bản quyền template nào. Hãy khám phá thư viện cao cấp của chúng tôi ngay hôm nay." : "You don't own any licensed templates yet. Explore our premium catalog today."))}
           </p>
           <Link
             href="/shop"
-            className="inline-flex items-center justify-center px-8 py-3.5 text-xs font-bold rounded-xl text-white bg-primary hover:bg-primary-dark transition-all shadow-md active:scale-95 uppercase tracking-wider"
+            className="inline-flex items-center justify-center px-6 py-2.5 text-sm font-medium rounded-xl text-white bg-primary hover:bg-primary-dark transition-all shadow-xs active:scale-95"
           >
             {orderDict.exploreShop || (locale === "vi" ? "Khám phá cửa hàng" : "Explore Catalog")}
           </Link>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {items.map((item, idx) => {
             const product = Array.isArray(item.products) ? item.products[0] : item.products;
             if (!product) return null;
             return (
               <div
                 key={idx}
-                className="bg-white rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-xl hover:-translate-y-1 hover:border-primary/30 transition-all duration-300 flex flex-col overflow-hidden group"
+                className="bg-white rounded-2xl border border-slate-100 shadow-xs hover:shadow-md hover:border-primary/40 transition-all duration-200 flex flex-col overflow-hidden group"
               >
                 <Link href={`/product/${item.product_id}`} className="relative aspect-[16/10] bg-slate-50 overflow-hidden block">
                   {product.image_url ? (
@@ -166,49 +166,49 @@ export default async function OrderHistoryPage({ searchParams }: OrderHistoryPag
                       alt={getLocalizedText(product.title as Record<string, string>, locale)} 
                       fill
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                      className="object-cover transition-transform duration-700 group-hover:scale-105" 
+                      className="object-cover transition-transform duration-500 group-hover:scale-105" 
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
-                      <Package className="w-12 h-12 text-slate-300" />
+                      <Package className="w-10 h-10 text-slate-300" />
                     </div>
                   )}
-                  <div className="absolute top-4 right-4 bg-white/95 backdrop-blur-md px-3 py-1 rounded-full shadow-sm">
-                    <span className="text-[10px] font-black text-slate-900 uppercase tracking-widest flex items-center gap-1.5">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                      {orderDict.licenseActive || (locale === "vi" ? "Bản quyền" : "Licensed")}
+                  <div className="absolute top-3 right-3 backdrop-blur-md bg-slate-950/80 border border-white/10 px-2.5 py-0.5 rounded-full shadow-xs">
+                    <span className="text-xs font-medium text-white flex items-center gap-1.5">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                      {orderDict.licenseActive || (locale === "vi" ? "Bản quyền trọn đời" : "Lifetime License")}
                     </span>
                   </div>
                 </Link>
                 
-                <div className="p-6 flex flex-col flex-grow">
+                <div className="p-5 flex flex-col flex-grow">
                   <div className="flex-grow">
                     <Link href={`/product/${item.product_id}`}>
-                      <h3 className="font-extrabold text-slate-900 text-base leading-snug mb-2 group-hover:text-primary transition-colors line-clamp-2">
+                      <h3 className="font-semibold text-slate-900 text-sm md:text-base leading-snug mb-1.5 group-hover:text-primary transition-colors line-clamp-2 tracking-tight">
                         {getLocalizedText(product.title as Record<string, string>, locale)}
                       </h3>
                     </Link>
-                    <p className="text-[11px] text-slate-400 font-bold uppercase tracking-wider mb-6">
+                    <p className="text-xs text-slate-400 font-normal font-mono mb-4">
                       {orderDict.purchasedDate || (locale === "vi" ? "Đã mua:" : "Purchased on:")}{" "}
                       {formatDate(item.order_created_at, locale)}
                     </p>
                   </div>
                   
-                  <div className="pt-4 border-t border-slate-100 flex gap-3">
+                  <div className="pt-3 border-t border-slate-100 flex gap-2.5">
                     <a
                       href={product.source_code_url || "#"}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex-1 flex items-center justify-center gap-2 bg-slate-900 text-white py-3 rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-primary transition-all active:scale-95 shadow-sm"
+                      className="flex-1 flex items-center justify-center gap-2 bg-primary text-white py-2.5 rounded-xl text-xs font-medium hover:bg-primary-dark transition-all active:scale-95 shadow-xs"
                     >
-                      <Download size={15} />
-                      <span>{orderDict.downloadSourceCode || (locale === "vi" ? "Tải source code" : "Download Source Code")}</span>
+                      <Download size={14} />
+                      <span>{orderDict.downloadSourceCode || (locale === "vi" ? "Tải source code" : "Download Code")}</span>
                     </a>
                     <Link
                       href={`/product/${item.product_id}`}
-                      className="flex items-center justify-center w-11 h-11 bg-slate-50 text-slate-600 rounded-xl hover:bg-slate-100 hover:text-slate-950 transition-all"
+                      className="flex items-center justify-center w-10 h-10 bg-slate-50 text-slate-600 rounded-xl hover:bg-slate-100 hover:text-slate-950 transition-all border border-slate-200/80 active:scale-95"
                     >
-                      <ArrowRight size={16} />
+                      <ArrowRight size={15} />
                     </Link>
                   </div>
                 </div>

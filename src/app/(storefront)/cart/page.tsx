@@ -51,11 +51,11 @@ export default function CartPage() {
         
         {/* Cart Items Column */}
         <div className="flex-grow w-full lg:max-w-3xl">
-          <header className="mb-8">
-            <h1 className="text-3xl font-extrabold text-slate-950 mb-1 tracking-tight">
+          <header className="mb-6">
+            <h1 className="text-2xl md:text-3xl font-bold text-slate-900 mb-1 tracking-tight">
               {dict?.cart?.title || (locale === "vi" ? "Giỏ hàng của bạn" : "Shopping Cart")}
             </h1>
-            <p className="text-slate-400 text-xs font-bold uppercase tracking-wider">
+            <p className="text-slate-500 text-xs font-normal">
               {items.length} {dict?.cart?.itemCount || (locale === "vi" ? "sản phẩm đã chọn" : "selected items")}
             </p>
           </header>
@@ -64,8 +64,8 @@ export default function CartPage() {
             {items.map((item) => {
               const productTitle = getLocalizedText(item.title as unknown as Record<string, string>, locale);
               return (
-                <div key={item.id} className="flex flex-col sm:flex-row gap-5 p-5 bg-white rounded-2xl border border-slate-200/80 shadow-sm group">
-                  <div className="w-full sm:w-28 sm:h-36 aspect-[16/10] sm:aspect-auto bg-slate-50 rounded-xl overflow-hidden flex-shrink-0 relative">
+                <div key={item.id} className="flex flex-col sm:flex-row gap-5 p-5 bg-white rounded-2xl border border-slate-100 shadow-xs hover:border-primary/30 transition-all group">
+                  <div className="w-full sm:w-28 sm:h-36 aspect-[16/10] sm:aspect-auto bg-slate-50 rounded-xl overflow-hidden flex-shrink-0 relative border border-slate-100/80">
                     {item.imageUrl ? (
                       <Image 
                         alt={productTitle} 
@@ -83,16 +83,20 @@ export default function CartPage() {
 
                   <div className="flex flex-col flex-grow justify-between">
                     <div>
-                      <div className="flex justify-between items-start gap-4 mb-1">
+                      <div className="flex justify-between items-start gap-4 mb-2">
                         <div>
-                          <h3 className="font-extrabold text-slate-950 text-base mb-1 group-hover:text-primary transition-colors">
+                          <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-primary/10 text-primary text-xs font-medium mb-1.5">
+                            <Zap size={12} />
+                            <span>{locale === "vi" ? "Bản quyền số • Trọn đời" : "Digital License • Lifetime"}</span>
+                          </div>
+                          <h3 className="font-semibold text-slate-900 text-base mb-1 group-hover:text-primary transition-colors tracking-tight">
                             {productTitle}
                           </h3>
-                          <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-                            {dict?.cart?.selectionBadge || (locale === "vi" ? "Mã nguồn đầy đủ + Tài liệu" : "Full Source Code & Docs")}
+                          <p className="text-xs font-normal text-slate-400">
+                            {dict?.cart?.selectionBadge || (locale === "vi" ? "Mã nguồn đầy đủ + Tài liệu kiến trúc Clean Arch" : "Full Source Code & Clean Arch Docs")}
                           </p>
                         </div>
-                        <p className="font-extrabold text-primary text-base whitespace-nowrap">
+                        <p className="font-bold text-primary text-base whitespace-nowrap font-mono">
                           {formatCurrency(item.price * item.quantity, locale)}
                         </p>
                       </div>
@@ -100,7 +104,7 @@ export default function CartPage() {
 
                     <div className="mt-4 flex justify-between items-center pt-3 border-t border-slate-100">
                       <div className="flex items-center gap-4">
-                        <div className="flex items-center border border-slate-200 rounded-lg h-8 px-1 bg-slate-50">
+                        <div className="flex items-center border border-slate-200/80 rounded-lg h-8 px-1 bg-slate-50/80">
                           <button 
                             onClick={() => item.quantity > 1 && updateQuantity(item.id, item.quantity - 1)}
                             disabled={item.quantity <= 1}
@@ -113,7 +117,7 @@ export default function CartPage() {
                           >
                             <Minus size={13} />
                           </button>
-                          <span className="w-6 text-center text-xs font-bold text-slate-950">{item.quantity}</span>
+                          <span className="w-6 text-center text-xs font-semibold text-slate-900 font-mono">{item.quantity}</span>
                           <button 
                             onClick={() => updateQuantity(item.id, item.quantity + 1)}
                             type="button"
@@ -126,7 +130,7 @@ export default function CartPage() {
                         <button 
                           onClick={() => handleRemove(item.id, productTitle)}
                           type="button"
-                          className="text-[11px] font-bold text-slate-400 hover:text-red-500 transition-colors cursor-pointer"
+                          className="text-xs font-medium text-slate-400 hover:text-red-500 transition-colors cursor-pointer"
                         >
                           {dict?.cart?.remove || (locale === "vi" ? "Xóa" : "Remove")}
                         </button>
@@ -141,46 +145,46 @@ export default function CartPage() {
 
         {/* Order Summary Column */}
         <div className="w-full lg:w-[380px] flex-shrink-0">
-          <div className="bg-slate-50/80 rounded-2xl p-6 md:p-8 sticky top-28 border border-slate-200/80 shadow-sm space-y-6">
-            <h2 className="text-lg font-extrabold text-slate-950">
+          <div className="bg-white rounded-3xl p-6 md:p-8 sticky top-28 border border-slate-100 shadow-xs space-y-6">
+            <h2 className="text-base font-semibold text-slate-900 tracking-tight">
               {dict?.cart?.orderSummary || (locale === "vi" ? "Tóm tắt đơn hàng" : "Order Summary")}
             </h2>
             
-            <div className="space-y-3 pb-6 border-b border-slate-200 text-xs">
+            <div className="space-y-3 pb-6 border-b border-slate-100 text-xs">
               <div className="flex justify-between">
-                <span className="text-slate-500">{dict?.cart?.subtotal || (locale === "vi" ? "Tạm tính" : "Subtotal")}</span>
-                <span className="text-slate-950 font-bold">{formatCurrency(subtotal, locale)}</span>
+                <span className="text-slate-500 font-normal">{dict?.cart?.subtotal || (locale === "vi" ? "Tạm tính" : "Subtotal")}</span>
+                <span className="text-slate-900 font-semibold font-mono">{formatCurrency(subtotal, locale)}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-500">{dict?.cart?.shipping || (locale === "vi" ? "Bàn giao số" : "Digital Delivery")}</span>
-                <span className="text-emerald-600 font-extrabold uppercase text-[10px] tracking-wider flex items-center gap-1">
+                <span className="text-slate-500 font-normal">{dict?.cart?.shipping || (locale === "vi" ? "Bàn giao số" : "Digital Delivery")}</span>
+                <span className="text-emerald-700 font-medium text-xs flex items-center gap-1">
                   <Zap size={12} />
                   {dict?.cart?.freeShipping || (locale === "vi" ? "Tự động tức thì (Miễn phí)" : "Instant Automated (Free)")}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-500">{dict?.cart?.tax || (locale === "vi" ? "Thuế VAT (0%)" : "Estimated Tax (0%)")}</span>
-                <span className="text-slate-950 font-bold">{formatCurrency(0, locale)}</span>
+                <span className="text-slate-500 font-normal">{dict?.cart?.tax || (locale === "vi" ? "Thuế VAT (0%)" : "Estimated Tax (0%)")}</span>
+                <span className="text-slate-900 font-semibold font-mono">{formatCurrency(0, locale)}</span>
               </div>
             </div>
 
             <div className="flex justify-between items-center">
-              <span className="font-extrabold text-slate-950 text-sm">{dict?.cart?.total || (locale === "vi" ? "Tổng thanh toán" : "Total")}</span>
-              <span className="text-2xl font-extrabold text-primary">{formatCurrency(subtotal, locale)}</span>
+              <span className="font-medium text-slate-900 text-sm tracking-tight">{dict?.cart?.total || (locale === "vi" ? "Tổng thanh toán" : "Total")}</span>
+              <span className="text-xl font-bold text-primary font-mono">{formatCurrency(subtotal, locale)}</span>
             </div>
 
             <Link 
               href={ROUTES.CHECKOUT}
-              className="w-full bg-primary hover:bg-primary-dark text-white font-extrabold text-xs py-3.5 rounded-xl uppercase tracking-wider flex items-center justify-center gap-2 transition-all shadow-md active:scale-95"
+              className="w-full bg-primary hover:bg-primary-dark text-white font-medium text-sm py-3 rounded-xl flex items-center justify-center gap-2 transition-all shadow-xs active:scale-95 cursor-pointer"
             >
               <span>{dict?.cart?.secureCheckout || (locale === "vi" ? "Tiến hành thanh toán" : "Proceed to Checkout")}</span>
-              <ArrowRight size={14} />
+              <ArrowRight size={15} />
             </Link>
 
-            <div className="pt-4 border-t border-slate-200 text-[11px] text-slate-400 space-y-2">
-              <div className="flex items-center gap-1.5 text-slate-600 font-medium">
-                <ShieldCheck size={14} className="text-emerald-500" />
-                <span>Bảo mật giao dịch qua VietQR / PayOS</span>
+            <div className="pt-4 border-t border-slate-100 text-xs space-y-2">
+              <div className="flex items-center gap-2 text-slate-600 font-normal bg-slate-50 border border-slate-100 px-3 py-2 rounded-xl">
+                <ShieldCheck size={16} className="text-emerald-500 shrink-0" />
+                <span>{locale === "vi" ? "Bảo mật giao dịch tự động qua VietQR / PayOS" : "Secured automated payment via VietQR / PayOS"}</span>
               </div>
             </div>
           </div>

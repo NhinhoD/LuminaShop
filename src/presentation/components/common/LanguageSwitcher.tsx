@@ -22,11 +22,11 @@ export function LanguageSwitcher({ initialLocale }: { initialLocale?: Locale } =
     <button
       onClick={toggleLanguage}
       disabled={isPending}
-      className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-slate-200/90 text-xs font-extrabold text-slate-700 hover:border-primary/40 hover:bg-primary/5 hover:text-primary transition-all disabled:opacity-50 cursor-pointer shadow-sm active:scale-95"
+      className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200/80 text-xs font-medium text-slate-700 hover:border-primary/40 hover:bg-primary/5 hover:text-primary transition-all disabled:opacity-50 cursor-pointer shadow-xs active:scale-95"
       title={currentLocale === "vi" ? "Đổi sang Tiếng Anh (Switch to English)" : "Switch to Vietnamese (Đổi sang Tiếng Việt)"}
     >
       <Globe className="w-3.5 h-3.5 text-primary" />
-      <span className="uppercase tracking-wider text-[11px] font-bold">{currentLocale}</span>
+      <span className="uppercase tracking-wide text-xs font-mono font-medium">{currentLocale}</span>
     </button>
   );
 }

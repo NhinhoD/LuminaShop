@@ -66,7 +66,7 @@ export default function CartDrawer() {
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "spring", stiffness: 320, damping: 32 }}
-            className="fixed right-0 top-0 bottom-0 w-full max-w-[420px] bg-white z-50 shadow-2xl flex flex-col h-full border-l border-slate-200/80 font-sans"
+            className="fixed right-0 top-0 bottom-0 w-full max-w-[420px] bg-white z-50 shadow-2xl flex flex-col h-full border-l border-slate-100 font-sans"
           >
             {/* Header */}
             <div className="flex items-center justify-between px-6 py-5 bg-white border-b border-slate-100">
@@ -141,7 +141,7 @@ export default function CartDrawer() {
                           animate={{ opacity: 1, y: 0 }}
                           exit={{ opacity: 0, y: -10 }}
                           transition={{ delay: index * 0.04 }}
-                          className="flex gap-3.5 p-3.5 bg-slate-50/70 hover:bg-white rounded-xl border border-slate-200/80 transition-all group"
+                          className="flex gap-3.5 p-3.5 bg-slate-50/70 hover:bg-white rounded-2xl border border-slate-100 transition-all group shadow-xs"
                         >
                           <div className="w-18 h-18 bg-slate-100 overflow-hidden relative flex-shrink-0 rounded-lg">
                             {item.imageUrl ? (
@@ -218,7 +218,7 @@ export default function CartDrawer() {
 
             {/* Footer Summary (Checkout CTA) */}
             {items.length > 0 && (
-              <div className="px-6 py-5 bg-slate-50 border-t border-slate-200/80 space-y-4">
+              <div className="px-6 py-5 bg-slate-50/80 border-t border-slate-100 space-y-4">
                 <div className="flex justify-between items-center text-slate-900 font-bold">
                   <span className="text-xs text-slate-500 uppercase tracking-wider font-semibold">
                     {dict?.drawer?.subtotal || (locale === "vi" ? "Tạm tính" : "Subtotal")}

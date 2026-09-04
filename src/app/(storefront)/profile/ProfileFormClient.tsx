@@ -54,45 +54,45 @@ export function ProfileFormClient({
 
   return (
     <form onSubmit={handleSave} className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-5">
         <div>
-          <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">
+          <label className="block text-xs font-medium text-slate-700 mb-1.5">
             {profileDict.firstNameLabel || (locale === "vi" ? "Họ & Tên lót" : "First Name")}
           </label>
           <input
             type="text"
             value={firstName}
             onChange={(e) => setFirstName(e.target.value)}
-            className="w-full h-11 px-4 bg-white border border-slate-200 rounded-xl text-xs font-semibold focus:border-[#0051d5] outline-none transition-all"
+            className="w-full h-10 px-3.5 bg-white border border-slate-200/80 rounded-xl text-sm font-normal focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all placeholder:text-slate-400"
             placeholder={locale === "vi" ? "Nguyễn Văn" : "Jane"}
           />
         </div>
         <div>
-          <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">
+          <label className="block text-xs font-medium text-slate-700 mb-1.5">
             {profileDict.lastNameLabel || (locale === "vi" ? "Tên" : "Last Name")}
           </label>
           <input
             type="text"
             value={lastName}
             onChange={(e) => setLastName(e.target.value)}
-            className="w-full h-11 px-4 bg-white border border-slate-200 rounded-xl text-xs font-semibold focus:border-[#0051d5] outline-none transition-all"
+            className="w-full h-10 px-3.5 bg-white border border-slate-200/80 rounded-xl text-sm font-normal focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all placeholder:text-slate-400"
             placeholder={locale === "vi" ? "A" : "Doe"}
             required
           />
         </div>
         <div className="md:col-span-2">
-          <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">
+          <label className="block text-xs font-medium text-slate-700 mb-1.5">
             {profileDict.emailLabel || (locale === "vi" ? "Địa chỉ Email" : "Email Address")}
           </label>
           <input
             type="email"
             readOnly
             defaultValue={email}
-            className="w-full h-11 px-4 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-400 outline-none cursor-not-allowed"
+            className="w-full h-10 px-3.5 bg-slate-50 border border-slate-200/80 rounded-xl text-sm font-normal text-slate-400 outline-none cursor-not-allowed"
           />
         </div>
         <div className="md:col-span-2">
-          <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">
+          <label className="block text-xs font-medium text-slate-700 mb-1.5">
             {profileDict.phoneLabel || (locale === "vi" ? "Số điện thoại liên hệ" : "Contact Phone Number")}
           </label>
           <input
@@ -100,21 +100,21 @@ export function ProfileFormClient({
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
             placeholder="0912345678"
-            className="w-full h-11 px-4 bg-white border border-slate-200 rounded-xl text-xs font-semibold focus:border-[#0051d5] outline-none transition-all"
+            className="w-full h-10 px-3.5 bg-white border border-slate-200/80 rounded-xl text-sm font-normal focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all placeholder:text-slate-400"
           />
         </div>
       </div>
 
-      <div className="flex justify-end mt-10">
+      <div className="flex justify-end mt-8">
         <button
           type="submit"
           disabled={isPending}
-          className="bg-[#0051d5] hover:bg-[#0041ac] text-white font-bold px-8 py-3 rounded-xl transition-all shadow-md shadow-blue-900/10 text-xs active:scale-95 uppercase tracking-wider cursor-pointer flex items-center gap-2 disabled:opacity-50"
+          className="bg-primary hover:bg-primary-dark text-white font-medium px-6 py-2.5 rounded-xl transition-all shadow-xs text-sm active:scale-95 cursor-pointer flex items-center gap-2 disabled:opacity-50"
         >
           {isPending ? (
-            <Loader2 size={14} className="animate-spin" />
+            <Loader2 size={15} className="animate-spin" />
           ) : (
-            <CheckCircle2 size={14} />
+            <CheckCircle2 size={15} />
           )}
           <span>
             {isPending

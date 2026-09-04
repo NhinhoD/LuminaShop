@@ -5,6 +5,8 @@ import { cookies } from 'next/headers';
 import { revalidatePath } from 'next/cache';
 import { Language } from '@/domain/entities/Language';
 
+import { assertAdmin } from './authGuards';
+
 export async function getLanguagesAction(): Promise<Language[]> {
   try {
     const useCase = await makeGetLanguagesUseCase();
@@ -17,6 +19,7 @@ export async function getLanguagesAction(): Promise<Language[]> {
 
 export async function setDefaultLanguageAction(code: string) {
   try {
+    await assertAdmin();
     const useCase = await makeSetDefaultLanguageUseCase();
     await useCase.execute(code);
     revalidatePath('/admin/languages');

@@ -57,7 +57,7 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
   const totalPages = Math.ceil(total / itemsPerPage);
 
   return (
-    <main className="flex-grow bg-white py-12 font-sans">
+    <main className="flex-grow bg-background-subtle/40 py-12 font-sans">
       <div className="max-w-[1400px] mx-auto px-6 sm:px-8 lg:px-12">
         
         {/* Header Area */}

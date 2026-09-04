@@ -135,33 +135,33 @@ export default function VerifyOtpForm({ email }: VerifyOtpFormProps) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: "easeOut" }}
-      className="w-full max-w-[480px] bg-white rounded-2xl shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-slate-100 p-10 md:p-12 text-center font-sans"
+      className="w-full max-w-[480px] bg-white rounded-3xl shadow-[0_4px_24px_rgba(0,0,0,0.03)] border border-slate-100 p-8 sm:p-12 text-center font-sans"
     >
       <div className="mb-8 flex justify-center">
-        <div className="w-16 h-16 rounded-full bg-blue-50 text-[#0051d5] flex items-center justify-center shadow-inner">
-          <MailCheck size={32} />
+        <div className="w-16 h-16 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shadow-xs">
+          <MailCheck size={30} />
         </div>
       </div>
 
-      <h2 className="text-2xl font-bold text-slate-900 mb-2 font-sans">
-        {dict?.auth?.verifyEmailTitle}
+      <h2 className="text-2xl font-extrabold text-slate-950 mb-2 tracking-tight">
+        {dict?.auth?.verifyEmailTitle || "Xác thực Email"}
       </h2>
       <p className="text-slate-500 text-sm mb-8">
-        {dict?.auth?.verifyEmailSent} <br />
-        <span className="font-medium text-slate-900">{email}</span>
+        {dict?.auth?.verifyEmailSent || "Mã xác thực 6 số đã được gửi đến:"} <br />
+        <span className="font-bold text-slate-900">{email}</span>
       </p>
 
       {error && (
-        <p className="text-red-500 text-xs mb-6 font-medium bg-red-50 py-3 rounded-lg">{error}</p>
+        <p className="text-red-500 text-xs mb-6 font-medium bg-red-50 py-3 rounded-xl border border-red-100">{error}</p>
       )}
 
       {resendStatus && (
-        <p className={`text-xs mb-6 font-medium py-3 rounded-lg ${resendStatus.type === 'error' ? 'bg-red-50 text-red-500' : 'bg-green-50 text-green-600'}`}>
+        <p className={`text-xs mb-6 font-medium py-3 rounded-xl ${resendStatus.type === 'error' ? 'bg-red-50 text-red-500 border border-red-100' : 'bg-emerald-50 text-emerald-600 border border-emerald-100'}`}>
           {resendStatus.message}
         </p>
       )}
 
-      <div className="flex justify-center gap-3 mb-8">
+      <div className="flex justify-center gap-2.5 sm:gap-3 mb-8">
         {otp.map((digit, index) => (
           <input
             key={index}
@@ -176,7 +176,7 @@ export default function VerifyOtpForm({ email }: VerifyOtpFormProps) {
             onKeyDown={(e) => handleKeyDown(e, index)}
             onPaste={handlePaste}
             disabled={isPending}
-            className="w-12 h-14 text-center text-xl font-bold bg-white border border-slate-200 rounded-xl focus:border-[#0051d5] focus:ring-1 focus:ring-[#0051d5] outline-none transition-all disabled:opacity-50 disabled:bg-slate-50"
+            className="w-11 h-14 sm:w-12 sm:h-14 text-center text-xl font-mono font-bold bg-slate-50/50 border border-slate-200/80 rounded-xl focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all disabled:opacity-50 disabled:bg-slate-50"
           />
         ))}
       </div>
@@ -185,32 +185,32 @@ export default function VerifyOtpForm({ email }: VerifyOtpFormProps) {
         type="button"
         onClick={() => submitOtp(otp.join(''))}
         disabled={isPending || otp.some(d => d === '')}
-        className="w-full h-12 bg-black text-white font-bold rounded-xl hover:bg-slate-900 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:hover:bg-black group mb-6 cursor-pointer text-xs uppercase tracking-wider active:scale-[0.98]"
+        className="w-full h-12 bg-primary text-white font-extrabold rounded-xl hover:bg-primary-dark transition-all flex items-center justify-center gap-2 disabled:opacity-50 group mb-6 cursor-pointer text-xs uppercase tracking-wider active:scale-[0.98] shadow-md shadow-primary/20 pt-0.5"
       >
         {isPending ? (
           <Loader2 size={18} className="animate-spin" />
         ) : (
           <>
-            <span>{dict?.auth?.confirm}</span>
+            <span>{dict?.auth?.confirm || "Xác nhận & Hoàn tất"}</span>
             <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
           </>
         )}
       </button>
 
       <div className="text-sm font-medium text-slate-500">
-        {dict?.auth?.noCodeReceived}{' '}
+        {dict?.auth?.noCodeReceived || "Chưa nhận được mã?"}{' '}
         {canResend ? (
           <button 
             type="button" 
             onClick={handleResend}
             disabled={isPending}
-            className="text-[#0051d5] hover:underline underline-offset-4 disabled:opacity-50 cursor-pointer font-bold"
+            className="text-primary hover:underline underline-offset-4 disabled:opacity-50 cursor-pointer font-extrabold"
           >
-            {dict?.auth?.resendCode}
+            {dict?.auth?.resendCode || "Gửi lại mã"}
           </button>
         ) : (
-          <span className="text-slate-400">
-            {dict?.auth?.resendIn} {timer}s
+          <span className="text-slate-400 font-mono">
+            {dict?.auth?.resendIn || "Gửi lại sau"} {timer}s
           </span>
         )}
       </div>

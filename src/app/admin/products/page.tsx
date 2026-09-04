@@ -50,48 +50,52 @@ export default async function AdminProductsPage({
       {/* Page Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h2 className="text-2xl md:text-3xl font-extrabold text-slate-950 font-sans">{dict.title || "Quản lý sản phẩm"}</h2>
-          <p className="text-sm text-slate-500 mt-1">{dict.subtitle || "Danh sách mẫu template hiện có"} ({total})</p>
+          <h2 className="text-2xl md:text-3xl font-bold text-slate-900 tracking-tight font-sans">
+            {dict.title || (locale === "vi" ? "Quản lý sản phẩm" : "Product Management")}
+          </h2>
+          <p className="text-xs text-slate-500 mt-1 font-normal">
+            {dict.subtitle || (locale === "vi" ? "Danh sách mẫu template hiện có trong hệ thống" : "List of digital templates in catalog")} ({total})
+          </p>
         </div>
         <Link 
           href="/admin/products/new"
-          className="inline-flex items-center justify-center gap-2 bg-[#0051d5] text-white font-bold px-6 py-3 rounded-xl hover:bg-[#0041ab] transition-all duration-200 shadow-md shadow-blue-900/10 text-xs uppercase tracking-wider whitespace-nowrap h-11 active:scale-95"
+          className="inline-flex items-center justify-center gap-2 bg-primary text-white font-medium px-5 py-2.5 rounded-xl hover:bg-primary-dark transition-all duration-150 shadow-xs text-xs whitespace-nowrap active:scale-95 cursor-pointer"
         >
           <Plus size={16} />
-          <span>{dict.addProduct || "Thêm sản phẩm"}</span>
+          <span>{dict.addProduct || (locale === "vi" ? "Thêm sản phẩm" : "Add Product")}</span>
         </Link>
       </div>
       
       {/* Data Table Container */}
-      <div className="bg-white border border-slate-100 rounded-3xl shadow-sm overflow-hidden flex flex-col">
+      <div className="bg-white border border-slate-100 rounded-3xl shadow-xs overflow-hidden flex flex-col">
         {/* Toolbar */}
-        <form className="p-4 border-b border-slate-100 flex flex-col sm:flex-row gap-4 justify-between items-center bg-slate-50/70">
-          <div className="flex gap-4 w-full sm:w-auto flex-wrap">
+        <form className="p-4 border-b border-slate-100 flex flex-col sm:flex-row gap-4 justify-between items-center bg-slate-50/50">
+          <div className="flex gap-3 w-full sm:w-auto flex-wrap">
             <div className="relative w-full sm:w-80">
               <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
               <input 
                 name="q"
                 defaultValue={search}
-                className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-[#0051d5]/20 focus:border-[#0051d5] outline-none transition-all shadow-sm" 
-                placeholder={dict.searchPlaceholder || "Tìm kiếm sản phẩm..."} 
+                className="w-full pl-10 pr-4 py-2 bg-white border border-slate-200/80 rounded-xl text-xs font-normal focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all placeholder:text-slate-400" 
+                placeholder={dict.searchPlaceholder || (locale === "vi" ? "Tìm kiếm sản phẩm..." : "Search products...")} 
                 type="text" 
               />
             </div>
-            <select name="category" defaultValue={params.category || "all"} className="bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-xs outline-none focus:border-[#0051d5] shadow-sm font-semibold text-slate-700">
-              <option value="all">{dict.filterCategory || "Tất cả danh mục"}</option>
+            <select name="category" defaultValue={params.category || "all"} className="bg-white border border-slate-200/80 rounded-xl px-3.5 py-2 text-xs outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 font-normal text-slate-700">
+              <option value="all">{dict.filterCategory || (locale === "vi" ? "Tất cả danh mục" : "All Categories")}</option>
               {categories.map(c => (
                 <option key={c.id} value={c.id}>{getLocalizedText(c.name as unknown as Record<string, string>, locale)}</option>
               ))}
             </select>
-            <select name="status" defaultValue={params.status || "all"} className="bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-xs outline-none focus:border-[#0051d5] shadow-sm font-semibold text-slate-700">
-              <option value="all">{dict.filterStatus || "Tất cả trạng thái"}</option>
-              <option value="active">Đang bán</option>
-              <option value="inactive">Ẩn</option>
+            <select name="status" defaultValue={params.status || "all"} className="bg-white border border-slate-200/80 rounded-xl px-3.5 py-2 text-xs outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 font-normal text-slate-700">
+              <option value="all">{dict.filterStatus || (locale === "vi" ? "Tất cả trạng thái" : "All Statuses")}</option>
+              <option value="active">{locale === "vi" ? "Đang bán" : "Active"}</option>
+              <option value="inactive">{locale === "vi" ? "Ẩn" : "Hidden"}</option>
             </select>
           </div>
           <div className="flex gap-3 w-full sm:w-auto">
-            <button type="submit" className="px-6 py-2.5 bg-slate-900 text-white rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-black transition-all shadow-sm cursor-pointer active:scale-95">
-              Lọc
+            <button type="submit" className="px-5 py-2 bg-slate-900 text-white rounded-xl text-xs font-medium hover:bg-slate-800 transition-all shadow-xs cursor-pointer active:scale-95">
+              {locale === "vi" ? "Lọc" : "Filter"}
             </button>
           </div>
         </form>
@@ -100,58 +104,58 @@ export default async function AdminProductsPage({
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse min-w-[800px]">
             <thead>
-              <tr className="bg-white border-b border-slate-100 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+              <tr className="bg-white border-b border-slate-100 text-xs font-medium text-slate-500">
                 <th className="p-4 pl-6 w-12">
-                  <input className="rounded border-slate-200 text-[#0051d5] focus:ring-[#0051d5]" type="checkbox" />
+                  <input className="rounded border-slate-300 text-primary focus:ring-primary/20" type="checkbox" />
                 </th>
-                <th className="p-4 min-w-[250px]">{dict.tableProduct || "SẢN PHẨM"}</th>
-                <th className="p-4 text-right">{dict.tablePrice || "GIÁ"}</th>
-                <th className="p-4 text-right">{dict.tableStock || "TỒN KHO"}</th>
-                <th className="p-4">{dict.tableStatus || "TRẠNG THÁI"}</th>
-                <th className="p-4 pr-6 text-right">{dict.tableActions || "HÀNH ĐỘNG"}</th>
+                <th className="p-4 min-w-[250px]">{dict.tableProduct || (locale === "vi" ? "SẢN PHẨM" : "PRODUCT")}</th>
+                <th className="p-4 text-right">{dict.tablePrice || (locale === "vi" ? "GIÁ BẢN QUYỀN" : "PRICE")}</th>
+                <th className="p-4 text-right">{dict.tableStock || (locale === "vi" ? "TỒN KHO" : "STOCK")}</th>
+                <th className="p-4">{dict.tableStatus || (locale === "vi" ? "TRẠNG THÁI" : "STATUS")}</th>
+                <th className="p-4 pr-6 text-right">{dict.tableActions || (locale === "vi" ? "THAO TÁC" : "ACTIONS")}</th>
               </tr>
             </thead>
             <tbody className="text-sm text-slate-700 divide-y divide-slate-100 bg-white">
               {products.map((product) => (
-                <tr key={product.id} className="hover:bg-slate-50 transition-colors group">
+                <tr key={product.id} className="hover:bg-slate-50/60 transition-colors group">
                   <td className="p-4 pl-6">
-                    <input className="rounded border-slate-200 text-[#0051d5] focus:ring-[#0051d5]" type="checkbox" />
+                    <input className="rounded border-slate-300 text-primary focus:ring-primary/20" type="checkbox" />
                   </td>
                   <td className="p-4">
-                    <div className="flex items-center gap-4">
-                      <div className="w-14 h-14 rounded-xl border border-slate-100 bg-slate-50 flex-shrink-0 overflow-hidden shadow-sm relative">
+                    <div className="flex items-center gap-3.5">
+                      <div className="w-12 h-12 rounded-xl border border-slate-100 bg-slate-50 flex-shrink-0 overflow-hidden shadow-2xs relative">
                         {product.imageUrl ? (
-                          <Image alt={getLocalizedText(product.title as unknown as Record<string, string>, locale)} className="object-cover group-hover:scale-105 transition-transform duration-300" src={product.imageUrl} fill sizes="56px" />
+                          <Image alt={getLocalizedText(product.title as unknown as Record<string, string>, locale)} className="object-cover group-hover:scale-105 transition-transform duration-300" src={product.imageUrl} fill sizes="48px" />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center text-slate-300">
-                            <ImageIcon size={20} />
+                            <ImageIcon size={18} />
                           </div>
                         )}
                       </div>
                       <div>
-                        <div className="font-bold text-slate-900 group-hover:text-[#0051d5] transition-colors text-xs md:text-sm">{getLocalizedText(product.title as unknown as Record<string, string>, locale)}</div>
-                        <div className="text-slate-400 text-[11px] font-mono mt-0.5">{product.slug}</div>
+                        <div className="font-semibold text-slate-900 group-hover:text-primary transition-colors text-sm">{getLocalizedText(product.title as unknown as Record<string, string>, locale)}</div>
+                        <div className="text-slate-400 text-xs font-mono mt-0.5">{product.slug}</div>
                       </div>
                     </div>
                   </td>
-                  <td className="p-4 text-right font-black text-slate-900 text-xs md:text-sm">{product.price === 0 ? "MIỄN PHÍ" : formatCurrency(product.price)}</td>
-                  <td className="p-4 text-right font-semibold text-xs">{product.stock}</td>
+                  <td className="p-4 text-right font-bold text-slate-900 text-sm font-mono">{product.price === 0 ? (locale === "vi" ? "Miễn phí" : "Free") : formatCurrency(product.price, locale)}</td>
+                  <td className="p-4 text-right font-normal text-xs text-slate-600 font-mono">{product.stock}</td>
                   <td className="p-4">
-                    <span className={`inline-flex items-center px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-wider ${
+                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                       product.isActive 
-                        ? "bg-green-100 text-green-700" 
-                        : "bg-slate-100 text-slate-500"
+                        ? "bg-emerald-50 text-emerald-700 border border-emerald-200/60" 
+                        : "bg-slate-100 text-slate-600 border border-slate-200/60"
                     }`}>
-                      {product.isActive ? "Đang bán" : "Ẩn"}
+                      {product.isActive ? (locale === "vi" ? "Đang bán" : "Active") : (locale === "vi" ? "Ẩn" : "Hidden")}
                     </span>
                   </td>
                   <td className="p-4 pr-6 text-right space-x-1">
                     <Link 
                       href={`/admin/products/${product.id}/edit`}
-                      className="inline-flex p-2 text-slate-400 hover:text-[#0051d5] transition-colors rounded-lg hover:bg-blue-50"
-                      title="Chỉnh sửa"
+                      className="inline-flex p-2 text-slate-400 hover:text-primary transition-colors rounded-lg hover:bg-primary/5"
+                      title={locale === "vi" ? "Chỉnh sửa" : "Edit"}
                     >
-                      <Edit3 size={18} />
+                      <Edit3 size={16} />
                     </Link>
                     <ProductDeleteButton id={product.id} />
                   </td>
@@ -161,8 +165,8 @@ export default async function AdminProductsPage({
                 <tr>
                   <td colSpan={6} className="p-12 text-center text-slate-400">
                     <div className="flex flex-col items-center justify-center space-y-3">
-                      <Package size={40} className="text-slate-300" />
-                      <p className="text-xs font-bold">{dict.noProducts || "Không tìm thấy sản phẩm nào"}</p>
+                      <Package size={36} className="text-slate-300" />
+                      <p className="text-xs font-normal">{dict.noProducts || (locale === "vi" ? "Không tìm thấy sản phẩm nào" : "No products found")}</p>
                     </div>
                   </td>
                 </tr>
@@ -173,9 +177,9 @@ export default async function AdminProductsPage({
         
         {/* Pagination Footer */}
         {totalPages > 1 && (
-          <div className="p-4 border-t border-slate-100 bg-slate-50 flex justify-center flex-col items-center">
-            <div className="text-center mb-3 text-xs font-bold text-slate-400 uppercase tracking-wider">
-              Hiển thị <span className="text-slate-900">{offset + 1}</span> - <span className="text-slate-900">{Math.min(offset + limit, total)}</span> / <span className="text-slate-900">{total}</span>
+          <div className="p-4 border-t border-slate-100 bg-slate-50/50 flex justify-center flex-col items-center">
+            <div className="text-center mb-3 text-xs font-normal text-slate-500">
+              {locale === "vi" ? "Hiển thị" : "Showing"} <span className="text-slate-900 font-medium">{offset + 1}</span> - <span className="text-slate-900 font-medium">{Math.min(offset + limit, total)}</span> {locale === "vi" ? "trên" : "of"} <span className="text-slate-900 font-medium">{total}</span>
             </div>
             <PaginationControls currentPage={page} totalPages={totalPages} />
           </div>

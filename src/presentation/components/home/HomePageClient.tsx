@@ -758,7 +758,7 @@ export default function HomePageClient({ featuredProducts, categories }: HomePag
                 <div 
                   className={`absolute inset-0 rounded-3xl transition-all duration-700 blur-[85px] pointer-events-none opacity-60 ${
                     activeLabTab === "preview" 
-                      ? "bg-gradient-to-tr from-[#0051d5]/35 via-cyan-500/20 to-indigo-600/30"
+                      ? "bg-gradient-to-tr from-primary/35 via-cyan-500/20 to-indigo-600/30"
                       : activeLabTab === "architecture"
                       ? "bg-gradient-to-tr from-emerald-500/35 via-teal-500/20 to-cyan-600/30"
                       : "bg-gradient-to-tr from-purple-600/35 via-pink-500/20 to-amber-500/30"
@@ -1187,7 +1187,7 @@ export default function HomePageClient({ featuredProducts, categories }: HomePag
                           <button
                             onClick={handleRunDiagnostic}
                             disabled={isRunningDiagnostic}
-                            className="w-full py-2 bg-gradient-to-r from-[#0051d5] to-indigo-600 hover:from-[#0041ac] hover:to-indigo-700 text-white rounded-xl font-mono text-[11px] font-bold flex items-center justify-center gap-2 transition-all cursor-pointer shadow-md disabled:opacity-50"
+                            className="w-full py-2 bg-gradient-to-r from-primary to-indigo-600 hover:from-primary-dark hover:to-indigo-700 text-white rounded-xl font-mono text-xs font-medium flex items-center justify-center gap-2 transition-all cursor-pointer shadow-xs disabled:opacity-50"
                           >
                             {isRunningDiagnostic ? (
                               <>
@@ -1372,8 +1372,8 @@ export default function HomePageClient({ featuredProducts, categories }: HomePag
                   </p>
                 </div>
                 <div className="w-12 h-12 rounded-lg bg-slate-900 text-white flex flex-col items-center justify-center font-bold">
-                  <span className="text-sm text-emerald-400">98</span>
-                  <span className="text-[8px] uppercase tracking-wider text-slate-400 font-normal">Score</span>
+                  <span className="text-sm text-emerald-400 font-mono">98</span>
+                  <span className="text-[10px] tracking-wide text-slate-400 font-normal">Score</span>
                 </div>
               </div>
 

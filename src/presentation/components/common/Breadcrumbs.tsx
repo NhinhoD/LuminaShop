@@ -47,7 +47,7 @@ export function Breadcrumbs({ items }: BreadcrumbsProps) {
               <Link 
                 href={item.href}
                 onClick={(e) => handleClick(e, item.href)}
-                className="hover:text-[#0051d5] hover:underline transition-all underline-offset-4"
+                className="hover:text-primary hover:underline transition-all underline-offset-4"
               >
                 {item.label}
               </Link>
