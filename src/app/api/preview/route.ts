@@ -21,7 +21,9 @@ import { NextRequest, NextResponse } from "next/server";
 
 const ALLOWED_ORIGIN = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
 
-/** Map file extensions to correct MIME types */
+/**
+ * Maps file extensions to correct MIME types for proper browser rendering.
+ */
 function resolveContentType(url: string): string {
   const pathname = new URL(url).pathname.toLowerCase();
   if (pathname.endsWith(".html") || pathname.endsWith(".htm")) return "text/html; charset=utf-8";
@@ -41,13 +43,17 @@ function resolveContentType(url: string): string {
   return "application/octet-stream";
 }
 
-/** Get the directory URL from a full file URL (for <base> tag injection) */
+/**
+ * Extracts the directory URL from a full file URL for base tag injection.
+ */
 function getBaseUrl(fileUrl: string): string {
   const lastSlash = fileUrl.lastIndexOf("/");
   return lastSlash > 0 ? fileUrl.substring(0, lastSlash + 1) : fileUrl;
 }
 
-/** Check if a content type is HTML */
+/**
+ * Checks if a content type represents HTML.
+ */
 function isHtmlType(contentType: string): boolean {
   return contentType.startsWith("text/html");
 }
@@ -74,6 +80,10 @@ function injectBaseTag(html: string, baseUrl: string): string {
   return baseTag + html;
 }
 
+/**
+ * API route handler that proxies Supabase Storage files with corrected MIME types.
+ * Injects base tags into HTML for relative resource resolution and enforces SSRF protection.
+ */
 export async function GET(request: NextRequest): Promise<NextResponse> {
   const targetUrl = request.nextUrl.searchParams.get("url");
 

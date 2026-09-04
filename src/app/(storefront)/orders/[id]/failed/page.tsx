@@ -5,6 +5,10 @@ import { AlertCircle } from "lucide-react";
 import { getDictionary, getLocale } from "@/i18n/getDictionary";
 import { makeLanguageRepository } from "@/infrastructure/supabase/container";
 
+/**
+ * Order failure/pending page displayed when payment is incomplete or pending verification.
+ * Provides retry and continue browsing options.
+ */
 export default async function OrderFailedPage(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
   const result = await getOrderAction(params.id);

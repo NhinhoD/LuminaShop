@@ -7,6 +7,10 @@ import { ProductForm } from "@/app/admin/products/ProductForm";
 import { notFound } from "next/navigation";
 import { getDictionary, getLocale } from "@/i18n/getDictionary";
 
+/**
+ * Admin product editing page.
+ * Loads product data and renders the ProductForm with existing values for editing.
+ */
 export default async function EditProductPage({
   params,
 }: {

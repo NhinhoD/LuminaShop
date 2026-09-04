@@ -20,6 +20,10 @@ interface DemoViewerClientProps {
 
 type ViewportMode = "desktop" | "tablet" | "mobile";
 
+/**
+ * Client-side demo viewer for product templates with responsive viewport switcher (desktop/tablet/mobile).
+ * Renders an isolated sandbox iframe with navigation controls and purchase CTA.
+ */
 export default function DemoViewerClient({
   product,
   resolvedIframeSrc,

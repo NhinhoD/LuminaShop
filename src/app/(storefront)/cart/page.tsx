@@ -10,10 +10,17 @@ import { formatCurrency } from "@/lib/utils";
 import { toast } from "@/presentation/hooks/useToastStore";
 import { ShoppingBag, Image as ImageIcon, Minus, Plus, ArrowRight, ShieldCheck, Zap } from "lucide-react";
 
+/**
+ * Shopping cart page displaying selected products.
+ * Allows quantity adjustment, item removal, and checkout navigation with order summary.
+ */
 export default function CartPage() {
   const { items, updateQuantity, removeItem, subtotal } = useCart();
   const { dict, locale } = useI18n();
 
+  /**
+   * Removes an item from the cart and shows a toast notification.
+   */
   const handleRemove = (id: string, title?: string) => {
     removeItem(id);
     toast.info(

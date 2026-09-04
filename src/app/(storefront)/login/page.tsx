@@ -7,6 +7,10 @@ import { makeLanguageRepository } from "@/infrastructure/supabase/container";
 import { Mail, Lock, ArrowRight } from "lucide-react";
 import { AuthErrorToast } from "@/presentation/components/auth/AuthErrorToast";
 
+/**
+ * Login page with email/password authentication form.
+ * Displays error messages from URL params and provides link to registration.
+ */
 export default async function LoginPage({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
   const params = await searchParams;
   const locale = await getLocale();

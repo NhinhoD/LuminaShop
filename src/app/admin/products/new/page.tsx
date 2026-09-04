@@ -2,6 +2,10 @@ import { makeGetCategoriesUseCase, makeLanguageRepository } from "@/infrastructu
 import { ProductForm } from "@/app/admin/products/ProductForm";
 import { getDictionary, getLocale } from "@/i18n/getDictionary";
 
+/**
+ * Admin new product creation page.
+ * Renders the ProductForm in create mode with empty initial values.
+ */
 export default async function NewProductPage() {
   const getCategoriesUseCase = await makeGetCategoriesUseCase();
   const locale = await getLocale();

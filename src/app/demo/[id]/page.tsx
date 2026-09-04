@@ -8,6 +8,10 @@ interface DemoPageProps {
   params: Promise<{ id: string }>;
 }
 
+/**
+ * Demo preview page for product templates.
+ * Renders an interactive sandbox iframe viewer with device viewport controls and purchase CTA.
+ */
 export default async function DemoPage({ params }: DemoPageProps) {
   const cookieStore = await cookies();
   const locale = (cookieStore.get('NEXT_LOCALE')?.value as 'vi' | 'en') || 'vi';
@@ -22,7 +26,9 @@ export default async function DemoPage({ params }: DemoPageProps) {
     notFound();
   }
 
-  // Get proxied url logic as used in ProductMediaGallery
+  /**
+   * Proxies Supabase Storage URLs through the Next.js API route to correct MIME types.
+   */
   function getProxiedPreviewUrl(url: string): string {
     if (url.includes("supabase.co/storage/")) {
       return "/api/preview?url=" + encodeURIComponent(url);

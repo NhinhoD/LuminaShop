@@ -7,6 +7,10 @@ import { makeLanguageRepository } from "@/infrastructure/supabase/container";
 import { Mail, Lock, KeyRound, Info, ArrowRight } from "lucide-react";
 import { AuthErrorToast } from "@/presentation/components/auth/AuthErrorToast";
 
+/**
+ * User registration page with account creation form.
+ * Collects first name, last name, email, and password.
+ */
 export default async function RegisterPage({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
   const params = await searchParams;
   const locale = await getLocale();

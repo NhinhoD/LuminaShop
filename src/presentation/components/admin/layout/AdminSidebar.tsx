@@ -46,6 +46,10 @@ interface NavGroup {
   items: NavItem[];
 }
 
+/**
+ * Collapsible admin sidebar navigation with grouped menu items, system status indicator, and user profile card.
+ * Supports desktop collapsed state and mobile drawer mode with backdrop overlay.
+ */
 export function AdminSidebar({
   isCollapsed,
   onToggleCollapse,

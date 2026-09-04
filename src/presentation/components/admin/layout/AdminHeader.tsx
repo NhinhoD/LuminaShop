@@ -25,6 +25,10 @@ interface AdminHeaderProps {
   userName?: string;
 }
 
+/**
+ * Admin dashboard header component with breadcrumbs, global search, language switcher, and action buttons.
+ * Adapts to sidebar collapsed state and provides mobile menu toggle.
+ */
 export function AdminHeader({
   isCollapsed,
   onToggleCollapse,
@@ -36,7 +40,9 @@ export function AdminHeader({
   const pathname = usePathname();
   const [hasUnreadNotice] = useState(true);
 
-  // Generate current breadcrumb title from pathname
+  /**
+   * Derives a localized breadcrumb title from the current pathname.
+   */
   const getBreadcrumbTitle = () => {
     if (pathname === "/admin") return adminDict.navDashboard || (currentLocale === "vi" ? "Tổng quan" : "Dashboard");
     if (pathname.startsWith("/admin/products/new")) return adminDict.newProductTitle || (currentLocale === "vi" ? "Thêm sản phẩm mới" : "New Product");

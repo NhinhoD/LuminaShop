@@ -8,6 +8,10 @@ import { ROLES, ROUTES } from "@/presentation/constants";
 import { AdminShell } from "@/presentation/components/admin/layout/AdminShell";
 
 export const dynamic = "force-dynamic";
+/**
+ * Admin layout component that enforces role-based access control.
+ * Validates user authentication and admin role, then renders the AdminShell wrapper with localized UI.
+ */
 export default async function AdminLayout({
   children,
 }: Readonly<{

@@ -29,6 +29,11 @@ interface CustomerWithStats {
   lastOrderDate?: string;
 }
 
+/**
+ * Admin customers management page.
+ * Displays registered users with aggregated order statistics (total orders, total spent, last order).
+ * Supports search filtering by name, email, or user ID.
+ */
 export default async function AdminCustomersPage({
   searchParams,
 }: {

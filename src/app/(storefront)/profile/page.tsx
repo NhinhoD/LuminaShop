@@ -9,6 +9,10 @@ import { User, Download, LogOut } from 'lucide-react';
 import { ProfileFormClient } from './ProfileFormClient';
 import { UserOrdersRealtimeTracker } from '@/presentation/components/orders/UserOrdersRealtimeTracker';
 
+/**
+ * User profile page displaying account information and navigation sidebar.
+ * Requires authentication; redirects to login if not authenticated.
+ */
 export default async function ProfilePage() {
   const authRepo = await makeAuthRepository();
   const user = await authRepo.getCurrentUser();

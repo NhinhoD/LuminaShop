@@ -18,6 +18,10 @@ import {
 
 export const dynamic = "force-dynamic";
 
+/**
+ * Admin settings hub page with quick navigation cards.
+ * Provides access to translations, language management, payment configuration, and infrastructure settings.
+ */
 export default async function AdminSettingsPage() {
   const langRepo = await makeLanguageRepository();
   const dict = await getDictionary(langRepo);

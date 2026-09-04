@@ -9,9 +9,13 @@ import { getDictionary, getLocale } from "@/i18n/getDictionary";
 import { getLocalizedText } from "@/presentation/utils/locale";
 import { makeLanguageRepository } from "@/infrastructure/supabase/container";
 
+/**
+ * Order success confirmation page displayed after successful payment.
+ * Verifies payment status, displays order summary with licensed assets, and provides download/installation instructions.
+ */
 export default async function OrderSuccessPage(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
-  
+
   // Verify payment status (especially for PayOS on localhost where webhook might not reach)
   await verifyOrderPaymentAction(params.id, false);
   

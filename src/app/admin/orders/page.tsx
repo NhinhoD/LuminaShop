@@ -15,6 +15,10 @@ interface AdminOrdersPageProps {
   searchParams: Promise<{ page?: string; q?: string; status?: string }>;
 }
 
+/**
+ * Admin orders management page.
+ * Displays filterable/searchable order list with status tabs and pagination.
+ */
 export default async function AdminOrdersPage({ searchParams }: AdminOrdersPageProps) {
   const params = await searchParams;
   const currentPage = parseInt(params.page || "1", 10);

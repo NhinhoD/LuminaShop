@@ -18,6 +18,10 @@ import {
   ChevronRight 
 } from "lucide-react";
 
+/**
+ * Admin dashboard page displaying key business metrics and recent orders.
+ * Shows revenue, order count, customer growth KPIs, and a live order feed.
+ */
 export default async function AdminDashboardPage() {
   const repo = await makeLanguageRepository();
   const dictionary = await getDictionary(repo);

@@ -26,6 +26,9 @@ interface ProductFormData {
   techStack: string; // Comma separated for form input
 }
 
+/**
+ * Sanitizes a product title into a URL-safe slug for storage paths.
+ */
 function sanitizeName(title: string): string {
   return title
     .toLowerCase()
@@ -60,6 +63,9 @@ interface MockFileSystemDirectoryReader {
 }
 
 
+/**
+ * Recursively extracts files from a drag-and-drop directory entry (including nested folders).
+ */
 const getFilesFromDirectoryEntry = async (entry: MockFileSystemEntry, currentPath = ""): Promise<FileToUpload[]> => {
   const files: FileToUpload[] = [];
   if (entry.isFile) {
@@ -96,6 +102,9 @@ const getFilesFromDirectoryEntry = async (entry: MockFileSystemEntry, currentPat
   return files;
 };
 
+/**
+ * Extracts all files from a drag-and-drop DataTransfer object, preserving directory structure.
+ */
 const getDroppedFiles = async (dataTransfer: DataTransfer): Promise<FileToUpload[]> => {
   const files: FileToUpload[] = [];
   const items = dataTransfer.items;
@@ -120,6 +129,9 @@ const getDroppedFiles = async (dataTransfer: DataTransfer): Promise<FileToUpload
   return files;
 };
 
+/**
+ * Normalizes file paths by removing common top-level directory if all files share it.
+ */
 const normalizePaths = (files: FileToUpload[]): FileToUpload[] => {
   if (files.length === 0) return files;
   const firstPath = files[0].path;
@@ -137,6 +149,10 @@ const normalizePaths = (files: FileToUpload[]): FileToUpload[] => {
   return files;
 };
 
+/**
+ * Uploads a directory of preview/demo files to Supabase Storage.
+ * Injects click-blocking script into HTML files and sets correct MIME types.
+ */
 const uploadPreviewFilesAsync = async (
   filesToUpload: FileToUpload[],
   title: string,
@@ -256,6 +272,10 @@ const uploadPreviewFilesAsync = async (
   }
 };
 
+/**
+ * Admin product creation/editing form with multilingual support and file upload zones.
+ * Handles cover image, source code ZIP, and live preview folder uploads to Supabase Storage.
+ */
 export function ProductForm({ categories, initialData }: ProductFormProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);

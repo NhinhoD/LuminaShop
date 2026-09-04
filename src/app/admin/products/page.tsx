@@ -8,6 +8,11 @@ import { getDictionary, getLocale } from "@/i18n/getDictionary";
 import { getLocalizedText } from "@/presentation/utils/locale";
 import { Plus, Search, Edit3, Package, Image as ImageIcon } from "lucide-react";
 
+/**
+ * Admin products management page.
+ * Displays a filterable table of all products with search, category/status filters, and pagination.
+ * Supports inline editing, deletion, and navigation to product detail pages.
+ */
 export default async function AdminProductsPage({
   searchParams,
 }: {

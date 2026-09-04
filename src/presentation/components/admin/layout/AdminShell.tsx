@@ -13,6 +13,10 @@ interface AdminShellProps {
   userName?: string;
 }
 
+/**
+ * Main layout shell for the admin dashboard.
+ * Manages sidebar collapse state, mobile drawer, and renders AdminSidebar, AdminHeader, and page content.
+ */
 export function AdminShell({
   children,
   currentLocale,
