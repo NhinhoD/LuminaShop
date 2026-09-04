@@ -97,17 +97,17 @@ export function OrderDetailModal({ orderId, onClose }: OrderDetailModalProps): R
               {/* Customer Info */}
               <div className="space-y-6">
                 <section>
-                  <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 flex items-center gap-2">
+                  <h3 className="text-xs font-medium text-slate-500 mb-3 flex items-center gap-2">
                     <CreditCard className="w-4 h-4" /> Thanh toán
                   </h3>
-                  <div className="bg-slate-50 p-4 rounded-2xl space-y-4">
+                  <div className="bg-slate-50 p-4 rounded-2xl space-y-4 border border-slate-100">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold uppercase text-slate-700">
+                      <span className="text-xs font-medium uppercase text-slate-700 font-mono">
                         {order.paymentMethod === 'cod' ? 'Chuyển khoản VietQR' : order.paymentMethod}
                       </span>
                       <span className={cn(
-                        "text-xs font-bold px-3 py-1 rounded-full",
-                        order.paymentStatus === 'paid' ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700"
+                        "text-xs font-medium px-2.5 py-0.5 rounded-full",
+                        order.paymentStatus === 'paid' ? "bg-emerald-50 text-emerald-700 border border-emerald-200/60" : "bg-amber-50 text-amber-700 border border-amber-200/60"
                       )}>
                         {order.paymentStatus === 'paid' ? "Đã thanh toán" : "Chờ thanh toán"}
                       </span>
@@ -118,7 +118,7 @@ export function OrderDetailModal({ orderId, onClose }: OrderDetailModalProps): R
                         onClick={handleApprovePayment}
                         disabled={updating}
                         type="button"
-                        className="w-full bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white font-bold py-2.5 rounded-xl transition-all shadow-md text-xs flex items-center justify-center gap-1.5 cursor-pointer uppercase tracking-wider active:scale-98"
+                        className="w-full bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white font-medium py-2 rounded-xl transition-all shadow-xs text-xs flex items-center justify-center gap-1.5 cursor-pointer active:scale-98"
                       >
                         <CheckCircle className="w-4 h-4" />
                         Phê duyệt Chuyển khoản (Kích hoạt tải code)
@@ -129,10 +129,10 @@ export function OrderDetailModal({ orderId, onClose }: OrderDetailModalProps): R
 
                 {order.notes && (
                   <section>
-                    <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 flex items-center gap-2">
+                    <h3 className="text-xs font-medium text-slate-500 mb-3 flex items-center gap-2">
                       <FileText className="w-4 h-4" /> Ghi chú đơn hàng
                     </h3>
-                    <div className="bg-slate-50 p-4 rounded-2xl">
+                    <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100">
                       <p className="text-xs text-slate-600 italic leading-relaxed">
                         &ldquo;{order.notes}&rdquo;
                       </p>
@@ -144,10 +144,10 @@ export function OrderDetailModal({ orderId, onClose }: OrderDetailModalProps): R
 
             {/* Items */}
             <section>
-              <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+              <h3 className="text-xs font-medium text-slate-500 mb-4 flex items-center gap-2">
                 <Package className="w-4 h-4" /> Sản phẩm ({order.items?.length})
               </h3>
-              <div className="border border-slate-100 rounded-2xl overflow-hidden divide-y divide-slate-50">
+              <div className="border border-slate-100 rounded-2xl overflow-hidden divide-y divide-slate-100">
                 {order.items?.map((item: OrderItem) => (
                    <div key={item.id} className="p-4 flex items-center gap-4 bg-white">
                     <div className="relative w-12 h-12 bg-slate-100 rounded-xl flex-shrink-0 flex items-center justify-center text-slate-300 overflow-hidden">
@@ -164,22 +164,22 @@ export function OrderDetailModal({ orderId, onClose }: OrderDetailModalProps): R
                        )}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-xs font-bold text-slate-900 truncate">{getLocalizedText(item.productTitle as unknown as Record<string, string>, 'vi')}</p>
+                      <p className="text-sm font-semibold text-slate-900 truncate">{getLocalizedText(item.productTitle as unknown as Record<string, string>, 'vi')}</p>
                       {item.productSnapshot?.variantName && (
-                        <p className="text-[10px] text-slate-500">Phân loại: {item.productSnapshot.variantName}</p>
+                        <p className="text-xs text-slate-500 font-normal">Phân loại: {item.productSnapshot.variantName}</p>
                       )}
                     </div>
                     <div className="text-right">
-                      <p className="text-xs font-bold text-slate-900">{formatPrice(item.priceAtPurchase)}</p>
-                      <p className="text-[10px] text-slate-500">x {item.quantity}</p>
+                      <p className="text-sm font-bold text-slate-900 font-mono">{formatPrice(item.priceAtPurchase)}</p>
+                      <p className="text-xs text-slate-400 font-mono">x {item.quantity}</p>
                     </div>
                   </div>
                 ))}
               </div>
               <div className="mt-4 flex justify-end">
                 <div className="text-right">
-                  <p className="text-xs text-slate-400 font-bold uppercase tracking-wider">Tổng cộng</p>
-                  <p className="text-xl font-black text-[#0051d5] font-sans">{formatPrice(order.totalAmount)}</p>
+                  <p className="text-xs text-slate-500 font-normal">Tổng cộng</p>
+                  <p className="text-xl font-bold text-primary font-mono">{formatPrice(order.totalAmount)}</p>
                 </div>
               </div>
             </section>

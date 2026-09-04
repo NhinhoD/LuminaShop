@@ -9,6 +9,10 @@ import { User, Download, LogOut } from 'lucide-react';
 import { ProfileFormClient } from './ProfileFormClient';
 import { UserOrdersRealtimeTracker } from '@/presentation/components/orders/UserOrdersRealtimeTracker';
 
+/**
+ * User profile page displaying account information and navigation sidebar.
+ * Requires authentication; redirects to login if not authenticated.
+ */
 export default async function ProfilePage() {
   const authRepo = await makeAuthRepository();
   const user = await authRepo.getCurrentUser();
@@ -30,7 +34,7 @@ export default async function ProfilePage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* Navigation Sidebar */}
           <aside className="lg:col-span-3 space-y-6">
-            <div className="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-sm">
+            <div className="bg-white rounded-3xl border border-slate-100 p-6 shadow-[0_4px_24px_rgba(0,0,0,0.02)]">
               {/* User Identity */}
               <div className="flex flex-col items-center text-center mb-8">
                 <div className="w-20 h-20 rounded-full overflow-hidden mb-4 border-2 border-slate-100 shadow-sm relative">
@@ -49,18 +53,18 @@ export default async function ProfilePage() {
               </div>
 
               {/* Sidebar Navigation */}
-              <nav className="space-y-1.5">
-                <Link href="/profile" className="flex items-center gap-3 px-4 py-3 bg-primary text-white rounded-xl font-bold text-xs uppercase tracking-wider transition-all shadow-sm">
+              <nav className="space-y-1">
+                <Link href="/profile" className="flex items-center gap-3 px-3.5 py-2.5 bg-primary text-white rounded-xl font-medium text-sm transition-all shadow-xs">
                   <User size={16} />
                   <span>{profileDict.personalProfile || (locale === "vi" ? "Hồ sơ cá nhân" : "Personal Profile")}</span>
                 </Link>
-                <Link href="/profile/orders" className="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-50 hover:text-slate-950 rounded-xl font-bold text-xs uppercase tracking-wider transition-all group">
+                <Link href="/profile/orders" className="flex items-center gap-3 px-3.5 py-2.5 text-slate-600 hover:bg-slate-100 hover:text-slate-900 rounded-xl font-medium text-sm transition-all group">
                   <Download size={16} className="text-slate-400 group-hover:text-slate-900 transition-colors" />
                   <span>{profileDict.myTemplates || (locale === "vi" ? "Mã nguồn của tôi" : "My Templates")}</span>
                 </Link>
                 
-                <form action={signout} className="pt-4 border-t border-slate-100">
-                  <button type="submit" className="w-full flex items-center gap-3 px-4 py-3 text-red-500 hover:bg-red-50 rounded-xl font-bold text-xs uppercase tracking-wider transition-all group cursor-pointer">
+                <form action={signout} className="pt-3 border-t border-slate-100">
+                  <button type="submit" className="w-full flex items-center gap-3 px-3.5 py-2.5 text-red-500 hover:bg-red-50 rounded-xl font-medium text-sm transition-all group cursor-pointer">
                     <LogOut size={16} className="text-red-400 group-hover:text-red-500 transition-colors" />
                     <span>{profileDict.logout || (locale === "vi" ? "Đăng xuất" : "Sign Out")}</span>
                   </button>
@@ -71,15 +75,15 @@ export default async function ProfilePage() {
 
           {/* Main Content Area */}
           <div className="lg:col-span-9 space-y-8">
-            <section className="bg-white rounded-2xl border border-slate-200/80 p-8 md:p-10 shadow-sm">
+            <section className="bg-white rounded-3xl border border-slate-100 p-8 md:p-10 shadow-xs">
               <div className="mb-8">
-                <span className="text-[10px] font-black tracking-widest text-primary uppercase block mb-1">
+                <span className="text-xs font-semibold tracking-wider text-primary uppercase block mb-1">
                   {profileDict.tag || (locale === "vi" ? "CÀI ĐẶT TÀI KHOẢN" : "ACCOUNT SETTINGS")}
                 </span>
-                <h1 className="text-2xl font-extrabold text-slate-950">
+                <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
                   {profileDict.title || (locale === "vi" ? "Thông tin hồ sơ" : "Profile Information")}
                 </h1>
-                <div className="h-1 w-12 bg-primary rounded-full mt-2" />
+                <div className="h-0.5 w-12 bg-primary rounded-full mt-2" />
               </div>
 
               <ProfileFormClient

@@ -147,18 +147,18 @@ export default function ShopProductGrid({ initialProducts, currentSearch, curren
   }, [isLoading, filteredProducts, initialProducts]);
 
   return (
-    <div className="bg-white text-slate-800 font-sans rounded-2xl overflow-hidden shadow-sm border border-slate-200/80">
+    <div className="bg-white text-slate-800 font-sans rounded-3xl overflow-hidden shadow-[0_4px_24px_rgba(0,0,0,0.02)] border border-slate-100">
       {/* Top Filter & Sort Bar */}
-      <div className="bg-slate-50/70 p-5 sm:p-6 border-b border-slate-200/80 flex flex-col md:flex-row justify-between gap-4 items-center">
+      <div className="bg-slate-50/60 p-5 sm:p-6 border-b border-slate-100 flex flex-col md:flex-row justify-between gap-4 items-center">
         <div className="flex flex-wrap items-center gap-2">
           {categories.map((cat) => (
             <button
               key={cat.value}
               onClick={() => handleCategorySelect(cat.value)}
-              className={`rounded-xl px-4 py-2 text-xs font-bold transition-all border cursor-pointer ${
+              className={`rounded-xl px-4 py-2 text-xs font-medium transition-all border cursor-pointer ${
                 currentCategory === cat.value
-                  ? "bg-primary border-primary text-white shadow-sm"
-                  : "bg-white border-slate-200 text-slate-700 hover:border-primary/40 hover:text-slate-900"
+                  ? "bg-primary border-primary text-white shadow-xs font-semibold"
+                  : "bg-white border-slate-200/80 text-slate-600 hover:border-slate-300 hover:text-slate-900"
               }`}
             >
               {cat.label}
@@ -172,7 +172,7 @@ export default function ShopProductGrid({ initialProducts, currentSearch, curren
             <input
               type="text"
               placeholder={dict?.shop?.searchPlaceholder || (locale === "vi" ? "Tìm kiếm giao diện..." : "Search templates...")}
-              className="w-full pl-9 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+              className="w-full pl-9 pr-4 py-2 bg-white border border-slate-200/80 rounded-xl text-xs font-normal focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all placeholder:text-slate-400"
               value={searchQuery}
               onChange={(e) => {
                 setSearchQuery(e.target.value);
@@ -181,11 +181,11 @@ export default function ShopProductGrid({ initialProducts, currentSearch, curren
             />
           </div>
           <div className="flex items-center gap-1.5 flex-shrink-0">
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest hidden sm:inline">
+            <span className="text-xs font-medium text-slate-400 hidden sm:inline">
               {dict?.shop?.sortLabel || (locale === "vi" ? "Sắp xếp:" : "Sort:")}
             </span>
             <select 
-              className="bg-white text-xs font-bold text-slate-800 focus:outline-none cursor-pointer py-2 pl-2.5 pr-6 border border-slate-200 rounded-xl"
+              className="bg-white text-xs font-medium text-slate-700 focus:outline-none cursor-pointer py-2 pl-3 pr-7 border border-slate-200/80 rounded-xl shadow-xs"
               value={currentSort}
               onChange={(e) => handleSortSelect(e.target.value)}
             >
@@ -205,8 +205,8 @@ export default function ShopProductGrid({ initialProducts, currentSearch, curren
           <aside className="lg:col-span-3 space-y-6">
 
             {/* Price Filter */}
-            <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm">
-              <h3 className="flex items-center gap-2 text-xs font-extrabold text-slate-900 mb-4 uppercase tracking-wider">
+            <div className="bg-white border border-slate-100 rounded-2xl p-5 shadow-xs">
+              <h3 className="flex items-center gap-2 text-xs font-semibold text-slate-900 mb-4">
                 <SlidersHorizontal size={14} className="text-primary" />
                 {dict?.shop?.filterPrice || (locale === "vi" ? "Khoảng giá bản quyền" : "License Price Range")}
               </h3>
@@ -223,17 +223,17 @@ export default function ShopProductGrid({ initialProducts, currentSearch, curren
                 }}
                 className="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-primary"
               />
-              <div className="flex justify-between mt-3 text-[10px] text-slate-500 font-bold uppercase tracking-wider">
+              <div className="flex justify-between mt-3 text-xs text-slate-500 font-normal">
                 <span>Min: {formatCurrency(0, locale)}</span>
-                <span className="font-extrabold text-primary">
+                <span className="font-bold text-primary font-mono">
                   Max: {formatCurrency(maxPrice, locale)}
                 </span>
               </div>
             </div>
 
             {/* Tech Stack Filters */}
-            <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm">
-              <h3 className="flex items-center gap-2 text-xs font-extrabold text-slate-900 mb-4 uppercase tracking-wider">
+            <div className="bg-white border border-slate-100 rounded-2xl p-5 shadow-xs">
+              <h3 className="flex items-center gap-2 text-xs font-semibold text-slate-900 mb-4">
                 <Search size={14} className="text-primary" />
                 {dict?.shop?.filterTech || (locale === "vi" ? "Công nghệ tích hợp" : "Tech Stack")}
               </h3>
@@ -244,10 +244,10 @@ export default function ShopProductGrid({ initialProducts, currentSearch, curren
                     <button
                       key={tech}
                       onClick={() => toggleTech(tech)}
-                      className={`px-3 py-1.5 text-[11px] font-bold rounded-lg cursor-pointer transition-all ${
+                      className={`px-3 py-1.5 text-xs font-mono font-medium rounded-lg cursor-pointer transition-all ${
                         isSelected
-                          ? "bg-primary text-white shadow-sm"
-                          : "bg-slate-50 border border-slate-200 text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+                          ? "bg-primary border border-primary text-white shadow-xs font-semibold"
+                          : "bg-slate-50 border border-slate-200/80 text-slate-600 hover:bg-slate-100 hover:text-slate-900"
                       }`}
                     >
                       {tech}
@@ -276,9 +276,9 @@ export default function ShopProductGrid({ initialProducts, currentSearch, curren
                 ))}
               </div>
             ) : filteredProducts.length === 0 ? (
-              <div className="bg-white border border-slate-200/80 rounded-2xl p-16 text-center shadow-sm">
+              <div className="bg-white border border-slate-100 rounded-2xl p-16 text-center shadow-sm">
                 <Search size={40} className="text-slate-300 mx-auto mb-3" />
-                <h3 className="text-base font-extrabold text-slate-900 mb-1">
+                <h3 className="text-base font-extrabold text-slate-900 mb-1 tracking-tight">
                   {dict?.shop?.emptyTitle || (locale === "vi" ? "Không tìm thấy mã nguồn phù hợp" : "No matching source code found")}
                 </h3>
                 <p className="text-slate-500 text-xs">
@@ -293,11 +293,11 @@ export default function ShopProductGrid({ initialProducts, currentSearch, curren
                   return (
                     <div
                       key={product.id}
-                      className="product-card-anim bg-white rounded-2xl border border-slate-200/80 overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1.5 hover:border-primary/30 transition-all duration-300 group flex flex-col h-full"
+                      className="product-card-anim bg-white rounded-2xl border border-slate-100 overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1.5 hover:border-primary/40 transition-all duration-300 group flex flex-col h-full"
                     >
-                      <Link href={`${ROUTES.PRODUCT}/${product.id}`}>
-                        {/* Visual Frame */}
-                        <div className="relative overflow-hidden aspect-[16/10] bg-slate-50">
+                      {/* Visual Frame */}
+                      <div className="relative overflow-hidden aspect-[16/10] bg-slate-50">
+                        <Link href={`${ROUTES.PRODUCT}/${product.id}`}>
                           {product.imageUrl ? (
                             <Image
                               src={product.imageUrl}
@@ -311,11 +311,25 @@ export default function ShopProductGrid({ initialProducts, currentSearch, curren
                               <Monitor size={30} />
                             </div>
                           )}
-                          <div className="absolute top-3 left-3 bg-dark text-white rounded-md px-2.5 py-0.5 text-[9px] font-black tracking-widest uppercase">
-                            {isFree ? (dict?.common?.free || (locale === "vi" ? "Miễn phí" : "Free")) : (dict?.common?.premium || "Premium")}
-                          </div>
+                        </Link>
+                        
+                        <div className="absolute top-3 left-3 backdrop-blur-md bg-slate-950/80 border border-white/10 text-white rounded-full px-2.5 py-0.5 text-xs font-medium tracking-wide uppercase shadow-xs pointer-events-none">
+                          {isFree ? (dict?.common?.free || (locale === "vi" ? "Miễn phí" : "Free")) : (dict?.common?.premium || "Premium")}
                         </div>
-                      </Link>
+
+                        {/* Floating Quick Add Button on Thumbnail Hover */}
+                        <QuickAddButton
+                          product={{
+                            id: product.id,
+                            productId: product.id,
+                            title: product.title as unknown as Record<string, string>,
+                            price: Number(product.price),
+                            imageUrl: product.imageUrl || undefined,
+                            quantity: 1,
+                          }}
+                          hasVariants={false}
+                        />
+                      </div>
 
                       {/* Info Body */}
                       <div className="p-5 flex flex-col flex-grow space-y-3.5">
@@ -323,33 +337,33 @@ export default function ShopProductGrid({ initialProducts, currentSearch, curren
                           <div className="flex flex-wrap gap-1">
                             {product.techStack && product.techStack.length > 0 ? (
                               product.techStack.map((tech) => (
-                                <span key={tech} className="bg-slate-100 text-slate-600 text-[9px] font-bold px-1.5 py-0.5 rounded">
+                                <span key={tech} className="bg-slate-50 border border-slate-200/60 text-slate-600 text-xs font-mono font-normal px-2 py-0.5 rounded-md">
                                   {tech}
                                 </span>
                               ))
                             ) : (
                               <>
-                                <span className="bg-slate-100 text-slate-600 text-[9px] font-bold px-1.5 py-0.5 rounded">Next.js 16</span>
-                                <span className="bg-slate-100 text-slate-600 text-[9px] font-bold px-1.5 py-0.5 rounded">Tailwind 4</span>
+                                <span className="bg-slate-50 border border-slate-200/60 text-slate-600 text-xs font-mono font-normal px-2 py-0.5 rounded-md">Next.js 16</span>
+                                <span className="bg-slate-50 border border-slate-200/60 text-slate-600 text-xs font-mono font-normal px-2 py-0.5 rounded-md">Tailwind 4</span>
                               </>
                             )}
                           </div>
                           <Link href={`${ROUTES.PRODUCT}/${product.id}`}>
-                            <h3 className="text-base font-extrabold text-slate-950 group-hover:text-primary transition-colors line-clamp-1">
+                            <h3 className="text-base font-semibold text-slate-900 group-hover:text-primary transition-colors line-clamp-1 tracking-tight">
                               {getLocalizedText(product.title as unknown as Record<string, string>, locale)}
                             </h3>
                           </Link>
-                          <p className="text-slate-500 text-xs line-clamp-2 leading-relaxed h-8">
+                          <p className="text-slate-500 text-xs line-clamp-2 leading-relaxed h-8 font-normal">
                             {getLocalizedText(product.description as unknown as Record<string, string>, locale) || (locale === "vi" ? "Giao diện website cao cấp được thiết kế tỉ mỉ, đầy đủ công nghệ hiện đại." : "High-fidelity website template engineered with state-of-the-art modern technologies.")}
                           </p>
                         </div>
 
                         <div className="flex justify-between items-center pt-3 border-t border-slate-100 mt-auto">
                           <div>
-                            <div className="text-[9px] text-slate-400 font-bold uppercase tracking-wider">
+                            <div className="text-xs text-slate-400 font-normal">
                               {dict?.shop?.priceLabel || (locale === "vi" ? "Giá bản quyền" : "License Price")}
                             </div>
-                            <div className="text-base font-extrabold text-primary">
+                            <div className="text-base font-bold text-primary font-mono">
                               {isFree ? (dict?.common?.free?.toUpperCase() || (locale === "vi" ? "MIỄN PHÍ" : "FREE")) : formatCurrency(product.price, locale)}
                             </div>
                           </div>
@@ -360,23 +374,18 @@ export default function ShopProductGrid({ initialProducts, currentSearch, curren
                                 href={`/demo/${product.id}`} 
                                 target="_blank" 
                                 rel="noopener noreferrer"
-                                className="bg-slate-50 hover:bg-slate-100 text-slate-700 text-[11px] font-bold px-3 py-2 rounded-xl transition-all border border-slate-200 flex items-center gap-1"
+                                className="bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs font-medium px-3 py-1.5 rounded-xl transition-all border border-slate-200/80 flex items-center gap-1 shadow-xs active:scale-95"
                               >
                                 <span>{dict?.shop?.demoButton || (locale === "vi" ? "Demo" : "Demo")}</span>
                                 <ExternalLink size={12} />
                               </Link>
                             )}
-                            <QuickAddButton
-                              product={{
-                                id: product.id,
-                                productId: product.id,
-                                title: product.title as unknown as Record<string, string>,
-                                price: Number(product.price),
-                                imageUrl: product.imageUrl || undefined,
-                                quantity: 1,
-                              }}
-                              hasVariants={false}
-                            />
+                            <Link 
+                              href={`${ROUTES.PRODUCT}/${product.id}`}
+                              className="bg-primary/10 hover:bg-primary text-primary hover:text-white text-xs font-medium px-3 py-1.5 rounded-xl transition-all flex items-center gap-1 active:scale-95"
+                            >
+                              <span>{dict?.shop?.detailsButton || (locale === "vi" ? "Chi tiết" : "Details")}</span>
+                            </Link>
                           </div>
                         </div>
                       </div>

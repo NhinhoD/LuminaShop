@@ -305,15 +305,27 @@ chore: install supabase agent skills
   - Built React Context `I18nProvider` & `useI18n()` hook, wrapping the root layout for instant client & server reactivity with zero hydration mismatches.
   - Localized 100% of storefront and transaction flows: Navbar, Topbar, Footer, Homepage (Hero, Advantages, Categories, Showcase, Journey, Newsletter), Shop Catalog (filters, search, sorts), Product Detail (reviews, instant download badges, accordions, licensing tiers), Cart page & CartDrawer, 3-Step Checkout with localized Zod validation messages, Auth (Login, Registration, OTP), Order Outcomes (Success, Failed), Demo Fullscreen Preview, 404 Page, and User Profile / Purchased Template Downloads.
   - Added full locale support to currency and date formatters (`formatCurrency`, `formatDate`).
+- **Security Remediation & OWASP Hardening**:
+  - Engineered centralized [`authGuards.ts`](file:///D:/E-Commerce_Full_Stack/LuminaShop/src/presentation/actions/authGuards.ts) with `assertAdmin()` and `assertAuthenticated()`, securing all admin mutation actions.
+  - Eliminated simulation backdoors in order flow and enforced strict input verification.
+  - Hardened `/api/preview` SSRF vector with protocol, hostname, and path whitelisting.
+  - Configured HTTP security headers (`nosniff`, `X-Frame-Options`, `Referrer-Policy`, `Permissions-Policy`) in `next.config.ts`.
+  - Hardened database RLS policies to restrict storage manipulation and prevent unauthorized order updates.
+- **Admin Suite & Dynamic Layout Evolution**:
+  - Implemented modern collapsible admin sidebar (`AdminSidebar.tsx`) with smooth GSAP/CSS transitions and zero layout shifts.
+  - Added Admin Customers (`/admin/customers`) and Settings (`/admin/settings`) views.
+  - Fully bound Admin layout and navigation labels to dynamic `site_translations` dictionaries.
+- **Interactive Demo Frame Polish**:
+  - Built high-fidelity responsive preview frame (`DemoPreviewFrame.tsx`) with device mode toggles (desktop, tablet, mobile).
 
 ### 🔄 In Progress:
 - None currently.
 
 ### ⏳ Next Tasks (recommended order):
-- None currently.
+- Email delivery architecture (Custom SMTP configuration vs. dedicated Clean Architecture `sendMail` service for digital license and order fulfillment).
 
 ### ⚠️ Known Issues:
-- None currently
+- None currently.
 ---
 
 ## ─── PR REVIEW PROMPT ───

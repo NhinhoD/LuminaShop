@@ -48,10 +48,10 @@ export function NavLink({ href, icon, children }: NavLinkProps) {
       <Link
         href={href}
         className={cn(
-          "flex items-center gap-3 px-4 py-3 transition-all duration-200 ease-in-out rounded-xl group text-xs uppercase tracking-wider font-bold",
+          "flex items-center gap-3 px-3.5 py-2.5 transition-all duration-150 ease-in-out rounded-xl group text-sm font-medium",
           isActive
-            ? "bg-[#0051d5] text-white shadow-md shadow-blue-900/20"
-            : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+            ? "bg-primary text-white shadow-xs font-semibold"
+            : "text-slate-600 hover:bg-slate-100/80 hover:text-slate-900"
         )}
       >
         <IconComponent 

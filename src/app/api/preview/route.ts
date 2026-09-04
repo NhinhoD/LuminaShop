@@ -21,7 +21,9 @@ import { NextRequest, NextResponse } from "next/server";
 
 const ALLOWED_ORIGIN = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
 
-/** Map file extensions to correct MIME types */
+/**
+ * Maps file extensions to correct MIME types for proper browser rendering.
+ */
 function resolveContentType(url: string): string {
   const pathname = new URL(url).pathname.toLowerCase();
   if (pathname.endsWith(".html") || pathname.endsWith(".htm")) return "text/html; charset=utf-8";
@@ -41,13 +43,17 @@ function resolveContentType(url: string): string {
   return "application/octet-stream";
 }
 
-/** Get the directory URL from a full file URL (for <base> tag injection) */
+/**
+ * Extracts the directory URL from a full file URL for base tag injection.
+ */
 function getBaseUrl(fileUrl: string): string {
   const lastSlash = fileUrl.lastIndexOf("/");
   return lastSlash > 0 ? fileUrl.substring(0, lastSlash + 1) : fileUrl;
 }
 
-/** Check if a content type is HTML */
+/**
+ * Checks if a content type represents HTML.
+ */
 function isHtmlType(contentType: string): boolean {
   return contentType.startsWith("text/html");
 }
@@ -74,6 +80,10 @@ function injectBaseTag(html: string, baseUrl: string): string {
   return baseTag + html;
 }
 
+/**
+ * API route handler that proxies Supabase Storage files with corrected MIME types.
+ * Injects base tags into HTML for relative resource resolution and enforces SSRF protection.
+ */
 export async function GET(request: NextRequest): Promise<NextResponse> {
   const targetUrl = request.nextUrl.searchParams.get("url");
 
@@ -81,9 +91,31 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ error: "Missing 'url' query parameter" }, { status: 400 });
   }
 
-  // Security: only allow proxying from our own Supabase project
-  if (ALLOWED_ORIGIN && !targetUrl.startsWith(ALLOWED_ORIGIN)) {
-    return NextResponse.json({ error: "URL is not from the allowed Supabase origin" }, { status: 403 });
+  // Security: strictly parse URL and verify origin and path against Supabase public storage
+  try {
+    const parsedTarget = new URL(targetUrl);
+    if (!ALLOWED_ORIGIN) {
+      return NextResponse.json({ error: "Server configuration error: Supabase origin missing" }, { status: 500 });
+    }
+    const parsedAllowed = new URL(ALLOWED_ORIGIN);
+
+    // Block credentials in URL
+    if (parsedTarget.username || parsedTarget.password) {
+      return NextResponse.json({ error: "Credentials in URL are not permitted" }, { status: 400 });
+    }
+
+    // Exact origin verification (scheme, host, and port) to completely prevent SSRF and port attacks
+    if (parsedTarget.origin.toLowerCase() !== parsedAllowed.origin.toLowerCase()) {
+      return NextResponse.json({ error: "URL is not from the allowed Supabase origin" }, { status: 403 });
+    }
+
+    // Path validation: only allow public preview and storage assets
+    const lowerPath = parsedTarget.pathname.toLowerCase();
+    if (!lowerPath.startsWith("/storage/v1/object/public/")) {
+      return NextResponse.json({ error: "URL path is restricted" }, { status: 403 });
+    }
+  } catch {
+    return NextResponse.json({ error: "Malformed URL parameter" }, { status: 400 });
   }
 
   try {
@@ -102,7 +134,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
     const resolvedType = resolveContentType(targetUrl);
 
-    // For HTML files, inject <base> tag and serve as text
+    // For HTML files, inject <base> tag and serve with strict sandbox headers
     if (isHtmlType(resolvedType)) {
       const rawHtml = await upstreamResponse.text();
       const baseUrl = getBaseUrl(targetUrl);
@@ -114,7 +146,8 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
           "Content-Type": resolvedType,
           "Cache-Control": "public, max-age=3600, s-maxage=3600",
           "X-Content-Type-Options": "nosniff",
-          "Access-Control-Allow-Origin": "*",
+          "X-Frame-Options": "SAMEORIGIN",
+          "Content-Security-Policy": "default-src 'self' 'unsafe-inline' 'unsafe-eval' https: data: blob:; object-src 'none'; frame-ancestors 'self'",
         },
       });
     }

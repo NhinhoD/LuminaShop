@@ -136,15 +136,15 @@ export default async function OrderDetailPage({ params }: PageProps) {
           </div>
 
           {/* Items & Download Panel */}
-          <div className="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
-            <div className="p-6 border-b border-slate-50 flex items-center gap-2">
-              <ShoppingBag className="w-5 h-5 text-[#0051d5]" />
-              <h2 className="font-extrabold text-slate-900 text-sm font-sans">
+          <div className="bg-white rounded-3xl border border-slate-100 shadow-xs overflow-hidden">
+            <div className="p-6 border-b border-slate-100 flex items-center gap-2">
+              <ShoppingBag className="w-5 h-5 text-primary" />
+              <h2 className="font-semibold text-slate-900 text-sm font-sans">
                 {orderDict.ownedSourcePackages || (locale === "vi" ? "Gói mã nguồn sở hữu" : "Owned Source Code Packages")}
               </h2>
             </div>
             
-            <div className="divide-y divide-slate-50">
+            <div className="divide-y divide-slate-100">
               {itemsWithCode.map((item) => (
                 <div key={item.id} className="p-6 space-y-4">
                   <div className="flex gap-4 items-center">
@@ -162,30 +162,30 @@ export default async function OrderDetailPage({ params }: PageProps) {
                       )}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-extrabold text-slate-800 text-[14px] truncate">
+                      <h3 className="font-semibold text-slate-900 text-sm truncate">
                         {getLocalizedText(item.productTitle as unknown as Record<string, string>, locale) || (locale === "vi" ? "Sản phẩm không xác định" : "Unknown Product")}
                       </h3>
-                      <div className="flex gap-1.5 mt-1">
-                        <span className="text-[8px] bg-slate-100 text-slate-400 font-extrabold px-1.5 py-0.5 rounded">
+                      <div className="flex flex-wrap gap-2 mt-1">
+                        <span className="text-xs bg-slate-100 text-slate-600 font-medium px-2 py-0.5 rounded font-mono">
                           {orderDict.licenseCode || "SKU:"} {item.productId.slice(0, 6).toUpperCase()}
                         </span>
-                        <span className="text-[8px] bg-blue-50 text-[#0051d5] font-extrabold px-1.5 py-0.5 rounded">
+                        <span className="text-xs bg-primary/10 text-primary font-medium px-2 py-0.5 rounded">
                           {orderDict.lifetimeLicenseBadge || (locale === "vi" ? "CẤP PHÉP TRỌN ĐỜI" : "LIFETIME LICENSE")}
                         </span>
                       </div>
                     </div>
-                    <div className="text-right font-black text-slate-900 text-sm">
+                    <div className="text-right font-bold text-slate-900 text-sm font-mono">
                       {formatCurrency(Number(item.priceAtPurchase), locale)}
                     </div>
                   </div>
 
                   {/* HIGH-CONTRAST DIGITAL DOWNLOAD DRAWER */}
                   {isOrderPaid ? (
-                    <div className="flex flex-col sm:flex-row gap-2 pt-2">
+                    <div className="flex flex-col sm:flex-row gap-2.5 pt-2">
                       {item.sourceCodeUrl ? (
                         <a
                           href={item.sourceCodeUrl}
-                          className="flex-1 inline-flex items-center justify-center gap-2 bg-[#0051d5] hover:bg-[#0041ac] text-white px-5 py-3 rounded-xl font-bold transition-all text-xs shadow-md shadow-blue-500/10 active:scale-98 uppercase tracking-wider"
+                          className="flex-1 inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary-dark text-white px-5 py-2.5 rounded-xl font-medium transition-all text-xs shadow-xs active:scale-98"
                         >
                           <Download size={14} />
                           <span>{orderDict.downloadSourceCode || (locale === "vi" ? "Tải source code (.zip)" : "Download Source Code (.zip)")}</span>
@@ -193,7 +193,7 @@ export default async function OrderDetailPage({ params }: PageProps) {
                       ) : (
                         <button
                           disabled
-                          className="flex-1 inline-flex items-center justify-center gap-2 bg-slate-100 text-slate-400 px-5 py-3 rounded-xl font-bold text-xs cursor-not-allowed border border-slate-200 uppercase tracking-wider"
+                          className="flex-1 inline-flex items-center justify-center gap-2 bg-slate-100 text-slate-400 px-5 py-2.5 rounded-xl font-medium text-xs cursor-not-allowed border border-slate-200/80"
                         >
                           <Download size={14} />
                           <span>{orderDict.preparingDownload || (locale === "vi" ? "Đang chuẩn bị file tải lên..." : "Preparing upload file...")}</span>
@@ -205,7 +205,7 @@ export default async function OrderDetailPage({ params }: PageProps) {
                           href={item.demoUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center justify-center gap-2 bg-slate-50 hover:bg-slate-100 text-slate-700 px-5 py-3 rounded-xl font-bold border border-slate-200 transition-all text-xs uppercase tracking-wider"
+                          className="inline-flex items-center justify-center gap-2 bg-slate-50 hover:bg-slate-100 text-slate-700 px-5 py-2.5 rounded-xl font-medium border border-slate-200/80 transition-all text-xs"
                         >
                           <ExternalLink size={14} />
                           <span>{orderDict.liveDemoBtn || (locale === "vi" ? "Xem Demo trực tiếp" : "Live Demo")}</span>
@@ -213,7 +213,7 @@ export default async function OrderDetailPage({ params }: PageProps) {
                       )}
                     </div>
                   ) : (
-                    <div className="bg-amber-50/50 border border-amber-100 rounded-xl p-4 text-[11px] font-bold text-amber-700 flex items-center gap-2">
+                    <div className="bg-amber-50/60 border border-amber-200/60 rounded-xl p-3.5 text-xs font-normal text-amber-800 flex items-center gap-2">
                       <span className="flex h-2 w-2 rounded-full bg-amber-500 animate-pulse" />
                       <span>
                         {orderDict.transferVerifying || (locale === "vi" ? "Giao dịch chuyển khoản đang được xác nhận. Link tải code sẽ tự động hiển thị tại đây khi hoàn tất." : "Bank transfer verification in progress. Download links will appear here immediately once verified.")}
@@ -225,13 +225,13 @@ export default async function OrderDetailPage({ params }: PageProps) {
             </div>
 
             <div className="bg-slate-50/50 p-6 space-y-3">
-              <div className="flex justify-between text-xs font-bold text-slate-400 uppercase tracking-wider">
+              <div className="flex justify-between text-xs font-normal text-slate-500">
                 <span>{cartDict.subtotal || (locale === "vi" ? "Tạm tính" : "Subtotal")}</span>
-                <span className="text-slate-800">{formatCurrency(order.totalAmount, locale)}</span>
+                <span className="text-slate-900 font-medium font-mono">{formatCurrency(order.totalAmount, locale)}</span>
               </div>
-              <div className="flex justify-between items-center pt-3 border-t border-slate-200">
-                <span className="font-extrabold text-slate-900 text-sm">{orderDict.total || (locale === "vi" ? "Tổng cộng" : "Total Amount")}</span>
-                <span className="text-2xl font-black text-[#0051d5] font-sans">
+              <div className="flex justify-between items-center pt-3 border-t border-slate-200/80">
+                <span className="font-semibold text-slate-900 text-sm">{orderDict.total || (locale === "vi" ? "Tổng cộng" : "Total Amount")}</span>
+                <span className="text-xl font-bold text-primary font-mono">
                   {formatCurrency(order.totalAmount, locale)}
                 </span>
               </div>
@@ -243,51 +243,51 @@ export default async function OrderDetailPage({ params }: PageProps) {
         <div className="space-y-6">
           
           {/* Digital Email Delivery */}
-          <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
+          <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-xs">
             <div className="flex items-center gap-2 mb-4">
-              <MapPin className="w-5 h-5 text-[#0051d5]" />
-              <h2 className="font-extrabold text-slate-900 text-sm font-sans">
+              <MapPin className="w-5 h-5 text-primary" />
+              <h2 className="font-semibold text-slate-900 text-sm font-sans">
                 {orderDict.accountDeliverInfo || (locale === "vi" ? "Thông tin tài khoản nhận mã nguồn" : "Source Code Recipient Account")}
               </h2>
             </div>
             <div className="space-y-3">
-              <p className="font-bold text-slate-800 text-[13px]">{order.shippingAddress?.fullName}</p>
+              <p className="font-medium text-slate-900 text-sm">{order.shippingAddress?.fullName}</p>
               <div className="p-3 bg-slate-50 rounded-xl border border-slate-100 text-xs">
-                <span className="text-slate-400 font-bold uppercase tracking-wider block mb-0.5 text-[10px]">
+                <span className="text-slate-400 font-normal block mb-0.5 text-xs">
                   {orderDict.deployEnvironment || (locale === "vi" ? "Môi trường nhận code (Email)" : "Delivery Destination (Email)")}
                 </span>
-                <span className="font-extrabold text-slate-800 break-all">{order.shippingAddress?.street}</span>
+                <span className="font-medium text-slate-800 break-all font-mono">{order.shippingAddress?.street}</span>
               </div>
-              <div className="text-[11px] text-slate-400 font-bold">
+              <div className="text-xs text-slate-400 font-normal font-mono">
                 {orderDict.contactSupportChannel || (locale === "vi" ? "Kênh liên hệ hỗ trợ:" : "Support Contact Channel:")} {order.shippingAddress?.phone}
               </div>
             </div>
           </div>
 
           {/* Payment Info */}
-          <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
+          <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-xs">
             <div className="flex items-center gap-2 mb-4">
-              <CreditCard className="w-5 h-5 text-[#0051d5]" />
-              <h2 className="font-extrabold text-slate-900 text-sm font-sans">
+              <CreditCard className="w-5 h-5 text-primary" />
+              <h2 className="font-semibold text-slate-900 text-sm font-sans">
                 {orderDict.paymentMethod || (locale === "vi" ? "Thanh toán" : "Payment Details")}
               </h2>
             </div>
-            <div className="space-y-3.5 text-xs">
+            <div className="space-y-3 text-xs">
               <div className="flex items-center justify-between">
-                <span className="text-slate-400 font-bold uppercase tracking-wider">
+                <span className="text-slate-500 font-normal">
                   {orderDict.paymentMethod || "Method"}:
                 </span>
-                <span className="font-extrabold text-slate-800 uppercase">
+                <span className="font-medium text-slate-900 font-mono uppercase">
                   {order.paymentMethod === 'cod' ? 'Manual VietQR' : order.paymentMethod}
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-slate-400 font-bold uppercase tracking-wider">
+                <span className="text-slate-500 font-normal">
                   {orderDict.paymentStatusLabel || (locale === "vi" ? "Trạng thái:" : "Status:")}
                 </span>
                 <span className={cn(
-                  "font-black uppercase tracking-wider",
-                  order.paymentStatus === 'paid' ? "text-green-600" : "text-amber-500"
+                  "font-medium",
+                  order.paymentStatus === 'paid' ? "text-emerald-600" : "text-amber-600"
                 )}>
                   {order.paymentStatus === 'paid' 
                     ? (orderDict.paymentPaid || (locale === "vi" ? "Đã xác nhận" : "Verified & Paid"))
@@ -299,43 +299,43 @@ export default async function OrderDetailPage({ params }: PageProps) {
 
           {/* Quick Bank Transfer details if not paid yet */}
           {!isOrderPaid && (
-            <div className="bg-white border border-slate-100 p-6 rounded-3xl shadow-sm space-y-4">
+            <div className="bg-white border border-slate-100 p-6 rounded-3xl shadow-xs space-y-4">
               <div className="flex items-center gap-2">
                 <QrCode className="w-5 h-5 text-amber-500" />
-                <h3 className="font-extrabold text-slate-900 text-sm font-sans">
+                <h3 className="font-semibold text-slate-900 text-sm font-sans">
                   {orderDict.bankTransferGuide || (locale === "vi" ? "Hướng dẫn chuyển khoản" : "Bank Transfer Instructions")}
                 </h3>
               </div>
-              <div className="p-4 bg-slate-50 border border-slate-100 rounded-2xl text-[11px] text-slate-500 space-y-2.5 leading-relaxed">
+              <div className="p-4 bg-slate-50 border border-slate-100 rounded-2xl text-xs text-slate-500 space-y-2.5 leading-relaxed">
                 <div>
-                  <span className="font-bold text-slate-400 uppercase tracking-widest block text-[9px]">{orderDict.bankName || "Bank"}</span>
-                  <span className="font-extrabold text-slate-800 text-xs">MB BANK (Ngân hàng Quân Đội)</span>
+                  <span className="font-normal text-slate-400 block text-xs">{orderDict.bankName || "Bank"}</span>
+                  <span className="font-medium text-slate-900 text-xs">MB BANK (Ngân hàng Quân Đội)</span>
                 </div>
                 <div>
-                  <span className="font-bold text-slate-400 uppercase tracking-widest block text-[9px]">{orderDict.bankAccountNo || "Account No"}</span>
-                  <span className="font-extrabold text-slate-800 text-xs">999988886666</span>
+                  <span className="font-normal text-slate-400 block text-xs">{orderDict.bankAccountNo || "Account No"}</span>
+                  <span className="font-medium text-slate-900 text-xs font-mono">999988886666</span>
                 </div>
                 <div>
-                  <span className="font-bold text-slate-400 uppercase tracking-widest block text-[9px]">{orderDict.bankAccountHolder || "Account Holder"}</span>
-                  <span className="font-extrabold text-slate-800 text-xs">PHUNG XUAN DUONG</span>
+                  <span className="font-normal text-slate-400 block text-xs">{orderDict.bankAccountHolder || "Account Holder"}</span>
+                  <span className="font-medium text-slate-900 text-xs">PHUNG XUAN DUONG</span>
                 </div>
                 <div>
-                  <span className="font-bold text-slate-400 uppercase tracking-widest block text-[9px]">{orderDict.bankContent || "Transfer Memo"}</span>
-                  <span className="font-black text-amber-700 bg-amber-50 border border-amber-100 px-2 py-0.5 rounded text-xs inline-block mt-0.5">KHOUI {order.id.slice(0, 8).toUpperCase()}</span>
+                  <span className="font-normal text-slate-400 block text-xs">{orderDict.bankContent || "Transfer Memo"}</span>
+                  <span className="font-medium text-amber-700 bg-amber-50 border border-amber-200/60 px-2 py-0.5 rounded text-xs inline-block mt-0.5 font-mono">KHOUI {order.id.slice(0, 8).toUpperCase()}</span>
                 </div>
               </div>
             </div>
           )}
 
           {/* Digital Handover Shield */}
-          <div className="bg-gradient-to-br from-[#0051d5] to-[#0041ac] p-6 rounded-3xl shadow-lg shadow-blue-500/10 text-white">
-            <div className="flex items-center gap-2 mb-4">
-              <ShoppingBag className="w-6 h-6" />
-              <h2 className="font-extrabold text-sm font-sans">
+          <div className="bg-gradient-to-br from-primary to-primary-dark p-6 rounded-3xl shadow-xs text-white">
+            <div className="flex items-center gap-2 mb-3">
+              <ShoppingBag className="w-5 h-5" />
+              <h2 className="font-semibold text-sm font-sans">
                 {orderDict.sourceDeliveryTitle || (locale === "vi" ? "Bàn giao mã nguồn" : "Source Code Handover")}
               </h2>
             </div>
-            <p className="text-blue-100 text-[11px] leading-relaxed">
+            <p className="text-blue-100 text-xs leading-relaxed font-normal">
               {isOrderPaid 
                 ? (orderDict.sourceDeliveryPaid || (locale === "vi" ? "Bản quyền đã kích hoạt! Hãy nhấn vào nút 'Tải về Source Code' bên dưới sản phẩm để tải file mã nguồn dạng .zip." : "License active! Click 'Download Source Code' below each item to retrieve the .zip package."))
                 : (orderDict.sourceDeliveryPending || (locale === "vi" ? "Đơn hàng đang chờ xác nhận giao dịch chuyển khoản. Vui lòng hoàn thành chuyển khoản để kích hoạt link tải tự động." : "Order is awaiting bank payment confirmation. Please complete the transfer to unlock instant downloads."))

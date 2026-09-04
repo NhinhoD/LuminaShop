@@ -1,8 +1,9 @@
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import VerifyOtpForm from '@/presentation/components/VerifyOtpForm'
-import { BRAND_NAME } from '@/presentation/constants'
-
+import { ROUTES } from '@/presentation/constants'
+import Link from 'next/link'
+import Image from 'next/image'
 import React from 'react'
 
 export default async function VerifyOtpPage(): Promise<React.ReactNode> {
@@ -10,15 +11,15 @@ export default async function VerifyOtpPage(): Promise<React.ReactNode> {
   const email = cookieStore.get('pending_verification_email')?.value
 
   if (!email) {
-    redirect('/register')
+    redirect(ROUTES.REGISTER)
   }
 
   return (
-    <div className="min-h-screen bg-[#f8f9fa] flex flex-col items-center justify-center py-20 px-4">
+    <div className="min-h-screen bg-background-subtle/50 flex flex-col items-center justify-center py-20 px-4 font-sans">
       {/* Brand Header */}
-      <h1 className="text-4xl font-black tracking-[0.2em] text-slate-950 uppercase mb-12">
-        {BRAND_NAME}
-      </h1>
+      <Link href={ROUTES.HOME} className="mb-10">
+        <Image src="/LogoKhoUI.png" alt="KhoUI Logo" width={160} height={56} priority className="h-14 w-auto object-contain" />
+      </Link>
 
       <VerifyOtpForm email={email} />
     </div>

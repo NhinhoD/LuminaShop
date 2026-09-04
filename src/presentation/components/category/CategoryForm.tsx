@@ -57,32 +57,32 @@ export function CategoryForm({ category, onSuccess, onCancel }: CategoryFormProp
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 bg-white p-6 rounded-xl shadow-sm border border-slate-100">
-      <h3 className="text-lg font-bold text-slate-900 mb-4">
+    <form onSubmit={handleSubmit} className="space-y-4 bg-white p-6 rounded-2xl shadow-xs border border-slate-100 font-sans">
+      <h3 className="text-base font-semibold text-slate-900 mb-4 tracking-tight">
         {category ? "Cập nhật danh mục" : "Thêm danh mục mới"}
       </h3>
       
       {error && (
-        <div className="p-3 bg-red-50 text-red-600 text-sm rounded-lg border border-red-100">
+        <div className="p-3 bg-red-50 text-red-600 text-xs rounded-xl border border-red-100">
           {error}
         </div>
       )}
 
-      <div className="space-y-2">
-        <div className="flex justify-between items-center mb-2">
-          <label className="text-sm font-medium text-slate-700">Tên danh mục</label>
-          <div className="flex bg-slate-100 p-1 rounded-lg">
+      <div className="space-y-1.5">
+        <div className="flex justify-between items-center mb-1">
+          <label className="text-xs font-medium text-slate-700">Tên danh mục *</label>
+          <div className="flex bg-slate-100 p-0.5 rounded-lg">
             <button 
               type="button"
               onClick={() => setCurrentLang('vi')}
-              className={`px-2 py-1 text-xs font-bold rounded-md transition-colors ${currentLang === 'vi' ? 'bg-white shadow-sm text-[#0051d5]' : 'text-slate-500'}`}
+              className={`px-2.5 py-1 text-xs font-medium rounded-md transition-colors ${currentLang === 'vi' ? 'bg-white shadow-xs text-primary' : 'text-slate-500'}`}
             >
               Tiếng Việt
             </button>
             <button 
               type="button"
               onClick={() => setCurrentLang('en')}
-              className={`px-2 py-1 text-xs font-bold rounded-md transition-colors ${currentLang === 'en' ? 'bg-white shadow-sm text-[#0051d5]' : 'text-slate-500'}`}
+              className={`px-2.5 py-1 text-xs font-medium rounded-md transition-colors ${currentLang === 'en' ? 'bg-white shadow-xs text-primary' : 'text-slate-500'}`}
             >
               English
             </button>
@@ -93,37 +93,37 @@ export function CategoryForm({ category, onSuccess, onCancel }: CategoryFormProp
           value={name[currentLang] || ""}
           onChange={(e) => setName({ ...name, [currentLang]: e.target.value })}
           placeholder={currentLang === 'vi' ? "Ví dụ: Giao diện cá nhân" : "Example: Personal Portfolio"}
-          className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+          className="w-full h-10 px-3.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm font-normal"
           required
         />
-        <p className="text-xs text-slate-500 italic">Slug sẽ được tự động tạo: {generateSlug(name.vi || name.en || "category") || "..."}</p>
+        <p className="text-xs text-slate-400 font-mono">Slug: {generateSlug(name.vi || name.en || "category") || "..."}</p>
       </div>
 
-      <div className="space-y-2">
-        <div className="flex justify-between items-center mb-2">
-          <label className="text-sm font-medium text-slate-700">Mô tả</label>
+      <div className="space-y-1.5">
+        <div className="flex justify-between items-center mb-1">
+          <label className="text-xs font-medium text-slate-700">Mô tả</label>
         </div>
         <textarea
           value={description[currentLang] || ""}
           onChange={(e) => setDescription({ ...description, [currentLang]: e.target.value })}
           placeholder={currentLang === 'vi' ? "Mô tả ngắn gọn về danh mục..." : "Brief description of the category..."}
           rows={3}
-          className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all resize-none"
+          className="w-full p-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all resize-none text-sm font-normal"
         />
       </div>
 
-      <div className="flex gap-3 pt-2">
+      <div className="flex gap-3 pt-3">
         <button
           type="submit"
           disabled={loading}
-          className="flex-1 bg-[#0051d5] text-white py-2 rounded-lg font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50"
+          className="flex-1 bg-primary text-white py-2.5 rounded-xl font-medium text-sm hover:bg-primary-dark transition-colors disabled:opacity-50 shadow-xs cursor-pointer active:scale-95"
         >
           {loading ? "Đang xử lý..." : category ? "Cập nhật" : "Tạo mới"}
         </button>
         <button
           type="button"
           onClick={onCancel}
-          className="flex-1 bg-slate-100 text-slate-700 py-2 rounded-lg font-semibold hover:bg-slate-200 transition-colors"
+          className="flex-1 bg-slate-100 text-slate-700 py-2.5 rounded-xl font-medium text-sm hover:bg-slate-200 transition-colors cursor-pointer active:scale-95"
         >
           Hủy
         </button>

@@ -48,7 +48,7 @@ export function PaginationControls({ currentPage, totalPages }: PaginationContro
             {isActive && (
               <motion.div
                 layoutId="pagination-active"
-                className="absolute inset-0 bg-[#0051d5] rounded-full shadow-md shadow-blue-500/20"
+                className="absolute inset-0 bg-primary rounded-full shadow-md shadow-primary/20"
                 transition={{ type: "spring", stiffness: 300, damping: 20 }}
               />
             )}

@@ -1,6 +1,9 @@
 "use server";
 
-import { makeProcessPaymentUseCase } from "@/infrastructure/supabase/container";
+import { 
+  makeProcessPaymentUseCase, 
+  makeVerifyOrderPaymentUseCase 
+} from "@/infrastructure/supabase/container";
 import { revalidatePath } from "next/cache";
 
 export async function processPaymentAction(orderId: string, amount: number, method: string) {
@@ -19,7 +22,6 @@ export async function processPaymentAction(orderId: string, amount: number, meth
 }
 
 export async function verifyOrderPaymentAction(orderId: string, shouldRevalidate: boolean = true) {
-  const { makeVerifyOrderPaymentUseCase } = await import('@/infrastructure/supabase/container');
   const useCase = await makeVerifyOrderPaymentUseCase();
   const result = await useCase.execute(orderId);
   
