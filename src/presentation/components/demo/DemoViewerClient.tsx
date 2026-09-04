@@ -146,7 +146,7 @@ export default function DemoViewerClient({
           <iframe
             src={resolvedIframeSrc}
             className="w-full h-full border-0 bg-white"
-            sandbox="allow-scripts allow-same-origin allow-popups"
+            sandbox="allow-scripts allow-popups allow-forms"
             allow="autoplay; fullscreen; clipboard-read; clipboard-write; encrypted-media"
             title={`Live Demo of ${productTitle}`}
           />

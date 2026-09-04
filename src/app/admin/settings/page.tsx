@@ -72,7 +72,7 @@ export default async function AdminSettingsPage() {
 
         {/* Languages & Locales */}
         <Link
-          href="/admin/settings/languages"
+          href="/admin/languages"
           className="p-6 bg-white border border-slate-100 rounded-2xl shadow-xs hover:shadow-sm hover:border-primary/30 transition-all group flex flex-col justify-between"
         >
           <div className="space-y-3">

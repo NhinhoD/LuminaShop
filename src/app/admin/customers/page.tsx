@@ -50,15 +50,28 @@ export default async function AdminCustomersPage({
   const supabase = await createServerSupabaseClient();
 
   // 1. Fetch profiles
-  const { data: profiles = [] } = await supabase
+  const { data: profiles, error: profilesError } = await supabase
     .from("profiles")
     .select("id, full_name, role, created_at")
     .order("created_at", { ascending: false });
 
   // 2. Fetch all orders to aggregate by customer
-  const { data: orders = [] } = await supabase
+  const { data: orders, error: ordersError } = await supabase
     .from("orders")
     .select("id, user_id, contact_email, total_amount, status, payment_status, created_at");
+
+  if (profilesError || ordersError) {
+    return (
+      <div className="p-8 text-center bg-red-50 border border-red-200 rounded-2xl text-red-700 max-w-xl mx-auto my-12 font-sans">
+        <p className="font-semibold text-sm">
+          {locale === "vi" ? "Không thể tải dữ liệu khách hàng từ máy chủ" : "Failed to load customer metrics from database"}
+        </p>
+        <p className="text-xs text-red-500 mt-1 font-mono">
+          {profilesError?.message || ordersError?.message}
+        </p>
+      </div>
+    );
+  }
 
   // Build customer stats map
   const ordersByUser: Record<string, { totalOrders: number; totalSpent: number; lastOrderDate: string; email: string }> = {};

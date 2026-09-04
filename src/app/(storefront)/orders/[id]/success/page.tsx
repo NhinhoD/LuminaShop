@@ -30,6 +30,10 @@ export default async function OrderSuccessPage(props: { params: Promise<{ id: st
     redirect("/");
   }
 
+  if (order.status === "cancelled" || order.paymentStatus === "failed") {
+    redirect(`/orders/${params.id}/failed`);
+  }
+
   return (
     <div className="min-h-screen bg-background-subtle/50 py-16 sm:py-20 px-4 sm:px-6 font-sans">
       <div className="max-w-[720px] mx-auto text-center">

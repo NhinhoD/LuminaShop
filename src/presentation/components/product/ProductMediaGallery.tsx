@@ -121,7 +121,7 @@ export default function ProductMediaGallery({ productId, title, imageUrl, demoUr
               src={resolvedIframeSrc}
               title={`Live Preview of ${title}`}
               className="w-full h-[calc(100%-32px)] border-0 bg-white"
-              sandbox="allow-scripts allow-same-origin allow-popups"
+              sandbox="allow-scripts allow-popups allow-forms"
               allow="autoplay; fullscreen; clipboard-read; clipboard-write; encrypted-media"
               onLoad={() => setIframeLoading(false)}
             />

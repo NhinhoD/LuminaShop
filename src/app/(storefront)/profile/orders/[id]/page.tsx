@@ -165,7 +165,7 @@ export default async function OrderDetailPage({ params }: PageProps) {
                       <h3 className="font-semibold text-slate-900 text-sm truncate">
                         {getLocalizedText(item.productTitle as unknown as Record<string, string>, locale) || (locale === "vi" ? "Sản phẩm không xác định" : "Unknown Product")}
                       </h3>
-                      <div className="flex gap-2 mt-1">
+                      <div className="flex flex-wrap gap-2 mt-1">
                         <span className="text-xs bg-slate-100 text-slate-600 font-medium px-2 py-0.5 rounded font-mono">
                           {orderDict.licenseCode || "SKU:"} {item.productId.slice(0, 6).toUpperCase()}
                         </span>

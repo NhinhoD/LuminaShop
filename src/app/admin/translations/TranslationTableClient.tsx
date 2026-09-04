@@ -178,7 +178,7 @@ export default function TranslationTableClient({ initialTranslations }: { initia
             <thead>
               <tr className="bg-white border-b border-slate-100 text-xs font-medium text-slate-500">
                 <th className="px-6 py-3.5 w-1/4">{locale === "vi" ? "MÃ KHÓA (KEY)" : "KEY"}</th>
-                <th className="px-4 py-3.5 w-1/8">{locale === "vi" ? "NHÓM" : "NAMESPACE"}</th>
+                <th className="px-4 py-3.5 w-[12.5%]">{locale === "vi" ? "NHÓM" : "NAMESPACE"}</th>
                 <th className="px-4 py-3.5 w-1/3">{locale === "vi" ? "TIẾNG VIỆT (VI)" : "VIETNAMESE (VI)"}</th>
                 <th className="px-4 py-3.5 w-1/3">{locale === "vi" ? "TIẾNG ANH (EN)" : "ENGLISH (EN)"}</th>
                 <th className="px-6 py-3.5 text-right">{locale === "vi" ? "THAO TÁC" : "ACTIONS"}</th>

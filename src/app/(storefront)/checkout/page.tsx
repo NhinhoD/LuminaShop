@@ -308,7 +308,7 @@ export default function CheckoutPage() {
                             <h3 className="font-semibold text-slate-900 text-sm group-hover:text-primary transition-colors tracking-tight">
                               {getLocalizedText(item.title as unknown as Record<string, string>, locale)}
                             </h3>
-                            <div className="flex gap-1.5 mt-1.5">
+                            <div className="flex flex-wrap gap-1.5 mt-1.5">
                               <span className="text-xs text-primary font-medium bg-primary/10 px-2 py-0.5 rounded">
                                 {dict?.checkout?.lifetimeLicense || (locale === "vi" ? "Bản quyền trọn đời" : "Lifetime License")}
                               </span>
@@ -546,7 +546,7 @@ export default function CheckoutPage() {
                       className="mt-1 text-primary focus:ring-primary"
                     />
                     <div className="flex-1">
-                      <div className="flex items-center gap-2">
+                      <div className="flex flex-wrap items-center gap-2">
                         <QrCode className="w-4 h-4 text-primary" />
                         <span className="font-semibold text-sm text-slate-900 tracking-tight">
                           {locale === "vi" ? "VietQR / PayOS (Khuyên dùng)" : "VietQR / PayOS (Recommended)"}

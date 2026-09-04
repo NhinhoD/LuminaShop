@@ -41,10 +41,10 @@ export default async function OrderFailedPage(props: { params: Promise<{ id: str
 
         <div className="flex flex-col sm:flex-row justify-center gap-3.5">
           <Link 
-            href={`/checkout`} 
+            href={`/profile/orders/${order.id}`} 
             className="px-6 py-3 bg-primary text-white rounded-xl font-medium hover:bg-primary-dark transition-all text-sm shadow-xs active:scale-95 text-center"
           >
-            {orderDict.retryPayment || (locale === "vi" ? "Thử thanh toán lại" : "Retry Payment")}
+            {orderDict.viewOrderDetail || (locale === "vi" ? "Kiểm tra chi tiết đơn hàng" : "View Order Details")}
           </Link>
           <Link 
             href="/shop" 

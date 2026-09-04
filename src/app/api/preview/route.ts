@@ -99,11 +99,13 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     }
     const parsedAllowed = new URL(ALLOWED_ORIGIN);
 
-    // Exact hostname & protocol verification to block SSRF and sub-domain collision
-    if (parsedTarget.protocol !== "https:" && parsedTarget.protocol !== "http:") {
-      return NextResponse.json({ error: "Invalid protocol" }, { status: 400 });
+    // Block credentials in URL
+    if (parsedTarget.username || parsedTarget.password) {
+      return NextResponse.json({ error: "Credentials in URL are not permitted" }, { status: 400 });
     }
-    if (parsedTarget.hostname.toLowerCase() !== parsedAllowed.hostname.toLowerCase()) {
+
+    // Exact origin verification (scheme, host, and port) to completely prevent SSRF and port attacks
+    if (parsedTarget.origin.toLowerCase() !== parsedAllowed.origin.toLowerCase()) {
       return NextResponse.json({ error: "URL is not from the allowed Supabase origin" }, { status: 403 });
     }
 
@@ -132,7 +134,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
     const resolvedType = resolveContentType(targetUrl);
 
-    // For HTML files, inject <base> tag and serve as text
+    // For HTML files, inject <base> tag and serve with strict sandbox headers
     if (isHtmlType(resolvedType)) {
       const rawHtml = await upstreamResponse.text();
       const baseUrl = getBaseUrl(targetUrl);
@@ -144,7 +146,8 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
           "Content-Type": resolvedType,
           "Cache-Control": "public, max-age=3600, s-maxage=3600",
           "X-Content-Type-Options": "nosniff",
-          "Access-Control-Allow-Origin": "*",
+          "X-Frame-Options": "SAMEORIGIN",
+          "Content-Security-Policy": "default-src 'self' 'unsafe-inline' 'unsafe-eval' https: data: blob:; object-src 'none'; frame-ancestors 'self'",
         },
       });
     }
