@@ -155,4 +155,85 @@ export class SupabaseAuthRepository implements IAuthRepository {
       return null;
     }
   }
+
+  async updateProfile(userId: string, data: { fullName: string; phone?: string | null }): Promise<Result<void>> {
+    try {
+      const { error } = await this.supabase
+        .from('profiles')
+        .update({
+          full_name: data.fullName,
+          phone: data.phone ?? null,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', userId);
+
+      if (error) {
+        return fail(new Error(error.message || 'Cập nhật hồ sơ thất bại'));
+      }
+
+      return ok(undefined);
+    } catch (err) {
+      return fail(err instanceof Error ? err : new Error('Lỗi hệ thống khi cập nhật hồ sơ'));
+    }
+  }
+
+  async resetPasswordForEmail(email: string, redirectTo: string): Promise<Result<void>> {
+    try {
+      const { error } = await this.supabase.auth.resetPasswordForEmail(email, {
+        redirectTo,
+      });
+      if (error) {
+        return fail(new Error(error.message || 'Gửi email đặt lại mật khẩu thất bại'));
+      }
+      return ok(undefined);
+    } catch (err) {
+      return fail(err instanceof Error ? err : new Error('Lỗi hệ thống khi gửi email đặt lại mật khẩu'));
+    }
+  }
+
+  async updatePassword(newPassword: string): Promise<Result<void>> {
+    try {
+      const { error } = await this.supabase.auth.updateUser({
+        password: newPassword,
+      });
+      if (error) {
+        return fail(new Error(error.message || 'Cập nhật mật khẩu thất bại'));
+      }
+      return ok(undefined);
+    } catch (err) {
+      return fail(err instanceof Error ? err : new Error('Lỗi hệ thống khi cập nhật mật khẩu'));
+    }
+  }
+
+  async changePassword(currentPassword: string, newPassword: string): Promise<Result<void>> {
+    try {
+      const { data: { user }, error: userError } = await this.supabase.auth.getUser();
+      if (userError || !user || !user.email) {
+        return fail(new Error('Người dùng chưa đăng nhập hoặc không tìm thấy phiên làm việc'));
+      }
+
+      // Re-authenticate using current password to ensure verification
+      const { error: signInError } = await this.supabase.auth.signInWithPassword({
+        email: user.email,
+        password: currentPassword,
+      });
+
+      if (signInError) {
+        return fail(new Error('Mật khẩu hiện tại không chính xác'));
+      }
+
+      // Update password for verified user
+      const { error: updateError } = await this.supabase.auth.updateUser({
+        password: newPassword,
+      });
+
+      if (updateError) {
+        return fail(new Error(updateError.message || 'Cập nhật mật khẩu thất bại'));
+      }
+
+      return ok(undefined);
+    } catch (err) {
+      return fail(err instanceof Error ? err : new Error('Lỗi hệ thống khi đổi mật khẩu'));
+    }
+  }
 }

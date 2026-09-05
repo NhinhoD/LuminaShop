@@ -1531,8 +1531,8 @@ export default function HomePageClient({ featuredProducts, categories }: HomePag
                   </Link>
 
                   {/* Template Info Body */}
-                  <div className="p-5 flex flex-col flex-grow space-y-3.5">
-                    <div className="space-y-1.5">
+                  <div className="p-5 flex flex-col flex-grow justify-between">
+                    <div className="space-y-2 mb-4">
                       <div className="flex flex-wrap gap-1">
                         {product.techStack && product.techStack.length > 0 ? (
                           product.techStack.map((tech) => (
@@ -1554,39 +1554,61 @@ export default function HomePageClient({ featuredProducts, categories }: HomePag
                           {productTitle}
                         </h3>
                       </Link>
-                      <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed font-normal h-8">
+                      <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed font-normal min-h-[38px]">
                         {productDesc || (locale === "vi" ? "Website Template chất lượng cao, tích hợp đầy đủ công nghệ hiện đại nhất." : "High-fidelity website template engineered with state-of-the-art technologies.")}
                       </p>
                     </div>
 
-                    <div className="flex justify-between items-center pt-3.5 border-t border-slate-100 mt-auto">
-                      <div>
-                        <div className="text-[10px] text-slate-400 font-normal">
-                          {dict?.home?.showcase?.priceLabel || (locale === "vi" ? "Bản quyền trọn đời" : "Lifetime License")}
+                    {/* Card Footer */}
+                    <div className="pt-3.5 border-t border-slate-100 mt-auto">
+                      <div className="flex items-end justify-between gap-2 mb-3">
+                        <div className="min-w-0">
+                          <span className="block text-[10px] text-slate-400 font-medium uppercase tracking-wider mb-0.5">
+                            {dict?.home?.showcase?.priceLabel || (locale === "vi" ? "Bản quyền trọn đời" : "Lifetime License")}
+                          </span>
+                          <div className="flex items-baseline gap-1 font-mono">
+                            <span className="text-sm font-bold text-primary tracking-tight">
+                              {isFree ? (dict?.common?.free?.toUpperCase() || (locale === "vi" ? "MIỄN PHÍ" : "FREE")) : formatCurrency(product.price, locale)}
+                            </span>
+                            {!isFree && (
+                              <span className="text-[10px] font-normal text-slate-400 font-sans">
+                                {locale === "vi" ? "/ trọn đời" : "/ lifetime"}
+                              </span>
+                            )}
+                          </div>
                         </div>
-                        <div className="text-sm font-bold text-primary font-mono">
-                          {isFree ? (dict?.common?.free?.toUpperCase() || (locale === "vi" ? "MIỄN PHÍ" : "FREE")) : formatCurrency(product.price, locale)}
+
+                        <div className="shrink-0">
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200/60">
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                            <span>{locale === "vi" ? "Sẵn sàng" : "Instant"}</span>
+                          </span>
                         </div>
                       </div>
 
-                      <div className="flex gap-1.5 items-center">
-                        {product.demoUrl && (
+                      <div className="grid grid-cols-2 gap-2">
+                        {product.demoUrl ? (
                           <a
                             href={product.demoUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="bg-slate-50 hover:bg-slate-100 text-slate-700 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors border border-slate-200/60 flex items-center gap-1"
+                            className="h-8.5 rounded-xl text-xs font-medium bg-slate-50 hover:bg-slate-100 text-slate-700 hover:text-slate-900 border border-slate-200/80 transition-all flex items-center justify-center gap-1 shadow-2xs active:scale-[0.98]"
                           >
                             <span>Demo</span>
                             <ExternalLink size={11} />
                           </a>
+                        ) : (
+                          <div className="h-8.5 rounded-xl text-xs font-medium bg-slate-50/60 text-slate-400 border border-slate-100 flex items-center justify-center gap-1 cursor-default select-none">
+                            <Code2 size={11} className="text-slate-300" />
+                            <span>Code</span>
+                          </div>
                         )}
                         <Link
                           href={`${ROUTES.PRODUCT}/${product.id}`}
-                          className="w-8 h-8 rounded-lg bg-primary text-white flex items-center justify-center hover:bg-primary-dark transition-colors shadow-2xs"
-                          title="View Details"
+                          className="h-8.5 rounded-xl text-xs font-semibold bg-primary hover:bg-primary-dark text-white shadow-2xs shadow-primary/20 transition-all flex items-center justify-center gap-1 group/btn active:scale-[0.98]"
                         >
-                          <ArrowRight size={13} />
+                          <span>{dict?.shop?.detailsButton || (locale === "vi" ? "Chi tiết" : "Details")}</span>
+                          <ArrowRight size={11} className="transition-transform group-hover/btn:translate-x-0.5" />
                         </Link>
                       </div>
                     </div>

@@ -16,7 +16,6 @@ import {
   User, 
   Mail,
   Send,
-  CreditCard, 
   ArrowRight, 
   ArrowLeft, 
   ShoppingCart, 
@@ -523,44 +522,67 @@ export default function CheckoutPage() {
                   </div>
                 </div>
 
-                {/* Payment Gateway Options */}
-                <div className="space-y-3">
-                  <span className="text-xs font-medium text-slate-500 block">
-                    {dict?.checkout?.paymentMethodTitle || (locale === "vi" ? "Chọn phương thức thanh toán" : "Choose Payment Method")}
-                  </span>
-                  
-                  {/* PayOS Option */}
-                  <label 
-                    className={`flex items-start gap-4 p-4 rounded-2xl border-2 transition-all cursor-pointer ${
-                      formData.paymentMethod === PaymentMethod.PAYOS 
-                        ? 'border-primary bg-primary/[0.03] shadow-xs' 
-                        : 'border-slate-100 hover:border-slate-200 bg-white'
-                    }`}
-                  >
-                    <input 
-                      type="radio" 
-                      name="paymentMethod"
-                      value={PaymentMethod.PAYOS}
-                      checked={formData.paymentMethod === PaymentMethod.PAYOS}
-                      onChange={() => setFormData(prev => ({ ...prev, paymentMethod: PaymentMethod.PAYOS }))}
-                      className="mt-1 text-primary focus:ring-primary"
-                    />
-                    <div className="flex-1">
-                      <div className="flex flex-wrap items-center gap-2">
-                        <QrCode className="w-4 h-4 text-primary" />
+                {/* Payment Gateway Options or Free Order Banner */}
+                {subtotal === 0 ? (
+                  <div className="p-5 rounded-2xl border-2 border-emerald-500/20 bg-emerald-50/40 flex items-start gap-4">
+                    <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center shrink-0">
+                      <ShieldCheck className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
                         <span className="font-semibold text-sm text-slate-900 tracking-tight">
-                          {locale === "vi" ? "VietQR / PayOS (Khuyên dùng)" : "VietQR / PayOS (Recommended)"}
+                          {locale === "vi" ? "Đơn hàng miễn phí (0đ)" : "Free Digital Order (0đ)"}
                         </span>
                         <span className="bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 text-xs font-medium px-2 py-0.5 rounded-full">
-                          {locale === "vi" ? "Tự động 24/7" : "Automated 24/7"}
+                          {locale === "vi" ? "Không cần thanh toán" : "No Payment Required"}
                         </span>
                       </div>
                       <p className="text-xs text-slate-500 mt-1 leading-relaxed font-normal">
-                        {dict?.checkout?.vietQrDesc || (locale === "vi" ? "Tạo mã QR động VietQR thanh toán tự động trong 5 giây qua ứng dụng ngân hàng" : "Dynamic VietQR automated code generation with 5-second bank verification")}
+                        {locale === "vi"
+                          ? "Mã bản quyền (License Key) và link tải mã nguồn sẽ được hệ thống tự động kích hoạt và gửi đến email của bạn ngay lập tức."
+                          : "Your lifetime license key and source code download link will be automatically issued and dispatched to your email immediately."}
                       </p>
                     </div>
-                  </label>
-                </div>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    <span className="text-xs font-medium text-slate-500 block">
+                      {dict?.checkout?.paymentMethodTitle || (locale === "vi" ? "Chọn phương thức thanh toán" : "Choose Payment Method")}
+                    </span>
+                    
+                    {/* PayOS Option */}
+                    <label 
+                      className={`flex items-start gap-4 p-4 rounded-2xl border-2 transition-all cursor-pointer ${
+                        formData.paymentMethod === PaymentMethod.PAYOS 
+                          ? 'border-primary bg-primary/[0.03] shadow-xs' 
+                          : 'border-slate-100 hover:border-slate-200 bg-white'
+                      }`}
+                    >
+                      <input 
+                        type="radio" 
+                        name="paymentMethod"
+                        value={PaymentMethod.PAYOS}
+                        checked={formData.paymentMethod === PaymentMethod.PAYOS}
+                        onChange={() => setFormData(prev => ({ ...prev, paymentMethod: PaymentMethod.PAYOS }))}
+                        className="mt-1 text-primary focus:ring-primary"
+                      />
+                      <div className="flex-1">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <QrCode className="w-4 h-4 text-primary" />
+                          <span className="font-semibold text-sm text-slate-900 tracking-tight">
+                            {locale === "vi" ? "VietQR / PayOS (Khuyên dùng)" : "VietQR / PayOS (Recommended)"}
+                          </span>
+                          <span className="bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 text-xs font-medium px-2 py-0.5 rounded-full">
+                            {locale === "vi" ? "Tự động 24/7" : "Automated 24/7"}
+                          </span>
+                        </div>
+                        <p className="text-xs text-slate-500 mt-1 leading-relaxed font-normal">
+                          {dict?.checkout?.vietQrDesc || (locale === "vi" ? "Tạo mã QR động VietQR thanh toán tự động trong 5 giây qua ứng dụng ngân hàng" : "Dynamic VietQR automated code generation with 5-second bank verification")}
+                        </p>
+                      </div>
+                    </label>
+                  </div>
+                )}
 
                 {/* Error Banner */}
                 {error && (
@@ -592,8 +614,12 @@ export default function CheckoutPage() {
                       </>
                     ) : (
                       <>
-                        <CreditCard className="w-4 h-4" />
-                        <span>{dict?.checkout?.placeOrderCTA || (locale === "vi" ? "Xác nhận & Thanh toán" : "Confirm & Pay Now")}</span>
+                        <span>
+                          {subtotal === 0 
+                            ? (locale === "vi" ? "Nhận mã nguồn miễn phí ngay (0đ)" : "Claim Free Source Code (0đ)")
+                            : (locale === "vi" ? `Thanh toán ${formatCurrency(subtotal, locale)}` : `Pay ${formatCurrency(subtotal, locale)}`)}
+                        </span>
+                        <ArrowRight className="w-4 h-4" />
                       </>
                     )}
                   </button>

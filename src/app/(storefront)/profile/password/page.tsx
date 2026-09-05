@@ -1,16 +1,18 @@
 import { redirect } from 'next/navigation';
+import { Metadata } from 'next';
 import { makeAuthRepository, makeLanguageRepository } from '@/infrastructure/supabase/container';
 import { ROUTES } from '@/presentation/constants';
 import { getDictionary, getLocale } from '@/i18n/getDictionary';
-import { ProfileFormClient } from './ProfileFormClient';
-import { ProfileSidebar } from './ProfileSidebar';
+import { ProfileSidebar } from '../ProfileSidebar';
+import { ChangePasswordForm } from './ChangePasswordForm';
 import { UserOrdersRealtimeTracker } from '@/presentation/components/orders/UserOrdersRealtimeTracker';
 
-/**
- * User profile page displaying account information and navigation sidebar.
- * Requires authentication; redirects to login if not authenticated.
- */
-export default async function ProfilePage() {
+export const metadata: Metadata = {
+  title: 'Đổi mật khẩu | KhoUI',
+  description: 'Cập nhật mật khẩu tài khoản của bạn trên KhoUI',
+};
+
+export default async function ChangePasswordPage() {
   const authRepo = await makeAuthRepository();
   const user = await authRepo.getCurrentUser();
 
@@ -31,7 +33,7 @@ export default async function ProfilePage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* Navigation Sidebar */}
           <ProfileSidebar
-            activeTab="profile"
+            activeTab="password"
             user={user}
             profile={profile}
             locale={locale}
@@ -43,21 +45,20 @@ export default async function ProfilePage() {
             <section className="bg-white rounded-3xl border border-slate-100 p-8 md:p-10 shadow-xs">
               <div className="mb-8">
                 <span className="text-xs font-semibold tracking-wider text-primary uppercase block mb-1">
-                  {profileDict.tag || (locale === "vi" ? "CÀI ĐẶT TÀI KHOẢN" : "ACCOUNT SETTINGS")}
+                  {locale === 'vi' ? 'BẢO MẬT TÀI KHOẢN' : 'ACCOUNT SECURITY'}
                 </span>
                 <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
-                  {profileDict.title || (locale === "vi" ? "Thông tin hồ sơ" : "Profile Information")}
+                  {profileDict.changePassword || (locale === 'vi' ? 'Đổi mật khẩu' : 'Change Password')}
                 </h1>
-                <div className="h-0.5 w-12 bg-primary rounded-full mt-2" />
+                <p className="text-slate-500 text-xs mt-1.5 font-normal">
+                  {locale === 'vi'
+                    ? 'Để bảo mật tài khoản, vui lòng sử dụng mật khẩu mạnh và không chia sẻ cho người khác.'
+                    : 'For your security, please use a strong password and do not share it with others.'}
+                </p>
+                <div className="h-0.5 w-12 bg-primary rounded-full mt-3" />
               </div>
 
-              <ProfileFormClient
-                initialFullName={profile?.fullName || ''}
-                initialPhone={profile?.phone || ''}
-                email={user.email || ''}
-                locale={locale}
-                profileDict={profileDict}
-              />
+              <ChangePasswordForm locale={locale} />
             </section>
           </div>
         </div>

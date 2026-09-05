@@ -13,7 +13,7 @@ export async function Navbar() {
   const navLinks = [
     { label: navDict.home || "Trang chủ", href: ROUTES.HOME },
     { label: navDict.templates || "Kho Template", href: ROUTES.SHOP },
-    { label: navDict.portfolio || "Bộ sưu tập", href: "/shop?category=portfolio" },
+    { label: navDict.portfolio || "Bộ sưu tập", href: "/shop?category=portfolio-agency" },
     { label: navDict.contact || "Hỗ trợ kỹ thuật", href: "mailto:contact@khoui.com" },
   ] as const;
 

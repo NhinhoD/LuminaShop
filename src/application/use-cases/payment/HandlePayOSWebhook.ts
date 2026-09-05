@@ -1,5 +1,6 @@
 import { IOrderRepository } from '@/domain/repositories/IOrderRepository';
 import { IPaymentRepository } from '@/domain/repositories/IPaymentRepository';
+import { SendOrderConfirmationEmailUseCase } from '@/application/use-cases/orders/SendOrderConfirmationEmail';
 
 export interface WebhookData {
   orderCode: number;
@@ -17,7 +18,8 @@ export interface WebhookData {
 export class HandlePayOSWebhookUseCase {
   constructor(
     private orderRepo: IOrderRepository,
-    private paymentRepo: IPaymentRepository
+    private paymentRepo: IPaymentRepository,
+    private sendOrderEmailUseCase?: SendOrderConfirmationEmailUseCase
   ) {}
 
   async execute(data: WebhookData): Promise<{ success: boolean; message: string }> {
@@ -32,12 +34,20 @@ export class HandlePayOSWebhookUseCase {
         await this.paymentRepo.updatePaymentStatus(payment.id, 'paid');
         await this.orderRepo.updatePaymentStatus(payment.orderId, 'paid');
         
+        // Trigger automated license key & digital fulfillment delivery email
+        if (this.sendOrderEmailUseCase) {
+          try {
+            await this.sendOrderEmailUseCase.execute(payment.orderId);
+          } catch {
+            // Non-blocking: payment is already verified
+          }
+        }
+
         return { success: true, message: 'Webhook processed successfully' };
       }
 
       return { success: true, message: 'Webhook received but not a success code' };
     } catch (error: unknown) {
-      console.error('HandlePayOSWebhookUseCase error:', error);
       return {
         success: false,
         message: error instanceof Error ? error.message : 'Unknown webhook processing error'

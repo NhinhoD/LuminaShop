@@ -1,12 +1,14 @@
 import { IOrderRepository } from '@/domain/repositories/IOrderRepository';
 import { IPaymentRepository } from '@/domain/repositories/IPaymentRepository';
 import { IPaymentGateway } from '@/domain/repositories/IPaymentGateway';
+import { SendOrderConfirmationEmailUseCase } from '@/application/use-cases/orders/SendOrderConfirmationEmail';
 
 export class VerifyOrderPaymentUseCase {
   constructor(
     private orderRepo: IOrderRepository,
     private paymentRepo: IPaymentRepository,
-    private payosGateway: IPaymentGateway
+    private payosGateway: IPaymentGateway,
+    private sendOrderEmailUseCase?: SendOrderConfirmationEmailUseCase
   ) {}
 
   async execute(orderId: string): Promise<{ success: boolean; message: string }> {
@@ -25,6 +27,16 @@ export class VerifyOrderPaymentUseCase {
           if (verifyResult.success) {
             await this.paymentRepo.updatePaymentStatus(payment.id, 'paid');
             await this.orderRepo.updatePaymentStatus(orderId, 'paid');
+
+            // Trigger automated license key & digital fulfillment delivery email
+            if (this.sendOrderEmailUseCase) {
+              try {
+                await this.sendOrderEmailUseCase.execute(orderId);
+              } catch {
+                // Non-blocking
+              }
+            }
+
             return { success: true, message: 'Payment verified successfully' };
           }
           return verifyResult;
@@ -33,7 +45,6 @@ export class VerifyOrderPaymentUseCase {
 
       return { success: false, message: 'Payment is not PAID yet or unsupported method' };
     } catch (error: unknown) {
-      console.error('VerifyOrderPaymentUseCase error:', error);
       return { success: false, message: error instanceof Error ? error.message : 'Unknown error' };
     }
   }

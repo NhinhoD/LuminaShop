@@ -317,12 +317,18 @@ chore: install supabase agent skills
   - Fully bound Admin layout and navigation labels to dynamic `site_translations` dictionaries.
 - **Interactive Demo Frame Polish**:
   - Built high-fidelity responsive preview frame (`DemoPreviewFrame.tsx`) with device mode toggles (desktop, tablet, mobile).
+- **Automated Digital License & Order Email Fulfillment Engine**:
+  - Engineered pure domain service interface [`IEmailService.ts`](file:///D:/E-Commerce_Full_Stack/LuminaShop/src/domain/services/IEmailService.ts).
+  - Built production infrastructure [`ResendEmailService.ts`](file:///D:/E-Commerce_Full_Stack/LuminaShop/src/infrastructure/email/ResendEmailService.ts) using Resend SDK with safe development fallbacks.
+  - Designed branded responsive HTML/plaintext email template [`orderConfirmationTemplate.ts`](file:///D:/E-Commerce_Full_Stack/LuminaShop/src/infrastructure/email/templates/orderConfirmationTemplate.ts) delivering order invoice, unique license keys, and direct source code download links.
+  - Implemented application use case [`SendOrderConfirmationEmailUseCase.ts`](file:///D:/E-Commerce_Full_Stack/LuminaShop/src/application/use-cases/orders/SendOrderConfirmationEmail.ts).
+  - Wired automated fulfillment triggering upon PayOS webhook confirmation, client payment verification, and admin manual payment approval, plus added on-demand resend action `resendOrderEmailAction`.
 
 ### 🔄 In Progress:
 - None currently.
 
 ### ⏳ Next Tasks (recommended order):
-- Email delivery architecture (Custom SMTP configuration vs. dedicated Clean Architecture `sendMail` service for digital license and order fulfillment).
+- Configure Custom SMTP in Supabase Dashboard with user's Resend credentials to unlock high-capacity Auth OTP sending.
 
 ### ⚠️ Known Issues:
 - None currently.

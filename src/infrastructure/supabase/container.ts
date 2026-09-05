@@ -11,6 +11,9 @@ import { SupabaseTranslationRepository } from './repositories/SupabaseTranslatio
 import { SupabaseDashboardRepository } from './repositories/SupabaseDashboardRepository';
 import { SupabasePaymentRepository } from './repositories/SupabasePaymentRepository';
 import { IAuthRepository } from '@/domain/repositories/IAuthRepository';
+import { ResendEmailService } from '../email/ResendEmailService';
+import { IEmailService } from '@/domain/services/IEmailService';
+import { SendOrderConfirmationEmailUseCase } from '@/application/use-cases/orders/SendOrderConfirmationEmail';
 
 import { AddToCartUseCase } from '@/application/use-cases/cart/AddToCart';
 import { MergeCartUseCase } from '@/application/use-cases/cart/MergeCart';
@@ -23,6 +26,7 @@ import { GetAllOrdersUseCase } from '@/application/use-cases/orders/GetAllOrders
 import { GetOrderDetailUseCase } from '@/application/use-cases/orders/GetOrderDetail';
 import { GetUserOrdersUseCase } from '@/application/use-cases/orders/GetUserOrders';
 import { UpdateOrderStatusUseCase } from '@/application/use-cases/orders/UpdateOrderStatus';
+import { ApproveManualPaymentUseCase } from '@/application/use-cases/orders/ApproveManualPayment';
 import { CreateProductUseCase } from '@/application/use-cases/products/CreateProduct';
 import { UpdateProductUseCase } from '@/application/use-cases/products/UpdateProduct';
 import { GetProductByIdUseCase } from '@/application/use-cases/products/GetProductById';
@@ -38,6 +42,10 @@ import { SignupUseCase } from '@/application/use-cases/auth/SignupUseCase';
 import { VerifyOtpUseCase } from '@/application/use-cases/auth/VerifyOtpUseCase';
 import { ResendOtpUseCase } from '@/application/use-cases/auth/ResendOtpUseCase';
 import { SignoutUseCase } from '@/application/use-cases/auth/SignoutUseCase';
+import { ForgotPasswordUseCase } from '@/application/use-cases/auth/ForgotPasswordUseCase';
+import { UpdatePasswordUseCase } from '@/application/use-cases/auth/UpdatePasswordUseCase';
+import { ChangePasswordUseCase } from '@/application/use-cases/auth/ChangePasswordUseCase';
+import { UpdateProfileUseCase } from '@/application/use-cases/auth/UpdateProfileUseCase';
 
 import { HttpLocationRepository } from '../repositories/HttpLocationRepository';
 import { GetProvincesUseCase } from '@/application/use-cases/location/GetProvinces';
@@ -147,6 +155,12 @@ export async function makeUpdateOrderStatusUseCase() {
   return new UpdateOrderStatusUseCase(repo);
 }
 
+export async function makeApproveManualPaymentUseCase() {
+  const orderRepo = await makeOrderRepository();
+  const emailUseCase = await makeSendOrderConfirmationEmailUseCase();
+  return new ApproveManualPaymentUseCase(orderRepo, emailUseCase);
+}
+
 export async function makeCreateProductUseCase() {
   const repo = await makeProductRepository();
   return new CreateProductUseCase(repo);
@@ -187,21 +201,24 @@ export async function makeProcessPaymentUseCase() {
   });
 
   const orderRepo = await makeOrderRepository();
-  return new ProcessPaymentUseCase(compositeGateway, orderRepo);
+  const emailUseCase = await makeSendOrderConfirmationEmailUseCase();
+  return new ProcessPaymentUseCase(compositeGateway, orderRepo, emailUseCase);
 }
 
 export async function makeHandlePayOSWebhookUseCase() {
   const orderRepo = await makeOrderRepository();
   const paymentRepo = await makePaymentRepository();
-  return new HandlePayOSWebhookUseCase(orderRepo, paymentRepo);
+  const emailUseCase = await makeSendOrderConfirmationEmailUseCase();
+  return new HandlePayOSWebhookUseCase(orderRepo, paymentRepo, emailUseCase);
 }
 
 export async function makeVerifyOrderPaymentUseCase() {
   const orderRepo = await makeOrderRepository();
   const paymentRepo = await makePaymentRepository();
   const payosGateway = await makePayOSGateway();
+  const emailUseCase = await makeSendOrderConfirmationEmailUseCase();
   const { VerifyOrderPaymentUseCase } = await import('@/application/use-cases/payment/VerifyOrderPayment');
-  return new VerifyOrderPaymentUseCase(orderRepo, paymentRepo, payosGateway);
+  return new VerifyOrderPaymentUseCase(orderRepo, paymentRepo, payosGateway, emailUseCase);
 }
 
 // Language Factories
@@ -274,6 +291,26 @@ export async function makeSignoutUseCase(): Promise<SignoutUseCase> {
   return new SignoutUseCase(repo);
 }
 
+export async function makeForgotPasswordUseCase(): Promise<ForgotPasswordUseCase> {
+  const repo = await makeAuthRepository();
+  return new ForgotPasswordUseCase(repo);
+}
+
+export async function makeUpdatePasswordUseCase(): Promise<UpdatePasswordUseCase> {
+  const repo = await makeAuthRepository();
+  return new UpdatePasswordUseCase(repo);
+}
+
+export async function makeChangePasswordUseCase(): Promise<ChangePasswordUseCase> {
+  const repo = await makeAuthRepository();
+  return new ChangePasswordUseCase(repo);
+}
+
+export async function makeUpdateProfileUseCase(): Promise<UpdateProfileUseCase> {
+  const repo = await makeAuthRepository();
+  return new UpdateProfileUseCase(repo);
+}
+
 // Location Factories
 export function makeLocationRepository(): HttpLocationRepository {
   return new HttpLocationRepository();
@@ -297,6 +334,19 @@ export function makeGetWardsUseCase(): GetWardsUseCase {
 LocationProvider.registerProvincesFactory(makeGetProvincesUseCase);
 LocationProvider.registerDistrictsFactory(makeGetDistrictsUseCase);
 LocationProvider.registerWardsFactory(makeGetWardsUseCase);
+
+// Email Factories
+export function makeEmailService(): IEmailService {
+  return new ResendEmailService();
+}
+
+export async function makeSendOrderConfirmationEmailUseCase(): Promise<SendOrderConfirmationEmailUseCase> {
+  const orderRepo = await makeOrderRepository();
+  const productRepo = await makeProductRepository();
+  const emailService = makeEmailService();
+  return new SendOrderConfirmationEmailUseCase(orderRepo, productRepo, emailService);
+}
+
 
 
 

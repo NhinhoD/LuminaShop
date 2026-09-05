@@ -6,10 +6,11 @@ import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import QuickAddButton from "./QuickAddButton";
 import { Product } from "@/domain/entities/Product";
+import { Category } from "@/domain/entities/Category";
 import { ROUTES } from "@/presentation/constants";
 import { formatCurrency } from "@/lib/utils";
 import gsap from "gsap";
-import { Search, SlidersHorizontal, Monitor, ExternalLink } from "lucide-react";
+import { Search, SlidersHorizontal, Monitor, Eye, ArrowRight, Code2 } from "lucide-react";
 import { useDebouncedCallback } from "use-debounce";
 import { useI18n } from "@/presentation/components/common/I18nContext";
 import { getLocalizedText } from "@/presentation/utils/locale";
@@ -20,9 +21,16 @@ interface ShopProductGridProps {
   currentSort: string;
   currentCategory: string;
   initialCategory?: string;
+  dbCategories?: readonly Category[];
 }
 
-export default function ShopProductGrid({ initialProducts, currentSearch, currentSort, currentCategory }: ShopProductGridProps) {
+export default function ShopProductGrid({ 
+  initialProducts, 
+  currentSearch, 
+  currentSort, 
+  currentCategory,
+  dbCategories,
+}: ShopProductGridProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -37,10 +45,18 @@ export default function ShopProductGrid({ initialProducts, currentSearch, curren
 
   const categories = [
     { label: dict?.shop?.allCategories || (locale === "vi" ? "Tất cả" : "All"), value: "all" },
-    { label: "Landing Page", value: "landing-page" },
-    { label: "E-Commerce", value: "e-commerce" },
-    { label: "Admin Dashboard", value: "admin-dashboard" },
-    { label: "Portfolio", value: "portfolio" },
+    ...(dbCategories && dbCategories.length > 0
+      ? dbCategories.map((c) => ({
+          label: getLocalizedText(c.name as unknown as Record<string, string>, locale) || c.slug,
+          value: c.slug,
+        }))
+      : [
+          { label: "E-Commerce", value: "e-commerce" },
+          { label: "SaaS & Tech", value: "saas-tech" },
+          { label: "Portfolio & Agency", value: "portfolio-agency" },
+          { label: "Food & Hospitality", value: "food-hospitality" },
+          { label: "Fintech & Corporate", value: "fintech-corporate" },
+        ]),
   ];
 
   const techFilters = ["Next.js 16", "Next.js 15", "Tailwind 4", "GSAP", "Framer Motion", "React 19"];
@@ -58,6 +74,9 @@ export default function ShopProductGrid({ initialProducts, currentSearch, curren
     setIsLoading(true);
     const params = new URLSearchParams(searchParams.toString());
     
+    // Always clear legacy/alias 'cat' param so URL stays unified on 'category'
+    params.delete("cat");
+
     if (updates.q !== undefined) {
       if (updates.q) params.set("q", updates.q);
       else params.delete("q");
@@ -293,7 +312,7 @@ export default function ShopProductGrid({ initialProducts, currentSearch, curren
                   return (
                     <div
                       key={product.id}
-                      className="product-card-anim bg-white rounded-2xl border border-slate-100 overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1.5 hover:border-primary/40 transition-all duration-300 group flex flex-col h-full"
+                      className="product-card-anim bg-white rounded-2xl border border-slate-100 overflow-hidden shadow-xs hover:shadow-xl hover:-translate-y-1.5 hover:border-primary/40 transition-all duration-300 group flex flex-col h-full"
                     >
                       {/* Visual Frame */}
                       <div className="relative overflow-hidden aspect-[16/10] bg-slate-50">
@@ -313,8 +332,18 @@ export default function ShopProductGrid({ initialProducts, currentSearch, curren
                           )}
                         </Link>
                         
-                        <div className="absolute top-3 left-3 backdrop-blur-md bg-slate-950/80 border border-white/10 text-white rounded-full px-2.5 py-0.5 text-xs font-medium tracking-wide uppercase shadow-xs pointer-events-none">
-                          {isFree ? (dict?.common?.free || (locale === "vi" ? "Miễn phí" : "Free")) : (dict?.common?.premium || "Premium")}
+                        <div className="absolute top-3 left-3 backdrop-blur-md bg-slate-950/75 border border-white/15 text-white rounded-full px-2.5 py-0.5 text-[11px] font-medium tracking-wide uppercase shadow-xs pointer-events-none flex items-center gap-1.5">
+                          {isFree ? (
+                            <>
+                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                              <span>{dict?.common?.free || (locale === "vi" ? "Miễn phí" : "Free")}</span>
+                            </>
+                          ) : (
+                            <>
+                              <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+                              <span>{dict?.common?.premium || "Premium"}</span>
+                            </>
+                          )}
                         </div>
 
                         {/* Floating Quick Add Button on Thumbnail Hover */}
@@ -332,59 +361,86 @@ export default function ShopProductGrid({ initialProducts, currentSearch, curren
                       </div>
 
                       {/* Info Body */}
-                      <div className="p-5 flex flex-col flex-grow space-y-3.5">
-                        <div className="space-y-1.5">
+                      <div className="p-5 flex flex-col flex-grow justify-between">
+                        <div className="space-y-2 mb-4">
                           <div className="flex flex-wrap gap-1">
-                            {product.techStack && product.techStack.length > 0 ? (
-                              product.techStack.map((tech) => (
-                                <span key={tech} className="bg-slate-50 border border-slate-200/60 text-slate-600 text-xs font-mono font-normal px-2 py-0.5 rounded-md">
-                                  {tech}
-                                </span>
-                              ))
-                            ) : (
-                              <>
-                                <span className="bg-slate-50 border border-slate-200/60 text-slate-600 text-xs font-mono font-normal px-2 py-0.5 rounded-md">Next.js 16</span>
-                                <span className="bg-slate-50 border border-slate-200/60 text-slate-600 text-xs font-mono font-normal px-2 py-0.5 rounded-md">Tailwind 4</span>
-                              </>
+                            {(product.techStack && product.techStack.length > 0
+                              ? product.techStack.slice(0, 3)
+                              : ["Next.js 16", "Tailwind 4"]
+                            ).map((tech) => (
+                              <span key={tech} className="bg-slate-50 border border-slate-200/60 text-slate-600 text-[11px] font-mono font-normal px-2 py-0.5 rounded-md">
+                                {tech}
+                              </span>
+                            ))}
+                            {product.techStack && product.techStack.length > 3 && (
+                              <span className="bg-slate-50 border border-slate-200/60 text-slate-400 text-[10px] font-mono font-normal px-1.5 py-0.5 rounded-md">
+                                +{product.techStack.length - 3}
+                              </span>
                             )}
                           </div>
                           <Link href={`${ROUTES.PRODUCT}/${product.id}`}>
-                            <h3 className="text-base font-semibold text-slate-900 group-hover:text-primary transition-colors line-clamp-1 tracking-tight">
+                            <h3 className="text-[15px] font-semibold text-slate-900 group-hover:text-primary transition-colors line-clamp-1 tracking-tight">
                               {getLocalizedText(product.title as unknown as Record<string, string>, locale)}
                             </h3>
                           </Link>
-                          <p className="text-slate-500 text-xs line-clamp-2 leading-relaxed h-8 font-normal">
+                          <p className="text-slate-500 text-xs line-clamp-2 leading-relaxed font-normal min-h-[38px]">
                             {getLocalizedText(product.description as unknown as Record<string, string>, locale) || (locale === "vi" ? "Giao diện website cao cấp được thiết kế tỉ mỉ, đầy đủ công nghệ hiện đại." : "High-fidelity website template engineered with state-of-the-art modern technologies.")}
                           </p>
                         </div>
 
-                        <div className="flex justify-between items-center pt-3 border-t border-slate-100 mt-auto">
-                          <div>
-                            <div className="text-xs text-slate-400 font-normal">
-                              {dict?.shop?.priceLabel || (locale === "vi" ? "Giá bản quyền" : "License Price")}
+                        {/* Card Footer: 2-Tier Structured Layout (Zero overlapping, 100% consistent) */}
+                        <div className="pt-3.5 border-t border-slate-100 mt-auto">
+                          {/* Price & Status Row */}
+                          <div className="flex items-end justify-between gap-2 mb-3">
+                            <div className="min-w-0">
+                              <span className="block text-[10px] font-medium text-slate-400 uppercase tracking-wider mb-0.5">
+                                {dict?.shop?.priceLabel || (locale === "vi" ? "Giá bản quyền" : "License Price")}
+                              </span>
+                              <div className="flex items-baseline gap-1 font-mono">
+                                <span className="text-base sm:text-lg font-bold text-primary tracking-tight">
+                                  {isFree ? (dict?.common?.free?.toUpperCase() || (locale === "vi" ? "MIỄN PHÍ" : "FREE")) : formatCurrency(product.price, locale)}
+                                </span>
+                                {!isFree && (
+                                  <span className="text-[11px] font-normal text-slate-400 font-sans">
+                                    {locale === "vi" ? "/ trọn đời" : "/ lifetime"}
+                                  </span>
+                                )}
+                              </div>
                             </div>
-                            <div className="text-base font-bold text-primary font-mono">
-                              {isFree ? (dict?.common?.free?.toUpperCase() || (locale === "vi" ? "MIỄN PHÍ" : "FREE")) : formatCurrency(product.price, locale)}
+
+                            <div className="shrink-0">
+                              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200/60">
+                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                                <span>{locale === "vi" ? "Sẵn sàng" : "Instant"}</span>
+                              </span>
                             </div>
                           </div>
 
-                          <div className="flex gap-2 items-center">
-                            {product.demoUrl && (
+                          {/* Action Buttons Row: Grid 2-cols ensures uniform height and zero overlap */}
+                          <div className="grid grid-cols-2 gap-2">
+                            {product.demoUrl ? (
                               <Link 
                                 href={`/demo/${product.id}`} 
                                 target="_blank" 
                                 rel="noopener noreferrer"
-                                className="bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs font-medium px-3 py-1.5 rounded-xl transition-all border border-slate-200/80 flex items-center gap-1 shadow-xs active:scale-95"
+                                className="h-9 rounded-xl text-xs font-medium bg-slate-50 hover:bg-slate-100 text-slate-700 hover:text-slate-900 border border-slate-200/80 hover:border-slate-300 transition-all flex items-center justify-center gap-1.5 shadow-2xs active:scale-[0.98]"
                               >
-                                <span>{dict?.shop?.demoButton || (locale === "vi" ? "Demo" : "Demo")}</span>
-                                <ExternalLink size={12} />
+                                <Eye size={13} className="text-slate-500" />
+                                <span>{dict?.shop?.demoButton || (locale === "vi" ? "Xem Demo" : "Live Demo")}</span>
                               </Link>
+                            ) : (
+                              <div className="h-9 rounded-xl text-xs font-medium bg-slate-50/60 text-slate-400 border border-slate-100 flex items-center justify-center gap-1.5 cursor-default select-none">
+                                <Code2 size={13} className="text-slate-300" />
+                                <span>{locale === "vi" ? "Mã nguồn" : "Source Code"}</span>
+                              </div>
                             )}
+
                             <Link 
                               href={`${ROUTES.PRODUCT}/${product.id}`}
-                              className="bg-primary/10 hover:bg-primary text-primary hover:text-white text-xs font-medium px-3 py-1.5 rounded-xl transition-all flex items-center gap-1 active:scale-95"
+                              className="h-9 rounded-xl text-xs font-semibold bg-primary hover:bg-primary/90 text-white shadow-2xs shadow-primary/20 transition-all flex items-center justify-center gap-1.5 group/btn active:scale-[0.98]"
                             >
                               <span>{dict?.shop?.detailsButton || (locale === "vi" ? "Chi tiết" : "Details")}</span>
+                              <ArrowRight size={13} className="transition-transform group-hover/btn:translate-x-0.5" />
                             </Link>
                           </div>
                         </div>
