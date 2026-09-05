@@ -289,6 +289,28 @@ export async function approveManualPaymentAction(orderId: string): Promise<Actio
  */
 export async function resendOrderEmailAction(orderId: string): Promise<ActionResponse<void>> {
   try {
+    const user = await getCurrentUser();
+    if (!user) {
+      return { success: false, error: "Bạn cần đăng nhập để thực hiện thao tác này." };
+    }
+
+    const admin = await isUserAdmin();
+    const orderDetailUseCase = await makeGetOrderDetailUseCase();
+    const orderResult = await orderDetailUseCase.execute({
+      orderId,
+      requesterId: user.id,
+      isAdmin: admin,
+    });
+
+    if (!orderResult.success) {
+      return { success: false, error: orderResult.error.message };
+    }
+
+    const order = orderResult.data;
+    if (order.paymentStatus !== "paid") {
+      return { success: false, error: "Đơn hàng chưa thanh toán, không thể cấp mã bản quyền." };
+    }
+
     const useCase = await makeSendOrderConfirmationEmailUseCase();
     const result = await useCase.execute(orderId);
     if (!result.success) {

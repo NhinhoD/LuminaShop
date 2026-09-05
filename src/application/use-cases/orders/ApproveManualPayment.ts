@@ -26,9 +26,12 @@ export class ApproveManualPaymentUseCase {
       // Auto-trigger license key & fulfillment email on approval
       if (this.sendOrderEmailUseCase) {
         try {
-          await this.sendOrderEmailUseCase.execute(orderId);
-        } catch {
-          // Non-blocking: payment status is already updated
+          const emailResult = await this.sendOrderEmailUseCase.execute(orderId);
+          if (!emailResult.success) {
+            console.error(`[ApproveManualPayment] Gửi email fulfillment thất bại cho đơn ${orderId}:`, emailResult.error.message);
+          }
+        } catch (emailErr) {
+          console.error(`[ApproveManualPayment] Ngoại lệ khi gửi email fulfillment cho đơn ${orderId}:`, emailErr);
         }
       }
 

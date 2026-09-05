@@ -318,10 +318,10 @@ chore: install supabase agent skills
 - **Interactive Demo Frame Polish**:
   - Built high-fidelity responsive preview frame (`DemoPreviewFrame.tsx`) with device mode toggles (desktop, tablet, mobile).
 - **Automated Digital License & Order Email Fulfillment Engine**:
-  - Engineered pure domain service interface [`IEmailService.ts`](file:///D:/E-Commerce_Full_Stack/LuminaShop/src/domain/services/IEmailService.ts).
-  - Built production infrastructure [`ResendEmailService.ts`](file:///D:/E-Commerce_Full_Stack/LuminaShop/src/infrastructure/email/ResendEmailService.ts) using Resend SDK with safe development fallbacks.
-  - Designed branded responsive HTML/plaintext email template [`orderConfirmationTemplate.ts`](file:///D:/E-Commerce_Full_Stack/LuminaShop/src/infrastructure/email/templates/orderConfirmationTemplate.ts) delivering order invoice, unique license keys, and direct source code download links.
-  - Implemented application use case [`SendOrderConfirmationEmailUseCase.ts`](file:///D:/E-Commerce_Full_Stack/LuminaShop/src/application/use-cases/orders/SendOrderConfirmationEmail.ts).
+  - Engineered pure domain service interface [`IEmailService.ts`](src/domain/services/IEmailService.ts).
+  - Built production infrastructure [`ResendEmailService.ts`](src/infrastructure/email/ResendEmailService.ts) using Resend SDK with safe development fallbacks.
+  - Designed branded responsive HTML/plaintext email template [`orderConfirmationTemplate.ts`](src/infrastructure/email/templates/orderConfirmationTemplate.ts) delivering order invoice, unique license keys, and direct source code download links.
+  - Implemented application use case [`SendOrderConfirmationEmailUseCase.ts`](src/application/use-cases/orders/SendOrderConfirmationEmail.ts).
   - Wired automated fulfillment triggering upon PayOS webhook confirmation, client payment verification, and admin manual payment approval, plus added on-demand resend action `resendOrderEmailAction`.
 
 ### 🔄 In Progress:

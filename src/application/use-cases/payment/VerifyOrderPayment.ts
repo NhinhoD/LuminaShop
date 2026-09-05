@@ -31,9 +31,12 @@ export class VerifyOrderPaymentUseCase {
             // Trigger automated license key & digital fulfillment delivery email
             if (this.sendOrderEmailUseCase) {
               try {
-                await this.sendOrderEmailUseCase.execute(orderId);
-              } catch {
-                // Non-blocking
+                const emailResult = await this.sendOrderEmailUseCase.execute(orderId);
+                if (!emailResult.success) {
+                  console.error(`[VerifyOrderPayment] Gửi email fulfillment thất bại cho đơn ${orderId}:`, emailResult.error.message);
+                }
+              } catch (emailErr) {
+                console.error(`[VerifyOrderPayment] Ngoại lệ khi gửi email fulfillment cho đơn ${orderId}:`, emailErr);
               }
             }
 

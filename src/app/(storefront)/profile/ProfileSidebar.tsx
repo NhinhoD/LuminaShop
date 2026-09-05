@@ -53,18 +53,19 @@ export function ProfileSidebar({
         {/* User Identity */}
         <div className="flex flex-col items-center text-center mb-8">
           <div className="w-20 h-20 rounded-full overflow-hidden mb-4 border-2 border-slate-100 shadow-sm relative">
-            <Image
-              alt="Profile"
-              className="object-cover"
-              src={
-                profile?.avatarUrl ||
-                `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                  profile?.fullName || user.email || 'User'
-                )}&background=0051d5&color=fff&size=128`
-              }
-              fill
-              sizes="80px"
-            />
+            {profile?.avatarUrl ? (
+              <Image
+                alt="Profile"
+                className="object-cover"
+                src={profile.avatarUrl}
+                fill
+                sizes="80px"
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center bg-gradient-to-tr from-blue-600 to-indigo-600 text-white font-extrabold text-2xl select-none">
+                {(profile?.fullName?.trim() || user.email?.trim() || 'U').charAt(0).toUpperCase()}
+              </div>
+            )}
           </div>
           <h2 className="text-base font-extrabold text-slate-900 leading-snug">
             {profile?.fullName || profileDict.userDefault || (locale === 'vi' ? 'Khách hàng KhoUI' : 'KhoUI Customer')}

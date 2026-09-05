@@ -37,9 +37,12 @@ export class HandlePayOSWebhookUseCase {
         // Trigger automated license key & digital fulfillment delivery email
         if (this.sendOrderEmailUseCase) {
           try {
-            await this.sendOrderEmailUseCase.execute(payment.orderId);
-          } catch {
-            // Non-blocking: payment is already verified
+            const emailResult = await this.sendOrderEmailUseCase.execute(payment.orderId);
+            if (!emailResult.success) {
+              console.error(`[HandlePayOSWebhook] Gửi email fulfillment thất bại cho đơn ${payment.orderId}:`, emailResult.error.message);
+            }
+          } catch (emailErr) {
+            console.error(`[HandlePayOSWebhook] Ngoại lệ khi gửi email fulfillment cho đơn ${payment.orderId}:`, emailErr);
           }
         }
 

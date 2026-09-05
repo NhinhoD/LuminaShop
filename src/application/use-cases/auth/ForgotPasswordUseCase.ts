@@ -10,6 +10,19 @@ export class ForgotPasswordUseCase {
         return fail(new Error('Địa chỉ email không hợp lệ'));
       }
 
+      if (!redirectTo || (!redirectTo.startsWith('http://') && !redirectTo.startsWith('https://'))) {
+        return fail(new Error('Địa chỉ chuyển hướng không hợp lệ'));
+      }
+
+      try {
+        const parsedUrl = new URL(redirectTo);
+        if (parsedUrl.protocol !== 'https:' && parsedUrl.protocol !== 'http:') {
+          return fail(new Error('Giao thức chuyển hướng không an toàn'));
+        }
+      } catch {
+        return fail(new Error('Định dạng URL chuyển hướng không hợp lệ'));
+      }
+
       const result = await this.authRepo.resetPasswordForEmail(email, redirectTo);
       if (!result.success) {
         return fail(result.error);

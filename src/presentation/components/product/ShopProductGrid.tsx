@@ -419,6 +419,7 @@ export default function ShopProductGrid({
                           {/* Action Buttons Row: Grid 2-cols ensures uniform height and zero overlap */}
                           <div className="grid grid-cols-2 gap-2">
                             {product.demoUrl ? (
+                              /* Routes to in-app responsive sandbox viewer at /demo/[id] which proxies demoUrl and adds viewport controls */
                               <Link 
                                 href={`/demo/${product.id}`} 
                                 target="_blank" 

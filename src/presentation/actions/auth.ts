@@ -231,20 +231,28 @@ export async function forgotPasswordAction(formData: FormData): Promise<{ succes
 
     const { email } = parsed.data;
 
-    let baseUrl = process.env.APP_URL || process.env.NEXT_PUBLIC_SITE_URL;
-    if (!baseUrl) {
+    // Strictly resolve baseUrl from configured environment origin, avoiding unvalidated Host headers
+    let baseUrl: string | undefined;
+    const rawEnvUrl = process.env.APP_URL || process.env.NEXT_PUBLIC_SITE_URL;
+    if (rawEnvUrl) {
       try {
-        const { headers } = await import('next/headers');
-        const headerList = await headers();
-        const host = headerList.get('host');
-        const proto = headerList.get('x-forwarded-proto') || 'http';
-        if (host) {
-          baseUrl = `${proto}://${host}`;
+        const parsed = new URL(rawEnvUrl);
+        if (parsed.protocol === 'https:' || (process.env.NODE_ENV === 'development' && parsed.protocol === 'http:')) {
+          baseUrl = parsed.origin;
         }
       } catch {
-        baseUrl = 'http://localhost:3000';
+        baseUrl = undefined;
       }
     }
+
+    if (!baseUrl) {
+      if (process.env.NODE_ENV === 'development') {
+        baseUrl = 'http://localhost:3000';
+      } else {
+        return { error: 'Cấu hình hệ thống chưa hoàn tất: vui lòng cấu hình APP_URL hoặc NEXT_PUBLIC_SITE_URL.' };
+      }
+    }
+
     const redirectTo = `${baseUrl}/reset-password`;
 
     const useCase = await makeForgotPasswordUseCase();

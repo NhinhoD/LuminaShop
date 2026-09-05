@@ -17,13 +17,25 @@ export class ProcessPaymentUseCase {
 
   async execute(data: ProcessPaymentDTO): Promise<PaymentResult> {
     try {
-      // Free products / 0đ orders: instantly activate as paid and deliver license key via email
-      if (data.amount <= 0) {
+      const order = await this.orderRepo.findById(data.orderId);
+      if (!order) {
+        return {
+          success: false,
+          paymentId: '',
+          message: 'Không tìm thấy thông tin đơn hàng.',
+        };
+      }
+
+      // Free products / 0đ orders: verify against stored order total to prevent client amount tampering
+      if (order.totalAmount <= 0) {
         await this.orderRepo.updatePaymentStatus(data.orderId, 'paid');
         
         if (this.emailUseCase) {
           try {
-            await this.emailUseCase.execute(data.orderId);
+            const emailResult = await this.emailUseCase.execute(data.orderId);
+            if (!emailResult.success) {
+              console.error('[ProcessPaymentUseCase] Free order email delivery failed:', emailResult.error.message);
+            }
           } catch (emailErr) {
             console.error('[ProcessPaymentUseCase] Free order email delivery error:', emailErr);
           }
@@ -36,7 +48,7 @@ export class ProcessPaymentUseCase {
         };
       }
 
-      const result = await this.paymentGateway.processPayment(data.orderId, data.amount, data.method);
+      const result = await this.paymentGateway.processPayment(data.orderId, order.totalAmount, data.method);
       
       if (result.success) {
         const paymentStatus = (data.method === 'cod' || data.method === 'payos') ? 'unpaid' : 'paid';

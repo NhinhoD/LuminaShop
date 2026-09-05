@@ -26,8 +26,11 @@ export class ResendEmailService implements IEmailService {
   async sendEmail(options: SendEmailOptions): Promise<Result<EmailSendResult>> {
     try {
       if (!this.resend) {
-        // Safe development fallback: log warning without crashing
-        return ok({ messageId: `mock-email-${Date.now()}` });
+        if (process.env.NODE_ENV === 'development') {
+          // Safe development fallback: allow local simulation without throwing
+          return ok({ messageId: `mock-email-${Date.now()}` });
+        }
+        return fail(new Error('Cấu hình gửi email chưa hoàn tất: thiếu RESEND_API_KEY trong môi trường triển khai.'));
       }
 
       const { data, error } = await this.resend.emails.send({

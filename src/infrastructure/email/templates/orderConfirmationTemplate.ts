@@ -1,4 +1,4 @@
-﻿import { OrderConfirmationEmailDTO } from '@/domain/services/IEmailService';
+import { OrderConfirmationEmailDTO } from '@/domain/services/IEmailService';
 
 function formatVND(amount: number): string {
   return new Intl.NumberFormat('vi-VN', {
@@ -21,6 +21,7 @@ export function generateOrderConfirmationEmail(data: OrderConfirmationEmailDTO):
   text: string;
 } {
   const isVi = data.locale === 'vi';
+  const isEn = !isVi;
   const shortOrderId = data.orderId.split('-')[0].toUpperCase();
   const formattedTotal = isVi ? formatVND(data.totalAmount) : formatUSD(data.totalAmount);
 
@@ -155,26 +156,41 @@ export function generateOrderConfirmationEmail(data: OrderConfirmationEmailDTO):
 </html>
   `.trim();
 
+  const greeting = isEn
+    ? `Dear ${data.customerName || 'Valued Customer'},`
+    : `Kính gửi ${data.customerName || 'Quý khách'},`;
+
+  const thankYou = isEn
+    ? `Thank you for choosing KhoUI. The transaction for order #${shortOrderId} is complete.`
+    : `Cảm ơn bạn đã mua sắm tại KhoUI. Giao dịch cho đơn hàng #${shortOrderId} đã hoàn tất.`;
+
+  const totalLabel = isEn ? 'Total Paid' : 'Tổng thanh toán';
+  const licensesLabel = isEn ? 'Your Digital Licenses & Source Code:' : 'Danh sách bản quyền:';
+  const licenseKeyLabel = isEn ? 'License Key' : 'Mã bản quyền';
+  const downloadLabel = isEn ? 'Download Link' : 'Link tải mã nguồn';
+  const downloadFallback = isEn ? 'Access via your KhoUI account' : 'Xem trong tài khoản KhoUI';
+  const supportLabel = isEn ? 'Technical Support' : 'Hỗ trợ kỹ thuật';
+
   const text = `
 KhoUI - ${subject}
 
-Kính gửi ${data.customerName || 'Quý khách'},
-Cảm ơn bạn đã mua sắm tại KhoUI. Giao dịch cho đơn hàng #${shortOrderId} đã hoàn tất.
+${greeting}
+${thankYou}
 
-Tổng thanh toán: ${formattedTotal}
+${totalLabel}: ${formattedTotal}
 
-Danh sách bản quyền:
+${licensesLabel}
 ${data.items
   .map(
     (item) => `
 - ${item.productTitle}
-  Mã bản quyền: ${item.licenseKey}
-  Link tải mã nguồn: ${item.sourceCodeUrl || 'Xem trong tài khoản KhoUI'}
+  ${licenseKeyLabel}: ${item.licenseKey}
+  ${downloadLabel}: ${item.sourceCodeUrl || downloadFallback}
 `
   )
   .join('\n')}
 
-Hỗ trợ kỹ thuật: contact@khoui.com
+${supportLabel}: contact@khoui.com
 © 2026 KhoUI Marketplace.
   `.trim();
 
