@@ -119,6 +119,17 @@ export class SupabaseOrderRepository implements IOrderRepository {
 
   async updatePaymentStatus(id: string, paymentStatus: string): Promise<void> {
     const supabase = this.supabase;
+    
+    if (paymentStatus === 'paid') {
+      // Use atomic SECURITY DEFINER RPC to bypass user-level RLS restrictions and fulfill immediately
+      const { error: rpcError } = await supabase.rpc('complete_order_payment', {
+        p_order_id: id
+      });
+      
+      if (!rpcError) return;
+      console.warn('[SupabaseOrderRepository] complete_order_payment RPC failed, falling back to direct update:', rpcError.message);
+    }
+
     const updateData: { payment_status: string; updated_at: string; status?: string } = { 
       payment_status: paymentStatus, 
       updated_at: new Date().toISOString() 

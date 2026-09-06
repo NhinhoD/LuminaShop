@@ -41,6 +41,23 @@ export class SupabasePaymentRepository implements IPaymentRepository {
   }
 
   async updatePaymentStatus(id: string, status: string): Promise<void> {
+    if (status === 'paid') {
+      const { data: payment } = await this.supabase
+        .from('payments')
+        .select('order_id')
+        .eq('id', id)
+        .single();
+
+      if (payment?.order_id) {
+        const { error: rpcError } = await this.supabase.rpc('complete_order_payment', {
+          p_order_id: payment.order_id,
+          p_payment_id: id
+        });
+        if (!rpcError) return;
+        console.warn('[SupabasePaymentRepository] complete_order_payment RPC failed, falling back to direct update:', rpcError.message);
+      }
+    }
+
     const { error } = await this.supabase
       .from('payments')
       .update({ status })
