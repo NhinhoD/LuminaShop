@@ -126,7 +126,7 @@ export default async function AdminSettingsPage() {
               <Database size={15} className="text-slate-400" />
               {locale === "vi" ? "Dịch vụ Cơ sở dữ liệu" : "Database Engine"}
             </span>
-            <span className="font-mono font-semibold text-slate-900">Supabase Cloud (shwofhhhfdokbycejeam)</span>
+            <span className="font-mono font-semibold text-slate-900">Supabase Cloud (PostgreSQL)</span>
           </div>
 
           <div className="py-3.5 flex items-center justify-between">
