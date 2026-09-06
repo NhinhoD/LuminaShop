@@ -16,7 +16,7 @@ export class ResendEmailService implements IEmailService {
   constructor() {
     const apiKey = process.env.RESEND_API_KEY;
     this.defaultFromEmail = process.env.RESEND_FROM_EMAIL || 'KhoUI <noreply@khoui.io.vn>';
-    this.defaultReplyToEmail = process.env.RESEND_REPLY_TO_EMAIL || 'khoui.gmail@gmail.com';
+    this.defaultReplyToEmail = process.env.RESEND_REPLY_TO_EMAIL || '';
 
     if (apiKey) {
       this.resend = new Resend(apiKey);
@@ -39,7 +39,7 @@ export class ResendEmailService implements IEmailService {
         subject: options.subject,
         html: options.html,
         text: options.text,
-        replyTo: options.replyTo || this.defaultReplyToEmail,
+        replyTo: options.replyTo || this.defaultReplyToEmail || undefined,
       });
 
       if (error || !data) {
