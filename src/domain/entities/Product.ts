@@ -45,7 +45,11 @@ export type UpdateProductDTO = Partial<Omit<Product, 'id' | 'createdAt' | 'updat
  * @returns Sanitized Product entity.
  */
 export function sanitizeProductForPublic(product: Product, isPurchased = false): Product {
-  if (isPurchased || product.price === 0) {
+  const hasPaidVariant = product.variants?.some(
+    (variant) => product.price + variant.priceAdjustment > 0
+  ) ?? false;
+
+  if (isPurchased || (product.price === 0 && !hasPaidVariant)) {
     return product;
   }
   return {

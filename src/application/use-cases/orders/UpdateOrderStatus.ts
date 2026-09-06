@@ -27,11 +27,19 @@ export class UpdateOrderStatusUseCase {
       }
 
       // Security & State Integrity: Do not cancel orders that are already marked paid
-      if (newStatus === OrderStatus.CANCELLED && order.paymentStatus === 'paid') {
-        return fail(new Error('Không thể hủy đơn hàng đã thanh toán. Vui lòng liên hệ hỗ trợ để được giải quyết.'));
-      }
+      if (newStatus === OrderStatus.CANCELLED) {
+        if (order.paymentStatus === 'paid') {
+          return fail(new Error('Không thể hủy đơn hàng đã thanh toán. Vui lòng liên hệ hỗ trợ để được giải quyết.'));
+        }
 
-      await this.orderRepo.updateStatus(data.orderId, newStatus);
+        // Atomically cancel order requiring pending status and unpaid payment status
+        const cancelled = await this.orderRepo.cancelPendingOrder(data.orderId);
+        if (!cancelled) {
+          return fail(new Error('Không thể hủy đơn hàng. Đơn hàng không ở trạng thái chờ thanh toán hoặc đã được xử lý.'));
+        }
+      } else {
+        await this.orderRepo.updateStatus(data.orderId, newStatus);
+      }
       
       const updatedOrder = await this.orderRepo.findById(data.orderId);
       if (!updatedOrder) {

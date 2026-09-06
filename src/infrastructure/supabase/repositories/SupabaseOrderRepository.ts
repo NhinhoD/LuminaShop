@@ -161,6 +161,32 @@ export class SupabaseOrderRepository implements IOrderRepository {
     return data.length > 0;
   }
 
+  async cancelPendingOrder(id: string): Promise<boolean> {
+    // 1. Try atomic PostgreSQL RPC with SECURITY DEFINER
+    const { data, error } = await this.supabase.rpc('cancel_pending_order', {
+      p_order_id: id
+    });
+
+    if (!error && data) {
+      return data.success === true;
+    }
+
+    // 2. Fallback: atomic conditional update enforcing pending and unpaid preconditions
+    const { data: updated, error: updateError } = await this.supabase
+      .from('orders')
+      .update({ status: OrderStatus.CANCELLED, updated_at: new Date().toISOString() })
+      .eq('id', id)
+      .eq('status', OrderStatus.PENDING)
+      .neq('payment_status', 'paid')
+      .select('id');
+
+    if (updateError || !updated || updated.length === 0) {
+      return false;
+    }
+
+    return true;
+  }
+
   private mapToEntity(row: OrderRow): Order {
     const items = (row.items || []) as OrderItemRow[];
 

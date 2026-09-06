@@ -33,6 +33,11 @@ export class UpdateCartItemUseCase {
         return fail(new Error('Sản phẩm không thuộc giỏ hàng của bạn.'));
       }
 
+      // Validate quantity as finite integer
+      if (!Number.isFinite(dto.quantity) || (dto.quantity > 0 && !Number.isInteger(dto.quantity))) {
+        return fail(new Error('Số lượng sản phẩm không hợp lệ.'));
+      }
+
       if (dto.quantity <= 0) {
         await this.cartRepo.removeItem(dto.itemId);
       } else {
