@@ -19,6 +19,10 @@ interface OrderHistoryPageProps {
   searchParams: Promise<{ page?: string; q?: string }>;
 }
 
+/**
+ * Order history and digital template vault page for authenticated users.
+ * Lists all purchased/completed UI templates with download links, search, and pagination.
+ */
 export default async function OrderHistoryPage({ searchParams }: OrderHistoryPageProps) {
   const cookieStore = await cookies();
   const locale = (cookieStore.get('NEXT_LOCALE')?.value as 'vi' | 'en') || 'vi';
@@ -64,6 +68,7 @@ export default async function OrderHistoryPage({ searchParams }: OrderHistoryPag
       )
     `, { count: 'exact' })
     .eq('orders.user_id', user.id)
+    .neq('orders.status', 'cancelled')
     .or('payment_status.eq.paid,status.eq.completed,status.eq.delivered', { referencedTable: 'orders' });
 
   if (search) {

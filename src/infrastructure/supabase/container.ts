@@ -33,6 +33,7 @@ import { GetProductByIdUseCase } from '@/application/use-cases/products/GetProdu
 import { GetProductsUseCase } from '@/application/use-cases/products/GetProducts';
 import { ProcessPaymentUseCase } from '@/application/use-cases/payment/ProcessPayment';
 import { HandlePayOSWebhookUseCase } from '@/application/use-cases/payment/HandlePayOSWebhook';
+import { VerifyOrderPaymentUseCase } from '@/application/use-cases/payment/VerifyOrderPayment';
 import { CODPaymentGateway } from './gateways/CODPaymentGateway';
 import { PayOSGateway } from './gateways/PayOSGateway';
 import { CompositePaymentGateway } from './gateways/CompositePaymentGateway';
@@ -217,7 +218,6 @@ export async function makeVerifyOrderPaymentUseCase() {
   const paymentRepo = await makePaymentRepository();
   const payosGateway = await makePayOSGateway();
   const emailUseCase = await makeSendOrderConfirmationEmailUseCase();
-  const { VerifyOrderPaymentUseCase } = await import('@/application/use-cases/payment/VerifyOrderPayment');
   return new VerifyOrderPaymentUseCase(orderRepo, paymentRepo, payosGateway, emailUseCase);
 }
 

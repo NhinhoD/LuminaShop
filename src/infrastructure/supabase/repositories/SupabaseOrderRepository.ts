@@ -143,6 +143,7 @@ export class SupabaseOrderRepository implements IOrderRepository {
       .eq('product_id', productId)
       .eq('orders.user_id', userId)
       .eq('orders.payment_status', 'paid')
+      .neq('orders.status', 'cancelled')
       .limit(1);
 
     if (error || !data) return false;

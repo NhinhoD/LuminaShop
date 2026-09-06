@@ -1,14 +1,24 @@
 import { IOrderRepository } from '@/domain/repositories/IOrderRepository';
-import { Order, OrderStatus } from '@/domain/entities/Order';
+import { Order } from '@/domain/entities/Order';
 import { SendOrderConfirmationEmailUseCase } from './SendOrderConfirmationEmail';
 import { Result, ok, fail } from '@/domain/shared/Result';
 
+/**
+ * Use case for admin approval of manual payments (e.g. COD / Bank Transfer).
+ * Atomically marks order as paid and completed, and triggers fulfillment email.
+ */
 export class ApproveManualPaymentUseCase {
   constructor(
     private orderRepo: IOrderRepository,
     private sendOrderEmailUseCase?: SendOrderConfirmationEmailUseCase
   ) {}
 
+  /**
+   * Approves a manual payment for an order.
+   *
+   * @param orderId - The unique ID of the order being approved.
+   * @returns A Result containing the updated Order entity or an Error.
+   */
   async execute(orderId: string): Promise<Result<Order>> {
     try {
       const order = await this.orderRepo.findById(orderId);
@@ -16,8 +26,8 @@ export class ApproveManualPaymentUseCase {
         return fail(new Error('Không tìm thấy đơn hàng.'));
       }
 
+      // updatePaymentStatus('paid') atomically marks status as 'completed'
       await this.orderRepo.updatePaymentStatus(orderId, 'paid');
-      await this.orderRepo.updateStatus(orderId, OrderStatus.COMPLETED);
 
       const updatedOrder = await this.orderRepo.findById(orderId);
       if (!updatedOrder) {
