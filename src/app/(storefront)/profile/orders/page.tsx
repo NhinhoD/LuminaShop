@@ -58,12 +58,13 @@ export default async function OrderHistoryPage({ searchParams }: OrderHistoryPag
       products!inner (*),
       orders!inner (
         status,
+        payment_status,
         user_id,
         created_at
       )
     `, { count: 'exact' })
     .eq('orders.user_id', user.id)
-    .in('orders.status', ['completed', 'delivered']);
+    .or('payment_status.eq.paid,status.eq.completed,status.eq.delivered', { referencedTable: 'orders' });
 
   if (search) {
     query = query.ilike('products.title', `%${search}%`);

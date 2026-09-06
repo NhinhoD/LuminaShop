@@ -1,5 +1,6 @@
 import { IOrderRepository } from '@/domain/repositories/IOrderRepository';
 import { IPaymentRepository } from '@/domain/repositories/IPaymentRepository';
+import { OrderStatus } from '@/domain/entities/Order';
 import { SendOrderConfirmationEmailUseCase } from '@/application/use-cases/orders/SendOrderConfirmationEmail';
 
 export interface WebhookData {
@@ -38,6 +39,7 @@ export class HandlePayOSWebhookUseCase {
 
         await this.paymentRepo.updatePaymentStatus(payment.id, 'paid');
         await this.orderRepo.updatePaymentStatus(payment.orderId, 'paid');
+        await this.orderRepo.updateStatus(payment.orderId, OrderStatus.COMPLETED);
         
         // Trigger automated license key & digital fulfillment delivery email
         if (this.sendOrderEmailUseCase) {

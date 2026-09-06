@@ -1,6 +1,7 @@
 import { IOrderRepository } from '@/domain/repositories/IOrderRepository';
 import { IPaymentRepository } from '@/domain/repositories/IPaymentRepository';
 import { IPaymentGateway } from '@/domain/repositories/IPaymentGateway';
+import { OrderStatus } from '@/domain/entities/Order';
 import { SendOrderConfirmationEmailUseCase } from '@/application/use-cases/orders/SendOrderConfirmationEmail';
 
 export class VerifyOrderPaymentUseCase {
@@ -15,7 +16,12 @@ export class VerifyOrderPaymentUseCase {
     try {
       const order = await this.orderRepo.findById(orderId);
       if (!order) return { success: false, message: 'Order not found' };
-      if (order.paymentStatus === 'paid') return { success: true, message: 'Already paid' };
+      if (order.paymentStatus === 'paid') {
+        if (order.status !== OrderStatus.COMPLETED) {
+          await this.orderRepo.updateStatus(orderId, OrderStatus.COMPLETED);
+        }
+        return { success: true, message: 'Already paid' };
+      }
 
       const payment = await this.paymentRepo.findByOrderId(orderId);
       if (!payment) return { success: false, message: 'Payment record not found' };
@@ -27,6 +33,7 @@ export class VerifyOrderPaymentUseCase {
           if (verifyResult.success) {
             await this.paymentRepo.updatePaymentStatus(payment.id, 'paid');
             await this.orderRepo.updatePaymentStatus(orderId, 'paid');
+            await this.orderRepo.updateStatus(orderId, OrderStatus.COMPLETED);
 
             // Trigger automated license key & digital fulfillment delivery email
             if (this.sendOrderEmailUseCase) {

@@ -1,5 +1,6 @@
 import { IPaymentGateway, PaymentResult } from '@/domain/repositories/IPaymentGateway';
 import { IOrderRepository } from '@/domain/repositories/IOrderRepository';
+import { OrderStatus } from '@/domain/entities/Order';
 import { SendOrderConfirmationEmailUseCase } from '@/application/use-cases/orders/SendOrderConfirmationEmail';
 
 export interface ProcessPaymentDTO {
@@ -29,6 +30,7 @@ export class ProcessPaymentUseCase {
       // Free products / 0đ orders: verify against stored order total to prevent client amount tampering
       if (order.totalAmount <= 0) {
         await this.orderRepo.updatePaymentStatus(data.orderId, 'paid');
+        await this.orderRepo.updateStatus(data.orderId, OrderStatus.COMPLETED);
         
         if (this.emailUseCase) {
           try {
@@ -53,6 +55,9 @@ export class ProcessPaymentUseCase {
       if (result.success) {
         const paymentStatus = (data.method === 'cod' || data.method === 'payos') ? 'unpaid' : 'paid';
         await this.orderRepo.updatePaymentStatus(data.orderId, paymentStatus);
+        if (paymentStatus === 'paid') {
+          await this.orderRepo.updateStatus(data.orderId, OrderStatus.COMPLETED);
+        }
       } else {
         await this.orderRepo.updatePaymentStatus(data.orderId, 'failed');
       }

@@ -1,5 +1,5 @@
 import { IOrderRepository } from '@/domain/repositories/IOrderRepository';
-import { Order } from '@/domain/entities/Order';
+import { Order, OrderStatus } from '@/domain/entities/Order';
 import { SendOrderConfirmationEmailUseCase } from './SendOrderConfirmationEmail';
 import { Result, ok, fail } from '@/domain/shared/Result';
 
@@ -17,6 +17,7 @@ export class ApproveManualPaymentUseCase {
       }
 
       await this.orderRepo.updatePaymentStatus(orderId, 'paid');
+      await this.orderRepo.updateStatus(orderId, OrderStatus.COMPLETED);
 
       const updatedOrder = await this.orderRepo.findById(orderId);
       if (!updatedOrder) {

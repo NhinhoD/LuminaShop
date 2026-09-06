@@ -15,6 +15,7 @@ export async function processPaymentAction(orderId: string, amount: number, meth
   }
 
   revalidatePath("/profile");
+  revalidatePath("/profile/orders");
   revalidatePath("/admin/orders");
   revalidatePath(`/orders/${orderId}/success`);
   
