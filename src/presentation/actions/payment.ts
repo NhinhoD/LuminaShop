@@ -46,7 +46,7 @@ export async function processPaymentAction(orderId: string, amount: number, meth
  * @param shouldRevalidate - Whether to revalidate storefront order paths upon successful verification.
  * @returns An object containing success status and descriptive message.
  */
-export async function verifyOrderPaymentAction(orderId: string, shouldRevalidate: boolean = true) {
+export async function verifyOrderPaymentAction(orderId: string, shouldRevalidate: boolean = false) {
   const authRepo = await makeAuthRepository();
   const user = await authRepo.getCurrentUser();
   if (!user) {
@@ -57,9 +57,13 @@ export async function verifyOrderPaymentAction(orderId: string, shouldRevalidate
   const result = await useCase.execute(orderId, user.id);
   
   if (result.success && shouldRevalidate) {
-    revalidatePath("/profile/orders");
-    revalidatePath(`/orders/${orderId}/success`);
-    revalidatePath("/admin/orders");
+    try {
+      revalidatePath("/profile/orders");
+      revalidatePath(`/orders/${orderId}/success`);
+      revalidatePath("/admin/orders");
+    } catch {
+      // Safely ignore if called within an active render context where revalidation is unsupported
+    }
   }
   
   return result;

@@ -17,7 +17,7 @@ export default async function OrderSuccessPage(props: { params: Promise<{ id: st
   const params = await props.params;
 
   // Verify payment status (especially for PayOS on localhost where webhook might not reach)
-  await verifyOrderPaymentAction(params.id, true);
+  await verifyOrderPaymentAction(params.id, false);
   
   const result = await getOrderAction(params.id);
   const order = result.data;
