@@ -31,6 +31,11 @@ export class HandlePayOSWebhookUseCase {
           throw new Error(`Payment record not found for webhook orderCode ${data.orderCode}`);
         }
 
+        // Idempotency guard: If payment is already marked paid, return early to prevent duplicate fulfillment
+        if (payment.status === 'paid') {
+          return { success: true, message: 'Payment was already processed and marked paid' };
+        }
+
         await this.paymentRepo.updatePaymentStatus(payment.id, 'paid');
         await this.orderRepo.updatePaymentStatus(payment.orderId, 'paid');
         

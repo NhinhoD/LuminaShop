@@ -20,17 +20,26 @@ export function ResetPasswordClient({ locale, authDict = {}, initialError, code 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [isExchangingCode, setIsExchangingCode] = useState(Boolean(code));
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(initialError || null);
 
   useEffect(() => {
+    let isMounted = true;
     const supabase = createClient();
 
-    // 1. If code passed, exchange for session on browser
+    // 1. Coordinate PKCE exchange: wait for exchangeCodeForSession to complete before allowing submission
     if (code) {
-      supabase.auth.exchangeCodeForSession(code).catch(() => {
-        // Ignored if already exchanged
-      });
+      supabase.auth
+        .exchangeCodeForSession(code)
+        .catch(() => {
+          // Handled or already exchanged via server route
+        })
+        .finally(() => {
+          if (isMounted) {
+            setIsExchangingCode(false);
+          }
+        });
     }
 
     // 2. Listen for recovery events
@@ -41,13 +50,14 @@ export function ResetPasswordClient({ locale, authDict = {}, initialError, code 
     });
 
     return () => {
+      isMounted = false;
       subscription.unsubscribe();
     };
   }, [code]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (loading) return;
+    if (loading || isExchangingCode) return;
 
     if (password.length < 6) {
       setError(locale === "vi" ? "Mật khẩu phải có ít nhất 6 ký tự." : "Password must be at least 6 characters.");
@@ -64,16 +74,7 @@ export function ResetPasswordClient({ locale, authDict = {}, initialError, code 
 
     const supabase = createClient();
 
-    // 1. If PKCE code is provided, ensure it is exchanged for an active session before updating
-    if (code) {
-      try {
-        await supabase.auth.exchangeCodeForSession(code);
-      } catch {
-        // Ignored
-      }
-    }
-
-    // 2. Attempt update via browser client (handles URL hash tokens / active recovery sessions)
+    // 1. Attempt update via browser client (handles URL hash tokens / active recovery sessions)
     try {
       const { error: clientError } = await supabase.auth.updateUser({ password });
 
@@ -201,13 +202,18 @@ export function ResetPasswordClient({ locale, authDict = {}, initialError, code 
       <div className="pt-2">
         <button 
           type="submit"
-          disabled={loading}
+          disabled={loading || isExchangingCode}
           className="w-full h-11 bg-primary text-white font-medium rounded-xl hover:bg-primary-dark transition-all flex items-center justify-center gap-2 group shadow-xs active:scale-98 cursor-pointer text-sm disabled:opacity-50"
         >
           {loading ? (
             <>
               <Loader2 className="w-4 h-4 animate-spin" />
               <span>{locale === "vi" ? "Đang lưu..." : "Saving..."}</span>
+            </>
+          ) : isExchangingCode ? (
+            <>
+              <Loader2 className="w-4 h-4 animate-spin" />
+              <span>{locale === "vi" ? "Đang xác thực phiên..." : "Verifying session..."}</span>
             </>
           ) : (
             <>
