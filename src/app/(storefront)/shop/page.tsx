@@ -3,6 +3,7 @@ import ShopProductGrid from "@/presentation/components/product/ShopProductGrid";
 import { PaginationControls } from "@/presentation/components/common/PaginationControls";
 import { getDictionary, getLocale } from "@/i18n/getDictionary";
 import { Sparkles, Zap } from "lucide-react";
+import { sanitizeProductsForPublic } from "@/domain/entities/Product";
 
 interface ShopPageProps {
   searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -139,7 +140,7 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
         </div>
 
         <ShopProductGrid 
-          initialProducts={products} 
+          initialProducts={sanitizeProductsForPublic(products)} 
           currentSearch={search || ""} 
           currentSort={sortType} 
           currentCategory={categorySlug || "all"}

@@ -3,12 +3,17 @@
 import { 
   makeCreateProductUseCase, 
   makeUpdateProductUseCase, 
-  makeProductRepository 
+  makeDeleteProductUseCase 
 } from "@/infrastructure/supabase/container";
 import { CreateProductDTO, UpdateProductDTO } from "@/domain/entities/Product";
 import { revalidatePath } from "next/cache";
 import { assertAdmin } from "./authGuards";
 
+/**
+ * Server action to create a new product (admin-only).
+ *
+ * @param data - The product creation payload.
+ */
 export async function createProductAction(data: CreateProductDTO) {
   try {
     await assertAdmin();
@@ -29,6 +34,12 @@ export async function createProductAction(data: CreateProductDTO) {
   return { data: result.data };
 }
 
+/**
+ * Server action to update an existing product (admin-only).
+ *
+ * @param id - The ID of the product to update.
+ * @param data - The update payload.
+ */
 export async function updateProductAction(id: string, data: UpdateProductDTO) {
   try {
     await assertAdmin();
@@ -50,12 +61,23 @@ export async function updateProductAction(id: string, data: UpdateProductDTO) {
   return { data: result.data };
 }
 
+/**
+ * Server action to delete a product (admin-only).
+ *
+ * @param id - The ID of the product to delete.
+ */
 export async function deleteProductAction(id: string) {
   try {
     await assertAdmin();
-    const productRepository = await makeProductRepository();
-    await productRepository.delete(id);
+    const useCase = await makeDeleteProductUseCase();
+    const result = await useCase.execute(id);
+
+    if (!result.success) {
+      return { success: false, error: result.error.message };
+    }
+
     revalidatePath("/admin/products");
+    revalidatePath("/shop");
     return { success: true };
   } catch (error) {
     return { 

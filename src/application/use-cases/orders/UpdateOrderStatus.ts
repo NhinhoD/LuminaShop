@@ -26,6 +26,11 @@ export class UpdateOrderStatusUseCase {
         return fail(new Error(`Invalid status transition from ${currentStatus} to ${newStatus}.`));
       }
 
+      // Security & State Integrity: Do not cancel orders that are already marked paid
+      if (newStatus === OrderStatus.CANCELLED && order.paymentStatus === 'paid') {
+        return fail(new Error('Không thể hủy đơn hàng đã thanh toán. Vui lòng liên hệ hỗ trợ để được giải quyết.'));
+      }
+
       await this.orderRepo.updateStatus(data.orderId, newStatus);
       
       const updatedOrder = await this.orderRepo.findById(data.orderId);

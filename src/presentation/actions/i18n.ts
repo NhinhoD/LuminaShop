@@ -6,7 +6,8 @@ import {
   makeAddTranslationUseCase, 
   makeUpdateTranslationUseCase, 
   makeDeleteTranslationUseCase, 
-  makeTranslationRepository 
+  makeGetTranslationsUseCase,
+  makeSyncTranslationsUseCase 
 } from "@/infrastructure/supabase/container";
 import { clearDictionaryCache } from "@/i18n/getDictionary";
 import { vi } from "@/i18n/dictionaries/vi";
@@ -29,8 +30,9 @@ export async function setLanguageAction(locale: "vi" | "en") {
  * Retrieves all translation entries from the database.
  */
 export async function getTranslationsAction() {
-  const repo = await makeTranslationRepository();
-  return repo.getAllTranslations();
+  const useCase = await makeGetTranslationsUseCase();
+  const result = await useCase.execute();
+  return result.success ? result.data : [];
 }
 
 /**
@@ -123,8 +125,11 @@ export async function syncAllTranslationsAction() {
       };
     });
 
-    const repo = await makeTranslationRepository();
-    await repo.upsertTranslations(entries);
+    const useCase = await makeSyncTranslationsUseCase();
+    const result = await useCase.execute(entries);
+    if (!result.success) {
+      return { success: false, error: result.error.message };
+    }
     clearDictionaryCache();
     revalidatePath("/", "layout");
     return { success: true, count: entries.length };
