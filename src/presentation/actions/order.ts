@@ -6,8 +6,9 @@ import {
   makeGetOrderDetailUseCase, 
   makeGetUserOrdersUseCase, 
   makeUpdateOrderStatusUseCase,
-  makeOrderRepository,
-  makeSupabaseClient
+  makeApproveManualPaymentUseCase,
+  makeSupabaseClient,
+  makeSendOrderConfirmationEmailUseCase
 } from "@/infrastructure/supabase/container";
 import { CreateOrderDTO } from "@/application/use-cases/orders/CreateOrder";
 import { OrderStatus, Order } from "@/domain/entities/Order";
@@ -265,12 +266,11 @@ export async function approveManualPaymentAction(orderId: string): Promise<Actio
   if (!isAdmin) return { success: false, error: "Access denied" };
 
   try {
-    const orderRepo = await makeOrderRepository();
-    await orderRepo.updatePaymentStatus(orderId, 'paid');
+    const useCase = await makeApproveManualPaymentUseCase();
+    const result = await useCase.execute(orderId);
 
-    const updatedOrder = await orderRepo.findById(orderId);
-    if (!updatedOrder) {
-      return { success: false, error: "Không tìm thấy đơn hàng sau cập nhật." };
+    if (!result.success) {
+      return { success: false, error: result.error.message };
     }
 
     revalidatePath("/admin/orders");
@@ -278,9 +278,50 @@ export async function approveManualPaymentAction(orderId: string): Promise<Actio
     revalidatePath("/profile/orders");
     revalidatePath(`/profile/orders/${orderId}`);
 
-    return { success: true, data: updatedOrder };
-  } catch (error: unknown) {
-    console.error('[Action Error] approveManualPaymentAction:', error);
+    return { success: true, data: result.data };
+  } catch {
     return { success: false, error: "Không thể phê duyệt thanh toán." };
   }
 }
+
+/**
+ * Resend order confirmation and digital license key email
+ */
+export async function resendOrderEmailAction(orderId: string): Promise<ActionResponse<void>> {
+  try {
+    const user = await getCurrentUser();
+    if (!user) {
+      return { success: false, error: "Bạn cần đăng nhập để thực hiện thao tác này." };
+    }
+
+    const admin = await isUserAdmin();
+    const orderDetailUseCase = await makeGetOrderDetailUseCase();
+    const orderResult = await orderDetailUseCase.execute({
+      orderId,
+      requesterId: user.id,
+      isAdmin: admin,
+    });
+
+    if (!orderResult.success) {
+      return { success: false, error: orderResult.error.message };
+    }
+
+    const order = orderResult.data;
+    if (order.paymentStatus !== "paid") {
+      return { success: false, error: "Đơn hàng chưa thanh toán, không thể cấp mã bản quyền." };
+    }
+
+    const useCase = await makeSendOrderConfirmationEmailUseCase();
+    const result = await useCase.execute(orderId);
+    if (!result.success) {
+      return { success: false, error: result.error.message };
+    }
+    return { success: true };
+  } catch (error: unknown) {
+    return { 
+      success: false, 
+      error: error instanceof Error ? error.message : "Không thể gửi lại email xác nhận đơn hàng." 
+    };
+  }
+}
+

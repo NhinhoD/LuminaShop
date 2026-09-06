@@ -8,9 +8,12 @@ import {
   makeSignupUseCase, 
   makeVerifyOtpUseCase, 
   makeResendOtpUseCase, 
-  makeSignoutUseCase 
+  makeSignoutUseCase,
+  makeForgotPasswordUseCase,
+  makeUpdatePasswordUseCase,
+  makeChangePasswordUseCase,
+  makeUpdateProfileUseCase
 } from '@/infrastructure/supabase/container'
-import { createClient } from '@/infrastructure/supabase/server'
 import { z } from 'zod'
 import { unstable_rethrow } from 'next/navigation'
 
@@ -176,29 +179,20 @@ export async function resendOtpAction(): Promise<{ success?: boolean; error?: st
 
 export async function updateProfileAction(fullName: string, phone: string): Promise<{ success: boolean; error?: string }> {
   try {
-    const supabase = await createClient();
-    const { data: { user }, error: userError } = await supabase.auth.getUser();
-    if (userError || !user) {
-      return { success: false, error: "Vui lòng đăng nhập lại để cập nhật thông tin." };
-    }
+    const useCase = await makeUpdateProfileUseCase();
+    const result = await useCase.execute(fullName, phone);
 
-    const { error: updateError } = await supabase
-      .from('profiles')
-      .update({
-        full_name: fullName,
-        phone: phone,
-        updated_at: new Date().toISOString(),
-      })
-      .eq('id', user.id);
-
-    if (updateError) {
-      return { success: false, error: updateError.message };
+    if (!result.success) {
+      return { success: false, error: result.error.message };
     }
 
     revalidatePath('/profile');
     return { success: true };
-  } catch {
-    return { success: false, error: "Đã có lỗi xảy ra khi cập nhật hồ sơ." };
+  } catch (error) {
+    return { 
+      success: false, 
+      error: error instanceof Error ? error.message : "Đã có lỗi xảy ra khi cập nhật hồ sơ." 
+    };
   }
 }
 
@@ -216,5 +210,127 @@ export async function signout(): Promise<never> {
   } catch (error: unknown) {
     unstable_rethrow(error)
     redirect('/')
+  }
+}
+
+const forgotPasswordSchema = z.object({
+  email: z.string().email('Email không hợp lệ'),
+});
+
+const updatePasswordSchema = z.object({
+  password: z.string().min(6, 'Mật khẩu phải có ít nhất 6 ký tự'),
+});
+
+export async function forgotPasswordAction(formData: FormData): Promise<{ success?: boolean; error?: string }> {
+  try {
+    const rawEmail = formData.get('email');
+    const parsed = forgotPasswordSchema.safeParse({ email: rawEmail });
+    if (!parsed.success) {
+      return { error: 'Địa chỉ email không hợp lệ' };
+    }
+
+    const { email } = parsed.data;
+
+    // Strictly resolve baseUrl from configured environment origin, avoiding unvalidated Host headers
+    let baseUrl: string | undefined;
+    const rawEnvUrl = process.env.APP_URL || process.env.NEXT_PUBLIC_SITE_URL;
+    if (rawEnvUrl) {
+      try {
+        const parsed = new URL(rawEnvUrl);
+        if (parsed.protocol === 'https:' || (process.env.NODE_ENV === 'development' && parsed.protocol === 'http:')) {
+          baseUrl = parsed.origin;
+        }
+      } catch {
+        baseUrl = undefined;
+      }
+    }
+
+    if (!baseUrl) {
+      if (process.env.NODE_ENV === 'development') {
+        baseUrl = 'http://localhost:3000';
+      } else {
+        return { error: 'Cấu hình hệ thống chưa hoàn tất: vui lòng cấu hình APP_URL hoặc NEXT_PUBLIC_SITE_URL.' };
+      }
+    }
+
+    const redirectTo = `${baseUrl}/reset-password`;
+
+    const useCase = await makeForgotPasswordUseCase();
+    const result = await useCase.execute(email, redirectTo);
+
+    if (!result.success) {
+      return { error: result.error.message || 'Không thể gửi email đặt lại mật khẩu' };
+    }
+
+    return { success: true };
+  } catch (error) {
+    return { error: error instanceof Error ? error.message : 'Lỗi hệ thống khi gửi email đặt lại mật khẩu' };
+  }
+}
+
+export async function updatePasswordAction(formData: FormData): Promise<{ success?: boolean; error?: string }> {
+  try {
+    const rawPassword = formData.get('password');
+    const parsed = updatePasswordSchema.safeParse({ password: rawPassword });
+    if (!parsed.success) {
+      return { error: 'Mật khẩu phải có ít nhất 6 ký tự' };
+    }
+
+    const { password } = parsed.data;
+    const useCase = await makeUpdatePasswordUseCase();
+    const result = await useCase.execute(password);
+
+    if (!result.success) {
+      return { error: result.error.message || 'Không thể cập nhật mật khẩu' };
+    }
+
+    revalidatePath('/profile');
+    return { success: true };
+  } catch (error) {
+    return { error: error instanceof Error ? error.message : 'Lỗi hệ thống khi cập nhật mật khẩu' };
+  }
+}
+
+const changePasswordSchema = z.object({
+  currentPassword: z.string().min(1, 'Vui lòng nhập mật khẩu hiện tại'),
+  newPassword: z.string().min(6, 'Mật khẩu mới phải có ít nhất 6 ký tự'),
+  confirmPassword: z.string().min(6, 'Vui lòng xác nhận mật khẩu mới'),
+}).refine((data) => data.newPassword === data.confirmPassword, {
+  message: 'Mật khẩu xác nhận không khớp',
+  path: ['confirmPassword'],
+}).refine((data) => data.currentPassword !== data.newPassword, {
+  message: 'Mật khẩu mới không được trùng với mật khẩu hiện tại',
+  path: ['newPassword'],
+});
+
+export async function changePasswordAction(formData: FormData): Promise<{ success?: boolean; error?: string }> {
+  try {
+    const rawCurrentPassword = formData.get('currentPassword');
+    const rawNewPassword = formData.get('newPassword');
+    const rawConfirmPassword = formData.get('confirmPassword');
+
+    const parsed = changePasswordSchema.safeParse({
+      currentPassword: rawCurrentPassword,
+      newPassword: rawNewPassword,
+      confirmPassword: rawConfirmPassword,
+    });
+
+    if (!parsed.success) {
+      return { error: parsed.error.issues[0]?.message || 'Dữ liệu không hợp lệ' };
+    }
+
+    const { currentPassword, newPassword } = parsed.data;
+    const useCase = await makeChangePasswordUseCase();
+    const result = await useCase.execute(currentPassword, newPassword);
+
+    if (!result.success) {
+      return { error: result.error.message || 'Không thể đổi mật khẩu' };
+    }
+
+    revalidatePath('/profile');
+    revalidatePath('/profile/password');
+    return { success: true };
+  } catch (error) {
+    return { error: error instanceof Error ? error.message : 'Lỗi hệ thống khi đổi mật khẩu' };
   }
 }

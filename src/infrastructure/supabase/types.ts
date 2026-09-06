@@ -109,3 +109,13 @@ export interface PaymentRow {
   webhook_payload?: unknown;
   created_at: string;
 }
+
+export interface ProfileRow {
+  id: string;
+  role: 'customer' | 'admin';
+  full_name: string | null;
+  phone: string | null;
+  avatar_url: string | null;
+  created_at: string;
+  updated_at: string;
+}
