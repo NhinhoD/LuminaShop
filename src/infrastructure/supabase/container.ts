@@ -337,6 +337,9 @@ LocationProvider.registerWardsFactory(makeGetWardsUseCase);
 
 // Email Factories
 export function makeEmailService(): IEmailService {
+  if (process.env.NODE_ENV === 'production' && !process.env.RESEND_API_KEY) {
+    throw new Error('RESEND_API_KEY is required in production');
+  }
   return new ResendEmailService();
 }
 

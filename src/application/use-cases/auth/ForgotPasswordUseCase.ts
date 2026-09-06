@@ -16,8 +16,10 @@ export class ForgotPasswordUseCase {
 
       try {
         const parsedUrl = new URL(redirectTo);
-        if (parsedUrl.protocol !== 'https:' && parsedUrl.protocol !== 'http:') {
-          return fail(new Error('Giao thức chuyển hướng không an toàn'));
+        const isAllowedProtocol = parsedUrl.protocol === 'https:' || 
+          (process.env.NODE_ENV === 'development' && parsedUrl.protocol === 'http:');
+        if (!isAllowedProtocol) {
+          return fail(new Error('Giao thức chuyển hướng không an toàn: chỉ chấp nhận HTTPS'));
         }
       } catch {
         return fail(new Error('Định dạng URL chuyển hướng không hợp lệ'));
