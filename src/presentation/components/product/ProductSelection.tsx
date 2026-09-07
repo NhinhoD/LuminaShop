@@ -111,7 +111,9 @@ export default function ProductSelection({ product, hasPurchased }: ProductSelec
         <button
           onClick={async () => {
             if (isFree || hasPurchased) {
-              window.open(product.sourceCodeUrl, "_blank");
+              if (product.sourceCodeUrl) {
+                window.open(product.sourceCodeUrl, "_blank", "noopener,noreferrer");
+              }
               return;
             }
 

@@ -11,7 +11,7 @@ import { OrderStatus } from "@/domain/entities/Order";
 import { Metadata } from "next";
 import { getDictionary, getLocale } from "@/i18n/getDictionary";
 import { getLocalizedText } from "@/presentation/utils/locale";
-import { makeLanguageRepository } from "@/infrastructure/supabase/container";
+import { makeLanguageRepository, makeProductRepository } from "@/infrastructure/supabase/container";
 
 export const metadata: Metadata = {
   title: "Chi tiết đơn hàng | KhoUI",
@@ -66,7 +66,6 @@ export default async function OrderDetailPage({ params }: PageProps) {
   }
 
   // Fetch the actual products for the order items to retrieve their active download/demo URLs
-  const { makeProductRepository } = await import("@/infrastructure/supabase/container");
   const productRepository = await makeProductRepository();
   
   const itemsWithCode = await Promise.all(
@@ -88,7 +87,7 @@ export default async function OrderDetailPage({ params }: PageProps) {
     })
   );
 
-  const isOrderPaid = order.paymentStatus === 'paid' || order.status === OrderStatus.COMPLETED;
+  const isOrderPaid = (order.paymentStatus === 'paid' || order.status === OrderStatus.COMPLETED) && order.status !== OrderStatus.CANCELLED;
 
   return (
     <div className="container mx-auto px-4 py-24 max-w-5xl font-sans">

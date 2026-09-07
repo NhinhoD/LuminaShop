@@ -119,6 +119,17 @@ export class SupabaseOrderRepository implements IOrderRepository {
 
   async updatePaymentStatus(id: string, paymentStatus: string): Promise<void> {
     const supabase = this.supabase;
+    
+    if (paymentStatus === 'paid') {
+      // Use atomic SECURITY DEFINER RPC to bypass user-level RLS restrictions and fulfill immediately
+      const { error: rpcError } = await supabase.rpc('complete_order_payment', {
+        p_order_id: id
+      });
+      
+      if (!rpcError) return;
+      console.warn('[SupabaseOrderRepository] complete_order_payment RPC failed, falling back to direct update:', rpcError.message);
+    }
+
     const updateData: { payment_status: string; updated_at: string; status?: string } = { 
       payment_status: paymentStatus, 
       updated_at: new Date().toISOString() 
@@ -128,12 +139,24 @@ export class SupabaseOrderRepository implements IOrderRepository {
       updateData.status = 'completed'; // Immediately fulfill digital order
     }
 
-    const { error } = await supabase
+    let query = supabase
       .from('orders')
       .update(updateData)
       .eq('id', id);
 
+    // When marking as paid in fallback, preserve cancellation predicate: require status = pending and payment_status != paid
+    if (paymentStatus === 'paid') {
+      query = query
+        .eq('status', OrderStatus.PENDING)
+        .neq('payment_status', 'paid');
+    }
+
+    const { data: updated, error } = await query.select('id');
+
     if (error) throw new Error(error.message);
+    if (paymentStatus === 'paid' && (!updated || updated.length === 0)) {
+      throw new Error('Không thể cập nhật trạng thái thanh toán. Đơn hàng không ở trạng thái chờ thanh toán hoặc đã bị hủy.');
+    }
   }
 
   async hasPurchasedProduct(userId: string, productId: string): Promise<boolean> {
@@ -143,10 +166,37 @@ export class SupabaseOrderRepository implements IOrderRepository {
       .eq('product_id', productId)
       .eq('orders.user_id', userId)
       .eq('orders.payment_status', 'paid')
+      .neq('orders.status', 'cancelled')
       .limit(1);
 
     if (error || !data) return false;
     return data.length > 0;
+  }
+
+  async cancelPendingOrder(id: string): Promise<boolean> {
+    // 1. Try atomic PostgreSQL RPC with SECURITY DEFINER
+    const { data, error } = await this.supabase.rpc('cancel_pending_order', {
+      p_order_id: id
+    });
+
+    if (!error && data) {
+      return data.success === true;
+    }
+
+    // 2. Fallback: atomic conditional update enforcing pending and unpaid preconditions
+    const { data: updated, error: updateError } = await this.supabase
+      .from('orders')
+      .update({ status: OrderStatus.CANCELLED, updated_at: new Date().toISOString() })
+      .eq('id', id)
+      .eq('status', OrderStatus.PENDING)
+      .neq('payment_status', 'paid')
+      .select('id');
+
+    if (updateError || !updated || updated.length === 0) {
+      return false;
+    }
+
+    return true;
   }
 
   private mapToEntity(row: OrderRow): Order {

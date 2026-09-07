@@ -66,7 +66,7 @@ export const vi = {
     hero: {
       badge: "Chợ Mua Bán Website Template & Mã Nguồn Cao Cấp",
       title1: "Sở Hữu Website Template Đỉnh Cao,",
-      title2: "Sẵn Sàng Triển Khai Cho Dự Án Đột Phá",
+      title2: "Sẵn Sàng Triển Khai Dự Án Đột Phá",
       title3: "",
       desc: "Sở hữu trọn bộ mã nguồn (Next.js 16, Tailwind v4, GSAP) chuẩn Clean Architecture được lập trình tối ưu bởi các Senior Engineers. Bàn giao nhanh chóng, an toàn, hỗ trợ deploy lên Vercel/Netlify miễn phí.",
       cta1: "Khám phá Template",

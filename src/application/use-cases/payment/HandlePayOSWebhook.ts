@@ -2,6 +2,9 @@ import { IOrderRepository } from '@/domain/repositories/IOrderRepository';
 import { IPaymentRepository } from '@/domain/repositories/IPaymentRepository';
 import { SendOrderConfirmationEmailUseCase } from '@/application/use-cases/orders/SendOrderConfirmationEmail';
 
+/**
+ * Payload data received from PayOS webhook notifications.
+ */
 export interface WebhookData {
   orderCode: number;
   amount: number;
@@ -15,6 +18,10 @@ export interface WebhookData {
   desc: string;
 }
 
+/**
+ * Use case to handle asynchronous webhook events from PayOS payment gateway.
+ * Updates payment and order status idempotently and triggers automated fulfillment emails.
+ */
 export class HandlePayOSWebhookUseCase {
   constructor(
     private orderRepo: IOrderRepository,
@@ -22,6 +29,12 @@ export class HandlePayOSWebhookUseCase {
     private sendOrderEmailUseCase?: SendOrderConfirmationEmailUseCase
   ) {}
 
+  /**
+   * Processes a verified PayOS webhook notification.
+   *
+   * @param data - The webhook notification data payload.
+   * @returns An object with success status and processing message.
+   */
   async execute(data: WebhookData): Promise<{ success: boolean; message: string }> {
     try {
       if (data.code === '00') {
@@ -37,6 +50,7 @@ export class HandlePayOSWebhookUseCase {
         }
 
         await this.paymentRepo.updatePaymentStatus(payment.id, 'paid');
+        // updatePaymentStatus('paid') atomically sets status: 'completed' in one operation
         await this.orderRepo.updatePaymentStatus(payment.orderId, 'paid');
         
         // Trigger automated license key & digital fulfillment delivery email

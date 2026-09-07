@@ -8,4 +8,5 @@ export interface IOrderRepository {
   updateStatus(id: string, status: OrderStatus): Promise<void>;
   updatePaymentStatus(id: string, paymentStatus: PaymentStatus): Promise<void>;
   hasPurchasedProduct(userId: string, productId: string): Promise<boolean>;
+  cancelPendingOrder(id: string): Promise<boolean>;
 }

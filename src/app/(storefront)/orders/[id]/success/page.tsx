@@ -4,10 +4,10 @@ import { OrderItem } from "@/domain/entities/Order";
 import { formatCurrency } from "@/lib/utils";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { CheckCircle2 } from "lucide-react";
+import { CheckCircle2, Download } from "lucide-react";
 import { getDictionary, getLocale } from "@/i18n/getDictionary";
 import { getLocalizedText } from "@/presentation/utils/locale";
-import { makeLanguageRepository } from "@/infrastructure/supabase/container";
+import { makeLanguageRepository, makeProductRepository } from "@/infrastructure/supabase/container";
 
 /**
  * Order success confirmation page displayed after successful payment.
@@ -33,6 +33,27 @@ export default async function OrderSuccessPage(props: { params: Promise<{ id: st
   if (order.status === "cancelled" || order.paymentStatus === "failed") {
     redirect(`/orders/${params.id}/failed`);
   }
+
+  // Fetch product models to retrieve active source code download URLs
+  const productRepo = await makeProductRepository();
+  const itemsWithCode = await Promise.all(
+    order.items.map(async (item: OrderItem) => {
+      try {
+        const prod = await productRepo.findById(item.productId);
+        return {
+          ...item,
+          sourceCodeUrl: prod?.sourceCodeUrl || "",
+        };
+      } catch {
+        return {
+          ...item,
+          sourceCodeUrl: "",
+        };
+      }
+    })
+  );
+
+  const isPaid = order.paymentStatus === "paid" || order.status === "completed";
 
   return (
     <div className="min-h-screen bg-background-subtle/50 py-16 sm:py-20 px-4 sm:px-6 font-sans">
@@ -69,8 +90,8 @@ export default async function OrderSuccessPage(props: { params: Promise<{ id: st
           </div>
           
           <div className="space-y-4 mb-6">
-            {order.items.map((item: OrderItem) => (
-              <div key={item.id} className="flex justify-between items-center text-sm">
+            {itemsWithCode.map((item) => (
+              <div key={item.id} className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 py-2 border-b border-slate-50 last:border-0 text-sm">
                 <div className="flex-1 pr-4">
                   <p className="font-semibold text-slate-900 tracking-tight text-sm">
                     {getLocalizedText(item.productSnapshot?.title as unknown as Record<string, string>, locale) || getLocalizedText(item.productTitle as unknown as Record<string, string>, locale) || (locale === "vi" ? "Sản phẩm" : "Product")}
@@ -79,7 +100,21 @@ export default async function OrderSuccessPage(props: { params: Promise<{ id: st
                     {orderDict.singleCommercialLicense || (locale === "vi" ? "Giấy phép thương mại vĩnh viễn (Single Commercial)" : "Lifetime Commercial License")}
                   </p>
                 </div>
-                <span className="font-bold text-slate-900 font-mono text-sm">{formatCurrency(item.priceAtPurchase * item.quantity, locale)}</span>
+
+                <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
+                  <span className="font-bold text-slate-900 font-mono text-sm">{formatCurrency(item.priceAtPurchase * item.quantity, locale)}</span>
+                  {isPaid && item.sourceCodeUrl && (
+                    <a
+                      href={item.sourceCodeUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold shadow-xs transition-all active:scale-95 flex-shrink-0"
+                    >
+                      <Download size={13} />
+                      <span>{locale === "vi" ? "Tải source code" : "Download (.zip)"}</span>
+                    </a>
+                  )}
+                </div>
               </div>
             ))}
           </div>
@@ -123,11 +158,23 @@ export default async function OrderSuccessPage(props: { params: Promise<{ id: st
 
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row justify-center gap-4">
+          {isPaid && itemsWithCode.length === 1 && itemsWithCode[0].sourceCodeUrl ? (
+            <a
+              href={itemsWithCode[0].sourceCodeUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-semibold transition-all text-sm shadow-xs flex items-center justify-center gap-2 active:scale-95"
+            >
+              <Download size={16} />
+              <span>{locale === "vi" ? "Tải ngay Source Code (.zip)" : "Download Source Code (.zip)"}</span>
+            </a>
+          ) : null}
           <Link 
             href="/profile/orders" 
-            className="px-6 py-3 bg-primary text-white rounded-xl font-medium hover:bg-primary-dark transition-all text-sm shadow-xs active:scale-95 text-center"
+            className="px-6 py-3 bg-primary text-white rounded-xl font-medium hover:bg-primary-dark transition-all text-sm shadow-xs active:scale-95 text-center flex items-center justify-center gap-2"
           >
-            {orderDict.accessVaultButton || orderDict.viewOrdersButton || (locale === "vi" ? "Mở Kho Bản Quyền Số" : "Access Digital Vault")}
+            <Download size={15} />
+            <span>{orderDict.accessVaultButton || orderDict.viewOrdersButton || (locale === "vi" ? "Vào Kho Giao Diện Của Tôi" : "Access My Templates Vault")}</span>
           </Link>
           <Link 
             href="/shop" 

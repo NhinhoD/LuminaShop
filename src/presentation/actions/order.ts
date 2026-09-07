@@ -231,9 +231,10 @@ export async function cancelOrderAction(orderId: string): Promise<ActionResponse
 
     if (
       orderResult.data.status === OrderStatus.COMPLETED || 
-      orderResult.data.status === OrderStatus.CANCELLED
+      orderResult.data.status === OrderStatus.CANCELLED ||
+      orderResult.data.paymentStatus === 'paid'
     ) {
-      return { success: false, error: "Chỉ có thể hủy đơn hàng đang chờ thanh toán." };
+      return { success: false, error: "Đơn hàng đã thanh toán hoặc đã hoàn tất, không thể tự hủy." };
     }
 
     const result = await useCase.execute({

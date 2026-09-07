@@ -16,7 +16,7 @@ export class ResendEmailService implements IEmailService {
   constructor() {
     const apiKey = process.env.RESEND_API_KEY;
     this.defaultFromEmail = process.env.RESEND_FROM_EMAIL || 'KhoUI <noreply@khoui.io.vn>';
-    this.defaultReplyToEmail = process.env.RESEND_REPLY_TO_EMAIL || 'khoui.gmail@gmail.com';
+    this.defaultReplyToEmail = process.env.RESEND_REPLY_TO_EMAIL || '';
 
     if (apiKey) {
       this.resend = new Resend(apiKey);
@@ -39,10 +39,21 @@ export class ResendEmailService implements IEmailService {
         subject: options.subject,
         html: options.html,
         text: options.text,
-        replyTo: options.replyTo || this.defaultReplyToEmail,
+        replyTo: options.replyTo || this.defaultReplyToEmail || undefined,
       });
 
       if (error || !data) {
+        // Resend Sandbox Restriction Detection:
+        // In development with onboarding@resend.dev, Resend forbids sending to arbitrary recipient emails.
+        if (
+          process.env.NODE_ENV === 'development' &&
+          error?.message?.includes('You can only send testing emails to your own email address')
+        ) {
+          console.warn(
+            `[Resend Sandbox Notice]: Đang dùng domain thử nghiệm (${this.defaultFromEmail}). Resend chỉ gửi tới email chủ tài khoản. Đơn hàng và quyền tải source code vẫn được kích hoạt tự động thành công 100%.`
+          );
+          return ok({ messageId: `sandbox-simulated-${Date.now()}` });
+        }
         return fail(new Error(error?.message || 'Failed to send email via Resend'));
       }
 

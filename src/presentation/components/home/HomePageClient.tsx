@@ -256,6 +256,60 @@ export default function HomePageClient({ featuredProducts, categories }: HomePag
     heroY.set(0);
   };
 
+  // Render balanced, orphan-proof hero title rows conforming to enterprise typography standards
+  const renderHeroTitle1 = () => {
+    const raw = dict?.home?.hero?.title1;
+    if (
+      raw &&
+      raw !== "Sở Hữu Website Template Đỉnh Cao," &&
+      raw !== "Sở Hữu Website Template Đỉnh Cao" &&
+      raw !== "Own Top-Tier Website Templates," &&
+      raw !== "Own Top-Tier Website Templates"
+    ) {
+      return raw.replace(/\s+([^\s]+)$/, "\u00A0$1");
+    }
+    if (locale === "vi") {
+      return (
+        <>
+          <span className="inline-block">Sở Hữu Website</span>{" "}
+          <span className="inline-block">Template Đỉnh&nbsp;Cao,</span>
+        </>
+      );
+    }
+    return (
+      <>
+        <span className="inline-block">Own Top-Tier</span>{" "}
+        <span className="inline-block">Website Templates,</span>
+      </>
+    );
+  };
+
+  const renderHeroTitle2 = () => {
+    const raw = dict?.home?.hero?.title2;
+    if (
+      raw &&
+      raw !== "Sẵn Sàng Triển Khai Cho Dự Án Đột Phá" &&
+      raw !== "Sẵn Sàng Triển Khai Dự Án Đột Phá" &&
+      raw !== "Production-Ready for Breakthrough Projects"
+    ) {
+      return raw.replace(/\s+([^\s]+)$/, "\u00A0$1");
+    }
+    if (locale === "vi") {
+      return (
+        <>
+          <span className="inline-block">Sẵn Sàng Triển Khai</span>{" "}
+          <span className="inline-block">Dự Án Đột&nbsp;Phá</span>
+        </>
+      );
+    }
+    return (
+      <>
+        <span className="inline-block">Production-Ready for</span>{" "}
+        <span className="inline-block">Breakthrough Projects</span>
+      </>
+    );
+  };
+
   const handleCopyCli = () => {
     navigator.clipboard.writeText("npx create-khoui-app@latest my-project");
     setCopiedCli(true);
@@ -639,7 +693,7 @@ export default function HomePageClient({ featuredProducts, categories }: HomePag
         <div className="hero-orb-1 absolute top-0 right-1/4 w-[500px] h-[500px] rounded-full bg-primary/[0.04] blur-[100px] pointer-events-none" />
 
         <div className="max-w-[1360px] mx-auto px-6 sm:px-8 w-full relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8 xl:gap-12 items-center">
 
             {/* Left Column: Headline & Content */}
             <div className="lg:col-span-7 space-y-5">
@@ -654,12 +708,12 @@ export default function HomePageClient({ featuredProducts, categories }: HomePag
               </div>
 
               {/* Refined, Balanced Headline with 3D Kinetic Split */}
-              <h1 className="hero-title text-3xl sm:text-4xl lg:text-[2.85rem] font-bold leading-[1.2] text-slate-900 tracking-[-0.025em] perspective-[1000px]">
-                <span className="hero-title-1 block">
-                  {dict?.home?.hero?.title1 || (locale === "vi" ? "Sở Hữu Website Template Đỉnh Cao," : "Own Top-Tier Website Templates,")}
+              <h1 className="hero-title text-2xl sm:text-4xl lg:text-[2.35rem] xl:text-[2.75rem] 2xl:text-[2.95rem] font-extrabold leading-[1.2] lg:leading-[1.16] text-slate-900 tracking-[-0.03em] perspective-[1000px] text-balance">
+                <span className="hero-title-1 block lg:whitespace-nowrap">
+                  {renderHeroTitle1()}
                 </span>
-                <span className="hero-title-2 block mt-1 text-primary">
-                  {dict?.home?.hero?.title2 || (locale === "vi" ? "Sẵn Sàng Triển Khai Cho Dự Án Đột Phá" : "Production-Ready for Breakthrough Projects")}
+                <span className="hero-title-2 block mt-1.5 lg:mt-2 text-primary lg:whitespace-nowrap">
+                  {renderHeroTitle2()}
                 </span>
               </h1>
 
@@ -772,7 +826,7 @@ export default function HomePageClient({ featuredProducts, categories }: HomePag
                     rotateY: heroRotateY,
                     transformStyle: "preserve-3d",
                   }}
-                  className="hero-ide-window relative w-[440px] xl:w-[470px] h-[520px] bg-[#090d16]/95 backdrop-blur-2xl text-white rounded-2xl overflow-hidden shadow-[0_30px_70px_-15px_rgba(0,0,0,0.8),0_0_35px_rgba(0,81,213,0.12)] border border-slate-800/90 ring-1 ring-white/10 flex flex-col justify-between select-none z-10"
+                  className="hero-ide-window relative w-full max-w-[420px] xl:max-w-[470px] h-[520px] bg-[#090d16]/95 backdrop-blur-2xl text-white rounded-2xl overflow-hidden shadow-[0_30px_70px_-15px_rgba(0,0,0,0.8),0_0_35px_rgba(0,81,213,0.12)] border border-slate-800/90 ring-1 ring-white/10 flex flex-col justify-between select-none z-10"
                 >
                   
                   {/* IDE Top Bar (macOS Style + File Breadcrumbs + Interactive Segmented Tab) */}

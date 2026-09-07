@@ -7,6 +7,7 @@ import ProductMediaGallery from "@/presentation/components/product/ProductMediaG
 import { getDictionary, getLocale } from "@/i18n/getDictionary";
 import { getLocalizedText } from "@/presentation/utils/locale";
 import { Zap, Layers, ShieldCheck, HelpCircle, Star } from "lucide-react";
+import { sanitizeProductForPublic } from "@/domain/entities/Product";
 
 interface ProductPageProps {
   params: Promise<{ id: string }>;
@@ -119,7 +120,7 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
             </div>
 
             {/* Price, Options & Purchase Actions */}
-            <ProductSelection product={product} hasPurchased={hasPurchased} />
+            <ProductSelection product={sanitizeProductForPublic(product, hasPurchased)} hasPurchased={hasPurchased} />
 
             {/* Technical Accordion / Info Items */}
             <div className="mt-8 pt-6 border-t border-slate-100 space-y-4">

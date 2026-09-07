@@ -17,6 +17,9 @@ import { SendOrderConfirmationEmailUseCase } from '@/application/use-cases/order
 
 import { AddToCartUseCase } from '@/application/use-cases/cart/AddToCart';
 import { MergeCartUseCase } from '@/application/use-cases/cart/MergeCart';
+import { GetCartUseCase } from '@/application/use-cases/cart/GetCart';
+import { UpdateCartItemUseCase } from '@/application/use-cases/cart/UpdateCartItem';
+import { RemoveCartItemUseCase } from '@/application/use-cases/cart/RemoveCartItem';
 import { CreateCategoryUseCase } from '@/application/use-cases/categories/CreateCategory';
 import { DeleteCategoryUseCase } from '@/application/use-cases/categories/DeleteCategory';
 import { GetCategoriesUseCase } from '@/application/use-cases/categories/GetCategories';
@@ -29,10 +32,17 @@ import { UpdateOrderStatusUseCase } from '@/application/use-cases/orders/UpdateO
 import { ApproveManualPaymentUseCase } from '@/application/use-cases/orders/ApproveManualPayment';
 import { CreateProductUseCase } from '@/application/use-cases/products/CreateProduct';
 import { UpdateProductUseCase } from '@/application/use-cases/products/UpdateProduct';
+import { DeleteProductUseCase } from '@/application/use-cases/products/DeleteProduct';
 import { GetProductByIdUseCase } from '@/application/use-cases/products/GetProductById';
 import { GetProductsUseCase } from '@/application/use-cases/products/GetProducts';
+import { AddTranslationUseCase } from '@/application/use-cases/translations/AddTranslation';
+import { UpdateTranslationUseCase } from '@/application/use-cases/translations/UpdateTranslation';
+import { DeleteTranslationUseCase } from '@/application/use-cases/translations/DeleteTranslation';
+import { GetTranslationsUseCase } from '@/application/use-cases/translations/GetTranslations';
+import { SyncTranslationsUseCase } from '@/application/use-cases/translations/SyncTranslations';
 import { ProcessPaymentUseCase } from '@/application/use-cases/payment/ProcessPayment';
 import { HandlePayOSWebhookUseCase } from '@/application/use-cases/payment/HandlePayOSWebhook';
+import { VerifyOrderPaymentUseCase } from '@/application/use-cases/payment/VerifyOrderPayment';
 import { CODPaymentGateway } from './gateways/CODPaymentGateway';
 import { PayOSGateway } from './gateways/PayOSGateway';
 import { CompositePaymentGateway } from './gateways/CompositePaymentGateway';
@@ -110,6 +120,21 @@ export async function makeMergeCartUseCase() {
   return new MergeCartUseCase(repo);
 }
 
+export async function makeGetCartUseCase() {
+  const repo = await makeCartRepository();
+  return new GetCartUseCase(repo);
+}
+
+export async function makeUpdateCartItemUseCase() {
+  const repo = await makeCartRepository();
+  return new UpdateCartItemUseCase(repo);
+}
+
+export async function makeRemoveCartItemUseCase() {
+  const repo = await makeCartRepository();
+  return new RemoveCartItemUseCase(repo);
+}
+
 export async function makeCreateCategoryUseCase() {
   const repo = await makeCategoryRepository();
   return new CreateCategoryUseCase(repo);
@@ -171,6 +196,11 @@ export async function makeUpdateProductUseCase() {
   return new UpdateProductUseCase(repo);
 }
 
+export async function makeDeleteProductUseCase() {
+  const repo = await makeProductRepository();
+  return new DeleteProductUseCase(repo);
+}
+
 export async function makeGetProductByIdUseCase() {
   const repo = await makeProductRepository();
   return new GetProductByIdUseCase(repo);
@@ -217,7 +247,6 @@ export async function makeVerifyOrderPaymentUseCase() {
   const paymentRepo = await makePaymentRepository();
   const payosGateway = await makePayOSGateway();
   const emailUseCase = await makeSendOrderConfirmationEmailUseCase();
-  const { VerifyOrderPaymentUseCase } = await import('@/application/use-cases/payment/VerifyOrderPayment');
   return new VerifyOrderPaymentUseCase(orderRepo, paymentRepo, payosGateway, emailUseCase);
 }
 
@@ -242,21 +271,28 @@ export async function makeGetDashboardMetricsUseCase() {
 }
 
 // Translation Factories
+export async function makeGetTranslationsUseCase() {
+  const repo = await makeTranslationRepository();
+  return new GetTranslationsUseCase(repo);
+}
+
+export async function makeSyncTranslationsUseCase() {
+  const repo = await makeTranslationRepository();
+  return new SyncTranslationsUseCase(repo);
+}
+
 export async function makeAddTranslationUseCase() {
   const repo = await makeTranslationRepository();
-  const { AddTranslationUseCase } = await import('@/application/use-cases/translations/AddTranslation');
   return new AddTranslationUseCase(repo);
 }
 
 export async function makeUpdateTranslationUseCase() {
   const repo = await makeTranslationRepository();
-  const { UpdateTranslationUseCase } = await import('@/application/use-cases/translations/UpdateTranslation');
   return new UpdateTranslationUseCase(repo);
 }
 
 export async function makeDeleteTranslationUseCase() {
   const repo = await makeTranslationRepository();
-  const { DeleteTranslationUseCase } = await import('@/application/use-cases/translations/DeleteTranslation');
   return new DeleteTranslationUseCase(repo);
 }
 
