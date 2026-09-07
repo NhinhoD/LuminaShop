@@ -15,7 +15,14 @@ BEGIN
         updated_at = NOW()
     WHERE id = p_order_id
       AND status = 'pending'
-      AND payment_status != 'paid';
+      AND payment_status != 'paid'
+      AND (
+        auth.uid() IS NULL -- service_role execution
+        OR user_id = auth.uid() -- order owner
+        OR EXISTS ( -- admin authorization
+          SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin'
+        )
+      );
 
     GET DIAGNOSTICS v_rows_updated = ROW_COUNT;
 

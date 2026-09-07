@@ -139,12 +139,24 @@ export class SupabaseOrderRepository implements IOrderRepository {
       updateData.status = 'completed'; // Immediately fulfill digital order
     }
 
-    const { error } = await supabase
+    let query = supabase
       .from('orders')
       .update(updateData)
       .eq('id', id);
 
+    // When marking as paid in fallback, preserve cancellation predicate: require status = pending and payment_status != paid
+    if (paymentStatus === 'paid') {
+      query = query
+        .eq('status', OrderStatus.PENDING)
+        .neq('payment_status', 'paid');
+    }
+
+    const { data: updated, error } = await query.select('id');
+
     if (error) throw new Error(error.message);
+    if (paymentStatus === 'paid' && (!updated || updated.length === 0)) {
+      throw new Error('Không thể cập nhật trạng thái thanh toán. Đơn hàng không ở trạng thái chờ thanh toán hoặc đã bị hủy.');
+    }
   }
 
   async hasPurchasedProduct(userId: string, productId: string): Promise<boolean> {

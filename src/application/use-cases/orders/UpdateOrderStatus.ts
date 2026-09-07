@@ -28,6 +28,11 @@ export class UpdateOrderStatusUseCase {
 
       // Security & State Integrity: Do not cancel orders that are already marked paid
       if (newStatus === OrderStatus.CANCELLED) {
+        // Return existing order as a successful no-op if already cancelled (idempotency)
+        if (currentStatus === OrderStatus.CANCELLED) {
+          return ok(order);
+        }
+
         if (order.paymentStatus === 'paid') {
           return fail(new Error('Không thể hủy đơn hàng đã thanh toán. Vui lòng liên hệ hỗ trợ để được giải quyết.'));
         }
