@@ -40,7 +40,7 @@ export async function processPaymentAction(orderId: string, amount: number, meth
   } catch (error: unknown) {
     console.error("[processPaymentAction] Unexpected error:", error);
     return { 
-      error: error instanceof Error ? error.message : "Đã xảy ra lỗi không mong muốn khi xử lý thanh toán." 
+      error: "Đã xảy ra lỗi không mong muốn khi xử lý thanh toán." 
     };
   }
 }
@@ -79,7 +79,7 @@ export async function verifyOrderPaymentAction(orderId: string, shouldRevalidate
     console.error("[verifyOrderPaymentAction] Unexpected error:", error);
     return { 
       success: false, 
-      message: error instanceof Error ? error.message : "Lỗi không xác định khi xác thực thanh toán." 
+      message: "Lỗi không xác định khi xác thực thanh toán." 
     };
   }
 }
