@@ -20,6 +20,10 @@ export class ResendEmailService implements IEmailService {
 
     if (apiKey) {
       this.resend = new Resend(apiKey);
+    } else {
+      console.warn(
+        '[ResendEmailService] CẢNH BÁO: RESEND_API_KEY chưa được cấu hình. Các tác vụ gửi email sẽ tạm thời bị bỏ qua an toàn để không gián đoạn thanh toán.'
+      );
     }
   }
 

@@ -17,25 +17,32 @@ import { revalidatePath } from "next/cache";
  * @returns An object containing the payment result or an error message.
  */
 export async function processPaymentAction(orderId: string, amount: number, method: string) {
-  const authRepo = await makeAuthRepository();
-  const user = await authRepo.getCurrentUser();
-  if (!user) {
-    return { error: "Bạn cần đăng nhập để thực hiện thanh toán." };
+  try {
+    const authRepo = await makeAuthRepository();
+    const user = await authRepo.getCurrentUser();
+    if (!user) {
+      return { error: "Bạn cần đăng nhập để thực hiện thanh toán." };
+    }
+
+    const processPaymentUseCase = await makeProcessPaymentUseCase();
+    const result = await processPaymentUseCase.execute({ orderId, amount, method, userId: user.id });
+
+    if (!result.success) {
+      return { error: result.message };
+    }
+
+    revalidatePath("/profile");
+    revalidatePath("/profile/orders");
+    revalidatePath("/admin/orders");
+    revalidatePath(`/orders/${orderId}/success`);
+    
+    return { data: result };
+  } catch (error: unknown) {
+    console.error("[processPaymentAction] Unexpected error:", error);
+    return { 
+      error: "Đã xảy ra lỗi không mong muốn khi xử lý thanh toán." 
+    };
   }
-
-  const processPaymentUseCase = await makeProcessPaymentUseCase();
-  const result = await processPaymentUseCase.execute({ orderId, amount, method, userId: user.id });
-
-  if (!result.success) {
-    return { error: result.message };
-  }
-
-  revalidatePath("/profile");
-  revalidatePath("/profile/orders");
-  revalidatePath("/admin/orders");
-  revalidatePath(`/orders/${orderId}/success`);
-  
-  return { data: result };
 }
 
 /**
@@ -47,24 +54,32 @@ export async function processPaymentAction(orderId: string, amount: number, meth
  * @returns An object containing success status and descriptive message.
  */
 export async function verifyOrderPaymentAction(orderId: string, shouldRevalidate: boolean = false) {
-  const authRepo = await makeAuthRepository();
-  const user = await authRepo.getCurrentUser();
-  if (!user) {
-    return { success: false, message: "Unauthorized" };
-  }
-
-  const useCase = await makeVerifyOrderPaymentUseCase();
-  const result = await useCase.execute(orderId, user.id);
-  
-  if (result.success && shouldRevalidate) {
-    try {
-      revalidatePath("/profile/orders");
-      revalidatePath(`/orders/${orderId}/success`);
-      revalidatePath("/admin/orders");
-    } catch {
-      // Safely ignore if called within an active render context where revalidation is unsupported
+  try {
+    const authRepo = await makeAuthRepository();
+    const user = await authRepo.getCurrentUser();
+    if (!user) {
+      return { success: false, message: "Unauthorized" };
     }
+
+    const useCase = await makeVerifyOrderPaymentUseCase();
+    const result = await useCase.execute(orderId, user.id);
+    
+    if (result.success && shouldRevalidate) {
+      try {
+        revalidatePath("/profile/orders");
+        revalidatePath(`/orders/${orderId}/success`);
+        revalidatePath("/admin/orders");
+      } catch {
+        // Safely ignore if called within an active render context where revalidation is unsupported
+      }
+    }
+    
+    return result;
+  } catch (error: unknown) {
+    console.error("[verifyOrderPaymentAction] Unexpected error:", error);
+    return { 
+      success: false, 
+      message: "Lỗi không xác định khi xác thực thanh toán." 
+    };
   }
-  
-  return result;
 }

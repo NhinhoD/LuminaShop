@@ -221,7 +221,27 @@ export async function makePayOSGateway() {
   return new PayOSGateway(supabase);
 }
 
+// Test Factory Overrides
+let customAuthRepositoryFactory: (() => Promise<IAuthRepository>) | null = null;
+let customProcessPaymentUseCaseFactory: (() => Promise<ProcessPaymentUseCase>) | null = null;
+let customVerifyOrderPaymentUseCaseFactory: (() => Promise<VerifyOrderPaymentUseCase>) | null = null;
+
+export function setCustomAuthRepositoryFactoryForTesting(factory: (() => Promise<IAuthRepository>) | null) {
+  customAuthRepositoryFactory = factory;
+}
+
+export function setCustomProcessPaymentUseCaseFactoryForTesting(factory: (() => Promise<ProcessPaymentUseCase>) | null) {
+  customProcessPaymentUseCaseFactory = factory;
+}
+
+export function setCustomVerifyOrderPaymentUseCaseFactoryForTesting(factory: (() => Promise<VerifyOrderPaymentUseCase>) | null) {
+  customVerifyOrderPaymentUseCaseFactory = factory;
+}
+
 export async function makeProcessPaymentUseCase() {
+  if (customProcessPaymentUseCaseFactory) {
+    return customProcessPaymentUseCaseFactory();
+  }
   const codGateway = await makeCODPaymentGateway();
   const payosGateway = await makePayOSGateway();
   
@@ -243,6 +263,9 @@ export async function makeHandlePayOSWebhookUseCase() {
 }
 
 export async function makeVerifyOrderPaymentUseCase() {
+  if (customVerifyOrderPaymentUseCaseFactory) {
+    return customVerifyOrderPaymentUseCaseFactory();
+  }
   const orderRepo = await makeOrderRepository();
   const paymentRepo = await makePaymentRepository();
   const payosGateway = await makePayOSGateway();
@@ -298,6 +321,9 @@ export async function makeDeleteTranslationUseCase() {
 
 // Auth Factories
 export async function makeAuthRepository(): Promise<IAuthRepository> {
+  if (customAuthRepositoryFactory) {
+    return customAuthRepositoryFactory();
+  }
   const supabase = await makeSupabaseClient();
   return new SupabaseAuthRepository(supabase);
 }
@@ -373,9 +399,6 @@ LocationProvider.registerWardsFactory(makeGetWardsUseCase);
 
 // Email Factories
 export function makeEmailService(): IEmailService {
-  if (process.env.NODE_ENV === 'production' && !process.env.RESEND_API_KEY) {
-    throw new Error('RESEND_API_KEY is required in production');
-  }
   return new ResendEmailService();
 }
 

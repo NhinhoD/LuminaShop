@@ -79,7 +79,8 @@ export class VerifyOrderPaymentUseCase {
 
       return { success: false, message: 'Payment is not PAID yet or unsupported method' };
     } catch (error: unknown) {
-      return { success: false, message: error instanceof Error ? error.message : 'Unknown error' };
+      console.error('VerifyOrderPaymentUseCase Error:', error);
+      return { success: false, message: 'Payment verification failed.' };
     }
   }
 }

@@ -98,7 +98,7 @@ export class ProcessPaymentUseCase {
       return {
         success: false,
         paymentId: '',
-        message: error instanceof Error ? error.message : 'Payment processing failed.'
+        message: 'Payment processing failed.'
       };
     }
   }
