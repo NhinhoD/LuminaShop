@@ -180,4 +180,97 @@ describe('VerifyOrderPaymentUseCase - Error Sanitization & CWE-209 Defense', () 
     assert.strictEqual(orderPaymentUpdated, true);
     assert.strictEqual(paymentRecordUpdated, true);
   });
+
+  it('automatically marks payment as failed and cancels pending order when gateway reports CANCELLED status', async () => {
+    const existingOrder = createMockOrder();
+    const existingPayment = createMockPayment();
+
+    let orderCancelled = false;
+    let paymentFailed = false;
+
+    const mockOrderRepo: Partial<IOrderRepository> = {
+      findById: async () => existingOrder,
+      cancelPendingOrder: async (orderId: string) => {
+        if (orderId === existingOrder.id) {
+          orderCancelled = true;
+          return true;
+        }
+        return false;
+      },
+    };
+
+    const mockPaymentRepo: Partial<IPaymentRepository> = {
+      findByOrderId: async () => existingPayment,
+      updatePaymentStatus: async (paymentId: string, status: string) => {
+        if (paymentId === existingPayment.id && status === 'failed') {
+          paymentFailed = true;
+        }
+      },
+    };
+
+    const mockGateway: IPaymentGateway = {
+      processPayment: async () => ({ success: true, paymentId: 'dummy', message: 'ok' }),
+      verifyPayment: async () => ({ success: false, status: 'CANCELLED', message: 'Payment cancelled' }),
+    };
+
+    const useCase = new VerifyOrderPaymentUseCase(
+      mockOrderRepo as IOrderRepository,
+      mockPaymentRepo as IPaymentRepository,
+      mockGateway
+    );
+
+    const result = await useCase.execute('order-test-verify-123', 'user-test-verify-456');
+
+    assert.strictEqual(result.success, false);
+    assert.match(result.message, /bị hủy/);
+    assert.strictEqual(orderCancelled, true, 'Order must be cancelled atomically');
+    assert.strictEqual(paymentFailed, true, 'Payment record must be marked failed');
+  });
+
+  it('automatically marks payment as failed and cancels pending order when gateway reports EXPIRED status', async () => {
+    const existingOrder = createMockOrder();
+    const existingPayment = createMockPayment();
+
+    let orderCancelled = false;
+    let paymentFailed = false;
+
+    const mockOrderRepo: Partial<IOrderRepository> = {
+      findById: async () => existingOrder,
+      cancelPendingOrder: async (orderId: string) => {
+        if (orderId === existingOrder.id) {
+          orderCancelled = true;
+          return true;
+        }
+        return false;
+      },
+    };
+
+    const mockPaymentRepo: Partial<IPaymentRepository> = {
+      findByOrderId: async () => existingPayment,
+      updatePaymentStatus: async (paymentId: string, status: string) => {
+        if (paymentId === existingPayment.id && status === 'failed') {
+          paymentFailed = true;
+        }
+      },
+    };
+
+    const mockGateway: IPaymentGateway = {
+      processPayment: async () => ({ success: true, paymentId: 'dummy', message: 'ok' }),
+      verifyPayment: async () => ({ success: false, status: 'EXPIRED', message: 'Payment link expired' }),
+    };
+
+    const useCase = new VerifyOrderPaymentUseCase(
+      mockOrderRepo as IOrderRepository,
+      mockPaymentRepo as IPaymentRepository,
+      mockGateway
+    );
+
+    const result = await useCase.execute('order-test-verify-123', 'user-test-verify-456');
+
+    assert.strictEqual(result.success, false);
+    assert.match(result.message, /bị hủy/);
+    assert.strictEqual(orderCancelled, true, 'Order must be cancelled atomically');
+    assert.strictEqual(paymentFailed, true, 'Payment record must be marked failed');
+  });
 });
+

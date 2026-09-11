@@ -1,4 +1,5 @@
 import { getOrderAction } from "@/presentation/actions/order";
+import { verifyOrderPaymentAction } from "@/presentation/actions/payment";
 import { OrderRealtimeTracker } from "@/presentation/components/orders/OrderRealtimeTracker";
 import { StatusBadge } from "@/presentation/components/orders/StatusBadge";
 import { CancelOrderButton } from "@/presentation/components/orders/CancelOrderButton";
@@ -23,6 +24,10 @@ interface PageProps {
 
 export default async function OrderDetailPage({ params }: PageProps) {
   const { id } = await params;
+  
+  // Auto-sync payment status with gateway (e.g. if cancelled or completed on PayOS)
+  await verifyOrderPaymentAction(id, false);
+
   const response = await getOrderAction(id);
   const locale = await getLocale();
   const langRepo = await makeLanguageRepository();
@@ -286,9 +291,15 @@ export default async function OrderDetailPage({ params }: PageProps) {
                 </span>
                 <span className={cn(
                   "font-medium",
-                  order.paymentStatus === 'paid' ? "text-emerald-600" : "text-amber-600"
+                  order.status === OrderStatus.CANCELLED || order.paymentStatus === 'failed'
+                    ? "text-red-600"
+                    : order.paymentStatus === 'paid' 
+                    ? "text-emerald-600" 
+                    : "text-amber-600"
                 )}>
-                  {order.paymentStatus === 'paid' 
+                  {order.status === OrderStatus.CANCELLED
+                    ? (orderDict.paymentCancelled || (locale === "vi" ? "Đã hủy" : "Cancelled"))
+                    : order.paymentStatus === 'paid' 
                     ? (orderDict.paymentPaid || (locale === "vi" ? "Đã xác nhận" : "Verified & Paid"))
                     : (orderDict.paymentPending || (locale === "vi" ? "Đang chờ duyệt" : "Awaiting Verification"))}
                 </span>
@@ -296,8 +307,8 @@ export default async function OrderDetailPage({ params }: PageProps) {
             </div>
           </div>
 
-          {/* Quick Bank Transfer details if not paid yet */}
-          {!isOrderPaid && (
+          {/* Quick Bank Transfer details if not paid yet and order is pending */}
+          {!isOrderPaid && order.status === OrderStatus.PENDING && (
             <div className="bg-white border border-slate-100 p-6 rounded-3xl shadow-xs space-y-4">
               <div className="flex items-center gap-2">
                 <QrCode className="w-5 h-5 text-amber-500" />
@@ -327,7 +338,12 @@ export default async function OrderDetailPage({ params }: PageProps) {
           )}
 
           {/* Digital Handover Shield */}
-          <div className="bg-gradient-to-br from-primary to-primary-dark p-6 rounded-3xl shadow-xs text-white">
+          <div className={cn(
+            "p-6 rounded-3xl shadow-xs text-white",
+            order.status === OrderStatus.CANCELLED
+              ? "bg-slate-900 border border-slate-800"
+              : "bg-gradient-to-br from-primary to-primary-dark"
+          )}>
             <div className="flex items-center gap-2 mb-3">
               <ShoppingBag className="w-5 h-5" />
               <h2 className="font-semibold text-sm font-sans">
@@ -335,7 +351,9 @@ export default async function OrderDetailPage({ params }: PageProps) {
               </h2>
             </div>
             <p className="text-blue-100 text-xs leading-relaxed font-normal">
-              {isOrderPaid 
+              {order.status === OrderStatus.CANCELLED
+                ? (orderDict.sourceDeliveryCancelled || (locale === "vi" ? "Đơn hàng này đã bị hủy do giao dịch thanh toán không thành công hoặc bị hủy. Bản quyền và mã nguồn chưa được kích hoạt." : "This order was cancelled due to incomplete or cancelled payment. Source code and licensing have not been activated."))
+                : isOrderPaid 
                 ? (orderDict.sourceDeliveryPaid || (locale === "vi" ? "Bản quyền đã kích hoạt! Hãy nhấn vào nút 'Tải về Source Code' bên dưới sản phẩm để tải file mã nguồn dạng .zip." : "License active! Click 'Download Source Code' below each item to retrieve the .zip package."))
                 : (orderDict.sourceDeliveryPending || (locale === "vi" ? "Đơn hàng đang chờ xác nhận giao dịch chuyển khoản. Vui lòng hoàn thành chuyển khoản để kích hoạt link tải tự động." : "Order is awaiting bank payment confirmation. Please complete the transfer to unlock instant downloads."))
               }

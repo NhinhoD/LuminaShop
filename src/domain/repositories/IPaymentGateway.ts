@@ -7,5 +7,5 @@ export interface PaymentResult {
 
 export interface IPaymentGateway {
   processPayment(orderId: string, amount: number, method: string): Promise<PaymentResult>;
-  verifyPayment?(transactionId: string): Promise<{ success: boolean; message: string }>;
+  verifyPayment?(transactionId: string): Promise<{ success: boolean; status?: string; message: string }>;
 }

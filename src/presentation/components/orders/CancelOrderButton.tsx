@@ -16,9 +16,6 @@ export function CancelOrderButton({ orderId }: CancelOrderButtonProps) {
   const { dict } = useI18n();
 
   const handleCancel = async () => {
-    const confirmMsg = dict?.orders?.cancelConfirm || "Are you sure you want to cancel this order?";
-    if (!confirm(confirmMsg)) return;
-
     setLoading(true);
     try {
       const result = await cancelOrderAction(orderId);

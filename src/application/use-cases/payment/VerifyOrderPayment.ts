@@ -73,6 +73,13 @@ export class VerifyOrderPaymentUseCase {
 
             return { success: true, message: 'Payment verified successfully' };
           }
+
+          if (verifyResult.status === 'CANCELLED' || verifyResult.status === 'EXPIRED') {
+            await this.paymentRepo.updatePaymentStatus(payment.id, 'failed');
+            await this.orderRepo.cancelPendingOrder(orderId);
+            return { success: false, message: 'Giao dịch thanh toán đã bị hủy. Đơn hàng đã được hủy tự động.' };
+          }
+
           return verifyResult;
         }
       }

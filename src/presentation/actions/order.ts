@@ -9,7 +9,8 @@ import {
   makeApproveManualPaymentUseCase,
   makeSupabaseClient,
   makeSendOrderConfirmationEmailUseCase,
-  makeGetCustomerCheckoutInfoUseCase
+  makeGetCustomerCheckoutInfoUseCase,
+  makePaymentRepository
 } from "@/infrastructure/supabase/container";
 import { CreateOrderDTO } from "@/application/use-cases/orders/CreateOrder";
 import { OrderStatus, Order } from "@/domain/entities/Order";
@@ -210,8 +211,13 @@ export async function updateOrderStatusAction(orderId: string, newStatus: OrderS
 }
 /**
  * Cancel order (User only - when pending)
+ * Idempotent: returns success if already cancelled.
+ * When cancelling, also updates payment record status to 'failed' if pending/unpaid.
  */
-export async function cancelOrderAction(orderId: string): Promise<ActionResponse<Order>> {
+export async function cancelOrderAction(
+  orderId: string, 
+  shouldRevalidate: boolean = true
+): Promise<ActionResponse<Order>> {
   const user = await getCurrentUser();
   if (!user) return { success: false, error: "Unauthorized" };
 
@@ -230,9 +236,13 @@ export async function cancelOrderAction(orderId: string): Promise<ActionResponse
       return { success: false, error: "Bạn không có quyền hủy đơn hàng này." };
     }
 
+    // Idempotency: If already cancelled, return success immediately
+    if (orderResult.data.status === OrderStatus.CANCELLED) {
+      return { success: true, data: orderResult.data };
+    }
+
     if (
       orderResult.data.status === OrderStatus.COMPLETED || 
-      orderResult.data.status === OrderStatus.CANCELLED ||
       orderResult.data.paymentStatus === 'paid'
     ) {
       return { success: false, error: "Đơn hàng đã thanh toán hoặc đã hoàn tất, không thể tự hủy." };
@@ -241,17 +251,34 @@ export async function cancelOrderAction(orderId: string): Promise<ActionResponse
     const result = await useCase.execute({
       orderId,
       newStatus: OrderStatus.CANCELLED,
-      adminId: user.id // We pass user.id as adminId here to bypass the admin check in useCase if it has one, 
-                        // but our useCase doesn't actually check adminId, it just takes it.
+      adminId: user.id
     });
 
     if (!result.success) {
       return { success: false, error: result.error.message };
     }
 
-    revalidatePath("/profile");
-    revalidatePath("/profile/orders");
-    revalidatePath(`/profile/orders/${orderId}`);
+    // Also update payment record status if one exists and is unpaid
+    try {
+      const paymentRepo = await makePaymentRepository();
+      const payment = await paymentRepo.findByOrderId(orderId);
+      if (payment && payment.status !== 'paid') {
+        await paymentRepo.updatePaymentStatus(payment.id, 'failed');
+      }
+    } catch (paymentErr) {
+      console.warn('[cancelOrderAction] Could not update payment record status:', paymentErr);
+    }
+
+    if (shouldRevalidate) {
+      try {
+        revalidatePath("/profile");
+        revalidatePath("/profile/orders");
+        revalidatePath(`/profile/orders/${orderId}`);
+        revalidatePath(`/orders/${orderId}/failed`);
+      } catch {
+        // Safe to ignore in active render contexts
+      }
+    }
     
     return { success: true, data: result.data };
   } catch (error: unknown) {
