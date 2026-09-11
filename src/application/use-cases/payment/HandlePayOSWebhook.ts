@@ -68,21 +68,21 @@ export class HandlePayOSWebhookUseCase {
         return { success: true, message: 'Webhook processed successfully' };
       }
 
-      // Handle cancellation webhook notifications
+      // Handle cancellation webhook notifications using structured fields
       const rawData = data as unknown as Record<string, unknown>;
       const isCancelled =
         rawData.status === 'CANCELLED' ||
         rawData.cancel === true ||
-        Boolean(rawData.cancellationReason) ||
-        data.desc?.toLowerCase().includes('cancel') ||
-        data.desc?.toLowerCase().includes('hủy');
+        Boolean(rawData.cancellationReason);
 
       if (isCancelled) {
         const payment = await this.paymentRepo.findByTransactionId(String(data.orderCode));
         if (payment && payment.status !== 'paid') {
-          await this.paymentRepo.updatePaymentStatus(payment.id, 'failed');
-          await this.orderRepo.cancelPendingOrder(payment.orderId);
-          return { success: true, message: 'Payment cancelled successfully via webhook' };
+          const cancelled = await this.orderRepo.cancelPendingOrder(payment.orderId);
+          if (cancelled) {
+            await this.paymentRepo.updatePaymentStatus(payment.id, 'failed');
+            return { success: true, message: 'Payment cancelled successfully via webhook' };
+          }
         }
       }
 

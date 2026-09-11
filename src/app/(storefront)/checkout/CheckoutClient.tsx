@@ -36,6 +36,14 @@ export interface CheckoutClientProps {
   initialCustomerInfo?: CustomerCheckoutInfo | null;
 }
 
+/**
+ * Interactive Client Component for the 3-step checkout experience.
+ * Manages customer form inputs, step animations, order submission,
+ * and integration with PayOS / COD payment methods following safe checkout transaction rules.
+ *
+ * @param props - Component props containing initial customer info from server pre-fill.
+ * @returns JSX Element for the checkout flow.
+ */
 export default function CheckoutClient({ initialCustomerInfo }: CheckoutClientProps) {
   const { dict, locale } = useI18n();
   const { items, subtotal, clearCart, isLoading: cartLoading } = useCart();

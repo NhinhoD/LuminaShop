@@ -75,8 +75,10 @@ export class VerifyOrderPaymentUseCase {
           }
 
           if (verifyResult.status === 'CANCELLED' || verifyResult.status === 'EXPIRED') {
-            await this.paymentRepo.updatePaymentStatus(payment.id, 'failed');
-            await this.orderRepo.cancelPendingOrder(orderId);
+            const cancelled = await this.orderRepo.cancelPendingOrder(orderId);
+            if (cancelled) {
+              await this.paymentRepo.updatePaymentStatus(payment.id, 'failed');
+            }
             return { success: false, message: 'Giao dịch thanh toán đã bị hủy. Đơn hàng đã được hủy tự động.' };
           }
 

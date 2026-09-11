@@ -3,6 +3,13 @@ import CheckoutClient, { CustomerCheckoutInfo } from "./CheckoutClient";
 
 export const dynamic = "force-dynamic";
 
+/**
+ * Server component for the Storefront Checkout process.
+ * Dynamically retrieves authenticated customer profile data to pre-fill delivery fields,
+ * and renders CheckoutClient with clean architecture state management.
+ *
+ * @returns JSX Element for the checkout page.
+ */
 export default async function CheckoutPage() {
   let initialCustomerInfo: CustomerCheckoutInfo | null = null;
 

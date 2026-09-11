@@ -27,6 +27,14 @@ interface OrderHistoryPageProps {
   searchParams: Promise<{ page?: string; q?: string; tab?: string }>;
 }
 
+/**
+ * Customer order history and digital templates vault page.
+ * Provides two-tab navigation between overall order history and purchased source code templates,
+ * with search, pagination, and real-time order updates.
+ *
+ * @param props - Component props containing searchParams promise.
+ * @returns JSX Element for the profile orders dashboard.
+ */
 export default async function OrderHistoryPage({ searchParams }: OrderHistoryPageProps) {
   const authRepo = await makeAuthRepository();
   const user = await authRepo.getCurrentUser();
@@ -44,36 +52,28 @@ export default async function OrderHistoryPage({ searchParams }: OrderHistoryPag
 
   const params = await searchParams;
   const currentTab = params.tab === "templates" ? "templates" : "orders";
-  const currentPage = parseInt(params.page || "1", 10);
+  const parsedPage = parseInt(params.page || "1", 10);
+  const safePage = Number.isFinite(parsedPage) && parsedPage > 0 ? parsedPage : 1;
   const search = typeof params.q === "string" ? params.q.trim() : undefined;
 
   const supabase = await makeSupabaseClient();
 
   // 1. Query user orders for "Lịch sử đơn hàng & thanh toán"
   const ordersPerPage = 10;
-  const ordersOffset = (currentPage - 1) * ordersPerPage;
-  const ordersResult = await getUserOrdersAction(ordersPerPage, ordersOffset);
-  let orders = ordersResult.data?.orders || [];
+  const ordersOffset = (safePage - 1) * ordersPerPage;
+  const ordersResult = await getUserOrdersAction(
+    ordersPerPage, 
+    ordersOffset, 
+    currentTab === "orders" ? search : undefined
+  );
+  const ordersError = ordersResult.success ? null : ordersResult.error;
+  const orders = ordersResult.data?.orders || [];
   const totalOrders = ordersResult.data?.total || 0;
-
-  if (search && currentTab === "orders") {
-    const searchLower = search.toLowerCase();
-    orders = orders.filter((o) =>
-      o.id.toLowerCase().includes(searchLower) ||
-      o.items.some((i) => {
-        const title = typeof i.productTitle === "object"
-          ? getLocalizedText(i.productTitle as Record<string, string>, locale)
-          : (i.productTitle || "");
-        return title.toLowerCase().includes(searchLower);
-      })
-    );
-  }
-
   const totalOrdersPages = Math.ceil(totalOrders / ordersPerPage);
 
   // 2. Query user purchased templates for "Kho mã nguồn đã sở hữu"
   const templatesPerPage = 9;
-  const templatesOffset = (currentPage - 1) * templatesPerPage;
+  const templatesOffset = (safePage - 1) * templatesPerPage;
 
   let templatesQuery = supabase
     .from("order_items")
@@ -96,10 +96,10 @@ export default async function OrderHistoryPage({ searchParams }: OrderHistoryPag
     .or("payment_status.eq.paid,status.eq.completed,status.eq.delivered", { referencedTable: "orders" });
 
   if (search && currentTab === "templates") {
-    templatesQuery = templatesQuery.ilike("products.title", `%${search}%`);
+    templatesQuery = templatesQuery.or(`title->>vi.ilike.%${search}%,title->>en.ilike.%${search}%`, { referencedTable: "products" });
   }
 
-  const { data: orderItemsData, count: totalTemplatesCount } = await templatesQuery
+  const { data: orderItemsData, count: totalTemplatesCount, error: templatesError } = await templatesQuery
     .order("created_at", { ascending: false })
     .range(templatesOffset, templatesOffset + templatesPerPage - 1);
 
@@ -202,7 +202,23 @@ export default async function OrderHistoryPage({ searchParams }: OrderHistoryPag
               {/* TAB 1: ORDER HISTORY & PAYMENTS */}
               {currentTab === "orders" && (
                 <div>
-                  {orders.length === 0 ? (
+                  {ordersError ? (
+                    <div className="text-center py-16 bg-red-50/50 rounded-3xl border border-red-100 max-w-xl mx-auto">
+                      <Package className="w-12 h-12 text-red-300 mx-auto mb-4" />
+                      <h2 className="text-lg font-bold text-red-900 mb-2 tracking-tight">
+                        {locale === "vi" ? "Lỗi tải lịch sử đơn hàng" : "Error Loading Order History"}
+                      </h2>
+                      <p className="text-slate-500 mb-6 max-w-sm mx-auto text-xs font-normal">
+                        {ordersError}
+                      </p>
+                      <Link
+                        href="/profile/orders?tab=orders"
+                        className="inline-flex items-center justify-center px-6 py-2.5 text-xs font-semibold rounded-xl text-white bg-red-600 hover:bg-red-700 transition-all shadow-xs active:scale-95"
+                      >
+                        {locale === "vi" ? "Thử lại" : "Retry"}
+                      </Link>
+                    </div>
+                  ) : orders.length === 0 ? (
                     <div className="text-center py-16 bg-slate-50/50 rounded-3xl border border-slate-100 max-w-xl mx-auto">
                       <ShoppingBag className="w-12 h-12 text-slate-300 mx-auto mb-4" />
                       <h2 className="text-lg font-bold text-slate-900 mb-2 tracking-tight">
@@ -331,7 +347,7 @@ export default async function OrderHistoryPage({ searchParams }: OrderHistoryPag
 
                   {totalOrdersPages > 1 && (
                     <div className="mt-8 flex justify-center">
-                      <PaginationControls currentPage={currentPage} totalPages={totalOrdersPages} />
+                      <PaginationControls currentPage={safePage} totalPages={totalOrdersPages} />
                     </div>
                   )}
                 </div>
@@ -340,7 +356,23 @@ export default async function OrderHistoryPage({ searchParams }: OrderHistoryPag
               {/* TAB 2: DOWNLOADABLE PURCHASED TEMPLATES */}
               {currentTab === "templates" && (
                 <div>
-                  {templateItems.length === 0 ? (
+                  {templatesError ? (
+                    <div className="text-center py-16 bg-red-50/50 rounded-3xl border border-red-100 max-w-xl mx-auto">
+                      <Package className="w-12 h-12 text-red-300 mx-auto mb-4" />
+                      <h2 className="text-lg font-bold text-red-900 mb-2 tracking-tight">
+                        {locale === "vi" ? "Lỗi tải danh sách mã nguồn" : "Error Loading Templates"}
+                      </h2>
+                      <p className="text-slate-500 mb-6 max-w-sm mx-auto text-xs font-normal">
+                        {templatesError.message || (locale === "vi" ? "Không thể lấy dữ liệu mã nguồn đã mua." : "Could not retrieve purchased templates.")}
+                      </p>
+                      <Link
+                        href="/profile/orders?tab=templates"
+                        className="inline-flex items-center justify-center px-6 py-2.5 text-xs font-semibold rounded-xl text-white bg-red-600 hover:bg-red-700 transition-all shadow-xs active:scale-95"
+                      >
+                        {locale === "vi" ? "Thử lại" : "Retry"}
+                      </Link>
+                    </div>
+                  ) : templateItems.length === 0 ? (
                     <div className="text-center py-16 bg-slate-50/50 rounded-3xl border border-slate-100 max-w-xl mx-auto">
                       <ShoppingBag className="w-12 h-12 text-slate-300 mx-auto mb-4" />
                       <h2 className="text-lg font-bold text-slate-900 mb-2 tracking-tight">
@@ -404,15 +436,25 @@ export default async function OrderHistoryPage({ searchParams }: OrderHistoryPag
                               </div>
 
                               <div className="pt-3 border-t border-slate-100 flex items-center gap-2">
-                                <a
-                                  href={product.source_code_url || "#"}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="flex-1 flex items-center justify-center gap-1.5 bg-primary text-white py-2 rounded-xl text-xs font-semibold hover:bg-primary-dark transition-all active:scale-95 shadow-xs cursor-pointer"
-                                >
-                                  <Download size={13} />
-                                  <span>{orderDict.downloadSourceCode || (locale === "vi" ? "Tải code" : "Download")}</span>
-                                </a>
+                                {product.source_code_url ? (
+                                  <a
+                                    href={product.source_code_url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex-1 flex items-center justify-center gap-1.5 bg-primary text-white py-2 rounded-xl text-xs font-semibold hover:bg-primary-dark transition-all active:scale-95 shadow-xs cursor-pointer"
+                                  >
+                                    <Download size={13} />
+                                    <span>{orderDict.downloadSourceCode || (locale === "vi" ? "Tải code" : "Download")}</span>
+                                  </a>
+                                ) : (
+                                  <span
+                                    aria-disabled="true"
+                                    className="flex-1 flex items-center justify-center gap-1.5 bg-slate-100 text-slate-400 py-2 rounded-xl text-xs font-semibold cursor-not-allowed"
+                                  >
+                                    <Download size={13} />
+                                    <span>{orderDict.downloadUnavailable || (locale === "vi" ? "Chưa có file" : "Unavailable")}</span>
+                                  </span>
+                                )}
 
                                 {item.order_id && (
                                   <Link
@@ -441,7 +483,7 @@ export default async function OrderHistoryPage({ searchParams }: OrderHistoryPag
 
                   {totalTemplatesPages > 1 && (
                     <div className="mt-8 flex justify-center">
-                      <PaginationControls currentPage={currentPage} totalPages={totalTemplatesPages} />
+                      <PaginationControls currentPage={safePage} totalPages={totalTemplatesPages} />
                     </div>
                   )}
                 </div>

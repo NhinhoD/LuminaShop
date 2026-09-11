@@ -134,6 +134,12 @@ export class PayOSGateway implements IPaymentGateway {
     }
   }
 
+  /**
+   * Verifies the status of a payment transaction with the PayOS API.
+   *
+   * @param transactionId - The PayOS order code numeric string.
+   * @returns Verification result including boolean success, explicit status code, and message.
+   */
   async verifyPayment(transactionId: string): Promise<{ success: boolean; status?: string; message: string }> {
     try {
       const paymentInfo = await this.payos.paymentRequests.get(Number(transactionId));

@@ -19,6 +19,14 @@ interface ProfileSidebarProps {
   profileDict?: Record<string, string>;
 }
 
+/**
+ * Sidebar navigation component for user profile management.
+ * Displays user identity summary and provides tab navigation between
+ * Profile Info, Change Password, and Orders & Templates.
+ *
+ * @param props - ProfileSidebarProps containing user, profile, active tab, locale, and dictionary.
+ * @returns JSX Element for the profile sidebar navigation.
+ */
 export function ProfileSidebar({
   user,
   profile,

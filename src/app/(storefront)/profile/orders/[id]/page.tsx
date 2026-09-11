@@ -22,13 +22,32 @@ interface PageProps {
   params: Promise<{ id: string }>;
 }
 
+/**
+ * Order details and payment tracking page.
+ * Displays order items, license downloads, payment summary, and cancellation actions.
+ * Limits synchronous payment verification to unresolved pending orders to prevent page render delay.
+ *
+ * @param props - Component props with async params promise.
+ * @returns JSX Element for the order detail page.
+ */
 export default async function OrderDetailPage({ params }: PageProps) {
   const { id } = await params;
   
-  // Auto-sync payment status with gateway (e.g. if cancelled or completed on PayOS)
-  await verifyOrderPaymentAction(id, false);
+  // Load order first
+  let response = await getOrderAction(id);
 
-  const response = await getOrderAction(id);
+  // Auto-sync payment status only for unresolved pending orders (prevents slow network blocking on paid/cancelled orders)
+  if (
+    response.success &&
+    response.data &&
+    response.data.paymentStatus !== 'paid' &&
+    response.data.status === OrderStatus.PENDING
+  ) {
+    const verification = await verifyOrderPaymentAction(id, false);
+    if (verification.success) {
+      response = await getOrderAction(id);
+    }
+  }
   const locale = await getLocale();
   const langRepo = await makeLanguageRepository();
   const dict = await getDictionary(langRepo);
@@ -297,7 +316,7 @@ export default async function OrderDetailPage({ params }: PageProps) {
                     ? "text-emerald-600" 
                     : "text-amber-600"
                 )}>
-                  {order.status === OrderStatus.CANCELLED
+                  {order.status === OrderStatus.CANCELLED || order.paymentStatus === 'failed'
                     ? (orderDict.paymentCancelled || (locale === "vi" ? "Đã hủy" : "Cancelled"))
                     : order.paymentStatus === 'paid' 
                     ? (orderDict.paymentPaid || (locale === "vi" ? "Đã xác nhận" : "Verified & Paid"))

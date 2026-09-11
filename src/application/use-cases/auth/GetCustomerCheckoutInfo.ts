@@ -7,9 +7,18 @@ export interface CustomerCheckoutInfoDTO {
   phone: string;
 }
 
+/**
+ * Use case to retrieve and aggregate customer delivery profile information
+ * (full name, email, contact phone) for seamless checkout pre-filling.
+ */
 export class GetCustomerCheckoutInfoUseCase {
   constructor(private authRepo: IAuthRepository) {}
 
+  /**
+   * Retrieves checkout information for the currently authenticated customer.
+   *
+   * @returns Result containing CustomerCheckoutInfoDTO or null if not authenticated.
+   */
   async execute(): Promise<Result<CustomerCheckoutInfoDTO | null>> {
     try {
       const user = await this.authRepo.getCurrentUser();

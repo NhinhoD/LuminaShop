@@ -18,12 +18,23 @@ export class SupabaseOrderRepository implements IOrderRepository {
     return this.mapToEntity(data);
   }
 
-  async findByUserId(userId: string, filters?: { limit?: number; offset?: number }): Promise<{ orders: Order[], total: number }> {
+  /**
+   * Retrieves orders belonging to a specific customer with optional limit, offset, and ID search filtering.
+   *
+   * @param userId - The ID of the customer.
+   * @param filters - Optional pagination limit, offset, and search term.
+   * @returns An object containing mapped Order entities and the total count.
+   */
+  async findByUserId(userId: string, filters?: { limit?: number; offset?: number; search?: string }): Promise<{ orders: Order[], total: number }> {
     const supabase = this.supabase;
     let query = supabase
       .from('orders')
       .select('*, items:order_items(*, product:products(title))', { count: 'exact' })
       .eq('user_id', userId);
+
+    if (filters?.search) {
+      query = query.ilike('id', `%${filters.search}%`);
+    }
 
     if (filters?.limit) {
       const from = filters.offset || 0;
@@ -173,6 +184,13 @@ export class SupabaseOrderRepository implements IOrderRepository {
     return data.length > 0;
   }
 
+  /**
+   * Atomically cancels a pending unpaid order.
+   * Enforces that the order status must be PENDING and payment_status must not be 'paid'.
+   *
+   * @param id - The unique ID of the order to cancel.
+   * @returns Promise resolving to true if cancelled, or false if already paid/cancelled or error.
+   */
   async cancelPendingOrder(id: string): Promise<boolean> {
     // 1. Try atomic PostgreSQL RPC with SECURITY DEFINER
     const { data, error } = await this.supabase.rpc('cancel_pending_order', {

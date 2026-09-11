@@ -6,26 +6,45 @@ import { getDictionary, getLocale } from "@/i18n/getDictionary";
 import { makeLanguageRepository } from "@/infrastructure/supabase/container";
 import { StatusBadge } from "@/presentation/components/orders/StatusBadge";
 
+import { OrderStatus } from "@/domain/entities/Order";
+
 /**
  * Order failure/cancelled page displayed when payment is cancelled or failed.
- * Automatically marks pending unpaid orders as cancelled with zero user friction.
+ * Protects against accidental cancellations on GET, redirects paid orders to success,
+ * and branches copy appropriately based on actual order status.
+ *
+ * @param props - Component props containing the async params promise with order ID.
+ * @returns JSX Element for the order failed/cancelled page.
  */
 export default async function OrderFailedPage(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
 
-  // Auto-cancel the order if it was pending and unpaid (user cancelled payment on PayOS or payment gateway error)
-  await cancelOrderAction(params.id, false);
-
   const result = await getOrderAction(params.id);
-  const order = result.data;
+  let order = result.data;
+
+  if (!order) {
+    redirect("/");
+  }
+
+  // If order is already paid or completed, redirect to success certificate
+  if (order.status === OrderStatus.COMPLETED || order.paymentStatus === 'paid') {
+    redirect(`/orders/${order.id}/success`);
+  }
+
+  // Only auto-cancel pending unpaid orders when returning from payment gateway cancellation
+  if (order.status === OrderStatus.PENDING) {
+    const cancelRes = await cancelOrderAction(params.id, false);
+    if (cancelRes.success && cancelRes.data) {
+      order = cancelRes.data;
+    }
+  }
+
   const locale = await getLocale();
   const langRepo = await makeLanguageRepository();
   const dict = await getDictionary(langRepo);
   const orderDict = (dict?.orders as Record<string, string>) || {};
 
-  if (!order) {
-    redirect("/");
-  }
+  const isCancelled = order.status === OrderStatus.CANCELLED;
 
   return (
     <div className="min-h-screen bg-background-subtle/50 py-16 sm:py-20 px-4 sm:px-6 font-sans">
@@ -39,10 +58,15 @@ export default async function OrderFailedPage(props: { params: Promise<{ id: str
         </div>
 
         <h1 className="text-2xl sm:text-3xl font-bold tracking-tight mb-3 text-slate-900">
-          {orderDict.failedTitle || (locale === "vi" ? "Giao Dịch Thanh Toán Đã Bị Hủy" : "Payment Cancelled")}
+          {isCancelled
+            ? (orderDict.failedTitle || (locale === "vi" ? "Giao Dịch Thanh Toán Đã Bị Hủy" : "Payment Cancelled"))
+            : (orderDict.pendingTitle || (locale === "vi" ? "Thanh Toán Chưa Hoàn Tất" : "Payment Incomplete"))}
         </h1>
         <p className="text-slate-500 text-xs mb-8 max-w-md mx-auto leading-relaxed font-normal">
-          {orderDict.failedSubtitle || (locale === "vi" ? "Giao dịch thanh toán đã bị hủy. Đơn hàng của bạn đã được hủy tự động." : "Payment transaction was cancelled. Your order has been automatically cancelled.")}{" "}
+          {isCancelled
+            ? (orderDict.failedSubtitle || (locale === "vi" ? "Giao dịch thanh toán đã bị hủy. Đơn hàng của bạn đã được hủy tự động." : "Payment transaction was cancelled. Your order has been automatically cancelled."))
+            : (orderDict.pendingSubtitle || (locale === "vi" ? "Đơn hàng đang chờ xử lý thanh toán." : "Order is awaiting payment completion."))}
+          {" "}
           <strong className="text-slate-900 font-mono bg-slate-50 px-2 py-0.5 rounded-md border border-slate-200 font-medium">
             #{order.id.split("-")[0].toUpperCase()}
           </strong>.

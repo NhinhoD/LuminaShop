@@ -119,15 +119,24 @@ export async function getOrderAction(id: string): Promise<ActionResponse<Order>>
 }
 
 /**
- * Get current user's orders
+ * Retrieves the current authenticated user's orders with pagination and optional search filter.
+ *
+ * @param limit - Number of orders per page.
+ * @param offset - Number of orders to skip.
+ * @param search - Optional query string to filter by order ID.
+ * @returns ActionResponse containing orders and total count.
  */
-export async function getUserOrdersAction(limit?: number, offset?: number): Promise<ActionResponse<{ orders: Order[], total: number }>> {
+export async function getUserOrdersAction(
+  limit?: number, 
+  offset?: number,
+  search?: string
+): Promise<ActionResponse<{ orders: Order[], total: number }>> {
   const user = await getCurrentUser();
   if (!user) return { success: false, error: "Bạn cần đăng nhập để xem lịch sử đơn hàng." };
 
   try {
     const useCase = await makeGetUserOrdersUseCase();
-    const result = await useCase.execute({ userId: user.id, limit, offset });
+    const result = await useCase.execute({ userId: user.id, limit, offset, search });
 
     if (!result.success) {
       return { success: false, error: result.error.message };
@@ -210,9 +219,13 @@ export async function updateOrderStatusAction(orderId: string, newStatus: OrderS
   }
 }
 /**
- * Cancel order (User only - when pending)
- * Idempotent: returns success if already cancelled.
- * When cancelling, also updates payment record status to 'failed' if pending/unpaid.
+ * Cancels a pending unpaid order for the authenticated user.
+ * Idempotent: returns success immediately if the order is already cancelled.
+ * Atomically updates payment record status to 'failed' if pending/unpaid.
+ *
+ * @param orderId - The unique ID of the order to cancel.
+ * @param shouldRevalidate - Whether Next.js page paths should be revalidated.
+ * @returns ActionResponse containing the updated Order or error message.
  */
 export async function cancelOrderAction(
   orderId: string, 
@@ -224,7 +237,7 @@ export async function cancelOrderAction(
   try {
     const useCase = await makeUpdateOrderStatusUseCase();
     
-    // We need to verify ownership first since updateOrderStatusUseCase doesn't check ownership by default
+    // Verify ownership first
     const getDetailUseCase = await makeGetOrderDetailUseCase();
     const orderResult = await getDetailUseCase.execute({
       orderId,
@@ -258,15 +271,11 @@ export async function cancelOrderAction(
       return { success: false, error: result.error.message };
     }
 
-    // Also update payment record status if one exists and is unpaid
-    try {
-      const paymentRepo = await makePaymentRepository();
-      const payment = await paymentRepo.findByOrderId(orderId);
-      if (payment && payment.status !== 'paid') {
-        await paymentRepo.updatePaymentStatus(payment.id, 'failed');
-      }
-    } catch (paymentErr) {
-      console.warn('[cancelOrderAction] Could not update payment record status:', paymentErr);
+    // Update payment record status if one exists and is unpaid
+    const paymentRepo = await makePaymentRepository();
+    const payment = await paymentRepo.findByOrderId(orderId);
+    if (payment && payment.status !== 'paid') {
+      await paymentRepo.updatePaymentStatus(payment.id, 'failed');
     }
 
     if (shouldRevalidate) {
