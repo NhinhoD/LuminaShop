@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { User, Lock, Download, LogOut } from 'lucide-react';
+import { User, Lock, LogOut, ShoppingBag } from 'lucide-react';
 import { signout } from '@/presentation/actions/auth';
 
 interface ProfileSidebarProps {
@@ -42,8 +42,8 @@ export function ProfileSidebar({
     {
       id: 'orders',
       href: '/profile/orders',
-      label: profileDict.myTemplates || (locale === 'vi' ? 'Mã nguồn của tôi' : 'My Templates'),
-      icon: Download,
+      label: profileDict.myOrders || (locale === 'vi' ? 'Đơn hàng & Mã nguồn' : 'Orders & Templates'),
+      icon: ShoppingBag,
     },
   ];
 
