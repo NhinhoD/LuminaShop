@@ -126,11 +126,16 @@ export class SupabaseAuthRepository implements IAuthRepository {
     }
   }
 
-  async getCurrentUser(): Promise<{ id: string; email?: string } | null> {
+  async getCurrentUser(): Promise<{ id: string; email?: string; fullName?: string; phone?: string } | null> {
     try {
       const { data: { user } } = await this.supabase.auth.getUser();
       if (!user) return null;
-      return { id: user.id, email: user.email };
+      return {
+        id: user.id,
+        email: user.email,
+        fullName: user.user_metadata?.full_name || user.user_metadata?.name || undefined,
+        phone: user.phone || user.user_metadata?.phone || undefined,
+      };
     } catch {
       return null;
     }

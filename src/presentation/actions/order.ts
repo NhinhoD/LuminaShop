@@ -8,7 +8,8 @@ import {
   makeUpdateOrderStatusUseCase,
   makeApproveManualPaymentUseCase,
   makeSupabaseClient,
-  makeSendOrderConfirmationEmailUseCase
+  makeSendOrderConfirmationEmailUseCase,
+  makeGetCustomerCheckoutInfoUseCase
 } from "@/infrastructure/supabase/container";
 import { CreateOrderDTO } from "@/application/use-cases/orders/CreateOrder";
 import { OrderStatus, Order } from "@/domain/entities/Order";
@@ -323,6 +324,26 @@ export async function resendOrderEmailAction(orderId: string): Promise<ActionRes
       success: false, 
       error: error instanceof Error ? error.message : "Không thể gửi lại email xác nhận đơn hàng." 
     };
+  }
+}
+
+/**
+ * Server action to retrieve pre-filled customer details for checkout.
+ * Returns the authenticated user's fullName, email, and phone number (support contact handle).
+ */
+export async function getCustomerCheckoutInfoAction(): Promise<ActionResponse<{ fullName: string; email: string; phone: string } | null>> {
+  try {
+    const useCase = await makeGetCustomerCheckoutInfoUseCase();
+    const result = await useCase.execute();
+
+    if (!result.success) {
+      return { success: false, error: result.error.message };
+    }
+
+    return { success: true, data: result.data };
+  } catch (error: unknown) {
+    console.error('[Action Error] getCustomerCheckoutInfoAction:', error);
+    return { success: false, error: "Không thể tải thông tin khách hàng." };
   }
 }
 
