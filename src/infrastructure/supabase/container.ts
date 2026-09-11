@@ -374,6 +374,11 @@ export async function makeUpdateProfileUseCase(): Promise<UpdateProfileUseCase> 
   return new UpdateProfileUseCase(repo);
 }
 
+/**
+ * Factory creating GetCustomerCheckoutInfoUseCase wired with Supabase Auth repository.
+ *
+ * @returns Promise resolving to a new GetCustomerCheckoutInfoUseCase instance.
+ */
 export async function makeGetCustomerCheckoutInfoUseCase(): Promise<GetCustomerCheckoutInfoUseCase> {
   const repo = await makeAuthRepository();
   return new GetCustomerCheckoutInfoUseCase(repo);

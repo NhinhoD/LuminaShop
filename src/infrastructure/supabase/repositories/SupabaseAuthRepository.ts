@@ -126,6 +126,12 @@ export class SupabaseAuthRepository implements IAuthRepository {
     }
   }
 
+  /**
+   * Retrieves the currently authenticated session user from Supabase Auth,
+   * extracting metadata attributes including fullName and phone.
+   *
+   * @returns User summary object or null if not authenticated.
+   */
   async getCurrentUser(): Promise<{ id: string; email?: string; fullName?: string; phone?: string } | null> {
     try {
       const { data: { user } } = await this.supabase.auth.getUser();
@@ -141,6 +147,12 @@ export class SupabaseAuthRepository implements IAuthRepository {
     }
   }
 
+  /**
+   * Retrieves profile data for a specific user ID from the profiles table.
+   *
+   * @param userId - Unique user ID.
+   * @returns User profile record or null if not found.
+   */
   async getProfile(userId: string): Promise<{ id: string; fullName?: string; phone?: string; avatarUrl?: string } | null> {
     try {
       const { data } = await this.supabase
