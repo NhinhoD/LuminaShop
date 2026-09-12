@@ -28,6 +28,18 @@ interface OrderHistoryPageProps {
 }
 
 /**
+ * Escapes PostgREST-reserved characters (commas and parentheses) in user search terms
+ * before interpolating into raw filter expressions like `.or()`, preventing query syntax errors
+ * while preserving SQL LIKE wildcards (`%` and `_`).
+ *
+ * @param value - Untrusted raw search query from user.
+ * @returns Escaped search string safe for PostgREST `.or()` filter interpolation.
+ */
+function escapePostgrestFilter(value: string): string {
+  return value.replace(/\\/g, "\\\\").replace(/[,()]/g, "\\$&");
+}
+
+/**
  * Customer order history and digital templates vault page.
  * Provides two-tab navigation between overall order history and purchased source code templates,
  * with search, pagination, and real-time order updates.
@@ -96,7 +108,8 @@ export default async function OrderHistoryPage({ searchParams }: OrderHistoryPag
     .or("payment_status.eq.paid,status.eq.completed,status.eq.delivered", { referencedTable: "orders" });
 
   if (search && currentTab === "templates") {
-    templatesQuery = templatesQuery.or(`title->>vi.ilike.%${search}%,title->>en.ilike.%${search}%`, { referencedTable: "products" });
+    const escapedSearch = escapePostgrestFilter(search);
+    templatesQuery = templatesQuery.or(`title->>vi.ilike.%${escapedSearch}%,title->>en.ilike.%${escapedSearch}%`, { referencedTable: "products" });
   }
 
   const { data: orderItemsData, count: totalTemplatesCount, error: templatesError } = await templatesQuery

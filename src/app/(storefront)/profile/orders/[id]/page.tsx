@@ -43,10 +43,9 @@ export default async function OrderDetailPage({ params }: PageProps) {
     response.data.paymentStatus !== 'paid' &&
     response.data.status === OrderStatus.PENDING
   ) {
-    const verification = await verifyOrderPaymentAction(id, false);
-    if (verification.success) {
-      response = await getOrderAction(id);
-    }
+    await verifyOrderPaymentAction(id, false);
+    // Reload order after verification to reflect newly reconciled status (e.g. paid, cancelled, or expired)
+    response = await getOrderAction(id);
   }
   const locale = await getLocale();
   const langRepo = await makeLanguageRepository();
