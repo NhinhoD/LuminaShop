@@ -134,13 +134,28 @@ export class PayOSGateway implements IPaymentGateway {
     }
   }
 
-  async verifyPayment(transactionId: string): Promise<{ success: boolean; message: string }> {
+  /**
+   * Verifies the status of a payment transaction with the PayOS API.
+   *
+   * @param transactionId - The PayOS order code numeric string.
+   * @returns Verification result including boolean success, explicit status code, and message.
+   */
+  async verifyPayment(transactionId: string): Promise<{ success: boolean; status?: string; message: string }> {
     try {
       const paymentInfo = await this.payos.paymentRequests.get(Number(transactionId));
-      if (paymentInfo && paymentInfo.status === 'PAID') {
-        return { success: true, message: 'Payment verified successfully' };
+      if (paymentInfo) {
+        if (paymentInfo.status === 'PAID') {
+          return { success: true, status: 'PAID', message: 'Payment verified successfully' };
+        }
+        if (paymentInfo.status === 'CANCELLED') {
+          return { success: false, status: 'CANCELLED', message: 'Payment was cancelled by user' };
+        }
+        if (paymentInfo.status === 'EXPIRED') {
+          return { success: false, status: 'EXPIRED', message: 'Payment link has expired' };
+        }
+        return { success: false, status: paymentInfo.status, message: `Payment status: ${paymentInfo.status}` };
       }
-      return { success: false, message: 'Payment is not PAID yet' };
+      return { success: false, message: 'Could not retrieve payment info from PayOS' };
     } catch (payosError: unknown) {
       console.error('PayOS verify error:', payosError instanceof Error ? payosError.message : String(payosError));
       return { success: false, message: 'Could not verify with PayOS' };

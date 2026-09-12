@@ -10,15 +10,19 @@ interface CancelOrderButtonProps {
   orderId: string;
 }
 
+/**
+ * Client button component allowing customers to cancel an active pending order.
+ * Triggers cancelOrderAction and provides immediate localized feedback without blocking dialogs.
+ *
+ * @param props - CancelOrderButtonProps containing orderId.
+ * @returns JSX button element.
+ */
 export function CancelOrderButton({ orderId }: CancelOrderButtonProps) {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { dict } = useI18n();
 
   const handleCancel = async () => {
-    const confirmMsg = dict?.orders?.cancelConfirm || "Are you sure you want to cancel this order?";
-    if (!confirm(confirmMsg)) return;
-
     setLoading(true);
     try {
       const result = await cancelOrderAction(orderId);

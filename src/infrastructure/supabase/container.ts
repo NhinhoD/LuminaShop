@@ -56,6 +56,7 @@ import { ForgotPasswordUseCase } from '@/application/use-cases/auth/ForgotPasswo
 import { UpdatePasswordUseCase } from '@/application/use-cases/auth/UpdatePasswordUseCase';
 import { ChangePasswordUseCase } from '@/application/use-cases/auth/ChangePasswordUseCase';
 import { UpdateProfileUseCase } from '@/application/use-cases/auth/UpdateProfileUseCase';
+import { GetCustomerCheckoutInfoUseCase } from '@/application/use-cases/auth/GetCustomerCheckoutInfo';
 
 import { HttpLocationRepository } from '../repositories/HttpLocationRepository';
 import { GetProvincesUseCase } from '@/application/use-cases/location/GetProvinces';
@@ -371,6 +372,16 @@ export async function makeChangePasswordUseCase(): Promise<ChangePasswordUseCase
 export async function makeUpdateProfileUseCase(): Promise<UpdateProfileUseCase> {
   const repo = await makeAuthRepository();
   return new UpdateProfileUseCase(repo);
+}
+
+/**
+ * Factory creating GetCustomerCheckoutInfoUseCase wired with Supabase Auth repository.
+ *
+ * @returns Promise resolving to a new GetCustomerCheckoutInfoUseCase instance.
+ */
+export async function makeGetCustomerCheckoutInfoUseCase(): Promise<GetCustomerCheckoutInfoUseCase> {
+  const repo = await makeAuthRepository();
+  return new GetCustomerCheckoutInfoUseCase(repo);
 }
 
 // Location Factories

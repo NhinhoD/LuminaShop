@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { User, Lock, Download, LogOut } from 'lucide-react';
+import { User, Lock, LogOut, ShoppingBag } from 'lucide-react';
 import { signout } from '@/presentation/actions/auth';
 
 interface ProfileSidebarProps {
@@ -19,6 +19,14 @@ interface ProfileSidebarProps {
   profileDict?: Record<string, string>;
 }
 
+/**
+ * Sidebar navigation component for user profile management.
+ * Displays user identity summary and provides tab navigation between
+ * Profile Info, Change Password, and Orders & Templates.
+ *
+ * @param props - ProfileSidebarProps containing user, profile, active tab, locale, and dictionary.
+ * @returns JSX Element for the profile sidebar navigation.
+ */
 export function ProfileSidebar({
   user,
   profile,
@@ -42,8 +50,8 @@ export function ProfileSidebar({
     {
       id: 'orders',
       href: '/profile/orders',
-      label: profileDict.myTemplates || (locale === 'vi' ? 'Mã nguồn của tôi' : 'My Templates'),
-      icon: Download,
+      label: profileDict.myOrders || (locale === 'vi' ? 'Đơn hàng & Mã nguồn' : 'Orders & Templates'),
+      icon: ShoppingBag,
     },
   ];
 

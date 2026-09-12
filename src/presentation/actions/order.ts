@@ -8,7 +8,9 @@ import {
   makeUpdateOrderStatusUseCase,
   makeApproveManualPaymentUseCase,
   makeSupabaseClient,
-  makeSendOrderConfirmationEmailUseCase
+  makeSendOrderConfirmationEmailUseCase,
+  makeGetCustomerCheckoutInfoUseCase,
+  makePaymentRepository
 } from "@/infrastructure/supabase/container";
 import { CreateOrderDTO } from "@/application/use-cases/orders/CreateOrder";
 import { OrderStatus, Order } from "@/domain/entities/Order";
@@ -117,15 +119,24 @@ export async function getOrderAction(id: string): Promise<ActionResponse<Order>>
 }
 
 /**
- * Get current user's orders
+ * Retrieves the current authenticated user's orders with pagination and optional search filter.
+ *
+ * @param limit - Number of orders per page.
+ * @param offset - Number of orders to skip.
+ * @param search - Optional query string to filter by order ID.
+ * @returns ActionResponse containing orders and total count.
  */
-export async function getUserOrdersAction(limit?: number, offset?: number): Promise<ActionResponse<{ orders: Order[], total: number }>> {
+export async function getUserOrdersAction(
+  limit?: number, 
+  offset?: number,
+  search?: string
+): Promise<ActionResponse<{ orders: Order[], total: number }>> {
   const user = await getCurrentUser();
   if (!user) return { success: false, error: "Bạn cần đăng nhập để xem lịch sử đơn hàng." };
 
   try {
     const useCase = await makeGetUserOrdersUseCase();
-    const result = await useCase.execute({ userId: user.id, limit, offset });
+    const result = await useCase.execute({ userId: user.id, limit, offset, search });
 
     if (!result.success) {
       return { success: false, error: result.error.message };
@@ -208,16 +219,25 @@ export async function updateOrderStatusAction(orderId: string, newStatus: OrderS
   }
 }
 /**
- * Cancel order (User only - when pending)
+ * Cancels a pending unpaid order for the authenticated user.
+ * Idempotent: returns success immediately if the order is already cancelled.
+ * Atomically updates payment record status to 'failed' if pending/unpaid.
+ *
+ * @param orderId - The unique ID of the order to cancel.
+ * @param shouldRevalidate - Whether Next.js page paths should be revalidated.
+ * @returns ActionResponse containing the updated Order or error message.
  */
-export async function cancelOrderAction(orderId: string): Promise<ActionResponse<Order>> {
+export async function cancelOrderAction(
+  orderId: string, 
+  shouldRevalidate: boolean = true
+): Promise<ActionResponse<Order>> {
   const user = await getCurrentUser();
   if (!user) return { success: false, error: "Unauthorized" };
 
   try {
     const useCase = await makeUpdateOrderStatusUseCase();
     
-    // We need to verify ownership first since updateOrderStatusUseCase doesn't check ownership by default
+    // Verify ownership first
     const getDetailUseCase = await makeGetOrderDetailUseCase();
     const orderResult = await getDetailUseCase.execute({
       orderId,
@@ -229,9 +249,13 @@ export async function cancelOrderAction(orderId: string): Promise<ActionResponse
       return { success: false, error: "Bạn không có quyền hủy đơn hàng này." };
     }
 
+    // Idempotency: If already cancelled, return success immediately
+    if (orderResult.data.status === OrderStatus.CANCELLED) {
+      return { success: true, data: orderResult.data };
+    }
+
     if (
       orderResult.data.status === OrderStatus.COMPLETED || 
-      orderResult.data.status === OrderStatus.CANCELLED ||
       orderResult.data.paymentStatus === 'paid'
     ) {
       return { success: false, error: "Đơn hàng đã thanh toán hoặc đã hoàn tất, không thể tự hủy." };
@@ -240,17 +264,30 @@ export async function cancelOrderAction(orderId: string): Promise<ActionResponse
     const result = await useCase.execute({
       orderId,
       newStatus: OrderStatus.CANCELLED,
-      adminId: user.id // We pass user.id as adminId here to bypass the admin check in useCase if it has one, 
-                        // but our useCase doesn't actually check adminId, it just takes it.
+      adminId: user.id
     });
 
     if (!result.success) {
       return { success: false, error: result.error.message };
     }
 
-    revalidatePath("/profile");
-    revalidatePath("/profile/orders");
-    revalidatePath(`/profile/orders/${orderId}`);
+    // Update payment record status if one exists and is unpaid
+    const paymentRepo = await makePaymentRepository();
+    const payment = await paymentRepo.findByOrderId(orderId);
+    if (payment && payment.status !== 'paid') {
+      await paymentRepo.updatePaymentStatus(payment.id, 'failed');
+    }
+
+    if (shouldRevalidate) {
+      try {
+        revalidatePath("/profile");
+        revalidatePath("/profile/orders");
+        revalidatePath(`/profile/orders/${orderId}`);
+        revalidatePath(`/orders/${orderId}/failed`);
+      } catch {
+        // Safe to ignore in active render contexts
+      }
+    }
     
     return { success: true, data: result.data };
   } catch (error: unknown) {
@@ -323,6 +360,26 @@ export async function resendOrderEmailAction(orderId: string): Promise<ActionRes
       success: false, 
       error: error instanceof Error ? error.message : "Không thể gửi lại email xác nhận đơn hàng." 
     };
+  }
+}
+
+/**
+ * Server action to retrieve pre-filled customer details for checkout.
+ * Returns the authenticated user's fullName, email, and phone number (support contact handle).
+ */
+export async function getCustomerCheckoutInfoAction(): Promise<ActionResponse<{ fullName: string; email: string; phone: string } | null>> {
+  try {
+    const useCase = await makeGetCustomerCheckoutInfoUseCase();
+    const result = await useCase.execute();
+
+    if (!result.success) {
+      return { success: false, error: result.error.message };
+    }
+
+    return { success: true, data: result.data };
+  } catch (error: unknown) {
+    console.error('[Action Error] getCustomerCheckoutInfoAction:', error);
+    return { success: false, error: "Không thể tải thông tin khách hàng." };
   }
 }
 
