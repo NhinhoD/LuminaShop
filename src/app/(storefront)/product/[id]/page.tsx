@@ -20,17 +20,34 @@ interface ProductPageProps {
 
 export default async function ProductDetailPage({ params }: ProductPageProps) {
   const { id } = await params;
-  const getProductUseCase = await makeGetProductByIdUseCase();
-  const productResult = await getProductUseCase.execute(id);
-
-  if (!productResult.success || !productResult.data) {
-    notFound();
-  }
-  const product = productResult.data;
-
   const locale = await getLocale();
   const dict = await getAppDictionary();
   const prodDict = (dict?.product as Record<string, string>) || {};
+
+  const getProductUseCase = await makeGetProductByIdUseCase();
+  const productResult = await getProductUseCase.execute(id);
+
+  if (!productResult.success) {
+    return (
+      <main className="flex-grow bg-white py-16 font-sans">
+        <div className="max-w-xl mx-auto px-6 text-center">
+          <div className="p-8 bg-red-50 border border-red-200 rounded-2xl text-red-700">
+            <p className="font-semibold text-sm">
+              {locale === "vi" ? "Không thể tải thông tin sản phẩm từ máy chủ" : "Failed to load product details from database"}
+            </p>
+            <p className="text-xs text-red-500 mt-1 font-mono">
+              {productResult.error.message || "Unknown error"}
+            </p>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
+  if (!productResult.data) {
+    notFound();
+  }
+  const product = productResult.data;
 
   const getCurrentUser = await makeGetCurrentUserUseCase();
   const currentUser = await getCurrentUser.execute();

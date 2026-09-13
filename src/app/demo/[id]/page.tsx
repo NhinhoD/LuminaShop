@@ -21,7 +21,23 @@ export default async function DemoPage({ params }: DemoPageProps) {
   const { id } = await params;
   const getProductByIdUseCase = await makeGetProductByIdUseCase();
   const productResult = await getProductByIdUseCase.execute(id);
-  const product = productResult.success ? productResult.data : null;
+
+  if (!productResult.success) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-6 bg-slate-50 font-sans">
+        <div className="p-8 text-center bg-red-50 border border-red-200 rounded-2xl text-red-700 max-w-xl mx-auto">
+          <p className="font-semibold text-sm">
+            {locale === "vi" ? "Không thể tải bản xem trước sản phẩm từ máy chủ" : "Failed to load product preview from database"}
+          </p>
+          <p className="text-xs text-red-500 mt-1 font-mono">
+            {productResult.error.message || "Unknown error"}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  const product = productResult.data;
 
   if (!product || !product.demoUrl) {
     notFound();

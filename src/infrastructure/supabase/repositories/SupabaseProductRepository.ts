@@ -30,7 +30,11 @@ export class SupabaseProductRepository implements IProductRepository {
       .eq('id', id)
       .single();
     
-    if (error || !data) return null;
+    if (error) {
+      if (error.code === 'PGRST116') return null;
+      throw new Error(`Failed to fetch product by id: ${error.message}`);
+    }
+    if (!data) return null;
     return this.mapToEntity(data);
   }
 
@@ -42,7 +46,11 @@ export class SupabaseProductRepository implements IProductRepository {
       .eq('slug', slug)
       .single();
     
-    if (error || !data) return null;
+    if (error) {
+      if (error.code === 'PGRST116') return null;
+      throw new Error(`Failed to fetch product by slug: ${error.message}`);
+    }
+    if (!data) return null;
     return this.mapToEntity(data);
   }
 
