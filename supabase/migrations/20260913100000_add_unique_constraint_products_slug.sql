@@ -1,7 +1,10 @@
 -- Migration: 20260913100000_add_unique_constraint_products_slug.sql
--- Description: Enforce unique index on products.slug, using collision-safe loop resolution for duplicate slugs prior to index creation
+-- Description: Enforce unique index on products.slug, using table lock and collision-safe loop resolution for duplicate slugs prior to index creation
 
--- 1. Deduplicate any existing duplicate non-NULL slugs using a collision-safe iterative loop
+-- 1. Lock table to prevent concurrent writes from inserting duplicates during migration
+LOCK TABLE public.products IN SHARE ROW EXCLUSIVE MODE;
+
+-- 2. Deduplicate any existing duplicate non-NULL slugs using a collision-safe iterative loop
 DO $$
 DECLARE
     r RECORD;
@@ -37,5 +40,5 @@ BEGIN
     END LOOP;
 END $$;
 
--- 2. Enforce unique index on public.products (slug) if not exists
+-- 3. Enforce unique index on public.products (slug) if not exists
 CREATE UNIQUE INDEX IF NOT EXISTS products_slug_unique_idx ON public.products (slug);
