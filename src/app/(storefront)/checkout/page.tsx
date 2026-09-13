@@ -1,4 +1,4 @@
-import { makeGetCustomerCheckoutInfoUseCase } from "@/infrastructure/supabase/container";
+import { makeGetCustomerCheckoutInfoUseCase } from "@/di/container";
 import CheckoutClient, { CustomerCheckoutInfo } from "./CheckoutClient";
 
 export const dynamic = "force-dynamic";

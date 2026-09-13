@@ -5,7 +5,7 @@ import {
   setCustomAuthRepositoryFactoryForTesting,
   setCustomProcessPaymentUseCaseFactoryForTesting,
   setCustomVerifyOrderPaymentUseCaseFactoryForTesting,
-} from '@/infrastructure/supabase/container';
+} from '@/di/container';
 import { IAuthRepository } from '@/domain/repositories/IAuthRepository';
 import { ProcessPaymentUseCase } from '@/application/use-cases/payment/ProcessPayment';
 import { VerifyOrderPaymentUseCase } from '@/application/use-cases/payment/VerifyOrderPayment';

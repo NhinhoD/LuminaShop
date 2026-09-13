@@ -5,9 +5,9 @@ import { formatCurrency } from "@/lib/utils";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { CheckCircle2, Download } from "lucide-react";
-import { getDictionary, getLocale } from "@/i18n/getDictionary";
+import { getLocale } from "@/i18n/getDictionary";
 import { getLocalizedText } from "@/presentation/utils/locale";
-import { makeLanguageRepository, makeProductRepository } from "@/infrastructure/supabase/container";
+import { makeGetProductByIdUseCase, getAppDictionary } from "@/di/container";
 
 /**
  * Order success confirmation page displayed after successful payment.
@@ -22,8 +22,7 @@ export default async function OrderSuccessPage(props: { params: Promise<{ id: st
   const result = await getOrderAction(params.id);
   const order = result.data;
   const locale = await getLocale();
-  const langRepo = await makeLanguageRepository();
-  const dict = await getDictionary(langRepo);
+  const dict = await getAppDictionary();
   const orderDict = (dict?.orders as Record<string, string>) || {};
 
   if (!order) {
@@ -35,11 +34,12 @@ export default async function OrderSuccessPage(props: { params: Promise<{ id: st
   }
 
   // Fetch product models to retrieve active source code download URLs
-  const productRepo = await makeProductRepository();
+  const getProductUseCase = await makeGetProductByIdUseCase();
   const itemsWithCode = await Promise.all(
     order.items.map(async (item: OrderItem) => {
       try {
-        const prod = await productRepo.findById(item.productId);
+        const prodResult = await getProductUseCase.execute(item.productId);
+        const prod = prodResult.success ? prodResult.data : null;
         return {
           ...item,
           sourceCodeUrl: prod?.sourceCodeUrl || "",

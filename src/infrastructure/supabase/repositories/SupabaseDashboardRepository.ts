@@ -1,4 +1,4 @@
-import { IDashboardRepository, DashboardMetrics } from '@/domain/repositories/IDashboardRepository';
+import { IDashboardRepository, DashboardMetrics, CustomerWithStats } from '@/domain/repositories/IDashboardRepository';
 import { SupabaseClient } from '@supabase/supabase-js';
 
 export class SupabaseDashboardRepository implements IDashboardRepository {
@@ -38,4 +38,75 @@ export class SupabaseDashboardRepository implements IDashboardRepository {
       newCustomers: newCustomers || 0,
     };
   }
+
+  async getCustomers(search?: string): Promise<CustomerWithStats[]> {
+    const supabase = this.supabase;
+
+    const { data: profiles, error: profilesError } = await supabase
+      .from('profiles')
+      .select('id, full_name, role, created_at')
+      .order('created_at', { ascending: false });
+
+    if (profilesError || !profiles) {
+      return [];
+    }
+
+    const { data: orders } = await supabase
+      .from('orders')
+      .select('id, user_id, contact_email, total_amount, status, payment_status, created_at');
+
+    const ordersByUser: Record<string, { totalOrders: number; totalSpent: number; lastOrderDate: string; email: string }> = {};
+
+    (orders || []).forEach((ord) => {
+      const uid = ord.user_id;
+      if (!uid) return;
+
+      if (!ordersByUser[uid]) {
+        ordersByUser[uid] = {
+          totalOrders: 0,
+          totalSpent: 0,
+          lastOrderDate: ord.created_at,
+          email: ord.contact_email || '',
+        };
+      }
+
+      ordersByUser[uid].totalOrders += 1;
+      if (ord.status === 'completed' || ord.payment_status === 'paid' || ord.status === 'delivered') {
+        ordersByUser[uid].totalSpent += Number(ord.total_amount || 0);
+      }
+      if (new Date(ord.created_at) > new Date(ordersByUser[uid].lastOrderDate)) {
+        ordersByUser[uid].lastOrderDate = ord.created_at;
+      }
+      if (!ordersByUser[uid].email && ord.contact_email) {
+        ordersByUser[uid].email = ord.contact_email;
+      }
+    });
+
+    const customers: CustomerWithStats[] = profiles.map((p) => {
+      const stats = ordersByUser[p.id] || { totalOrders: 0, totalSpent: 0, lastOrderDate: '', email: '' };
+      return {
+        id: p.id,
+        fullName: p.full_name || 'Khách hàng',
+        email: stats.email || (p.role === 'admin' ? 'admin@khoui.vn' : `${p.id.slice(0, 8)}@user.khoui.vn`),
+        role: p.role || 'user',
+        createdAt: p.created_at,
+        totalOrders: stats.totalOrders,
+        totalSpent: stats.totalSpent,
+        lastOrderDate: stats.lastOrderDate,
+      };
+    });
+
+    if (!search) {
+      return customers;
+    }
+
+    const q = search.toLowerCase();
+    return customers.filter(
+      (c) =>
+        c.fullName.toLowerCase().includes(q) ||
+        c.email.toLowerCase().includes(q) ||
+        c.id.toLowerCase().includes(q)
+    );
+  }
 }
+

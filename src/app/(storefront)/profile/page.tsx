@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation';
-import { makeAuthRepository, makeLanguageRepository } from '@/infrastructure/supabase/container';
+import { makeGetCurrentUserUseCase, makeGetProfileUseCase, getAppDictionary } from '@/di/container';
 import { ROUTES } from '@/presentation/constants';
-import { getDictionary, getLocale } from '@/i18n/getDictionary';
+import { getLocale } from '@/i18n/getDictionary';
 import { ProfileFormClient } from './ProfileFormClient';
 import { ProfileSidebar } from './ProfileSidebar';
 import { UserOrdersRealtimeTracker } from '@/presentation/components/orders/UserOrdersRealtimeTracker';
@@ -11,17 +11,17 @@ import { UserOrdersRealtimeTracker } from '@/presentation/components/orders/User
  * Requires authentication; redirects to login if not authenticated.
  */
 export default async function ProfilePage() {
-  const authRepo = await makeAuthRepository();
-  const user = await authRepo.getCurrentUser();
+  const getCurrentUserUseCase = await makeGetCurrentUserUseCase();
+  const user = await getCurrentUserUseCase.execute();
 
   if (!user) {
     redirect(ROUTES.LOGIN);
   }
 
-  const profile = await authRepo.getProfile(user.id);
+  const getProfileUseCase = await makeGetProfileUseCase();
+  const profile = await getProfileUseCase.execute(user.id);
   const locale = await getLocale();
-  const langRepo = await makeLanguageRepository();
-  const dict = await getDictionary(langRepo);
+  const dict = await getAppDictionary();
   const profileDict = (dict?.profile as Record<string, string>) || {};
 
   return (

@@ -137,11 +137,11 @@ export default function ShopProductGrid({
 
   // GSAP animation triggered on product card change
   useEffect(() => {
-    const currentGrid = gridRef.current;
-    if (!isLoading && currentGrid) {
-      const items = currentGrid.querySelectorAll(".product-card-anim");
+    if (isLoading || !gridRef.current) return;
+
+    const ctx = gsap.context(() => {
+      const items = gsap.utils.toArray<HTMLElement>(".product-card-anim");
       if (items.length > 0) {
-        gsap.killTweensOf(items);
         gsap.fromTo(
           items,
           { opacity: 0, y: 20, scale: 0.99 },
@@ -156,13 +156,9 @@ export default function ShopProductGrid({
           }
         );
       }
-    }
-    return () => {
-      if (currentGrid) {
-        const items = currentGrid.querySelectorAll(".product-card-anim");
-        gsap.killTweensOf(items);
-      }
-    };
+    }, gridRef);
+
+    return () => ctx.revert();
   }, [isLoading, filteredProducts, initialProducts]);
 
   return (

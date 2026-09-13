@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { login, signup, signout } from '@/presentation/actions/auth';
-import { makeSupabaseClient } from '@/infrastructure/supabase/container';
+import { createClient } from '@/infrastructure/supabase/client';
 import { User } from '@supabase/supabase-js';
 
 export function useAuth() {
@@ -11,13 +11,14 @@ export function useAuth() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    const supabase = createClient();
+
     async function getUser() {
       try {
-        const supabase = await makeSupabaseClient();
         const { data: { user } } = await supabase.auth.getUser();
         setUser(user);
-    } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      } catch (err: unknown) {
+        setError(err instanceof Error ? err.message : 'An error occurred');
       } finally {
         setIsLoading(false);
       }
@@ -26,19 +27,13 @@ export function useAuth() {
     getUser();
 
     // Listen for auth changes
-    const setupListener = async () => {
-      const supabase = await makeSupabaseClient();
-      const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-        setUser(session?.user ?? null);
-        setIsLoading(false);
-      });
-      return subscription;
-    };
-
-    const subscription = setupListener();
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+      setIsLoading(false);
+    });
 
     return () => {
-      subscription.then(sub => sub.unsubscribe());
+      subscription.unsubscribe();
     };
   }, []);
 

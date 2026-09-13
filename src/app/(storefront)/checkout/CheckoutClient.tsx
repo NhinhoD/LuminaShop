@@ -10,7 +10,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { PaymentMethod } from "@/domain/entities/Order";
-import { z } from "zod";
+import { createDigitalCheckoutSchema } from "@/lib/validations/checkout";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   User, 
@@ -84,12 +84,10 @@ export default function CheckoutClient({ initialCustomerInfo }: CheckoutClientPr
   }, [initialCustomerInfo]);
 
   // Dynamic validation schema using current locale
-  const digitalCheckoutSchema = z.object({
-    fullName: z.string().min(2, dict?.checkout?.validationNameMin || (locale === "vi" ? "Họ tên phải có ít nhất 2 ký tự" : "Full name must be at least 2 characters")),
-    email: z.string().email(dict?.checkout?.validationEmailInvalid || (locale === "vi" ? "Địa chỉ email không hợp lệ để nhận mã nguồn" : "Invalid email address for delivery")),
-    contactHandle: z.string().min(3, dict?.checkout?.validationContactMin || (locale === "vi" ? "Vui lòng cung cấp link Facebook hoặc số Zalo để nhận hỗ trợ kỹ thuật" : "Please provide a contact handle for support")),
-    notes: z.string().optional(),
-    paymentMethod: z.nativeEnum(PaymentMethod)
+  const digitalCheckoutSchema = createDigitalCheckoutSchema({
+    nameMin: dict?.checkout?.validationNameMin || (locale === "vi" ? "Họ tên phải có ít nhất 2 ký tự" : "Full name must be at least 2 characters"),
+    emailInvalid: dict?.checkout?.validationEmailInvalid || (locale === "vi" ? "Địa chỉ email không hợp lệ để nhận mã nguồn" : "Invalid email address for delivery"),
+    contactMin: dict?.checkout?.validationContactMin || (locale === "vi" ? "Vui lòng cung cấp link Facebook hoặc số Zalo để nhận hỗ trợ kỹ thuật" : "Please provide a contact handle for support"),
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {

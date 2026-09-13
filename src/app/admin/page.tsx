@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { makeGetDashboardMetricsUseCase, makeOrderRepository, makeLanguageRepository } from "@/infrastructure/supabase/container";
-import { getDictionary, getLocale } from "@/i18n/getDictionary";
+import { makeGetDashboardMetricsUseCase, getAppDictionary } from "@/di/container";
+import { getAllOrdersAction } from "@/presentation/actions/order";
+import { getLocale } from "@/i18n/getDictionary";
 import { formatCurrency } from "@/lib/utils";
 import { StatusBadge } from "@/presentation/components/orders/StatusBadge";
 import { formatDate } from "@/presentation/utils";
@@ -23,23 +24,21 @@ import {
  * Shows revenue, order count, customer growth KPIs, and a live order feed.
  */
 export default async function AdminDashboardPage() {
-  const repo = await makeLanguageRepository();
-  const dictionary = await getDictionary(repo);
+  const dictionary = await getAppDictionary();
   const dict = (dictionary.dashboard as Record<string, string>) || {};
   const locale = await getLocale();
 
   const dashboardUseCase = await makeGetDashboardMetricsUseCase();
-  const orderRepo = await makeOrderRepository();
 
   const [metricsResult, recentOrdersResult] = await Promise.all([
     dashboardUseCase.execute(),
-    orderRepo.findAll({ limit: 5 })
+    getAllOrdersAction(undefined, 5, 0)
   ]);
 
   const metrics = metricsResult.success && metricsResult.data ? metricsResult.data : {
     totalRevenue: 0, revenueGrowth: 0, totalOrders: 0, ordersGrowth: 0, newCustomers: 0
   };
-  const recentOrders = recentOrdersResult.orders || [];
+  const recentOrders = recentOrdersResult.success && recentOrdersResult.data?.orders ? recentOrdersResult.data.orders : [];
 
   return (
     <div className="max-w-container-max mx-auto space-y-6 font-sans">

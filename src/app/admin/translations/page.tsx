@@ -1,13 +1,12 @@
 import { getTranslationsAction } from '@/presentation/actions/i18n';
-import { makeLanguageRepository } from "@/infrastructure/supabase/container";
-import { getDictionary, getLocale } from "@/i18n/getDictionary";
+import { getAppDictionary } from "@/di/container";
+import { getLocale } from "@/i18n/getDictionary";
 import { Languages } from 'lucide-react';
 import TranslationTableClient from './TranslationTableClient';
 
 export default async function AdminTranslationsPage(): Promise<React.ReactElement> {
   const translations = await getTranslationsAction();
-  const langRepo = await makeLanguageRepository();
-  const dict = await getDictionary(langRepo);
+  const dict = await getAppDictionary();
   const adminDict = (dict.admin as Record<string, string>) || {};
   const locale = await getLocale();
 

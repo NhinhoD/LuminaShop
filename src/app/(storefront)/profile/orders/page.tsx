@@ -3,13 +3,13 @@ import Image from "next/image";
 import { Download, Package, ShoppingBag, ArrowRight, FileText, Receipt } from "lucide-react";
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { makeAuthRepository, makeLanguageRepository, makeSupabaseClient } from "@/infrastructure/supabase/container";
+import { makeAuthRepository, makeLanguageRepository } from "@/di/container";
 import { PaginationControls } from "@/presentation/components/common/PaginationControls";
 import { ProfileOrderSearch } from "./ProfileOrderSearch";
 import { getLocalizedText } from "@/presentation/utils/locale";
 import { getDictionary, getLocale } from "@/i18n/getDictionary";
 import { formatDate, formatCurrency } from "@/lib/utils";
-import { getUserOrdersAction } from "@/presentation/actions/order";
+import { getUserOrdersAction, getUserPurchasedTemplatesAction } from "@/presentation/actions/order";
 import { OrderStatus } from "@/domain/entities/Order";
 import { StatusBadge } from "@/presentation/components/orders/StatusBadge";
 import { ProfileSidebar } from "../ProfileSidebar";
@@ -25,18 +25,6 @@ export const metadata: Metadata = {
 
 interface OrderHistoryPageProps {
   searchParams: Promise<{ page?: string; q?: string; tab?: string }>;
-}
-
-/**
- * Escapes PostgREST-reserved characters (commas and parentheses) in user search terms
- * before interpolating into raw filter expressions like `.or()`, preventing query syntax errors
- * while preserving SQL LIKE wildcards (`%` and `_`).
- *
- * @param value - Untrusted raw search query from user.
- * @returns Escaped search string safe for PostgREST `.or()` filter interpolation.
- */
-function escapePostgrestFilter(value: string): string {
-  return value.replace(/\\/g, "\\\\").replace(/[,()]/g, "\\$&");
 }
 
 /**
@@ -68,8 +56,6 @@ export default async function OrderHistoryPage({ searchParams }: OrderHistoryPag
   const safePage = Number.isFinite(parsedPage) && parsedPage > 0 ? parsedPage : 1;
   const search = typeof params.q === "string" ? params.q.trim() : undefined;
 
-  const supabase = await makeSupabaseClient();
-
   // 1. Query user orders for "Lịch sử đơn hàng & thanh toán"
   const ordersPerPage = 10;
   const ordersOffset = (safePage - 1) * ordersPerPage;
@@ -83,57 +69,28 @@ export default async function OrderHistoryPage({ searchParams }: OrderHistoryPag
   const totalOrders = ordersResult.data?.total || 0;
   const totalOrdersPages = Math.ceil(totalOrders / ordersPerPage);
 
-  // 2. Query user purchased templates for "Kho mã nguồn đã sở hữu"
+  // 2. Query user purchased templates for "Kho mã nguồn đã sở hữu" via application action
   const templatesPerPage = 9;
   const templatesOffset = (safePage - 1) * templatesPerPage;
 
-  let templatesQuery = supabase
-    .from("order_items")
-    .select(`
-      id,
-      product_id,
-      price_at_purchase,
-      created_at,
-      order_id,
-      products!inner (*),
-      orders!inner (
-        status,
-        payment_status,
-        user_id,
-        created_at
-      )
-    `, { count: "exact" })
-    .eq("orders.user_id", user.id)
-    .neq("orders.status", "cancelled")
-    .or("payment_status.eq.paid,status.eq.completed,status.eq.delivered", { referencedTable: "orders" });
-
-  if (search && currentTab === "templates") {
-    const escapedSearch = escapePostgrestFilter(search);
-    templatesQuery = templatesQuery.or(`title->>vi.ilike.%${escapedSearch}%,title->>en.ilike.%${escapedSearch}%`, { referencedTable: "products" });
-  }
-
-  const { data: orderItemsData, count: totalTemplatesCount, error: templatesError } = await templatesQuery
-    .order("created_at", { ascending: false })
-    .range(templatesOffset, templatesOffset + templatesPerPage - 1);
-
-  const totalTemplates = totalTemplatesCount || 0;
+  const templatesResult = await getUserPurchasedTemplatesAction(
+    templatesPerPage,
+    templatesOffset,
+    currentTab === "templates" ? search : undefined
+  );
+  const templatesError = templatesResult.success ? null : templatesResult.error;
+  const totalTemplates = templatesResult.data?.total || 0;
   const totalTemplatesPages = Math.ceil(totalTemplates / templatesPerPage);
 
-  const templateItems = (orderItemsData || []).map((item: unknown) => {
-    const typedItem = item as {
-      id: string;
-      product_id: string;
-      price_at_purchase: number;
-      created_at: string;
-      order_id: string;
-      products: unknown;
-      orders: { created_at?: string } | null;
-    };
-    return {
-      ...typedItem,
-      order_created_at: typedItem.orders?.created_at || typedItem.created_at,
-    };
-  });
+  const templateItems = (templatesResult.data?.items || []).map((item) => ({
+    id: item.id,
+    product_id: item.productId,
+    price_at_purchase: item.priceAtPurchase,
+    created_at: item.createdAt.toISOString(),
+    order_id: item.orderId,
+    order_created_at: item.orderCreatedAt ? item.orderCreatedAt.toISOString() : item.createdAt.toISOString(),
+    products: item.product,
+  }));
 
   return (
     <main className="flex-grow pt-16 pb-24 bg-background-subtle font-sans">
@@ -376,7 +333,7 @@ export default async function OrderHistoryPage({ searchParams }: OrderHistoryPag
                         {locale === "vi" ? "Lỗi tải danh sách mã nguồn" : "Error Loading Templates"}
                       </h2>
                       <p className="text-slate-500 mb-6 max-w-sm mx-auto text-xs font-normal">
-                        {templatesError.message || (locale === "vi" ? "Không thể lấy dữ liệu mã nguồn đã mua." : "Could not retrieve purchased templates.")}
+                        {templatesError || (locale === "vi" ? "Không thể lấy dữ liệu mã nguồn đã mua." : "Could not retrieve purchased templates.")}
                       </p>
                       <Link
                         href="/profile/orders?tab=templates"

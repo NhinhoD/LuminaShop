@@ -153,7 +153,7 @@ export class SupabaseAuthRepository implements IAuthRepository {
    * @param userId - Unique user ID.
    * @returns User profile record or null if not found.
    */
-  async getProfile(userId: string): Promise<{ id: string; fullName?: string; phone?: string; avatarUrl?: string } | null> {
+  async getProfile(userId: string): Promise<{ id: string; fullName?: string; phone?: string; avatarUrl?: string; role?: string } | null> {
     try {
       const { data } = await this.supabase
         .from('profiles')
@@ -167,6 +167,7 @@ export class SupabaseAuthRepository implements IAuthRepository {
         fullName: data.full_name,
         phone: data.phone,
         avatarUrl: data.avatar_url,
+        role: data.role,
       };
     } catch {
       return null;

@@ -2,9 +2,7 @@
 
 > ![Status](https://img.shields.io/badge/Status-In%20Progress-yellow?style=flat-square&labelColor=333) This project is actively being built as a personal learning journey to explore and approach modern web technologies.
 
-KhoUI is a high-performance, visually stunning marketplace specialized in providing premium website templates, UI kits, and digital themes. Built with **Next.js 15**, **Tailwind CSS v4**, **GSAP**, **Supabase**, and **TypeScript**, it delivers a state-of-the-art editorial design experience.
-
----
+KhoUI is a high-performance, visually stunning marketplace specialized in providing premium website templates, UI kits, and digital themes. Built with **Next.js 16**, **Tailwind CSS v4**, **GSAP**, **Supabase**, and **TypeScript**, it delivers a state-of-the-art editorial design experience.
 
 ---
 
@@ -15,14 +13,14 @@ KhoUI is a high-performance, visually stunning marketplace specialized in provid
 - **Digital Product Delivery**: Seamless licensing, purchasing, and automatic download fulfillment for digital assets and source codes.
 - **Secure Authentication**: User registration and login powered by Supabase Auth.
 - **Developer-Friendly Admin Suite**: Comprehensive dashboard for managing digital products, licenses, dynamic translations, and sales analytics.
-- **Clean Architecture**: Strictly enforced 4-layer architecture (Domain, Application, Infrastructure, Presentation) for maximum maintainability.
+- **Clean Architecture**: Strictly enforced 4-layer architecture (Domain, Application, Infrastructure, Presentation) with dedicated Composition Root (`di/`).
 - **Glassmorphism & Micro-animations**: Premium UI/UX with smooth transitions and modern aesthetics.
 
 ---
 
 ## 🛠️ Tech Stack
 
-![Next.js](https://img.shields.io/badge/Next.js_15-000000?style=flat-square&logo=nextdotjs&logoColor=white)
+![Next.js](https://img.shields.io/badge/Next.js_16-000000?style=flat-square&logo=nextdotjs&logoColor=white)
 ![React](https://img.shields.io/badge/React_19-20232A?style=flat-square&logo=react&logoColor=61DAFB)
 ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS_4-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white)
@@ -34,7 +32,7 @@ KhoUI is a high-performance, visually stunning marketplace specialized in provid
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=flat-square&logo=postgresql&logoColor=white)
 
 ### Frontend
-- **[Next.js 15](https://nextjs.org/)** (App Router) — React framework with SSR & SSG
+- **[Next.js 16](https://nextjs.org/)** (App Router) — React framework with SSR & SSG
 - **[React 19](https://react.dev/)** — UI library
 - **[Tailwind CSS 4](https://tailwindcss.com/)** — Utility-first CSS framework
 - **[Framer Motion](https://www.framer.com/motion/)** — Animation library
@@ -68,11 +66,12 @@ KhoUI/
 ├── src/
 │   ├── app/                # Next.js App Router (Pages & Layouts)
 │   ├── application/        # Business Logic & Use Cases (Application Layer)
+│   ├── di/                 # Dependency Injection & Composition Root
 │   ├── domain/             # Entities & Models (Core Domain Layer)
-│   ├── infrastructure/     # Data Repositories & API Clients (Supabase)
-│   ├── presentation/       # Shared Components & UI Library
-│   ├── i18n/               # Multi-Language Dictionaries & Fallbacks
-│   └── lib/                # Utility Functions
+│   ├── infrastructure/     # Data Repositories, Gateways & API Clients (Supabase, PayOS)
+│   ├── presentation/       # Shared Components, Server Actions, Hooks & UI Library
+│   ├── i18n/               # Multi-Language Dictionaries & Localization
+│   └── lib/                # Shared Utilities & Centralized Validations
 ├── public/                 # Static Assets (Images, Icons)
 └── ...configs              # TypeScript, ESLint, Next.js configs
 ```

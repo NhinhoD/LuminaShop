@@ -6,8 +6,8 @@ import {
   makeGetCartUseCase,
   makeUpdateCartItemUseCase,
   makeRemoveCartItemUseCase,
-  makeSupabaseClient
-} from "@/infrastructure/supabase/container";
+  makeGetCurrentUserUseCase
+} from "@/di/container";
 import { revalidatePath } from "next/cache";
 import { CartItem as DomainCartItem } from "@/domain/entities/Cart";
 
@@ -15,8 +15,8 @@ import { CartItem as DomainCartItem } from "@/domain/entities/Cart";
  * Retrieves the currently authenticated user's ID from session.
  */
 async function getUserId(): Promise<string | undefined> {
-  const supabase = await makeSupabaseClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const getCurrentUser = await makeGetCurrentUserUseCase();
+  const user = await getCurrentUser.execute();
   return user?.id;
 }
 

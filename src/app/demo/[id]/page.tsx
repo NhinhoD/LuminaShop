@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { makeProductRepository } from "@/infrastructure/supabase/container";
+import { makeGetProductByIdUseCase } from "@/di/container";
 import { cookies } from "next/headers";
 import { getStaticDictionary } from "@/i18n/getDictionary";
 import DemoViewerClient from "@/presentation/components/demo/DemoViewerClient";
@@ -19,8 +19,9 @@ export default async function DemoPage({ params }: DemoPageProps) {
   const demoDict = (dict?.demo as Record<string, string>) || {};
 
   const { id } = await params;
-  const productRepository = await makeProductRepository();
-  const product = await productRepository.findById(id);
+  const getProductByIdUseCase = await makeGetProductByIdUseCase();
+  const productResult = await getProductByIdUseCase.execute(id);
+  const product = productResult.success ? productResult.data : null;
 
   if (!product || !product.demoUrl) {
     notFound();

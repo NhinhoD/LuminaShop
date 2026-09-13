@@ -1,6 +1,6 @@
 'use server';
 
-import { makeGetLanguagesUseCase, makeSetDefaultLanguageUseCase } from '@/infrastructure/supabase/container';
+import { makeGetLanguagesUseCase, makeSetDefaultLanguageUseCase } from '@/di/container';
 import { cookies } from 'next/headers';
 import { revalidatePath } from 'next/cache';
 import { Language } from '@/domain/entities/Language';

@@ -1,9 +1,9 @@
 import React from "react";
-import { createClient as createServerSupabaseClient } from "@/infrastructure/supabase/server";
-import { makeLanguageRepository } from "@/infrastructure/supabase/container";
-import { getDictionary, getLocale } from "@/i18n/getDictionary";
+import { getAppDictionary } from "@/di/container";
+import { getLocale } from "@/i18n/getDictionary";
 import { formatCurrency } from "@/lib/utils";
 import { formatDate } from "@/presentation/utils";
+import { getAdminCustomersAction } from "@/presentation/actions/admin";
 import { 
   Users, 
   Search, 
@@ -18,17 +18,6 @@ import {
 
 export const dynamic = "force-dynamic";
 
-interface CustomerWithStats {
-  id: string;
-  fullName: string;
-  email: string;
-  role: string;
-  createdAt: string;
-  totalOrders: number;
-  totalSpent: number;
-  lastOrderDate?: string;
-}
-
 /**
  * Admin customers management page.
  * Displays registered users with aggregated order statistics (total orders, total spent, last order).
@@ -39,96 +28,38 @@ export default async function AdminCustomersPage({
 }: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
-  const langRepo = await makeLanguageRepository();
-  const dict = await getDictionary(langRepo);
+  const dict = await getAppDictionary();
   const adminDict = (dict.admin as Record<string, string>) || {};
   const locale = await getLocale();
 
   const params = await searchParams;
   const search = typeof params.q === "string" ? params.q.toLowerCase() : "";
 
-  const supabase = await createServerSupabaseClient();
+  const [allCustomersResult, filteredCustomersResult] = await Promise.all([
+    getAdminCustomersAction(),
+    search ? getAdminCustomersAction(search) : Promise.resolve(null)
+  ]);
 
-  // 1. Fetch profiles
-  const { data: profiles, error: profilesError } = await supabase
-    .from("profiles")
-    .select("id, full_name, role, created_at")
-    .order("created_at", { ascending: false });
-
-  // 2. Fetch all orders to aggregate by customer
-  const { data: orders, error: ordersError } = await supabase
-    .from("orders")
-    .select("id, user_id, contact_email, total_amount, status, payment_status, created_at");
-
-  if (profilesError || ordersError) {
+  if (!allCustomersResult.success || !allCustomersResult.data) {
     return (
       <div className="p-8 text-center bg-red-50 border border-red-200 rounded-2xl text-red-700 max-w-xl mx-auto my-12 font-sans">
         <p className="font-semibold text-sm">
           {locale === "vi" ? "Không thể tải dữ liệu khách hàng từ máy chủ" : "Failed to load customer metrics from database"}
         </p>
         <p className="text-xs text-red-500 mt-1 font-mono">
-          {profilesError?.message || ordersError?.message}
+          {allCustomersResult.error || "Unknown error"}
         </p>
       </div>
     );
   }
 
-  // Build customer stats map
-  const ordersByUser: Record<string, { totalOrders: number; totalSpent: number; lastOrderDate: string; email: string }> = {};
-
-  (orders || []).forEach((ord) => {
-    const uid = ord.user_id;
-    if (!uid) return;
-
-    if (!ordersByUser[uid]) {
-      ordersByUser[uid] = {
-        totalOrders: 0,
-        totalSpent: 0,
-        lastOrderDate: ord.created_at,
-        email: ord.contact_email || "",
-      };
-    }
-
-    ordersByUser[uid].totalOrders += 1;
-    if (ord.status === "completed" || ord.payment_status === "paid") {
-      ordersByUser[uid].totalSpent += Number(ord.total_amount || 0);
-    }
-    if (new Date(ord.created_at) > new Date(ordersByUser[uid].lastOrderDate)) {
-      ordersByUser[uid].lastOrderDate = ord.created_at;
-    }
-    if (!ordersByUser[uid].email && ord.contact_email) {
-      ordersByUser[uid].email = ord.contact_email;
-    }
-  });
-
-  const customers: CustomerWithStats[] = (profiles || []).map((p) => {
-    const stats = ordersByUser[p.id] || { totalOrders: 0, totalSpent: 0, lastOrderDate: "", email: "" };
-    return {
-      id: p.id,
-      fullName: p.full_name || (locale === "vi" ? "Khách hàng ẩn danh" : "Anonymous Customer"),
-      email: stats.email || (p.role === "admin" ? "admin@khoui.vn" : `${p.id.slice(0, 8)}@user.khoui.vn`),
-      role: p.role || "user",
-      createdAt: p.created_at,
-      totalOrders: stats.totalOrders,
-      totalSpent: stats.totalSpent,
-      lastOrderDate: stats.lastOrderDate,
-    };
-  });
-
-  // Filter if search keyword provided
-  const filteredCustomers = customers.filter((c) => {
-    if (!search) return true;
-    return (
-      c.fullName.toLowerCase().includes(search) ||
-      c.email.toLowerCase().includes(search) ||
-      c.id.toLowerCase().includes(search)
-    );
-  });
+  const allCustomers = allCustomersResult.data;
+  const filteredCustomers = filteredCustomersResult?.data || allCustomers;
 
   // KPI calculations
-  const totalCustomersCount = customers.length;
-  const vipCustomersCount = customers.filter((c) => c.totalSpent > 500000).length;
-  const totalCustomerSpend = customers.reduce((acc, c) => acc + c.totalSpent, 0);
+  const totalCustomersCount = allCustomers.length;
+  const vipCustomersCount = allCustomers.filter((c) => c.totalSpent > 500000).length;
+  const totalCustomerSpend = allCustomers.reduce((acc, c) => acc + c.totalSpent, 0);
 
   return (
     <div className="space-y-6 font-sans">

@@ -1,10 +1,15 @@
 import { notFound } from "next/navigation";
-import { makeProductRepository, makeAuthRepository, makeOrderRepository, makeLanguageRepository } from "@/infrastructure/supabase/container";
+import { 
+  makeGetProductByIdUseCase, 
+  makeCheckProductPurchasedUseCase, 
+  makeGetCurrentUserUseCase, 
+  getAppDictionary 
+} from "@/di/container";
 import { BreadcrumbSetter } from "@/presentation/components/common/BreadcrumbSetter";
 import { ROUTES } from "@/presentation/constants";
 import ProductSelection from "@/presentation/components/product/ProductSelection";
 import ProductMediaGallery from "@/presentation/components/product/ProductMediaGallery";
-import { getDictionary, getLocale } from "@/i18n/getDictionary";
+import { getLocale } from "@/i18n/getDictionary";
 import { getLocalizedText } from "@/presentation/utils/locale";
 import { Zap, Layers, ShieldCheck, HelpCircle, Star } from "lucide-react";
 import { sanitizeProductForPublic } from "@/domain/entities/Product";
@@ -15,24 +20,26 @@ interface ProductPageProps {
 
 export default async function ProductDetailPage({ params }: ProductPageProps) {
   const { id } = await params;
-  const productRepository = await makeProductRepository();
-  const product = await productRepository.findById(id);
+  const getProductUseCase = await makeGetProductByIdUseCase();
+  const productResult = await getProductUseCase.execute(id);
 
-  if (!product) {
+  if (!productResult.success || !productResult.data) {
     notFound();
   }
+  const product = productResult.data;
+
   const locale = await getLocale();
-  const langRepo = await makeLanguageRepository();
-  const dict = await getDictionary(langRepo);
+  const dict = await getAppDictionary();
   const prodDict = (dict?.product as Record<string, string>) || {};
 
-  const authRepo = await makeAuthRepository();
-  const currentUser = await authRepo.getCurrentUser();
+  const getCurrentUser = await makeGetCurrentUserUseCase();
+  const currentUser = await getCurrentUser.execute();
   let hasPurchased = false;
 
   if (currentUser) {
-    const orderRepo = await makeOrderRepository();
-    hasPurchased = await orderRepo.hasPurchasedProduct(currentUser.id, product.id);
+    const checkPurchasedUseCase = await makeCheckProductPurchasedUseCase();
+    const purchasedResult = await checkPurchasedUseCase.execute(currentUser.id, product.id);
+    hasPurchased = purchasedResult.success ? purchasedResult.data : false;
   }
 
   const accordionItems = [

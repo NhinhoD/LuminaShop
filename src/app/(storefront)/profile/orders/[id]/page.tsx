@@ -12,7 +12,7 @@ import { OrderStatus } from "@/domain/entities/Order";
 import { Metadata } from "next";
 import { getDictionary, getLocale } from "@/i18n/getDictionary";
 import { getLocalizedText } from "@/presentation/utils/locale";
-import { makeLanguageRepository, makeProductRepository } from "@/infrastructure/supabase/container";
+import { makeLanguageRepository, makeGetProductByIdUseCase } from "@/di/container";
 
 export const metadata: Metadata = {
   title: "Chi tiết đơn hàng | KhoUI",
@@ -89,12 +89,13 @@ export default async function OrderDetailPage({ params }: PageProps) {
   }
 
   // Fetch the actual products for the order items to retrieve their active download/demo URLs
-  const productRepository = await makeProductRepository();
+  const getProductUseCase = await makeGetProductByIdUseCase();
   
   const itemsWithCode = await Promise.all(
     order.items.map(async (item) => {
       try {
-        const prod = await productRepository.findById(item.productId);
+        const prodResult = await getProductUseCase.execute(item.productId);
+        const prod = prodResult.success ? prodResult.data : null;
         return {
           ...item,
           sourceCodeUrl: prod?.sourceCodeUrl || "",

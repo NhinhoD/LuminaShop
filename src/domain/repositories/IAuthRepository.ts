@@ -9,7 +9,7 @@ export interface IAuthRepository {
   getOtpRateLimit(email: string): Promise<Result<Date | null>>;
   upsertOtpRateLimit(email: string, date: Date): Promise<Result<void>>;
   getCurrentUser(): Promise<{ id: string; email?: string; fullName?: string; phone?: string } | null>;
-  getProfile(userId: string): Promise<{ id: string; fullName?: string; phone?: string; avatarUrl?: string } | null>;
+  getProfile(userId: string): Promise<{ id: string; fullName?: string; phone?: string; avatarUrl?: string; role?: string } | null>;
   updateProfile(userId: string, data: { fullName: string; phone?: string | null }): Promise<Result<void>>;
   resetPasswordForEmail(email: string, redirectTo: string): Promise<Result<void>>;
   updatePassword(newPassword: string): Promise<Result<void>>;

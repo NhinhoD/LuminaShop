@@ -1,10 +1,10 @@
 import Link from "next/link";
 import Image from "next/image";
-import { makeGetProductsUseCase, makeGetCategoriesUseCase, makeLanguageRepository } from "@/infrastructure/supabase/container";
+import { makeGetProductsUseCase, makeGetCategoriesUseCase, getAppDictionary } from "@/di/container";
 import { formatCurrency } from "@/lib/utils";
 import { ProductDeleteButton } from "@/app/admin/products/ProductDeleteButton";
 import { PaginationControls } from "@/presentation/components/common/PaginationControls";
-import { getDictionary, getLocale } from "@/i18n/getDictionary";
+import { getLocale } from "@/i18n/getDictionary";
 import { getLocalizedText } from "@/presentation/utils/locale";
 import { Plus, Search, Edit3, Package, Image as ImageIcon } from "lucide-react";
 
@@ -18,8 +18,7 @@ export default async function AdminProductsPage({
 }: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
-  const repo = await makeLanguageRepository();
-  const dictionary = await getDictionary(repo);
+  const dictionary = await getAppDictionary();
   const dict = (dictionary.products as Record<string, string>) || {};
   const locale = await getLocale();
   

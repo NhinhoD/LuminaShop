@@ -8,7 +8,7 @@ import {
   makeDeleteTranslationUseCase, 
   makeGetTranslationsUseCase,
   makeSyncTranslationsUseCase 
-} from "@/infrastructure/supabase/container";
+} from "@/di/container";
 import { clearDictionaryCache } from "@/i18n/getDictionary";
 import { vi } from "@/i18n/dictionaries/vi";
 import { en } from "@/i18n/dictionaries/en";

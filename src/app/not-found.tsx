@@ -3,16 +3,15 @@ import { Navbar } from "@/presentation/components/layout/Navbar";
 import { Footer } from "@/presentation/components/layout/Footer";
 import CartDrawer from "@/presentation/components/layout/CartDrawer";
 import { cookies } from "next/headers";
-import { makeLanguageRepository } from "@/infrastructure/supabase/container";
-import { getDictionary, Locale } from "@/i18n/getDictionary";
+import { getAppDictionary } from "@/di/container";
+import { Locale } from "@/i18n/getDictionary";
 import { Home, ShoppingBag, ArrowLeft } from "lucide-react";
 
 export default async function NotFound() {
   const cookieStore = await cookies();
   const locale = (cookieStore.get("NEXT_LOCALE")?.value as Locale) || "vi";
 
-  const repo = await makeLanguageRepository();
-  const dict = await getDictionary(repo);
+  const dict = await getAppDictionary();
   const notFoundDict = (dict?.notFound as Record<string, string>) || {};
 
   const title = notFoundDict.title || (locale === "vi" ? "Không tìm thấy trang" : "Page Not Found");

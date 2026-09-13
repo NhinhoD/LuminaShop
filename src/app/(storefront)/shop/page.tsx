@@ -1,7 +1,7 @@
-import { makeProductRepository, makeLanguageRepository, makeCategoryRepository } from "@/infrastructure/supabase/container";
+import { makeGetProductsUseCase, makeGetCategoriesUseCase, getAppDictionary } from "@/di/container";
 import ShopProductGrid from "@/presentation/components/product/ShopProductGrid";
 import { PaginationControls } from "@/presentation/components/common/PaginationControls";
-import { getDictionary, getLocale } from "@/i18n/getDictionary";
+import { getLocale } from "@/i18n/getDictionary";
 import { Sparkles, Zap } from "lucide-react";
 import { sanitizeProductsForPublic } from "@/domain/entities/Product";
 
@@ -34,12 +34,12 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
     : undefined;
   
   const locale = await getLocale();
-  const langRepo = await makeLanguageRepository();
-  const dict = await getDictionary(langRepo);
+  const dict = await getAppDictionary();
   const shopDict = (dict?.shop as Record<string, string>) || {};
 
-  const categoryRepo = await makeCategoryRepository();
-  const { categories: dbCategories } = await categoryRepo.findAll();
+  const getCategoriesUseCase = await makeGetCategoriesUseCase();
+  const categoriesResult = await getCategoriesUseCase.execute();
+  const dbCategories = categoriesResult.success ? categoriesResult.data.categories : [];
 
   let categoryId: string | undefined = undefined;
   if (categorySlug && categorySlug !== 'all') {
@@ -53,8 +53,7 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
        if (matchedCategory) {
           categoryId = matchedCategory.id;
        } else {
-          const category = await categoryRepo.findBySlug(categorySlug);
-          categoryId = category ? category.id : "00000000-0000-0000-0000-000000000000";
+          categoryId = "00000000-0000-0000-0000-000000000000";
        }
     }
   }
@@ -67,8 +66,8 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
     sortType = params.sort as 'newest' | 'price_asc' | 'price_desc' | 'popular';
   }
 
-  const productRepository = await makeProductRepository();
-  const { products, total } = await productRepository.findAll({ 
+  const getProductsUseCase = await makeGetProductsUseCase();
+  const productsResult = await getProductsUseCase.execute({ 
     limit: itemsPerPage, 
     offset, 
     isActive: true,
@@ -76,6 +75,7 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
     categoryId,
     sort: sortType
   });
+  const { products, total } = productsResult.success ? productsResult.data : { products: [], total: 0 };
   
   const totalPages = Math.ceil(total / itemsPerPage);
 

@@ -10,10 +10,13 @@ import {
   makeSupabaseClient,
   makeSendOrderConfirmationEmailUseCase,
   makeGetCustomerCheckoutInfoUseCase,
-  makePaymentRepository
-} from "@/infrastructure/supabase/container";
+  makePaymentRepository,
+  makeGetUserPurchasedTemplatesUseCase,
+  makeCheckProductPurchasedUseCase
+} from "@/di/container";
 import { CreateOrderDTO } from "@/application/use-cases/orders/CreateOrder";
 import { OrderStatus, Order } from "@/domain/entities/Order";
+import { UserPurchasedTemplatesResult } from "@/domain/repositories/IOrderRepository";
 import { revalidatePath } from "next/cache";
 import { ROLES } from "@/presentation/constants";
 
@@ -377,9 +380,70 @@ export async function getCustomerCheckoutInfoAction(): Promise<ActionResponse<{ 
     }
 
     return { success: true, data: result.data };
-  } catch (error: unknown) {
-    console.error('[Action Error] getCustomerCheckoutInfoAction:', error);
+  } catch (_error: unknown) {
     return { success: false, error: "Không thể tải thông tin khách hàng." };
   }
 }
+
+/**
+ * Server action to retrieve purchased templates for the authenticated customer.
+ */
+export async function getUserPurchasedTemplatesAction(
+  limit: number = 9,
+  offset: number = 0,
+  search?: string
+): Promise<ActionResponse<UserPurchasedTemplatesResult>> {
+  try {
+    const user = await getCurrentUser();
+    if (!user) {
+      return { success: false, error: "Yêu cầu đăng nhập để xem mã nguồn sở hữu." };
+    }
+
+    const useCase = await makeGetUserPurchasedTemplatesUseCase();
+    const result = await useCase.execute({
+      userId: user.id,
+      limit,
+      offset,
+      search,
+    });
+
+    if (!result.success) {
+      return { success: false, error: result.error.message };
+    }
+
+    return { success: true, data: result.data };
+  } catch (error: unknown) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Không thể tải danh sách mã nguồn đã mua."
+    };
+  }
+}
+
+/**
+ * Server action to verify whether the authenticated customer has purchased a specific product.
+ */
+export async function checkProductPurchasedAction(productId: string): Promise<ActionResponse<boolean>> {
+  try {
+    const user = await getCurrentUser();
+    if (!user) {
+      return { success: true, data: false };
+    }
+
+    const useCase = await makeCheckProductPurchasedUseCase();
+    const result = await useCase.execute(user.id, productId);
+
+    if (!result.success) {
+      return { success: false, error: result.error.message };
+    }
+
+    return { success: true, data: result.data };
+  } catch (error: unknown) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Không thể kiểm tra trạng thái mua sản phẩm."
+    };
+  }
+}
+
 

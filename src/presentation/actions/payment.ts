@@ -4,7 +4,7 @@ import {
   makeAuthRepository,
   makeProcessPaymentUseCase, 
   makeVerifyOrderPaymentUseCase 
-} from "@/infrastructure/supabase/container";
+} from "@/di/container";
 import { revalidatePath } from "next/cache";
 
 /**

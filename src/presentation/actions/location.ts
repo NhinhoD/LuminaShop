@@ -1,6 +1,6 @@
 "use server";
 
-import "@/infrastructure/supabase/container";
+import "@/di/container";
 import { LocationProvider } from "@/application/di/LocationProvider";
 import { Province, District, Ward } from "@/domain/entities/Location";
 import { z } from "zod";

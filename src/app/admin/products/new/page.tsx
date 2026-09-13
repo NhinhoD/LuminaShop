@@ -1,6 +1,6 @@
-import { makeGetCategoriesUseCase, makeLanguageRepository } from "@/infrastructure/supabase/container";
+import { makeGetCategoriesUseCase, getAppDictionary } from "@/di/container";
 import { ProductForm } from "@/app/admin/products/ProductForm";
-import { getDictionary, getLocale } from "@/i18n/getDictionary";
+import { getLocale } from "@/i18n/getDictionary";
 
 /**
  * Admin new product creation page.
@@ -9,8 +9,7 @@ import { getDictionary, getLocale } from "@/i18n/getDictionary";
 export default async function NewProductPage() {
   const getCategoriesUseCase = await makeGetCategoriesUseCase();
   const locale = await getLocale();
-  const langRepo = await makeLanguageRepository();
-  const dict = await getDictionary(langRepo);
+  const dict = await getAppDictionary();
   const adminDict = (dict?.admin as Record<string, string>) || {};
   
   const result = await getCategoriesUseCase.execute();

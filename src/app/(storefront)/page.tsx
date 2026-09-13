@@ -1,49 +1,24 @@
 import React from "react";
-import { makeProductRepository, makeLanguageRepository, makeCategoryRepository } from "@/infrastructure/supabase/container";
+import { makeGetProductsUseCase, makeGetCategoriesUseCase, getAppDictionary } from "@/di/container";
 import HomePageClient from "@/presentation/components/home/HomePageClient";
-import { getDictionary } from "@/i18n/getDictionary";
 import { sanitizeProductsForPublic } from "@/domain/entities/Product";
-
+import { productSchema } from "@/lib/validations/product";
 import { z } from "zod";
 
-const productVariantSchema = z.object({
-  id: z.string(),
-  productId: z.string(),
-  sku: z.string(),
-  name: z.string(),
-  priceAdjustment: z.number(),
-  stockQuantity: z.number(),
-  createdAt: z.date(),
-  updatedAt: z.date(),
-});
-
-const productSchema = z.object({
-  id: z.string(),
-  categoryId: z.string(),
-  title: z.record(z.string(), z.string()),
-  slug: z.string(),
-  description: z.record(z.string(), z.string()),
-  price: z.number(),
-  stock: z.number(),
-  imageUrl: z.string().optional(),
-  isActive: z.boolean(),
-  demoUrl: z.string(),
-  sourceCodeUrl: z.string(),
-  techStack: z.array(z.string()),
-  variants: z.array(productVariantSchema).optional(),
-  createdAt: z.date(),
-  updatedAt: z.date(),
-});
-
 export default async function HomePage(): Promise<React.ReactElement> {
-  const repo = await makeLanguageRepository();
-  const dictionary = await getDictionary(repo);
-  const productRepository = await makeProductRepository();
-  const { products: rawProducts } = await productRepository.findAll({ limit: 4 });
-  const featuredProducts = z.array(productSchema).parse(rawProducts);
+  const dictionary = await getAppDictionary();
+  
+  const getProductsUseCase = await makeGetProductsUseCase();
+  const getCategoriesUseCase = await makeGetCategoriesUseCase();
 
-  const categoryRepository = await makeCategoryRepository();
-  const { categories } = await categoryRepository.findAll();
+  const [productsResult, categoriesResult] = await Promise.all([
+    getProductsUseCase.execute({ limit: 4 }),
+    getCategoriesUseCase.execute(),
+  ]);
+
+  const rawProducts = productsResult.success ? productsResult.data.products : [];
+  const featuredProducts = z.array(productSchema).parse(rawProducts);
+  const categories = categoriesResult.success ? categoriesResult.data.categories : [];
 
   return (
     <main className="flex flex-col min-h-screen">
