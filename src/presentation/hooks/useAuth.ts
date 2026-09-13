@@ -11,29 +11,40 @@ export function useAuth() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const supabase = createClient();
+    let isMounted = true;
+    let subscription: { unsubscribe: () => void } | null = null;
 
-    async function getUser() {
+    Promise.resolve().then(async () => {
       try {
-        const { data: { user } } = await supabase.auth.getUser();
-        setUser(user);
+        const supabase = createClient();
+
+        try {
+          const { data: { user } } = await supabase.auth.getUser();
+          if (isMounted) setUser(user);
+        } catch (err: unknown) {
+          if (isMounted) setError(err instanceof Error ? err.message : 'An error occurred');
+        } finally {
+          if (isMounted) setIsLoading(false);
+        }
+
+        const { data } = supabase.auth.onAuthStateChange((_event, session) => {
+          if (isMounted) {
+            setUser(session?.user ?? null);
+            setIsLoading(false);
+          }
+        });
+        subscription = data?.subscription ?? null;
       } catch (err: unknown) {
-        setError(err instanceof Error ? err.message : 'An error occurred');
-      } finally {
-        setIsLoading(false);
+        if (isMounted) {
+          setError(err instanceof Error ? err.message : 'Failed to initialize Supabase client');
+          setIsLoading(false);
+        }
       }
-    }
-
-    getUser();
-
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-      setIsLoading(false);
     });
 
     return () => {
-      subscription.unsubscribe();
+      isMounted = false;
+      subscription?.unsubscribe();
     };
   }, []);
 

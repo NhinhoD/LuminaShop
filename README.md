@@ -82,7 +82,7 @@ KhoUI/
 
 ### Prerequisites
 
-- Node.js 18+
+- Node.js 20.9+
 - npm / pnpm / yarn
 - A [Supabase](https://supabase.com/) Project
 

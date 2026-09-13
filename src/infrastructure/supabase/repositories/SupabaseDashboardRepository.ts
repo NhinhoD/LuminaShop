@@ -47,13 +47,21 @@ export class SupabaseDashboardRepository implements IDashboardRepository {
       .select('id, full_name, role, created_at')
       .order('created_at', { ascending: false });
 
-    if (profilesError || !profiles) {
+    if (profilesError) {
+      throw new Error(`Failed to fetch customer profiles: ${profilesError.message}`);
+    }
+
+    if (!profiles || profiles.length === 0) {
       return [];
     }
 
-    const { data: orders } = await supabase
+    const { data: orders, error: ordersError } = await supabase
       .from('orders')
       .select('id, user_id, contact_email, total_amount, status, payment_status, created_at');
+
+    if (ordersError) {
+      throw new Error(`Failed to fetch customer orders for stats: ${ordersError.message}`);
+    }
 
     const ordersByUser: Record<string, { totalOrders: number; totalSpent: number; lastOrderDate: string; email: string }> = {};
 

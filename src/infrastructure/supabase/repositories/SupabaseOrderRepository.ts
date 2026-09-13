@@ -266,7 +266,11 @@ export class SupabaseOrderRepository implements IOrderRepository {
       .order('created_at', { ascending: false })
       .range(offset, offset + limit - 1);
 
-    if (error || !data) {
+    if (error) {
+      throw new Error(`Failed to fetch user purchased templates: ${error.message}`);
+    }
+
+    if (!data) {
       return { items: [], total: 0 };
     }
 

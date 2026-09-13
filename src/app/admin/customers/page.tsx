@@ -53,8 +53,21 @@ export default async function AdminCustomersPage({
     );
   }
 
+  if (search && filteredCustomersResult && (!filteredCustomersResult.success || !filteredCustomersResult.data)) {
+    return (
+      <div className="p-8 text-center bg-red-50 border border-red-200 rounded-2xl text-red-700 max-w-xl mx-auto my-12 font-sans">
+        <p className="font-semibold text-sm">
+          {locale === "vi" ? "Không thể tìm kiếm khách hàng" : "Failed to search customers"}
+        </p>
+        <p className="text-xs text-red-500 mt-1 font-mono">
+          {filteredCustomersResult.error || "Unknown error"}
+        </p>
+      </div>
+    );
+  }
+
   const allCustomers = allCustomersResult.data;
-  const filteredCustomers = filteredCustomersResult?.data || allCustomers;
+  const filteredCustomers = search && filteredCustomersResult?.data ? filteredCustomersResult.data : allCustomers;
 
   // KPI calculations
   const totalCustomersCount = allCustomers.length;

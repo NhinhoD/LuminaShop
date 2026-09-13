@@ -7,7 +7,8 @@ import {
   makeGetUserOrdersUseCase, 
   makeUpdateOrderStatusUseCase,
   makeApproveManualPaymentUseCase,
-  makeSupabaseClient,
+  makeGetCurrentUserUseCase,
+  makeGetProfileUseCase,
   makeSendOrderConfirmationEmailUseCase,
   makeGetCustomerCheckoutInfoUseCase,
   makePaymentRepository,
@@ -33,9 +34,8 @@ export interface ActionResponse<T> {
  * Helper to get current authenticated user
  */
 async function getCurrentUser() {
-  const supabase = await makeSupabaseClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  return user;
+  const getCurrentUserUseCase = await makeGetCurrentUserUseCase();
+  return getCurrentUserUseCase.execute();
 }
 
 /**
@@ -45,27 +45,13 @@ async function isUserAdmin() {
   const user = await getCurrentUser();
   if (!user) return false;
 
-  const supabase = await makeSupabaseClient();
-  
-  // 1. Check Claims
   try {
-    const { data: claimsData } = await supabase.rpc('get_my_claims');
-    if (claimsData?.claims?.app_metadata?.user_role === ROLES.ADMIN || 
-        claimsData?.claims?.user_role === ROLES.ADMIN) {
-      return true;
-    }
+    const getProfileUseCase = await makeGetProfileUseCase();
+    const profile = await getProfileUseCase.execute(user.id);
+    return profile?.role === ROLES.ADMIN;
   } catch {
-    // Ignore error and fall back
+    return false;
   }
-
-  // 2. Check Profiles table
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('role')
-    .eq('id', user.id)
-    .single();
-
-  return profile?.role === ROLES.ADMIN;
 }
 
 /**

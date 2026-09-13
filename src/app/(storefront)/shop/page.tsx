@@ -39,7 +39,25 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
 
   const getCategoriesUseCase = await makeGetCategoriesUseCase();
   const categoriesResult = await getCategoriesUseCase.execute();
-  const dbCategories = categoriesResult.success ? categoriesResult.data.categories : [];
+
+  if (!categoriesResult.success) {
+    return (
+      <main className="flex-grow bg-background-subtle/40 py-12 font-sans">
+        <div className="max-w-[1400px] mx-auto px-6 sm:px-8 lg:px-12">
+          <div className="p-8 text-center bg-red-50 border border-red-200 rounded-2xl text-red-700 max-w-xl mx-auto my-12 font-sans">
+            <p className="font-semibold text-sm">
+              {locale === "vi" ? "Không thể tải danh mục sản phẩm từ máy chủ" : "Failed to load product categories from database"}
+            </p>
+            <p className="text-xs text-red-500 mt-1 font-mono">
+              {categoriesResult.error?.message || "Unknown error"}
+            </p>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
+  const dbCategories = categoriesResult.data.categories;
 
   let categoryId: string | undefined = undefined;
   if (categorySlug && categorySlug !== 'all') {
@@ -75,7 +93,25 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
     categoryId,
     sort: sortType
   });
-  const { products, total } = productsResult.success ? productsResult.data : { products: [], total: 0 };
+
+  if (!productsResult.success) {
+    return (
+      <main className="flex-grow bg-background-subtle/40 py-12 font-sans">
+        <div className="max-w-[1400px] mx-auto px-6 sm:px-8 lg:px-12">
+          <div className="p-8 text-center bg-red-50 border border-red-200 rounded-2xl text-red-700 max-w-xl mx-auto my-12 font-sans">
+            <p className="font-semibold text-sm">
+              {locale === "vi" ? "Không thể tải danh sách sản phẩm từ máy chủ" : "Failed to load products from database"}
+            </p>
+            <p className="text-xs text-red-500 mt-1 font-mono">
+              {productsResult.error?.message || "Unknown error"}
+            </p>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
+  const { products, total } = productsResult.data;
   
   const totalPages = Math.ceil(total / itemsPerPage);
 
