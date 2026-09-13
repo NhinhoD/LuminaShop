@@ -13,7 +13,20 @@ export default async function NewProductPage() {
   const adminDict = (dict?.admin as Record<string, string>) || {};
   
   const result = await getCategoriesUseCase.execute();
-  const categories = result.success ? result.data.categories : [];
+  if (!result.success) {
+    return (
+      <div className="p-8 text-center bg-red-50 border border-red-200 rounded-2xl text-red-700 max-w-xl mx-auto my-12 font-sans">
+        <p className="font-semibold text-sm">
+          {locale === "vi" ? "Không thể tải danh mục sản phẩm từ máy chủ" : "Failed to load categories from database"}
+        </p>
+        <p className="text-xs text-red-500 mt-1 font-mono">
+          {result.error.message || "Unknown error"}
+        </p>
+      </div>
+    );
+  }
+
+  const categories = result.data.categories;
 
   return (
     <div className="max-w-[1000px] mx-auto w-full font-sans">

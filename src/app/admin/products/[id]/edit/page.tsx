@@ -29,6 +29,19 @@ export default async function EditProductPage({
     getProductByIdUseCase.execute(id)
   ]);
 
+  if (!categoriesResult.success) {
+    return (
+      <div className="p-8 text-center bg-red-50 border border-red-200 rounded-2xl text-red-700 max-w-xl mx-auto my-12 font-sans">
+        <p className="font-semibold text-sm">
+          {locale === "vi" ? "Không thể tải danh mục sản phẩm từ máy chủ" : "Failed to load categories from database"}
+        </p>
+        <p className="text-xs text-red-500 mt-1 font-mono">
+          {categoriesResult.error.message || "Unknown error"}
+        </p>
+      </div>
+    );
+  }
+
   if (!productResult.success) {
     return (
       <div className="p-8 text-center bg-red-50 border border-red-200 rounded-2xl text-red-700 max-w-xl mx-auto my-12 font-sans">
@@ -46,7 +59,7 @@ export default async function EditProductPage({
     notFound();
   }
 
-  const categories = categoriesResult.success ? categoriesResult.data.categories : [];
+  const categories = categoriesResult.data.categories;
   const product = productResult.data;
 
   return (

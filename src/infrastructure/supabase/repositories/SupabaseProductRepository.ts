@@ -28,10 +28,9 @@ export class SupabaseProductRepository implements IProductRepository {
       .from('products')
       .select('*, variants:product_variants(*)')
       .eq('id', id)
-      .single();
+      .maybeSingle();
     
     if (error) {
-      if (error.code === 'PGRST116') return null;
       throw new Error(`Failed to fetch product by id: ${error.message}`);
     }
     if (!data) return null;
@@ -44,10 +43,9 @@ export class SupabaseProductRepository implements IProductRepository {
       .from('products')
       .select('*, variants:product_variants(*)')
       .eq('slug', slug)
-      .single();
+      .maybeSingle();
     
     if (error) {
-      if (error.code === 'PGRST116') return null;
       throw new Error(`Failed to fetch product by slug: ${error.message}`);
     }
     if (!data) return null;

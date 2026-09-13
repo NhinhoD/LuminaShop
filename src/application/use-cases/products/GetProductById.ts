@@ -10,7 +10,8 @@ export class GetProductByIdUseCase {
       const product = await this.productRepo.findById(id);
       return ok(product);
     } catch (error: unknown) {
-      return fail(error instanceof Error ? error : new Error('Đã có lỗi xảy ra khi lấy thông tin sản phẩm.'));
+      console.error('GetProductByIdUseCase Error:', error);
+      return fail(new Error('Đã có lỗi xảy ra khi lấy thông tin sản phẩm.'));
     }
   }
 }
