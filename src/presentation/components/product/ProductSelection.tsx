@@ -11,9 +11,10 @@ import { useI18n } from "@/presentation/components/common/I18nContext";
 interface ProductSelectionProps {
   product: Product;
   hasPurchased?: boolean;
+  purchaseLookupError?: boolean;
 }
 
-export default function ProductSelection({ product, hasPurchased }: ProductSelectionProps): React.ReactElement | null {
+export default function ProductSelection({ product, hasPurchased, purchaseLookupError }: ProductSelectionProps): React.ReactElement | null {
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(
     product.variants && product.variants.length > 0 ? product.variants[0] : null
   );
@@ -106,10 +107,24 @@ export default function ProductSelection({ product, hasPurchased }: ProductSelec
         </div>
       )}
 
+      {/* Lookup Error Notice */}
+      {purchaseLookupError && (
+        <div className="bg-amber-50 text-amber-700 text-xs p-3 rounded-lg border border-amber-200 font-medium">
+          {dict?.product?.lookupError || (locale === "vi" 
+            ? "Không thể kiểm tra trạng thái bản quyền do lỗi kết nối. Vui lòng tải lại trang." 
+            : "Could not verify your license status due to a connection error. Please reload the page.")}
+        </div>
+      )}
+
       {/* Add to Cart Actions */}
       <div className="space-y-2.5 pt-1">
         <button
           onClick={async () => {
+            if (purchaseLookupError) {
+              window.location.reload();
+              return;
+            }
+
             if (isFree || hasPurchased) {
               if (product.sourceCodeUrl) {
                 window.open(product.sourceCodeUrl, "_blank", "noopener,noreferrer");
@@ -142,6 +157,8 @@ export default function ProductSelection({ product, hasPurchased }: ProductSelec
         >
           {isProcessing ? (
             <Loader2 size={16} className="animate-spin" />
+          ) : purchaseLookupError ? (
+            <>{dict?.product?.reloadToVerify || (locale === "vi" ? "Tải lại trang để kiểm tra bản quyền" : "Reload to verify license")}</>
           ) : isFree ? (
             <><Download size={16} /> {dict?.product?.freeDownload || (locale === "vi" ? "Tải xuống miễn phí" : "Free Download")}</>
           ) : hasPurchased ? (

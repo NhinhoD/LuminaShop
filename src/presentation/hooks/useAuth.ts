@@ -19,7 +19,8 @@ export function useAuth() {
         const supabase = createClient();
 
         try {
-          const { data: { user } } = await supabase.auth.getUser();
+          const { data: { user }, error: authError } = await supabase.auth.getUser();
+          if (authError) throw authError;
           if (isMounted) setUser(user);
         } catch (err: unknown) {
           if (isMounted) setError(err instanceof Error ? err.message : 'An error occurred');
@@ -27,12 +28,20 @@ export function useAuth() {
           if (isMounted) setIsLoading(false);
         }
 
+        if (!isMounted) return;
+
         const { data } = supabase.auth.onAuthStateChange((_event, session) => {
           if (isMounted) {
             setUser(session?.user ?? null);
             setIsLoading(false);
           }
         });
+
+        if (!isMounted) {
+          data?.subscription?.unsubscribe();
+          return;
+        }
+
         subscription = data?.subscription ?? null;
       } catch (err: unknown) {
         if (isMounted) {

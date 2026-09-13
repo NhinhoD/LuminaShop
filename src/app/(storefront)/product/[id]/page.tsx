@@ -35,11 +35,16 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
   const getCurrentUser = await makeGetCurrentUserUseCase();
   const currentUser = await getCurrentUser.execute();
   let hasPurchased = false;
+  let purchaseLookupError = false;
 
   if (currentUser) {
     const checkPurchasedUseCase = await makeCheckProductPurchasedUseCase();
     const purchasedResult = await checkPurchasedUseCase.execute(currentUser.id, product.id);
-    hasPurchased = purchasedResult.success ? purchasedResult.data : false;
+    if (purchasedResult.success) {
+      hasPurchased = purchasedResult.data;
+    } else {
+      purchaseLookupError = true;
+    }
   }
 
   const accordionItems = [
@@ -127,7 +132,11 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
             </div>
 
             {/* Price, Options & Purchase Actions */}
-            <ProductSelection product={sanitizeProductForPublic(product, hasPurchased)} hasPurchased={hasPurchased} />
+            <ProductSelection 
+              product={sanitizeProductForPublic(product, hasPurchased)} 
+              hasPurchased={hasPurchased} 
+              purchaseLookupError={purchaseLookupError}
+            />
 
             {/* Technical Accordion / Info Items */}
             <div className="mt-8 pt-6 border-t border-slate-100 space-y-4">

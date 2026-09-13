@@ -176,6 +176,8 @@ export const vi = {
     freeDownload: "TẢI XUỐNG MIỄN PHÍ",
     downloadZip: "TẢI FILE SOURCE CODE (.ZIP)",
     payToPurchase: "MUA BẢN QUYỀN NGAY",
+    lookupError: "Không thể kiểm tra trạng thái bản quyền do lỗi kết nối. Vui lòng tải lại trang.",
+    reloadToVerify: "TẢI LẠI TRANG ĐỂ KIỂM TRA BẢN QUYỀN",
     addToWishlist: "Thêm vào yêu thích",
     tabArchitecture: "Kiến trúc & Công nghệ",
     tabArchitectureDesc: "Next.js 15, Tailwind v4, GSAP ScrollTrigger, Clean Architecture chuẩn mực.",
