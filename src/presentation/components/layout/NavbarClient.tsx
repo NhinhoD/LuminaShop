@@ -29,6 +29,7 @@ import { useI18n } from "../common/I18nContext";
 
 interface NavbarClientProps {
   readonly user: unknown;
+  readonly authError?: boolean;
   readonly brandName: string;
   readonly navLinks: readonly { label: string; href: string }[];
   readonly dict: Record<string, Record<string, string>>;
@@ -65,7 +66,7 @@ const TEMPLATE_MEGA_ITEMS = [
   },
 ];
 
-export default function NavbarClient({ user, navLinks }: NavbarClientProps) {
+export default function NavbarClient({ user, authError, navLinks }: NavbarClientProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [hoveredNav, setHoveredNav] = useState<string | null>(null);
@@ -350,7 +351,15 @@ export default function NavbarClient({ user, navLinks }: NavbarClientProps) {
             </button>
 
             {/* User Profile Button */}
-            {user ? (
+            {authError ? (
+              <Link
+                href={ROUTES.PROFILE}
+                className="w-9 h-9 rounded-lg flex items-center justify-center text-amber-600 hover:bg-amber-50 transition-colors border border-amber-200"
+                title={locale === "vi" ? "Lỗi kết nối tài khoản. Nhấn để thử lại." : "Account connection error. Click to reload."}
+              >
+                <User size={16} className="text-amber-600" />
+              </Link>
+            ) : user ? (
               <Link
                 href={ROUTES.PROFILE}
                 className="w-9 h-9 rounded-lg flex items-center justify-center text-slate-600 hover:bg-slate-100 transition-colors border border-slate-100"

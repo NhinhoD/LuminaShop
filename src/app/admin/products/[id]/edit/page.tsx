@@ -30,26 +30,28 @@ export default async function EditProductPage({
   ]);
 
   if (!categoriesResult.success) {
+    console.error("EditProductPage: failed to load categories:", categoriesResult.error);
     return (
       <div className="p-8 text-center bg-red-50 border border-red-200 rounded-2xl text-red-700 max-w-xl mx-auto my-12 font-sans">
         <p className="font-semibold text-sm">
           {locale === "vi" ? "Không thể tải danh mục sản phẩm từ máy chủ" : "Failed to load categories from database"}
         </p>
-        <p className="text-xs text-red-500 mt-1 font-mono">
-          {categoriesResult.error.message || "Unknown error"}
+        <p className="text-xs text-red-500 mt-1">
+          {locale === "vi" ? "Vui lòng thử lại sau." : "Please try again later."}
         </p>
       </div>
     );
   }
 
   if (!productResult.success) {
+    console.error("EditProductPage: failed to load product:", productResult.error);
     return (
       <div className="p-8 text-center bg-red-50 border border-red-200 rounded-2xl text-red-700 max-w-xl mx-auto my-12 font-sans">
         <p className="font-semibold text-sm">
           {locale === "vi" ? "Không thể tải thông tin sản phẩm từ máy chủ" : "Failed to load product details from database"}
         </p>
-        <p className="text-xs text-red-500 mt-1 font-mono">
-          {productResult.error.message || "Unknown error"}
+        <p className="text-xs text-red-500 mt-1">
+          {locale === "vi" ? "Vui lòng thử lại sau." : "Please try again later."}
         </p>
       </div>
     );

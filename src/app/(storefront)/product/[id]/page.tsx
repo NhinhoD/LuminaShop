@@ -28,6 +28,7 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
   const productResult = await getProductUseCase.execute(id);
 
   if (!productResult.success) {
+    console.error("ProductDetailPage: failed to load product:", productResult.error);
     return (
       <main className="flex-grow bg-white py-16 font-sans">
         <div className="max-w-xl mx-auto px-6 text-center">
@@ -35,8 +36,8 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
             <p className="font-semibold text-sm">
               {locale === "vi" ? "Không thể tải thông tin sản phẩm từ máy chủ" : "Failed to load product details from database"}
             </p>
-            <p className="text-xs text-red-500 mt-1 font-mono">
-              {productResult.error.message || "Unknown error"}
+            <p className="text-xs text-red-500 mt-1">
+              {locale === "vi" ? "Vui lòng thử lại sau." : "Please try again later."}
             </p>
           </div>
         </div>
@@ -51,17 +52,24 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
 
   const getCurrentUser = await makeGetCurrentUserUseCase();
   const userResult = await getCurrentUser.execute();
-  const currentUser = userResult.success ? userResult.data : null;
+  let currentUser = null;
   let hasPurchased = false;
   let purchaseLookupError = false;
 
-  if (currentUser) {
-    const checkPurchasedUseCase = await makeCheckProductPurchasedUseCase();
-    const purchasedResult = await checkPurchasedUseCase.execute(currentUser.id, product.id);
-    if (purchasedResult.success) {
-      hasPurchased = purchasedResult.data;
-    } else {
-      purchaseLookupError = true;
+  if (!userResult.success) {
+    console.error("ProductDetailPage: failed to get current user:", userResult.error);
+    purchaseLookupError = true;
+  } else {
+    currentUser = userResult.data;
+    if (currentUser) {
+      const checkPurchasedUseCase = await makeCheckProductPurchasedUseCase();
+      const purchasedResult = await checkPurchasedUseCase.execute(currentUser.id, product.id);
+      if (purchasedResult.success) {
+        hasPurchased = purchasedResult.data;
+      } else {
+        console.error("ProductDetailPage: failed to check purchased status:", purchasedResult.error);
+        purchaseLookupError = true;
+      }
     }
   }
 

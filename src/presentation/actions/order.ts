@@ -20,6 +20,8 @@ import { OrderStatus, Order } from "@/domain/entities/Order";
 import { UserPurchasedTemplatesResult } from "@/domain/repositories/IOrderRepository";
 import { revalidatePath } from "next/cache";
 import { ROLES } from "@/presentation/constants";
+import { Result, ok, fail } from "@/domain/shared/Result";
+import { AuthUser } from "@/domain/repositories/IAuthRepository";
 
 /**
  * Result interface for all server actions
@@ -33,25 +35,32 @@ export interface ActionResponse<T> {
 /**
  * Helper to get current authenticated user
  */
-async function getCurrentUser() {
+async function getCurrentUser(): Promise<Result<AuthUser | null>> {
   const getCurrentUserUseCase = await makeGetCurrentUserUseCase();
-  const userResult = await getCurrentUserUseCase.execute();
-  return userResult.success ? userResult.data : null;
+  return await getCurrentUserUseCase.execute();
 }
 
 /**
  * Helper to check if current user is an admin
  */
-async function isUserAdmin() {
-  const user = await getCurrentUser();
-  if (!user) return false;
+async function isUserAdmin(): Promise<Result<boolean>> {
+  const userResult = await getCurrentUser();
+  if (!userResult.success) {
+    return fail(userResult.error);
+  }
+  if (!userResult.data) {
+    return ok(false);
+  }
 
   try {
     const getProfileUseCase = await makeGetProfileUseCase();
-    const profileResult = await getProfileUseCase.execute(user.id);
-    return profileResult.success && profileResult.data?.role === ROLES.ADMIN;
-  } catch {
-    return false;
+    const profileResult = await getProfileUseCase.execute(userResult.data.id);
+    if (!profileResult.success) {
+      return fail(profileResult.error);
+    }
+    return ok(profileResult.data?.role === ROLES.ADMIN);
+  } catch (error) {
+    return fail(error instanceof Error ? error : new Error("Failed to check admin privileges"));
   }
 }
 
@@ -59,7 +68,12 @@ async function isUserAdmin() {
  * Create a new order
  */
 export async function createOrderAction(data: Omit<CreateOrderDTO, 'userId'>): Promise<ActionResponse<Order>> {
-  const user = await getCurrentUser();
+  const userResult = await getCurrentUser();
+  if (!userResult.success) {
+    console.error('[Action Error] createOrderAction user lookup failed:', userResult.error);
+    return { success: false, error: "Đã có lỗi xảy ra khi xác thực người dùng. Vui lòng thử lại sau." };
+  }
+  const user = userResult.data;
   if (!user) return { success: false, error: "Bạn cần đăng nhập để đặt hàng." };
 
   try {
@@ -84,10 +98,20 @@ export async function createOrderAction(data: Omit<CreateOrderDTO, 'userId'>): P
  * Get a specific order (owner or admin only)
  */
 export async function getOrderAction(id: string): Promise<ActionResponse<Order>> {
-  const user = await getCurrentUser();
+  const userResult = await getCurrentUser();
+  if (!userResult.success) {
+    console.error('[Action Error] getOrderAction user lookup failed:', userResult.error);
+    return { success: false, error: "Đã có lỗi xảy ra khi xác thực người dùng. Vui lòng thử lại sau." };
+  }
+  const user = userResult.data;
   if (!user) return { success: false, error: "Unauthorized" };
 
-  const isAdmin = await isUserAdmin();
+  const adminResult = await isUserAdmin();
+  if (!adminResult.success) {
+    console.error('[Action Error] getOrderAction admin lookup failed:', adminResult.error);
+    return { success: false, error: "Đã có lỗi xảy ra khi kiểm tra quyền hạn người dùng." };
+  }
+  const isAdmin = adminResult.data;
 
   try {
     const useCase = await makeGetOrderDetailUseCase();
@@ -121,7 +145,12 @@ export async function getUserOrdersAction(
   offset?: number,
   search?: string
 ): Promise<ActionResponse<{ orders: Order[], total: number }>> {
-  const user = await getCurrentUser();
+  const userResult = await getCurrentUser();
+  if (!userResult.success) {
+    console.error('[Action Error] getUserOrdersAction user lookup failed:', userResult.error);
+    return { success: false, error: "Đã có lỗi xảy ra khi xác thực người dùng. Vui lòng thử lại sau." };
+  }
+  const user = userResult.data;
   if (!user) return { success: false, error: "Bạn cần đăng nhập để xem lịch sử đơn hàng." };
 
   try {
@@ -148,10 +177,19 @@ export async function getAllOrdersAction(
   offset?: number,
   search?: string
 ): Promise<ActionResponse<{ orders: Order[], total: number }>> {
-  const isAdmin = await isUserAdmin();
-  if (!isAdmin) return { success: false, error: "Access denied" };
+  const adminResult = await isUserAdmin();
+  if (!adminResult.success) {
+    console.error('[Action Error] getAllOrdersAction admin lookup failed:', adminResult.error);
+    return { success: false, error: "Failed to verify permissions." };
+  }
+  if (!adminResult.data) return { success: false, error: "Access denied" };
 
-  const user = await getCurrentUser();
+  const userResult = await getCurrentUser();
+  if (!userResult.success) {
+    console.error('[Action Error] getAllOrdersAction user lookup failed:', userResult.error);
+    return { success: false, error: "Authentication failed." };
+  }
+  const user = userResult.data;
   if (!user) return { success: false, error: "Unauthorized" };
 
   try {
@@ -179,10 +217,19 @@ export async function getAllOrdersAction(
  * Update order status (Admin only)
  */
 export async function updateOrderStatusAction(orderId: string, newStatus: OrderStatus): Promise<ActionResponse<Order>> {
-  const isAdmin = await isUserAdmin();
-  if (!isAdmin) return { success: false, error: "Access denied" };
+  const adminResult = await isUserAdmin();
+  if (!adminResult.success) {
+    console.error('[Action Error] updateOrderStatusAction admin lookup failed:', adminResult.error);
+    return { success: false, error: "Failed to verify permissions." };
+  }
+  if (!adminResult.data) return { success: false, error: "Access denied" };
 
-  const user = await getCurrentUser();
+  const userResult = await getCurrentUser();
+  if (!userResult.success) {
+    console.error('[Action Error] updateOrderStatusAction user lookup failed:', userResult.error);
+    return { success: false, error: "Authentication failed." };
+  }
+  const user = userResult.data;
   if (!user) return { success: false, error: "Unauthorized" };
 
   try {
@@ -221,7 +268,12 @@ export async function cancelOrderAction(
   orderId: string, 
   shouldRevalidate: boolean = true
 ): Promise<ActionResponse<Order>> {
-  const user = await getCurrentUser();
+  const userResult = await getCurrentUser();
+  if (!userResult.success) {
+    console.error('[Action Error] cancelOrderAction user lookup failed:', userResult.error);
+    return { success: false, error: "Authentication failed." };
+  }
+  const user = userResult.data;
   if (!user) return { success: false, error: "Unauthorized" };
 
   try {
@@ -290,8 +342,12 @@ export async function cancelOrderAction(
  * Approve manual bank transfer payment (Admin only)
  */
 export async function approveManualPaymentAction(orderId: string): Promise<ActionResponse<Order>> {
-  const isAdmin = await isUserAdmin();
-  if (!isAdmin) return { success: false, error: "Access denied" };
+  const adminResult = await isUserAdmin();
+  if (!adminResult.success) {
+    console.error('[Action Error] approveManualPaymentAction admin lookup failed:', adminResult.error);
+    return { success: false, error: "Failed to verify permissions." };
+  }
+  if (!adminResult.data) return { success: false, error: "Access denied" };
 
   try {
     const useCase = await makeApproveManualPaymentUseCase();
@@ -317,12 +373,22 @@ export async function approveManualPaymentAction(orderId: string): Promise<Actio
  */
 export async function resendOrderEmailAction(orderId: string): Promise<ActionResponse<void>> {
   try {
-    const user = await getCurrentUser();
+    const userResult = await getCurrentUser();
+    if (!userResult.success) {
+      console.error('[Action Error] resendOrderEmailAction user lookup failed:', userResult.error);
+      return { success: false, error: "Đã có lỗi xảy ra khi xác thực người dùng." };
+    }
+    const user = userResult.data;
     if (!user) {
       return { success: false, error: "Bạn cần đăng nhập để thực hiện thao tác này." };
     }
 
-    const admin = await isUserAdmin();
+    const adminResult = await isUserAdmin();
+    if (!adminResult.success) {
+      console.error('[Action Error] resendOrderEmailAction admin lookup failed:', adminResult.error);
+      return { success: false, error: "Đã có lỗi xảy ra khi kiểm tra quyền người dùng." };
+    }
+    const admin = adminResult.data;
     const orderDetailUseCase = await makeGetOrderDetailUseCase();
     const orderResult = await orderDetailUseCase.execute({
       orderId,
@@ -381,7 +447,12 @@ export async function getUserPurchasedTemplatesAction(
   search?: string
 ): Promise<ActionResponse<UserPurchasedTemplatesResult>> {
   try {
-    const user = await getCurrentUser();
+    const userResult = await getCurrentUser();
+    if (!userResult.success) {
+      console.error('[Action Error] getUserPurchasedTemplatesAction user lookup failed:', userResult.error);
+      return { success: false, error: "Đã có lỗi xảy ra khi xác thực người dùng." };
+    }
+    const user = userResult.data;
     if (!user) {
       return { success: false, error: "Yêu cầu đăng nhập để xem mã nguồn sở hữu." };
     }
@@ -412,7 +483,12 @@ export async function getUserPurchasedTemplatesAction(
  */
 export async function checkProductPurchasedAction(productId: string): Promise<ActionResponse<boolean>> {
   try {
-    const user = await getCurrentUser();
+    const userResult = await getCurrentUser();
+    if (!userResult.success) {
+      console.error('[Action Error] checkProductPurchasedAction user lookup failed:', userResult.error);
+      return { success: false, error: "Đã có lỗi xảy ra khi xác thực người dùng." };
+    }
+    const user = userResult.data;
     if (!user) {
       return { success: true, data: false };
     }

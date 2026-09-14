@@ -16,6 +16,7 @@ export default async function ProfilePage() {
   const locale = await getLocale();
 
   if (!userResult.success) {
+    console.error("ProfilePage: failed to authenticate user:", userResult.error);
     return (
       <main className="flex-grow pt-16 pb-24 bg-background-subtle font-sans">
         <div className="max-w-xl mx-auto px-6 text-center">
@@ -23,8 +24,8 @@ export default async function ProfilePage() {
             <p className="font-semibold text-sm">
               {locale === "vi" ? "Không thể xác thực thông tin người dùng từ máy chủ" : "Failed to authenticate user from server"}
             </p>
-            <p className="text-xs text-red-500 mt-1 font-mono">
-              {userResult.error.message || "Unknown error"}
+            <p className="text-xs text-red-500 mt-1">
+              {locale === "vi" ? "Vui lòng thử lại sau hoặc đăng nhập lại." : "Please try again later or sign in again."}
             </p>
           </div>
         </div>
@@ -39,7 +40,26 @@ export default async function ProfilePage() {
 
   const getProfileUseCase = await makeGetProfileUseCase();
   const profileResult = await getProfileUseCase.execute(user.id);
-  const profile = profileResult.success ? profileResult.data : null;
+
+  if (!profileResult.success) {
+    console.error("ProfilePage: failed to load user profile:", profileResult.error);
+    return (
+      <main className="flex-grow pt-16 pb-24 bg-background-subtle font-sans">
+        <div className="max-w-xl mx-auto px-6 text-center">
+          <div className="p-8 bg-red-50 border border-red-200 rounded-2xl text-red-700">
+            <p className="font-semibold text-sm">
+              {locale === "vi" ? "Không thể tải thông tin hồ sơ từ máy chủ" : "Failed to load profile details from database"}
+            </p>
+            <p className="text-xs text-red-500 mt-1">
+              {locale === "vi" ? "Vui lòng thử lại sau." : "Please try again later."}
+            </p>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
+  const profile = profileResult.data;
   const dict = await getAppDictionary();
   const profileDict = (dict?.profile as Record<string, string>) || {};
 

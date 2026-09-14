@@ -4,7 +4,7 @@ import { OrderItem } from "@/domain/entities/Order";
 import { formatCurrency } from "@/lib/utils";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { CheckCircle2, Download } from "lucide-react";
+import { CheckCircle2, Download, AlertTriangle, RefreshCw } from "lucide-react";
 import { getLocale } from "@/i18n/getDictionary";
 import { getLocalizedText } from "@/presentation/utils/locale";
 import { makeGetProductByIdUseCase, getAppDictionary } from "@/di/container";
@@ -39,19 +39,31 @@ export default async function OrderSuccessPage(props: { params: Promise<{ id: st
     order.items.map(async (item: OrderItem) => {
       try {
         const prodResult = await getProductUseCase.execute(item.productId);
-        const prod = prodResult.success ? prodResult.data : null;
+        if (!prodResult.success) {
+          console.error("OrderSuccessPage: failed to fetch product details:", prodResult.error);
+          return {
+            ...item,
+            sourceCodeUrl: "",
+            lookupError: true,
+          };
+        }
         return {
           ...item,
-          sourceCodeUrl: prod?.sourceCodeUrl || "",
+          sourceCodeUrl: prodResult.data?.sourceCodeUrl || "",
+          lookupError: false,
         };
-      } catch {
+      } catch (err) {
+        console.error("OrderSuccessPage: product lookup exception:", err);
         return {
           ...item,
           sourceCodeUrl: "",
+          lookupError: true,
         };
       }
     })
   );
+
+  const hasProductLookupError = itemsWithCode.some((item) => item.lookupError);
 
   const isPaid = order.paymentStatus === "paid" || order.status === "completed";
 
@@ -78,6 +90,40 @@ export default async function OrderSuccessPage(props: { params: Promise<{ id: st
           </strong>
         </p>
 
+        {/* Lookup Failure Alert Banner */}
+        {hasProductLookupError && (
+          <div className="bg-amber-50 border border-amber-200 rounded-2xl p-5 text-left mb-8 flex items-start gap-3.5 shadow-xs">
+            <div className="p-2 bg-amber-100 rounded-xl text-amber-700 shrink-0 mt-0.5">
+              <AlertTriangle size={18} />
+            </div>
+            <div className="flex-1 text-xs text-amber-800">
+              <h3 className="font-semibold text-amber-900 text-sm">
+                {locale === "vi" ? "Không thể tải thông tin file mã nguồn" : "Failed to load download link"}
+              </h3>
+              <p className="mt-1 leading-relaxed">
+                {locale === "vi" 
+                  ? "Hệ thống đã xác nhận thanh toán thành công, nhưng tạm thời gặp lỗi khi lấy liên kết mã nguồn. Vui lòng tải lại trang hoặc kiểm tra trong kho giao diện của bạn."
+                  : "Your payment was confirmed, but retrieving download links failed. Please reload this page or access your purchased templates in profile."}
+              </p>
+              <div className="mt-2.5 flex items-center gap-2">
+                <Link
+                  href={`/orders/${params.id}/success`}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-700 hover:bg-amber-800 text-white rounded-lg text-xs font-semibold shadow-xs transition-colors"
+                >
+                  <RefreshCw size={12} />
+                  <span>{locale === "vi" ? "Tải lại trang" : "Reload"}</span>
+                </Link>
+                <Link
+                  href="/profile/orders"
+                  className="px-3 py-1.5 bg-white border border-amber-300 text-amber-900 rounded-lg text-xs font-medium hover:bg-amber-100/50 transition-colors"
+                >
+                  {locale === "vi" ? "Vào Kho Giao Diện Của Tôi" : "Access My Templates Vault"}
+                </Link>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Digital License Receipt Card */}
         <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-100 text-left mb-8 shadow-xs">
           <div className="flex justify-between items-center pb-4 border-b border-slate-100 mb-6">
@@ -103,7 +149,15 @@ export default async function OrderSuccessPage(props: { params: Promise<{ id: st
 
                 <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
                   <span className="font-bold text-slate-900 font-mono text-sm">{formatCurrency(item.priceAtPurchase * item.quantity, locale)}</span>
-                  {isPaid && item.sourceCodeUrl && (
+                  {item.lookupError ? (
+                    <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-50 text-amber-800 text-xs font-medium border border-amber-200">
+                      <AlertTriangle size={12} className="text-amber-600" />
+                      <span>{locale === "vi" ? "Lỗi tải link" : "Link unavailable"}</span>
+                      <Link href={`/orders/${params.id}/success`} className="underline font-semibold ml-1">
+                        {locale === "vi" ? "Thử lại" : "Retry"}
+                      </Link>
+                    </div>
+                  ) : isPaid && item.sourceCodeUrl ? (
                     <a
                       href={item.sourceCodeUrl}
                       target="_blank"
@@ -113,7 +167,7 @@ export default async function OrderSuccessPage(props: { params: Promise<{ id: st
                       <Download size={13} />
                       <span>{locale === "vi" ? "Tải source code" : "Download (.zip)"}</span>
                     </a>
-                  )}
+                  ) : null}
                 </div>
               </div>
             ))}
@@ -158,7 +212,15 @@ export default async function OrderSuccessPage(props: { params: Promise<{ id: st
 
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row justify-center gap-4">
-          {isPaid && itemsWithCode.length === 1 && itemsWithCode[0].sourceCodeUrl ? (
+          {hasProductLookupError ? (
+            <Link
+              href={`/orders/${params.id}/success`}
+              className="px-6 py-3 bg-amber-600 hover:bg-amber-700 text-white rounded-xl font-semibold transition-all text-sm shadow-xs flex items-center justify-center gap-2 active:scale-95"
+            >
+              <RefreshCw size={16} />
+              <span>{locale === "vi" ? "Thử tải lại liên kết" : "Retry Loading Links"}</span>
+            </Link>
+          ) : isPaid && itemsWithCode.length === 1 && itemsWithCode[0].sourceCodeUrl ? (
             <a
               href={itemsWithCode[0].sourceCodeUrl}
               target="_blank"

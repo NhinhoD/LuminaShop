@@ -41,26 +41,28 @@ export default async function AdminCustomersPage({
   ]);
 
   if (!allCustomersResult.success || !allCustomersResult.data) {
+    console.error("AdminCustomersPage: failed to load all customers:", allCustomersResult.error);
     return (
       <div className="p-8 text-center bg-red-50 border border-red-200 rounded-2xl text-red-700 max-w-xl mx-auto my-12 font-sans">
         <p className="font-semibold text-sm">
           {locale === "vi" ? "Không thể tải dữ liệu khách hàng từ máy chủ" : "Failed to load customer metrics from database"}
         </p>
-        <p className="text-xs text-red-500 mt-1 font-mono">
-          {allCustomersResult.error || "Unknown error"}
+        <p className="text-xs text-red-500 mt-1">
+          {locale === "vi" ? "Vui lòng thử lại sau." : "Please try again later."}
         </p>
       </div>
     );
   }
 
   if (search && filteredCustomersResult && (!filteredCustomersResult.success || !filteredCustomersResult.data)) {
+    console.error("AdminCustomersPage: failed to search customers:", filteredCustomersResult.error);
     return (
       <div className="p-8 text-center bg-red-50 border border-red-200 rounded-2xl text-red-700 max-w-xl mx-auto my-12 font-sans">
         <p className="font-semibold text-sm">
           {locale === "vi" ? "Không thể tìm kiếm khách hàng" : "Failed to search customers"}
         </p>
-        <p className="text-xs text-red-500 mt-1 font-mono">
-          {filteredCustomersResult.error || "Unknown error"}
+        <p className="text-xs text-red-500 mt-1">
+          {locale === "vi" ? "Vui lòng thử lại sau." : "Please try again later."}
         </p>
       </div>
     );

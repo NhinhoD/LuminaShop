@@ -24,6 +24,7 @@ export default async function AdminLayout({
   const userResult = await getCurrentUser.execute();
 
   if (!userResult.success) {
+    console.error("AdminLayout user authentication error:", userResult.error);
     return (
       <div className="min-h-screen flex items-center justify-center p-6 bg-slate-50 font-sans">
         <div className="p-8 text-center bg-red-50 border border-red-200 rounded-2xl text-red-700 max-w-xl mx-auto">
@@ -32,8 +33,10 @@ export default async function AdminLayout({
               ? "Không thể xác thực thông tin người dùng từ máy chủ"
               : "Failed to authenticate user from server"}
           </p>
-          <p className="text-xs text-red-500 mt-1 font-mono">
-            {userResult.error.message || "Unknown error"}
+          <p className="text-xs text-red-500 mt-1">
+            {currentLocale === "vi"
+              ? "Vui lòng thử lại sau hoặc đăng nhập lại."
+              : "Please try again later or sign in again."}
           </p>
         </div>
       </div>
@@ -51,6 +54,7 @@ export default async function AdminLayout({
   const profileResult = await getProfile.execute(user.id);
 
   if (!profileResult.success) {
+    console.error("AdminLayout profile lookup error:", profileResult.error);
     return (
       <div className="min-h-screen flex items-center justify-center p-6 bg-slate-50 font-sans">
         <div className="p-8 text-center bg-red-50 border border-red-200 rounded-2xl text-red-700 max-w-xl mx-auto">
@@ -59,8 +63,10 @@ export default async function AdminLayout({
               ? "Không thể tải thông tin quyền quản trị từ máy chủ"
               : "Failed to verify admin privileges from database"}
           </p>
-          <p className="text-xs text-red-500 mt-1 font-mono">
-            {profileResult.error.message || "Unknown error"}
+          <p className="text-xs text-red-500 mt-1">
+            {currentLocale === "vi"
+              ? "Vui lòng thử lại sau."
+              : "Please try again later."}
           </p>
         </div>
       </div>

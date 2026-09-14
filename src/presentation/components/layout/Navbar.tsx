@@ -5,7 +5,11 @@ import NavbarClient from "./NavbarClient";
 export async function Navbar() {
   const getCurrentUserUseCase = await makeGetCurrentUserUseCase();
   const userResult = await getCurrentUserUseCase.execute();
+  if (!userResult.success) {
+    console.error("Navbar: Failed to retrieve current user:", userResult.error);
+  }
   const user = userResult.success ? userResult.data : null;
+  const authError = !userResult.success;
   const dict = await getAppDictionary();
 
   const navDict = (dict?.nav as Record<string, string>) || {};
@@ -17,6 +21,12 @@ export async function Navbar() {
   ] as const;
 
   return (
-    <NavbarClient user={user} brandName={BRAND_NAME} navLinks={navLinks} dict={dict as unknown as Record<string, Record<string, string>>} />
+    <NavbarClient 
+      user={user} 
+      authError={authError}
+      brandName={BRAND_NAME} 
+      navLinks={navLinks} 
+      dict={dict as unknown as Record<string, Record<string, string>>} 
+    />
   );
 }
