@@ -65,6 +65,22 @@ export class SupabaseTranslationRepository implements ITranslationRepository {
     const { data, error, count } = await query;
 
     if (error) {
+      if (error.code === 'PGRST103' || error.message?.includes('satisfiable')) {
+        let countQuery = this.supabase
+          .from('site_translations')
+          .select('id', { count: 'exact', head: true });
+        if (filters?.namespace && filters.namespace !== 'all') {
+          countQuery = countQuery.eq('namespace', filters.namespace);
+        }
+        if (filters?.search && filters.search.trim()) {
+          const term = filters.search.trim();
+          const escapedTerm = term.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+          const pattern = `"%${escapedTerm}%"`;
+          countQuery = countQuery.or(`key.ilike.${pattern},vi.ilike.${pattern},en.ilike.${pattern}`);
+        }
+        const { count: actualCount } = await countQuery;
+        return { translations: [], total: actualCount || 0, namespaces };
+      }
       return { translations: [], total: 0, namespaces };
     }
 

@@ -162,6 +162,7 @@ export class SupabaseDashboardRepository implements IDashboardRepository {
       .from('profiles')
       .select('id, full_name, role, created_at', { count: 'exact' });
 
+    const orConditions: string[] = [];
     if (filters?.search && filters.search.trim()) {
       const term = filters.search.trim();
 
@@ -181,7 +182,7 @@ export class SupabaseDashboardRepository implements IDashboardRepository {
 
       const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(term);
       const escapedTerm = term.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
-      const orConditions: string[] = [`full_name.ilike."%${escapedTerm}%"`];
+      orConditions.push(`full_name.ilike."%${escapedTerm}%"`);
 
       if (isUuid) {
         orConditions.push(`id.eq.${term}`);
@@ -198,6 +199,21 @@ export class SupabaseDashboardRepository implements IDashboardRepository {
 
     const { data: profiles, count, error: profilesError } = await query;
     if (profilesError) {
+      if (profilesError.code === 'PGRST103' || profilesError.message?.includes('satisfiable')) {
+        let countQuery = supabase
+          .from('profiles')
+          .select('id', { count: 'exact', head: true });
+        if (orConditions.length > 0) {
+          countQuery = countQuery.or(orConditions.join(','));
+        }
+        const { count: actualCount } = await countQuery;
+        return {
+          customers: [],
+          total: actualCount || 0,
+          vipCount,
+          totalSpent,
+        };
+      }
       throw new Error(`Failed to fetch paginated profiles: ${profilesError.message}`);
     }
 
