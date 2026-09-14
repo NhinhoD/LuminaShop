@@ -1,4 +1,4 @@
-import { IAuthRepository } from '@/domain/repositories/IAuthRepository';
+import { IAuthRepository, AuthUser, AuthProfile } from '@/domain/repositories/IAuthRepository';
 import { Result, ok, fail } from '@/domain/shared/Result';
 import { SupabaseClient } from '@supabase/supabase-js';
 
@@ -130,20 +130,29 @@ export class SupabaseAuthRepository implements IAuthRepository {
    * Retrieves the currently authenticated session user from Supabase Auth,
    * extracting metadata attributes including fullName and phone.
    *
-   * @returns User summary object or null if not authenticated.
+   * @returns Result containing AuthUser, null if unauthenticated, or Error on failure.
    */
-  async getCurrentUser(): Promise<{ id: string; email?: string; fullName?: string; phone?: string } | null> {
+  async getCurrentUser(): Promise<Result<AuthUser | null>> {
     try {
-      const { data: { user } } = await this.supabase.auth.getUser();
-      if (!user) return null;
-      return {
+      const { data: { user }, error } = await this.supabase.auth.getUser();
+      if (error) {
+        if (
+          error.name === 'AuthSessionMissingError' ||
+          error.message?.includes('Auth session missing')
+        ) {
+          return ok(null);
+        }
+        return fail(new Error(error.message || 'Lỗi hệ thống khi xác thực người dùng'));
+      }
+      if (!user) return ok(null);
+      return ok({
         id: user.id,
         email: user.email,
         fullName: user.user_metadata?.full_name || user.user_metadata?.name || undefined,
         phone: user.phone || user.user_metadata?.phone || undefined,
-      };
-    } catch {
-      return null;
+      });
+    } catch (err) {
+      return fail(err instanceof Error ? err : new Error('Lỗi hệ thống khi xác thực người dùng'));
     }
   }
 
@@ -151,25 +160,30 @@ export class SupabaseAuthRepository implements IAuthRepository {
    * Retrieves profile data for a specific user ID from the profiles table.
    *
    * @param userId - Unique user ID.
-   * @returns User profile record or null if not found.
+   * @returns Result containing AuthProfile, null if not found, or Error on query failure.
    */
-  async getProfile(userId: string): Promise<{ id: string; fullName?: string; phone?: string; avatarUrl?: string } | null> {
+  async getProfile(userId: string): Promise<Result<AuthProfile | null>> {
     try {
-      const { data } = await this.supabase
+      const { data, error } = await this.supabase
         .from('profiles')
         .select('*')
         .eq('id', userId)
         .maybeSingle();
 
-      if (!data) return null;
-      return {
+      if (error) {
+        return fail(new Error(error.message || 'Không thể tải thông tin hồ sơ'));
+      }
+
+      if (!data) return ok(null);
+      return ok({
         id: data.id,
         fullName: data.full_name,
         phone: data.phone,
         avatarUrl: data.avatar_url,
-      };
-    } catch {
-      return null;
+        role: data.role,
+      });
+    } catch (err) {
+      return fail(err instanceof Error ? err : new Error('Lỗi hệ thống khi tải thông tin hồ sơ'));
     }
   }
 

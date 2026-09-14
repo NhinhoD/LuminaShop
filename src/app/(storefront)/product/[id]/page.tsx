@@ -1,10 +1,15 @@
 import { notFound } from "next/navigation";
-import { makeProductRepository, makeAuthRepository, makeOrderRepository, makeLanguageRepository } from "@/infrastructure/supabase/container";
+import { 
+  makeGetProductByIdUseCase, 
+  makeCheckProductPurchasedUseCase, 
+  makeGetCurrentUserUseCase, 
+  getAppDictionary 
+} from "@/di/container";
 import { BreadcrumbSetter } from "@/presentation/components/common/BreadcrumbSetter";
 import { ROUTES } from "@/presentation/constants";
 import ProductSelection from "@/presentation/components/product/ProductSelection";
 import ProductMediaGallery from "@/presentation/components/product/ProductMediaGallery";
-import { getDictionary, getLocale } from "@/i18n/getDictionary";
+import { getLocale } from "@/i18n/getDictionary";
 import { getLocalizedText } from "@/presentation/utils/locale";
 import { Zap, Layers, ShieldCheck, HelpCircle, Star } from "lucide-react";
 import { sanitizeProductForPublic } from "@/domain/entities/Product";
@@ -15,24 +20,57 @@ interface ProductPageProps {
 
 export default async function ProductDetailPage({ params }: ProductPageProps) {
   const { id } = await params;
-  const productRepository = await makeProductRepository();
-  const product = await productRepository.findById(id);
-
-  if (!product) {
-    notFound();
-  }
   const locale = await getLocale();
-  const langRepo = await makeLanguageRepository();
-  const dict = await getDictionary(langRepo);
+  const dict = await getAppDictionary();
   const prodDict = (dict?.product as Record<string, string>) || {};
 
-  const authRepo = await makeAuthRepository();
-  const currentUser = await authRepo.getCurrentUser();
-  let hasPurchased = false;
+  const getProductUseCase = await makeGetProductByIdUseCase();
+  const productResult = await getProductUseCase.execute(id);
 
-  if (currentUser) {
-    const orderRepo = await makeOrderRepository();
-    hasPurchased = await orderRepo.hasPurchasedProduct(currentUser.id, product.id);
+  if (!productResult.success) {
+    console.error("ProductDetailPage: failed to load product:", productResult.error);
+    return (
+      <main className="flex-grow bg-white py-16 font-sans">
+        <div className="max-w-xl mx-auto px-6 text-center">
+          <div className="p-8 bg-red-50 border border-red-200 rounded-2xl text-red-700">
+            <p className="font-semibold text-sm">
+              {locale === "vi" ? "Không thể tải thông tin sản phẩm từ máy chủ" : "Failed to load product details from database"}
+            </p>
+            <p className="text-xs text-red-500 mt-1">
+              {locale === "vi" ? "Vui lòng thử lại sau." : "Please try again later."}
+            </p>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
+  if (!productResult.data) {
+    notFound();
+  }
+  const product = productResult.data;
+
+  const getCurrentUser = await makeGetCurrentUserUseCase();
+  const userResult = await getCurrentUser.execute();
+  let currentUser = null;
+  let hasPurchased = false;
+  let purchaseLookupError = false;
+
+  if (!userResult.success) {
+    console.error("ProductDetailPage: failed to get current user:", userResult.error);
+    purchaseLookupError = true;
+  } else {
+    currentUser = userResult.data;
+    if (currentUser) {
+      const checkPurchasedUseCase = await makeCheckProductPurchasedUseCase();
+      const purchasedResult = await checkPurchasedUseCase.execute(currentUser.id, product.id);
+      if (purchasedResult.success) {
+        hasPurchased = purchasedResult.data;
+      } else {
+        console.error("ProductDetailPage: failed to check purchased status:", purchasedResult.error);
+        purchaseLookupError = true;
+      }
+    }
   }
 
   const accordionItems = [
@@ -120,7 +158,11 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
             </div>
 
             {/* Price, Options & Purchase Actions */}
-            <ProductSelection product={sanitizeProductForPublic(product, hasPurchased)} hasPurchased={hasPurchased} />
+            <ProductSelection 
+              product={sanitizeProductForPublic(product, hasPurchased)} 
+              hasPurchased={hasPurchased} 
+              purchaseLookupError={purchaseLookupError}
+            />
 
             {/* Technical Accordion / Info Items */}
             <div className="mt-8 pt-6 border-t border-slate-100 space-y-4">

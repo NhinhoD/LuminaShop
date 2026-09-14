@@ -1,8 +1,8 @@
 import Link from "next/link";
 import Image from "next/image";
 import { ROUTES } from "@/presentation/constants";
-import { getDictionary, getLocale } from "@/i18n/getDictionary";
-import { makeLanguageRepository } from "@/infrastructure/supabase/container";
+import { getLocale } from "@/i18n/getDictionary";
+import { getAppDictionary } from "@/di/container";
 import { AuthErrorToast } from "@/presentation/components/auth/AuthErrorToast";
 import { LoginFormClient } from "./LoginFormClient";
 
@@ -13,8 +13,7 @@ import { LoginFormClient } from "./LoginFormClient";
 export default async function LoginPage({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
   const params = await searchParams;
   const locale = await getLocale();
-  const langRepo = await makeLanguageRepository();
-  const dict = await getDictionary(langRepo);
+  const dict = await getAppDictionary();
   const authDict = (dict?.auth as Record<string, string>) || {};
 
   return (

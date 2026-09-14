@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation';
-import { makeAuthRepository, makeLanguageRepository } from '@/infrastructure/supabase/container';
+import { makeGetCurrentUserUseCase, makeGetProfileUseCase, getAppDictionary } from '@/di/container';
 import { ROUTES } from '@/presentation/constants';
-import { getDictionary, getLocale } from '@/i18n/getDictionary';
+import { getLocale } from '@/i18n/getDictionary';
 import { ProfileFormClient } from './ProfileFormClient';
 import { ProfileSidebar } from './ProfileSidebar';
 import { UserOrdersRealtimeTracker } from '@/presentation/components/orders/UserOrdersRealtimeTracker';
@@ -11,17 +11,56 @@ import { UserOrdersRealtimeTracker } from '@/presentation/components/orders/User
  * Requires authentication; redirects to login if not authenticated.
  */
 export default async function ProfilePage() {
-  const authRepo = await makeAuthRepository();
-  const user = await authRepo.getCurrentUser();
+  const getCurrentUserUseCase = await makeGetCurrentUserUseCase();
+  const userResult = await getCurrentUserUseCase.execute();
+  const locale = await getLocale();
 
+  if (!userResult.success) {
+    console.error("ProfilePage: failed to authenticate user:", userResult.error);
+    return (
+      <main className="flex-grow pt-16 pb-24 bg-background-subtle font-sans">
+        <div className="max-w-xl mx-auto px-6 text-center">
+          <div className="p-8 bg-red-50 border border-red-200 rounded-2xl text-red-700">
+            <p className="font-semibold text-sm">
+              {locale === "vi" ? "Không thể xác thực thông tin người dùng từ máy chủ" : "Failed to authenticate user from server"}
+            </p>
+            <p className="text-xs text-red-500 mt-1">
+              {locale === "vi" ? "Vui lòng thử lại sau hoặc đăng nhập lại." : "Please try again later or sign in again."}
+            </p>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
+  const user = userResult.data;
   if (!user) {
     redirect(ROUTES.LOGIN);
   }
 
-  const profile = await authRepo.getProfile(user.id);
-  const locale = await getLocale();
-  const langRepo = await makeLanguageRepository();
-  const dict = await getDictionary(langRepo);
+  const getProfileUseCase = await makeGetProfileUseCase();
+  const profileResult = await getProfileUseCase.execute(user.id);
+
+  if (!profileResult.success) {
+    console.error("ProfilePage: failed to load user profile:", profileResult.error);
+    return (
+      <main className="flex-grow pt-16 pb-24 bg-background-subtle font-sans">
+        <div className="max-w-xl mx-auto px-6 text-center">
+          <div className="p-8 bg-red-50 border border-red-200 rounded-2xl text-red-700">
+            <p className="font-semibold text-sm">
+              {locale === "vi" ? "Không thể tải thông tin hồ sơ từ máy chủ" : "Failed to load profile details from database"}
+            </p>
+            <p className="text-xs text-red-500 mt-1">
+              {locale === "vi" ? "Vui lòng thử lại sau." : "Please try again later."}
+            </p>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
+  const profile = profileResult.data;
+  const dict = await getAppDictionary();
   const profileDict = (dict?.profile as Record<string, string>) || {};
 
   return (

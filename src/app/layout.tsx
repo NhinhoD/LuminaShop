@@ -8,8 +8,7 @@ export const metadata: Metadata = {
 
 import { BreadcrumbProvider } from "@/presentation/components/common/BreadcrumbContext";
 import { I18nProvider, Locale } from "@/presentation/components/common/I18nContext";
-import { makeLanguageRepository } from "@/infrastructure/supabase/container";
-import { getDictionary } from "@/i18n/getDictionary";
+import { getAppDictionary } from "@/di/container";
 import { ToastContainer } from "@/presentation/components/common/ToastContainer";
 
 import { Plus_Jakarta_Sans } from "next/font/google";
@@ -31,8 +30,7 @@ export default async function RootLayout({
   const cookieStore = await cookies();
   const locale = (cookieStore.get("NEXT_LOCALE")?.value as Locale) || "vi";
 
-  const repo = await makeLanguageRepository();
-  const dict = await getDictionary(repo);
+  const dict = await getAppDictionary();
 
   return (
     <html lang={locale} className={`light ${plusJakartaSans.variable}`}>

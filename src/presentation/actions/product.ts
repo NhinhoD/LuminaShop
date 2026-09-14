@@ -4,7 +4,7 @@ import {
   makeCreateProductUseCase, 
   makeUpdateProductUseCase, 
   makeDeleteProductUseCase 
-} from "@/infrastructure/supabase/container";
+} from "@/di/container";
 import { CreateProductDTO, UpdateProductDTO } from "@/domain/entities/Product";
 import { revalidatePath } from "next/cache";
 import { assertAdmin } from "./authGuards";

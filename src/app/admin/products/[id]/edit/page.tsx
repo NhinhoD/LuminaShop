@@ -1,11 +1,11 @@
 import { 
   makeGetCategoriesUseCase, 
   makeGetProductByIdUseCase,
-  makeLanguageRepository
-} from "@/infrastructure/supabase/container";
+  getAppDictionary
+} from "@/di/container";
 import { ProductForm } from "@/app/admin/products/ProductForm";
 import { notFound } from "next/navigation";
-import { getDictionary, getLocale } from "@/i18n/getDictionary";
+import { getLocale } from "@/i18n/getDictionary";
 
 /**
  * Admin product editing page.
@@ -18,8 +18,7 @@ export default async function EditProductPage({
 }) {
   const { id } = await params;
   const locale = await getLocale();
-  const langRepo = await makeLanguageRepository();
-  const dict = await getDictionary(langRepo);
+  const dict = await getAppDictionary();
   const adminDict = (dict?.admin as Record<string, string>) || {};
   
   const getCategoriesUseCase = await makeGetCategoriesUseCase();
@@ -30,11 +29,39 @@ export default async function EditProductPage({
     getProductByIdUseCase.execute(id)
   ]);
 
+  if (!categoriesResult.success) {
+    console.error("EditProductPage: failed to load categories:", categoriesResult.error);
+    return (
+      <div className="p-8 text-center bg-red-50 border border-red-200 rounded-2xl text-red-700 max-w-xl mx-auto my-12 font-sans">
+        <p className="font-semibold text-sm">
+          {locale === "vi" ? "Không thể tải danh mục sản phẩm từ máy chủ" : "Failed to load categories from database"}
+        </p>
+        <p className="text-xs text-red-500 mt-1">
+          {locale === "vi" ? "Vui lòng thử lại sau." : "Please try again later."}
+        </p>
+      </div>
+    );
+  }
+
   if (!productResult.success) {
+    console.error("EditProductPage: failed to load product:", productResult.error);
+    return (
+      <div className="p-8 text-center bg-red-50 border border-red-200 rounded-2xl text-red-700 max-w-xl mx-auto my-12 font-sans">
+        <p className="font-semibold text-sm">
+          {locale === "vi" ? "Không thể tải thông tin sản phẩm từ máy chủ" : "Failed to load product details from database"}
+        </p>
+        <p className="text-xs text-red-500 mt-1">
+          {locale === "vi" ? "Vui lòng thử lại sau." : "Please try again later."}
+        </p>
+      </div>
+    );
+  }
+
+  if (!productResult.data) {
     notFound();
   }
 
-  const categories = categoriesResult.success ? categoriesResult.data.categories : [];
+  const categories = categoriesResult.data.categories;
   const product = productResult.data;
 
   return (

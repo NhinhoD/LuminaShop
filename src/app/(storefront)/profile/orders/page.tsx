@@ -3,13 +3,13 @@ import Image from "next/image";
 import { Download, Package, ShoppingBag, ArrowRight, FileText, Receipt } from "lucide-react";
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { makeAuthRepository, makeLanguageRepository, makeSupabaseClient } from "@/infrastructure/supabase/container";
+import { makeGetCurrentUserUseCase, makeGetProfileUseCase, getAppDictionary } from "@/di/container";
 import { PaginationControls } from "@/presentation/components/common/PaginationControls";
 import { ProfileOrderSearch } from "./ProfileOrderSearch";
 import { getLocalizedText } from "@/presentation/utils/locale";
-import { getDictionary, getLocale } from "@/i18n/getDictionary";
+import { getLocale } from "@/i18n/getDictionary";
 import { formatDate, formatCurrency } from "@/lib/utils";
-import { getUserOrdersAction } from "@/presentation/actions/order";
+import { getUserOrdersAction, getUserPurchasedTemplatesAction } from "@/presentation/actions/order";
 import { OrderStatus } from "@/domain/entities/Order";
 import { StatusBadge } from "@/presentation/components/orders/StatusBadge";
 import { ProfileSidebar } from "../ProfileSidebar";
@@ -28,18 +28,6 @@ interface OrderHistoryPageProps {
 }
 
 /**
- * Escapes PostgREST-reserved characters (commas and parentheses) in user search terms
- * before interpolating into raw filter expressions like `.or()`, preventing query syntax errors
- * while preserving SQL LIKE wildcards (`%` and `_`).
- *
- * @param value - Untrusted raw search query from user.
- * @returns Escaped search string safe for PostgREST `.or()` filter interpolation.
- */
-function escapePostgrestFilter(value: string): string {
-  return value.replace(/\\/g, "\\\\").replace(/[,()]/g, "\\$&");
-}
-
-/**
  * Customer order history and digital templates vault page.
  * Provides two-tab navigation between overall order history and purchased source code templates,
  * with search, pagination, and real-time order updates.
@@ -48,17 +36,56 @@ function escapePostgrestFilter(value: string): string {
  * @returns JSX Element for the profile orders dashboard.
  */
 export default async function OrderHistoryPage({ searchParams }: OrderHistoryPageProps) {
-  const authRepo = await makeAuthRepository();
-  const user = await authRepo.getCurrentUser();
+  const getCurrentUserUseCase = await makeGetCurrentUserUseCase();
+  const userResult = await getCurrentUserUseCase.execute();
+  const locale = await getLocale();
 
+  if (!userResult.success) {
+    console.error("OrderHistoryPage: failed to authenticate user:", userResult.error);
+    return (
+      <main className="flex-grow pt-16 pb-24 bg-background-subtle font-sans">
+        <div className="max-w-xl mx-auto px-6 text-center">
+          <div className="p-8 bg-red-50 border border-red-200 rounded-2xl text-red-700">
+            <p className="font-semibold text-sm">
+              {locale === "vi" ? "Không thể xác thực thông tin người dùng từ máy chủ" : "Failed to authenticate user from server"}
+            </p>
+            <p className="text-xs text-red-500 mt-1">
+              {locale === "vi" ? "Vui lòng thử lại sau hoặc đăng nhập lại." : "Please try again later or sign in again."}
+            </p>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
+  const user = userResult.data;
   if (!user) {
     redirect(ROUTES.LOGIN);
   }
 
-  const profile = await authRepo.getProfile(user.id);
-  const locale = await getLocale();
-  const langRepo = await makeLanguageRepository();
-  const dict = await getDictionary(langRepo);
+  const getProfileUseCase = await makeGetProfileUseCase();
+  const profileResult = await getProfileUseCase.execute(user.id);
+
+  if (!profileResult.success) {
+    console.error("OrderHistoryPage: failed to load user profile:", profileResult.error);
+    return (
+      <main className="flex-grow pt-16 pb-24 bg-background-subtle font-sans">
+        <div className="max-w-xl mx-auto px-6 text-center">
+          <div className="p-8 bg-red-50 border border-red-200 rounded-2xl text-red-700">
+            <p className="font-semibold text-sm">
+              {locale === "vi" ? "Không thể tải thông tin hồ sơ từ máy chủ" : "Failed to load profile details from database"}
+            </p>
+            <p className="text-xs text-red-500 mt-1">
+              {locale === "vi" ? "Vui lòng thử lại sau." : "Please try again later."}
+            </p>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
+  const profile = profileResult.data;
+  const dict = await getAppDictionary();
   const orderDict = (dict?.orders as Record<string, string>) || {};
   const profileDict = (dict?.profile as Record<string, string>) || {};
 
@@ -67,8 +94,6 @@ export default async function OrderHistoryPage({ searchParams }: OrderHistoryPag
   const parsedPage = parseInt(params.page || "1", 10);
   const safePage = Number.isFinite(parsedPage) && parsedPage > 0 ? parsedPage : 1;
   const search = typeof params.q === "string" ? params.q.trim() : undefined;
-
-  const supabase = await makeSupabaseClient();
 
   // 1. Query user orders for "Lịch sử đơn hàng & thanh toán"
   const ordersPerPage = 10;
@@ -83,57 +108,28 @@ export default async function OrderHistoryPage({ searchParams }: OrderHistoryPag
   const totalOrders = ordersResult.data?.total || 0;
   const totalOrdersPages = Math.ceil(totalOrders / ordersPerPage);
 
-  // 2. Query user purchased templates for "Kho mã nguồn đã sở hữu"
+  // 2. Query user purchased templates for "Kho mã nguồn đã sở hữu" via application action
   const templatesPerPage = 9;
   const templatesOffset = (safePage - 1) * templatesPerPage;
 
-  let templatesQuery = supabase
-    .from("order_items")
-    .select(`
-      id,
-      product_id,
-      price_at_purchase,
-      created_at,
-      order_id,
-      products!inner (*),
-      orders!inner (
-        status,
-        payment_status,
-        user_id,
-        created_at
-      )
-    `, { count: "exact" })
-    .eq("orders.user_id", user.id)
-    .neq("orders.status", "cancelled")
-    .or("payment_status.eq.paid,status.eq.completed,status.eq.delivered", { referencedTable: "orders" });
-
-  if (search && currentTab === "templates") {
-    const escapedSearch = escapePostgrestFilter(search);
-    templatesQuery = templatesQuery.or(`title->>vi.ilike.%${escapedSearch}%,title->>en.ilike.%${escapedSearch}%`, { referencedTable: "products" });
-  }
-
-  const { data: orderItemsData, count: totalTemplatesCount, error: templatesError } = await templatesQuery
-    .order("created_at", { ascending: false })
-    .range(templatesOffset, templatesOffset + templatesPerPage - 1);
-
-  const totalTemplates = totalTemplatesCount || 0;
+  const templatesResult = await getUserPurchasedTemplatesAction(
+    templatesPerPage,
+    templatesOffset,
+    currentTab === "templates" ? search : undefined
+  );
+  const templatesError = templatesResult.success ? null : templatesResult.error;
+  const totalTemplates = templatesResult.data?.total || 0;
   const totalTemplatesPages = Math.ceil(totalTemplates / templatesPerPage);
 
-  const templateItems = (orderItemsData || []).map((item: unknown) => {
-    const typedItem = item as {
-      id: string;
-      product_id: string;
-      price_at_purchase: number;
-      created_at: string;
-      order_id: string;
-      products: unknown;
-      orders: { created_at?: string } | null;
-    };
-    return {
-      ...typedItem,
-      order_created_at: typedItem.orders?.created_at || typedItem.created_at,
-    };
-  });
+  const templateItems = (templatesResult.data?.items || []).map((item) => ({
+    id: item.id,
+    product_id: item.productId,
+    price_at_purchase: item.priceAtPurchase,
+    created_at: item.createdAt.toISOString(),
+    order_id: item.orderId,
+    order_created_at: item.orderCreatedAt ? item.orderCreatedAt.toISOString() : item.createdAt.toISOString(),
+    products: item.product,
+  }));
 
   return (
     <main className="flex-grow pt-16 pb-24 bg-background-subtle font-sans">
@@ -376,7 +372,7 @@ export default async function OrderHistoryPage({ searchParams }: OrderHistoryPag
                         {locale === "vi" ? "Lỗi tải danh sách mã nguồn" : "Error Loading Templates"}
                       </h2>
                       <p className="text-slate-500 mb-6 max-w-sm mx-auto text-xs font-normal">
-                        {templatesError.message || (locale === "vi" ? "Không thể lấy dữ liệu mã nguồn đã mua." : "Could not retrieve purchased templates.")}
+                        {templatesError || (locale === "vi" ? "Không thể lấy dữ liệu mã nguồn đã mua." : "Could not retrieve purchased templates.")}
                       </p>
                       <Link
                         href="/profile/orders?tab=templates"

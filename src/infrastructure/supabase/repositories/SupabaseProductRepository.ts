@@ -28,9 +28,12 @@ export class SupabaseProductRepository implements IProductRepository {
       .from('products')
       .select('*, variants:product_variants(*)')
       .eq('id', id)
-      .single();
+      .maybeSingle();
     
-    if (error || !data) return null;
+    if (error) {
+      throw new Error(`Failed to fetch product by id: ${error.message}`);
+    }
+    if (!data) return null;
     return this.mapToEntity(data);
   }
 
@@ -40,9 +43,12 @@ export class SupabaseProductRepository implements IProductRepository {
       .from('products')
       .select('*, variants:product_variants(*)')
       .eq('slug', slug)
-      .single();
+      .maybeSingle();
     
-    if (error || !data) return null;
+    if (error) {
+      throw new Error(`Failed to fetch product by slug: ${error.message}`);
+    }
+    if (!data) return null;
     return this.mapToEntity(data);
   }
 

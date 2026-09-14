@@ -1,22 +1,21 @@
-import { makeLanguageRepository, makeTranslationRepository } from "@/infrastructure/supabase/container";
 import LanguageTableClient from "./LanguageTableClient";
 import { TranslationEntry } from "@/domain/repositories/ITranslationRepository";
-import { getDictionary, getLocale } from "@/i18n/getDictionary";
+import { getAppDictionary } from "@/di/container";
+import { getLocale } from "@/i18n/getDictionary";
+import { getTranslationsAction } from "@/presentation/actions/i18n";
 
 export const dynamic = 'force-dynamic';
 
 export default async function AdminLanguagesPage() {
   let translations: TranslationEntry[] = [];
   const locale = await getLocale();
-  const langRepo = await makeLanguageRepository();
-  const dict = await getDictionary(langRepo);
+  const dict = await getAppDictionary();
   const adminDict = (dict?.admin as Record<string, string>) || {};
 
   try {
-    const repo = await makeTranslationRepository();
-    translations = await repo.getAllTranslations();
-  } catch (error) {
-    console.error("Failed to fetch translations:", error);
+    translations = await getTranslationsAction();
+  } catch {
+    translations = [];
   }
 
   return (

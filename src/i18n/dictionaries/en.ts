@@ -176,6 +176,8 @@ export const en = {
     freeDownload: "FREE DOWNLOAD",
     downloadZip: "DOWNLOAD SOURCE CODE (.ZIP)",
     payToPurchase: "PURCHASE LICENSE NOW",
+    lookupError: "Could not verify your license status due to a connection error. Please reload the page.",
+    reloadToVerify: "RELOAD PAGE TO VERIFY LICENSE",
     addToWishlist: "Add to Wishlist",
     tabArchitecture: "Architecture & Tech Stack",
     tabArchitectureDesc: "Next.js 15, Tailwind v4, GSAP ScrollTrigger, and strict Clean Architecture.",

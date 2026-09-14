@@ -12,27 +12,20 @@ import {
   makeForgotPasswordUseCase,
   makeUpdatePasswordUseCase,
   makeChangePasswordUseCase,
-  makeUpdateProfileUseCase
-} from '@/infrastructure/supabase/container'
-import { z } from 'zod'
+  makeUpdateProfileUseCase,
+  makeGetCurrentUserUseCase,
+  makeGetProfileUseCase
+} from '@/di/container'
 import { unstable_rethrow } from 'next/navigation'
-
-const credentialsSchema = z.object({
-  email: z.string().email('Email không hợp lệ'),
-  password: z.string().min(6, 'Mật khẩu phải từ 6 ký tự'),
-})
-
-const SignUpFormSchema = z.object({
-  firstName: z.preprocess((val) => val ?? undefined, z.string().optional()),
-  lastName: z.preprocess((val) => val ?? undefined, z.string().optional()),
-})
-
-const otpVerificationSchema = z.object({
-  email: z.string().email('Email không hợp lệ'),
-  token: z.string().min(1, 'Vui lòng nhập mã OTP'),
-})
-
-const emailCookieSchema = z.string().email('Email không hợp lệ')
+import {
+  credentialsSchema,
+  signUpFormSchema as SignUpFormSchema,
+  otpVerificationSchema,
+  emailCookieSchema,
+  forgotPasswordSchema,
+  updatePasswordSchema,
+  changePasswordSchema
+} from '@/lib/validations/auth'
 
 export async function login(formData: FormData): Promise<never> {
   try {
@@ -213,13 +206,7 @@ export async function signout(): Promise<never> {
   }
 }
 
-const forgotPasswordSchema = z.object({
-  email: z.string().email('Email không hợp lệ'),
-});
 
-const updatePasswordSchema = z.object({
-  password: z.string().min(6, 'Mật khẩu phải có ít nhất 6 ký tự'),
-});
 
 export async function forgotPasswordAction(formData: FormData): Promise<{ success?: boolean; error?: string }> {
   try {
@@ -291,17 +278,7 @@ export async function updatePasswordAction(formData: FormData): Promise<{ succes
   }
 }
 
-const changePasswordSchema = z.object({
-  currentPassword: z.string().min(1, 'Vui lòng nhập mật khẩu hiện tại'),
-  newPassword: z.string().min(6, 'Mật khẩu mới phải có ít nhất 6 ký tự'),
-  confirmPassword: z.string().min(6, 'Vui lòng xác nhận mật khẩu mới'),
-}).refine((data) => data.newPassword === data.confirmPassword, {
-  message: 'Mật khẩu xác nhận không khớp',
-  path: ['confirmPassword'],
-}).refine((data) => data.currentPassword !== data.newPassword, {
-  message: 'Mật khẩu mới không được trùng với mật khẩu hiện tại',
-  path: ['newPassword'],
-});
+
 
 export async function changePasswordAction(formData: FormData): Promise<{ success?: boolean; error?: string }> {
   try {
@@ -334,3 +311,14 @@ export async function changePasswordAction(formData: FormData): Promise<{ succes
     return { error: error instanceof Error ? error.message : 'Lỗi hệ thống khi đổi mật khẩu' };
   }
 }
+
+export async function getCurrentUserAction() {
+  const useCase = await makeGetCurrentUserUseCase();
+  return useCase.execute();
+}
+
+export async function getProfileAction(userId: string) {
+  const useCase = await makeGetProfileUseCase();
+  return useCase.execute(userId);
+}
+

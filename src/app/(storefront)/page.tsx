@@ -1,49 +1,56 @@
 import React from "react";
-import { makeProductRepository, makeLanguageRepository, makeCategoryRepository } from "@/infrastructure/supabase/container";
+import { makeGetProductsUseCase, makeGetCategoriesUseCase, getAppDictionary } from "@/di/container";
 import HomePageClient from "@/presentation/components/home/HomePageClient";
-import { getDictionary } from "@/i18n/getDictionary";
 import { sanitizeProductsForPublic } from "@/domain/entities/Product";
-
+import { productSchema } from "@/lib/validations/product";
+import { getLocale } from "@/i18n/getDictionary";
 import { z } from "zod";
 
-const productVariantSchema = z.object({
-  id: z.string(),
-  productId: z.string(),
-  sku: z.string(),
-  name: z.string(),
-  priceAdjustment: z.number(),
-  stockQuantity: z.number(),
-  createdAt: z.date(),
-  updatedAt: z.date(),
-});
-
-const productSchema = z.object({
-  id: z.string(),
-  categoryId: z.string(),
-  title: z.record(z.string(), z.string()),
-  slug: z.string(),
-  description: z.record(z.string(), z.string()),
-  price: z.number(),
-  stock: z.number(),
-  imageUrl: z.string().optional(),
-  isActive: z.boolean(),
-  demoUrl: z.string(),
-  sourceCodeUrl: z.string(),
-  techStack: z.array(z.string()),
-  variants: z.array(productVariantSchema).optional(),
-  createdAt: z.date(),
-  updatedAt: z.date(),
-});
-
 export default async function HomePage(): Promise<React.ReactElement> {
-  const repo = await makeLanguageRepository();
-  const dictionary = await getDictionary(repo);
-  const productRepository = await makeProductRepository();
-  const { products: rawProducts } = await productRepository.findAll({ limit: 4 });
-  const featuredProducts = z.array(productSchema).parse(rawProducts);
+  const dictionary = await getAppDictionary();
+  const locale = await getLocale();
+  
+  const getProductsUseCase = await makeGetProductsUseCase();
+  const getCategoriesUseCase = await makeGetCategoriesUseCase();
 
-  const categoryRepository = await makeCategoryRepository();
-  const { categories } = await categoryRepository.findAll();
+  const [productsResult, categoriesResult] = await Promise.all([
+    getProductsUseCase.execute({ limit: 4 }),
+    getCategoriesUseCase.execute(),
+  ]);
+
+  if (!productsResult.success) {
+    return (
+      <main className="flex flex-col min-h-screen items-center justify-center p-6 bg-background-subtle/40 font-sans">
+        <div className="p-8 text-center bg-red-50 border border-red-200 rounded-2xl text-red-700 max-w-xl mx-auto my-12 font-sans">
+          <p className="font-semibold text-sm">
+            {locale === "vi" ? "Không thể tải danh sách sản phẩm từ máy chủ" : "Failed to load products from database"}
+          </p>
+          <p className="text-xs text-red-500 mt-1 font-mono">
+            {productsResult.error?.message || "Unknown error"}
+          </p>
+        </div>
+      </main>
+    );
+  }
+
+  if (!categoriesResult.success) {
+    return (
+      <main className="flex flex-col min-h-screen items-center justify-center p-6 bg-background-subtle/40 font-sans">
+        <div className="p-8 text-center bg-red-50 border border-red-200 rounded-2xl text-red-700 max-w-xl mx-auto my-12 font-sans">
+          <p className="font-semibold text-sm">
+            {locale === "vi" ? "Không thể tải danh mục sản phẩm từ máy chủ" : "Failed to load product categories from database"}
+          </p>
+          <p className="text-xs text-red-500 mt-1 font-mono">
+            {categoriesResult.error?.message || "Unknown error"}
+          </p>
+        </div>
+      </main>
+    );
+  }
+
+  const rawProducts = productsResult.data.products;
+  const featuredProducts = z.array(productSchema).parse(rawProducts);
+  const categories = categoriesResult.data.categories;
 
   return (
     <main className="flex flex-col min-h-screen">

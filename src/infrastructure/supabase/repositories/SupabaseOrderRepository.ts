@@ -1,7 +1,20 @@
-import { IOrderRepository } from '@/domain/repositories/IOrderRepository';
+import { IOrderRepository, PurchasedTemplateItem, UserPurchasedTemplatesResult } from '@/domain/repositories/IOrderRepository';
 import { Order, OrderItem, OrderStatus, PaymentStatus, ShippingAddress, ProductSnapshot, PaymentMethod } from '@/domain/entities/Order';
-import { OrderRow, OrderItemRow } from '../types';
+import { Product } from '@/domain/entities/Product';
+import { OrderRow, OrderItemRow, ProductRow } from '../types';
 import { SupabaseClient } from '@supabase/supabase-js';
+
+interface RawPurchasedTemplateRow {
+  id: string;
+  product_id: string;
+  price_at_purchase: string | number;
+  created_at: string;
+  order_id: string;
+  products: ProductRow;
+  orders: {
+    created_at?: string;
+  } | null;
+}
 
 export class SupabaseOrderRepository implements IOrderRepository {
   constructor(private supabase: SupabaseClient) {}
@@ -215,6 +228,87 @@ export class SupabaseOrderRepository implements IOrderRepository {
     }
 
     return true;
+  }
+
+  async findUserPurchasedTemplates(
+    userId: string,
+    options?: { limit?: number; offset?: number; search?: string }
+  ): Promise<UserPurchasedTemplatesResult> {
+    const limit = options?.limit ?? 9;
+    const offset = options?.offset ?? 0;
+
+    let query = this.supabase
+      .from('order_items')
+      .select(`
+        id,
+        product_id,
+        price_at_purchase,
+        created_at,
+        order_id,
+        products!inner (*),
+        orders!inner (
+          status,
+          payment_status,
+          user_id,
+          created_at
+        )
+      `, { count: 'exact' })
+      .eq('orders.user_id', userId)
+      .neq('orders.status', 'cancelled')
+      .or('payment_status.eq.paid,status.eq.completed,status.eq.delivered', { referencedTable: 'orders' });
+
+    if (options?.search) {
+      const escapedSearch = options.search.replace(/\\/g, '\\\\').replace(/[,()]/g, '\\$&');
+      query = query.or(`title->>vi.ilike.%${escapedSearch}%,title->>en.ilike.%${escapedSearch}%`, { referencedTable: 'products' });
+    }
+
+    const { data, count, error } = await query
+      .order('created_at', { ascending: false })
+      .range(offset, offset + limit - 1);
+
+    if (error) {
+      throw new Error(`Failed to fetch user purchased templates: ${error.message}`);
+    }
+
+    if (!data) {
+      return { items: [], total: 0 };
+    }
+
+    const rawRows = data as unknown as RawPurchasedTemplateRow[];
+    const items: PurchasedTemplateItem[] = rawRows.map((row) => {
+      const prod = row.products;
+      const productEntity: Product = {
+        id: prod.id,
+        categoryId: prod.category_id,
+        title: prod.title || { vi: '', en: '' },
+        slug: prod.slug,
+        description: prod.description || { vi: '', en: '' },
+        price: typeof prod.price === 'string' ? parseInt(prod.price) : prod.price,
+        stock: prod.stock,
+        imageUrl: prod.image_url || undefined,
+        isActive: prod.is_active,
+        demoUrl: prod.demo_url || '',
+        sourceCodeUrl: prod.source_code_url || '',
+        techStack: prod.tech_stack || [],
+        createdAt: new Date(prod.created_at),
+        updatedAt: new Date(prod.updated_at),
+      };
+
+      return {
+        id: row.id,
+        productId: row.product_id,
+        priceAtPurchase: typeof row.price_at_purchase === 'string' ? parseInt(row.price_at_purchase) : row.price_at_purchase,
+        createdAt: new Date(row.created_at),
+        orderId: row.order_id,
+        orderCreatedAt: row.orders?.created_at ? new Date(row.orders.created_at) : undefined,
+        product: productEntity,
+      };
+    });
+
+    return {
+      items,
+      total: count || items.length,
+    };
   }
 
   private mapToEntity(row: OrderRow): Order {

@@ -5,7 +5,7 @@ import {
   makeUpdateCategoryUseCase, 
   makeDeleteCategoryUseCase, 
   makeGetCategoriesUseCase 
-} from "@/infrastructure/supabase/container";
+} from "@/di/container";
 import { CreateCategoryDTO, UpdateCategoryDTO } from "@/domain/entities/Category";
 import { revalidatePath } from "next/cache";
 

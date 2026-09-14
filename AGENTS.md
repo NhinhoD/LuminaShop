@@ -46,8 +46,8 @@ After reading, report to user:
 **Purpose:** Learning project — exploring modern web technologies
 **Repository:** https://github.com/NhinhoD/LuminaShop
 
-### Tech Stack:
-- **Frontend:** Next.js 15 App Router, React 19, TypeScript (strict)
+#### Tech Stack:
+- **Frontend:** Next.js 16 App Router, React 19, TypeScript (strict)
 - **Styling:** Tailwind CSS 4, Framer Motion
 - **State:** Zustand (cart), Zod (validation)
 - **Backend:** Supabase (PostgreSQL + Auth + Storage)
@@ -58,10 +58,8 @@ After reading, report to user:
 - `profiles` — user profiles
 - `categories` — product categories
 - `products` — products (stock: int4)
-- `product_variants` — variants (stock_quantity: int4)
-- `inventory_items` — stock tracking (synced via triggers)
-- `carts` + `cart_items` — shopping cart
-- `orders` + `order_items` — orders
+- `orders` — customer orders
+- `order_items` — order items
 - `payments` — payment records
 
 ---
@@ -71,7 +69,7 @@ After reading, report to user:
 **Clean Architecture — strict layer boundaries. Never violate these.**
 
 ```
-domain/ → application/ → infrastructure/ → presentation/
+domain/ → application/ → infrastructure/ → di/ → presentation/
 ```
 
 ### Layer responsibilities:
@@ -88,16 +86,21 @@ domain/ → application/ → infrastructure/ → presentation/
 - NO direct DB calls, NO supabase client
 - Example: `CreateOrderUseCase`, `ProcessPaymentUseCase`
 
-**`src/infrastructure/supabase/`** — Data layer
+**`src/infrastructure/`** — Data & external services layer
 - Implements interfaces from `domain/`
-- ONLY layer allowed to import supabase client
+- ONLY layer allowed to import supabase client, payment SDKs, Resend
 - Always map `snake_case` DB columns → `camelCase` domain entities
-- Example: `SupabaseOrderRepository`, `CODPaymentGateway`
+- Example: `SupabaseOrderRepository`, `CODPaymentGateway`, `ResendEmailService`
+
+**`src/di/container.ts`** — Composition Root (Dependency Injection)
+- The ONLY module that couples layers together by wiring concrete infrastructure into application use cases.
+- Exposes factories like `makeGetProductsUseCase()`, `makeCreateOrderUseCase()`.
+- Presentation layer imports factories from `@/di/container`.
 
 **`src/presentation/`** — UI layer
 - Components, server actions, hooks, Zustand stores
-- Calls application use cases via server actions
-- NEVER calls supabase directly
+- Calls application use cases via server actions or DI factories
+- NEVER calls supabase or repositories directly
 - NEVER imports from `infrastructure/`
 - Example: `createOrderAction`, `useCartStore`, `CheckoutForm`
 

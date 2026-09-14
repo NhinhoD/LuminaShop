@@ -1,13 +1,16 @@
-import { makeAuthRepository, makeLanguageRepository } from "@/infrastructure/supabase/container";
+import { makeGetCurrentUserUseCase, getAppDictionary } from "@/di/container";
 import { ROUTES, BRAND_NAME } from "@/presentation/constants";
 import NavbarClient from "./NavbarClient";
-import { getDictionary } from "@/i18n/getDictionary";
 
 export async function Navbar() {
-  const authRepo = await makeAuthRepository();
-  const user = await authRepo.getCurrentUser();
-  const repo = await makeLanguageRepository();
-  const dict = await getDictionary(repo);
+  const getCurrentUserUseCase = await makeGetCurrentUserUseCase();
+  const userResult = await getCurrentUserUseCase.execute();
+  if (!userResult.success) {
+    console.error("Navbar: Failed to retrieve current user:", userResult.error);
+  }
+  const user = userResult.success ? userResult.data : null;
+  const authError = !userResult.success;
+  const dict = await getAppDictionary();
 
   const navDict = (dict?.nav as Record<string, string>) || {};
   const navLinks = [
@@ -18,6 +21,12 @@ export async function Navbar() {
   ] as const;
 
   return (
-    <NavbarClient user={user} brandName={BRAND_NAME} navLinks={navLinks} dict={dict as unknown as Record<string, Record<string, string>>} />
+    <NavbarClient 
+      user={user} 
+      authError={authError}
+      brandName={BRAND_NAME} 
+      navLinks={navLinks} 
+      dict={dict as unknown as Record<string, Record<string, string>>} 
+    />
   );
 }

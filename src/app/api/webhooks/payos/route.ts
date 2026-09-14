@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { makeHandlePayOSWebhookUseCase, makePayOSGateway } from '@/infrastructure/supabase/container';
+import { makeHandlePayOSWebhookUseCase, makePayOSGateway } from '@/di/container';
 
 export async function POST(req: NextRequest) {
   try {

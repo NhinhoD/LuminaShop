@@ -1,44 +1,57 @@
-import { makeSupabaseClient } from "@/infrastructure/supabase/container";
+import { makeGetCurrentUserUseCase, makeGetProfileUseCase } from "@/di/container";
 import { ROLES } from "@/presentation/constants";
 
 /**
  * Validates that the current request is from an authenticated admin.
- * Throws an Error if unauthorized.
+ * Throws an Error if unauthorized or forbidden, or propagates lookup errors.
  */
-export async function assertAdmin(): Promise<{ id: string; email: string }> {
-  const supabase = await makeSupabaseClient();
-  const { data: { user }, error: userError } = await supabase.auth.getUser();
+export async function assertAdmin(): Promise<{ id: string; email: string; fullName: string; role: string }> {
+  const getCurrentUser = await makeGetCurrentUserUseCase();
+  const userResult = await getCurrentUser.execute();
 
-  if (userError || !user) {
+  if (!userResult.success) {
+    throw userResult.error;
+  }
+
+  const user = userResult.data;
+  if (!user) {
     throw new Error("Unauthorized: Yêu cầu đăng nhập.");
   }
 
-  // Check role in profiles table
-  const { data: profile, error: profileError } = await supabase
-    .from("profiles")
-    .select("role")
-    .eq("id", user.id)
-    .single();
+  const getProfile = await makeGetProfileUseCase();
+  const profileResult = await getProfile.execute(user.id);
 
-  if (profileError || !profile || profile.role !== ROLES.ADMIN) {
+  if (!profileResult.success) {
+    throw profileResult.error;
+  }
+
+  const profile = profileResult.data;
+  if (!profile || profile.role !== ROLES.ADMIN) {
     throw new Error("Forbidden: Bạn không có quyền thực hiện thao tác này.");
   }
 
   return {
     id: user.id,
     email: user.email || "",
+    fullName: profile.fullName || user.fullName || "Admin",
+    role: profile.role,
   };
 }
 
 /**
  * Validates that the current request is from an authenticated user.
- * Throws an Error if not authenticated.
+ * Throws an Error if not authenticated or propagates lookup errors.
  */
 export async function assertAuthenticated(): Promise<{ id: string; email: string }> {
-  const supabase = await makeSupabaseClient();
-  const { data: { user }, error: userError } = await supabase.auth.getUser();
+  const getCurrentUser = await makeGetCurrentUserUseCase();
+  const userResult = await getCurrentUser.execute();
 
-  if (userError || !user) {
+  if (!userResult.success) {
+    throw userResult.error;
+  }
+
+  const user = userResult.data;
+  if (!user) {
     throw new Error("Unauthorized: Yêu cầu đăng nhập.");
   }
 

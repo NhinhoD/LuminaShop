@@ -6,13 +6,14 @@ import { CancelOrderButton } from "@/presentation/components/orders/CancelOrderB
 import { cn } from "@/presentation/utils";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { BackButton } from "@/presentation/components/common/BackButton";
-import { Package, MapPin, CreditCard, ShoppingBag, Download, ExternalLink, CheckCircle2, QrCode } from "lucide-react";
+import Link from "next/link";
+import { Package, MapPin, CreditCard, ShoppingBag, Download, ExternalLink, CheckCircle2, QrCode, AlertTriangle, RefreshCw } from "lucide-react";
 import { ImageWithFallback } from "@/presentation/components/common/ImageWithFallback";
 import { OrderStatus } from "@/domain/entities/Order";
 import { Metadata } from "next";
 import { getDictionary, getLocale } from "@/i18n/getDictionary";
 import { getLocalizedText } from "@/presentation/utils/locale";
-import { makeLanguageRepository, makeProductRepository } from "@/infrastructure/supabase/container";
+import { makeLanguageRepository, makeGetProductByIdUseCase } from "@/di/container";
 
 export const metadata: Metadata = {
   title: "Chi tiết đơn hàng | KhoUI",
@@ -89,26 +90,41 @@ export default async function OrderDetailPage({ params }: PageProps) {
   }
 
   // Fetch the actual products for the order items to retrieve their active download/demo URLs
-  const productRepository = await makeProductRepository();
+  const getProductUseCase = await makeGetProductByIdUseCase();
   
   const itemsWithCode = await Promise.all(
     order.items.map(async (item) => {
       try {
-        const prod = await productRepository.findById(item.productId);
+        const prodResult = await getProductUseCase.execute(item.productId);
+        if (!prodResult.success) {
+          console.error("ProfileOrderDetailPage: failed to fetch product details:", prodResult.error);
+          return {
+            ...item,
+            sourceCodeUrl: "",
+            demoUrl: "",
+            lookupError: true,
+          };
+        }
+        const prod = prodResult.data;
         return {
           ...item,
           sourceCodeUrl: prod?.sourceCodeUrl || "",
-          demoUrl: prod?.demoUrl || ""
+          demoUrl: prod?.demoUrl || "",
+          lookupError: false,
         };
-      } catch {
+      } catch (err) {
+        console.error("ProfileOrderDetailPage: product lookup exception:", err);
         return {
           ...item,
           sourceCodeUrl: "",
-          demoUrl: ""
+          demoUrl: "",
+          lookupError: true,
         };
       }
     })
   );
+
+  const hasProductLookupError = itemsWithCode.some((item) => item.lookupError);
 
   const isOrderPaid = (order.paymentStatus === 'paid' || order.status === OrderStatus.COMPLETED) && order.status !== OrderStatus.CANCELLED;
 
@@ -166,6 +182,22 @@ export default async function OrderDetailPage({ params }: PageProps) {
               </h2>
             </div>
             
+            {hasProductLookupError && (
+              <div className="p-4 bg-amber-50 border-b border-amber-200 text-amber-800 text-xs flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <AlertTriangle size={14} className="text-amber-600 shrink-0" />
+                  <span>{locale === "vi" ? "Có lỗi kết nối khi tải liên kết mã nguồn cho một số sản phẩm." : "Failed to retrieve source code download links for some items due to a connection error."}</span>
+                </div>
+                <Link
+                  href={`/profile/orders/${order.id}`}
+                  className="inline-flex items-center gap-1 font-semibold text-amber-900 underline hover:no-underline shrink-0 ml-2"
+                >
+                  <RefreshCw size={12} />
+                  <span>{locale === "vi" ? "Tải lại" : "Reload"}</span>
+                </Link>
+              </div>
+            )}
+
             <div className="divide-y divide-slate-100">
               {itemsWithCode.map((item) => (
                 <div key={item.id} className="p-6 space-y-4">
@@ -204,7 +236,21 @@ export default async function OrderDetailPage({ params }: PageProps) {
                   {/* HIGH-CONTRAST DIGITAL DOWNLOAD DRAWER */}
                   {isOrderPaid ? (
                     <div className="flex flex-col sm:flex-row gap-2.5 pt-2">
-                      {item.sourceCodeUrl ? (
+                      {item.lookupError ? (
+                        <div className="flex-1 flex items-center justify-between gap-2 bg-amber-50 text-amber-800 px-4 py-2.5 rounded-xl border border-amber-200 text-xs">
+                          <div className="flex items-center gap-2">
+                            <AlertTriangle size={14} className="text-amber-600 shrink-0" />
+                            <span>{locale === "vi" ? "Không thể tải liên kết mã nguồn từ máy chủ" : "Failed to retrieve source code link"}</span>
+                          </div>
+                          <Link
+                            href={`/profile/orders/${order.id}`}
+                            className="inline-flex items-center gap-1 font-semibold text-amber-900 underline hover:no-underline ml-2 shrink-0"
+                          >
+                            <RefreshCw size={12} />
+                            <span>{locale === "vi" ? "Thử lại" : "Retry"}</span>
+                          </Link>
+                        </div>
+                      ) : item.sourceCodeUrl ? (
                         <a
                           href={item.sourceCodeUrl}
                           className="flex-1 inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary-dark text-white px-5 py-2.5 rounded-xl font-medium transition-all text-xs shadow-xs active:scale-98"

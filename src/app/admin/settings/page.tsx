@@ -1,7 +1,7 @@
 import React from "react";
 import Link from "next/link";
-import { makeLanguageRepository } from "@/infrastructure/supabase/container";
-import { getDictionary, getLocale } from "@/i18n/getDictionary";
+import { getAppDictionary } from "@/di/container";
+import { getLocale } from "@/i18n/getDictionary";
 import { 
   Settings, 
   ShieldCheck, 
@@ -23,8 +23,7 @@ export const dynamic = "force-dynamic";
  * Provides access to translations, language management, payment configuration, and infrastructure settings.
  */
 export default async function AdminSettingsPage() {
-  const langRepo = await makeLanguageRepository();
-  const dict = await getDictionary(langRepo);
+  const dict = await getAppDictionary();
   const adminDict = (dict.admin as Record<string, string>) || {};
   const locale = await getLocale();
 

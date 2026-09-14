@@ -1,8 +1,8 @@
 import { getAllOrdersAction } from "@/presentation/actions/order";
 import { OrderList } from "@/presentation/components/admin/orders/OrderList";
 import { PaginationControls } from "@/presentation/components/common/PaginationControls";
-import { makeLanguageRepository } from "@/infrastructure/supabase/container";
-import { getDictionary, getLocale } from "@/i18n/getDictionary";
+import { getAppDictionary } from "@/di/container";
+import { getLocale } from "@/i18n/getDictionary";
 import { Package } from "lucide-react";
 import { Metadata } from "next";
 import { OrderStatus } from "@/domain/entities/Order";
@@ -27,8 +27,7 @@ export default async function AdminOrdersPage({ searchParams }: AdminOrdersPageP
   const search = typeof params.q === 'string' ? params.q : undefined;
   const status = typeof params.status === 'string' && params.status !== 'all' ? params.status as OrderStatus : undefined;
 
-  const langRepo = await makeLanguageRepository();
-  const dict = await getDictionary(langRepo);
+  const dict = await getAppDictionary();
   const adminDict = (dict.admin as Record<string, string>) || {};
   const locale = await getLocale();
 

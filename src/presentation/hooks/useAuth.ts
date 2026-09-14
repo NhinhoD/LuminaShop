@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { login, signup, signout } from '@/presentation/actions/auth';
-import { makeSupabaseClient } from '@/infrastructure/supabase/container';
+import { createClient } from '@/infrastructure/supabase/client';
 import { User } from '@supabase/supabase-js';
 
 export function useAuth() {
@@ -11,34 +11,49 @@ export function useAuth() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    async function getUser() {
+    let isMounted = true;
+    let subscription: { unsubscribe: () => void } | null = null;
+
+    Promise.resolve().then(async () => {
       try {
-        const supabase = await makeSupabaseClient();
-        const { data: { user } } = await supabase.auth.getUser();
-        setUser(user);
-    } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
-      } finally {
-        setIsLoading(false);
+        const supabase = createClient();
+
+        try {
+          const { data: { user }, error: authError } = await supabase.auth.getUser();
+          if (authError) throw authError;
+          if (isMounted) setUser(user);
+        } catch (err: unknown) {
+          if (isMounted) setError(err instanceof Error ? err.message : 'An error occurred');
+        } finally {
+          if (isMounted) setIsLoading(false);
+        }
+
+        if (!isMounted) return;
+
+        const { data } = supabase.auth.onAuthStateChange((_event, session) => {
+          if (isMounted) {
+            setUser(session?.user ?? null);
+            setIsLoading(false);
+          }
+        });
+
+        if (!isMounted) {
+          data?.subscription?.unsubscribe();
+          return;
+        }
+
+        subscription = data?.subscription ?? null;
+      } catch (err: unknown) {
+        if (isMounted) {
+          setError(err instanceof Error ? err.message : 'Failed to initialize Supabase client');
+          setIsLoading(false);
+        }
       }
-    }
-
-    getUser();
-
-    // Listen for auth changes
-    const setupListener = async () => {
-      const supabase = await makeSupabaseClient();
-      const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-        setUser(session?.user ?? null);
-        setIsLoading(false);
-      });
-      return subscription;
-    };
-
-    const subscription = setupListener();
+    });
 
     return () => {
-      subscription.then(sub => sub.unsubscribe());
+      isMounted = false;
+      subscription?.unsubscribe();
     };
   }, []);
 

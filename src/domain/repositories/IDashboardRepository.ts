@@ -6,6 +6,19 @@ export interface DashboardMetrics {
   newCustomers: number;
 }
 
+export interface CustomerWithStats {
+  id: string;
+  fullName: string;
+  email: string;
+  role: string;
+  createdAt: string;
+  totalOrders: number;
+  totalSpent: number;
+  lastOrderDate?: string;
+}
+
 export interface IDashboardRepository {
   getMetrics(): Promise<DashboardMetrics>;
+  getCustomers(search?: string): Promise<CustomerWithStats[]>;
 }
+

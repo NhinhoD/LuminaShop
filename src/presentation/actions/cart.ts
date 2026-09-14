@@ -6,18 +6,23 @@ import {
   makeGetCartUseCase,
   makeUpdateCartItemUseCase,
   makeRemoveCartItemUseCase,
-  makeSupabaseClient
-} from "@/infrastructure/supabase/container";
+  makeGetCurrentUserUseCase
+} from "@/di/container";
 import { revalidatePath } from "next/cache";
 import { CartItem as DomainCartItem } from "@/domain/entities/Cart";
+import { Result, ok, fail } from "@/domain/shared/Result";
 
 /**
  * Retrieves the currently authenticated user's ID from session.
+ * Distinguishes fail(error) from ok(null) unauthenticated user.
  */
-async function getUserId(): Promise<string | undefined> {
-  const supabase = await makeSupabaseClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  return user?.id;
+async function getUserIdResult(): Promise<Result<string | null>> {
+  const getCurrentUser = await makeGetCurrentUserUseCase();
+  const userResult = await getCurrentUser.execute();
+  if (!userResult.success) {
+    return fail(userResult.error);
+  }
+  return ok(userResult.data ? userResult.data.id : null);
 }
 
 /**
@@ -26,7 +31,12 @@ async function getUserId(): Promise<string | undefined> {
  * @param item - The product item payload (productId, variantId, quantity).
  */
 export async function addToCartAction(item: { productId: string, variantId?: string, quantity: number }) {
-  const userId = await getUserId();
+  const userRes = await getUserIdResult();
+  if (!userRes.success) {
+    console.error("[Action Error] addToCartAction user lookup failed:", userRes.error);
+    return { error: "Không thể xác thực thông tin người dùng. Vui lòng thử lại sau." };
+  }
+  const userId = userRes.data;
   if (!userId) return { error: "Bạn cần đăng nhập để thực hiện hành động này." };
 
   const addToCartUseCase = await makeAddToCartUseCase();
@@ -43,7 +53,12 @@ export async function addToCartAction(item: { productId: string, variantId?: str
  * @param localItems - Array of cart items from local state.
  */
 export async function mergeCartAction(localItems: Omit<DomainCartItem, 'id' | 'cartId'>[]) {
-  const userId = await getUserId();
+  const userRes = await getUserIdResult();
+  if (!userRes.success) {
+    console.error("[Action Error] mergeCartAction user lookup failed:", userRes.error);
+    return { error: "Authentication failed. Please try again later." };
+  }
+  const userId = userRes.data;
   if (!userId) return { error: "Unauthorized" };
 
   const mergeCartUseCase = await makeMergeCartUseCase();
@@ -58,7 +73,12 @@ export async function mergeCartAction(localItems: Omit<DomainCartItem, 'id' | 'c
  * Server action to retrieve the authenticated user's cart.
  */
 export async function getCartAction() {
-  const userId = await getUserId();
+  const userRes = await getUserIdResult();
+  if (!userRes.success) {
+    console.error("[Action Error] getCartAction user lookup failed:", userRes.error);
+    return { error: "Không thể tải giỏ hàng do lỗi xác thực." };
+  }
+  const userId = userRes.data;
   if (!userId) return { data: null };
 
   const useCase = await makeGetCartUseCase();
@@ -75,7 +95,12 @@ export async function getCartAction() {
  * @param quantity - Target quantity.
  */
 export async function updateCartItemAction(itemId: string, quantity: number) {
-  const userId = await getUserId();
+  const userRes = await getUserIdResult();
+  if (!userRes.success) {
+    console.error("[Action Error] updateCartItemAction user lookup failed:", userRes.error);
+    return { success: false, error: "Authentication failed. Please try again later." };
+  }
+  const userId = userRes.data;
   if (!userId) return { success: false, error: "Unauthorized: Yêu cầu đăng nhập." };
 
   const useCase = await makeUpdateCartItemUseCase();
@@ -93,7 +118,12 @@ export async function updateCartItemAction(itemId: string, quantity: number) {
  * @param itemId - The unique ID of the cart item.
  */
 export async function removeCartItemAction(itemId: string) {
-  const userId = await getUserId();
+  const userRes = await getUserIdResult();
+  if (!userRes.success) {
+    console.error("[Action Error] removeCartItemAction user lookup failed:", userRes.error);
+    return { success: false, error: "Authentication failed. Please try again later." };
+  }
+  const userId = userRes.data;
   if (!userId) return { success: false, error: "Unauthorized: Yêu cầu đăng nhập." };
 
   const useCase = await makeRemoveCartItemUseCase();

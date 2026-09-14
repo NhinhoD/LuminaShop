@@ -21,12 +21,20 @@ export class GetCustomerCheckoutInfoUseCase {
    */
   async execute(): Promise<Result<CustomerCheckoutInfoDTO | null>> {
     try {
-      const user = await this.authRepo.getCurrentUser();
+      const userResult = await this.authRepo.getCurrentUser();
+      if (!userResult.success) {
+        return fail(userResult.error);
+      }
+      const user = userResult.data;
       if (!user) {
         return ok(null);
       }
 
-      const profile = await this.authRepo.getProfile(user.id);
+      const profileResult = await this.authRepo.getProfile(user.id);
+      if (!profileResult.success) {
+        return fail(profileResult.error);
+      }
+      const profile = profileResult.data;
 
       const fullName = (profile?.fullName || user.fullName || '').trim();
       const email = (user.email || '').trim();

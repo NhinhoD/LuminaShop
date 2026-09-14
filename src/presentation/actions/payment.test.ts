@@ -5,8 +5,9 @@ import {
   setCustomAuthRepositoryFactoryForTesting,
   setCustomProcessPaymentUseCaseFactoryForTesting,
   setCustomVerifyOrderPaymentUseCaseFactoryForTesting,
-} from '@/infrastructure/supabase/container';
+} from '@/di/container';
 import { IAuthRepository } from '@/domain/repositories/IAuthRepository';
+import { ok } from '@/domain/shared/Result';
 import { ProcessPaymentUseCase } from '@/application/use-cases/payment/ProcessPayment';
 import { VerifyOrderPaymentUseCase } from '@/application/use-cases/payment/VerifyOrderPayment';
 
@@ -49,7 +50,7 @@ describe('Payment Server Actions - Error Sanitization & CWE-209 Defense', () => 
     it('sanitizes error thrown from makeProcessPaymentUseCase factory and returns localized generic fallback', async () => {
       const distinctiveSecret = 'DISTINCTIVE_PROCESS_PAYMENT_FACTORY_LEAK_333';
       const mockAuthRepo: Partial<IAuthRepository> = {
-        getCurrentUser: async () => ({
+        getCurrentUser: async () => ok({
           id: 'user-123',
           email: 'test@example.com',
           role: 'customer',
@@ -72,7 +73,7 @@ describe('Payment Server Actions - Error Sanitization & CWE-209 Defense', () => 
     it('sanitizes error thrown from useCase.execute and returns localized generic fallback', async () => {
       const distinctiveSecret = 'DISTINCTIVE_PROCESS_PAYMENT_EXECUTE_CRASH_444';
       const mockAuthRepo: Partial<IAuthRepository> = {
-        getCurrentUser: async () => ({
+        getCurrentUser: async () => ok({
           id: 'user-123',
           email: 'test@example.com',
           role: 'customer',
@@ -98,7 +99,7 @@ describe('Payment Server Actions - Error Sanitization & CWE-209 Defense', () => 
 
     it('returns unauthorized error message when user is unauthenticated', async () => {
       const mockAuthRepo: Partial<IAuthRepository> = {
-        getCurrentUser: async () => null,
+        getCurrentUser: async () => ok(null),
       };
 
       setCustomAuthRepositoryFactoryForTesting(async () => mockAuthRepo as IAuthRepository);
@@ -143,7 +144,7 @@ describe('Payment Server Actions - Error Sanitization & CWE-209 Defense', () => 
     it('sanitizes error thrown from makeVerifyOrderPaymentUseCase factory and returns localized generic fallback', async () => {
       const distinctiveSecret = 'DISTINCTIVE_VERIFY_USECASE_FACTORY_LEAK_777';
       const mockAuthRepo: Partial<IAuthRepository> = {
-        getCurrentUser: async () => ({
+        getCurrentUser: async () => ok({
           id: 'user-123',
           email: 'test@example.com',
           role: 'customer',
@@ -167,7 +168,7 @@ describe('Payment Server Actions - Error Sanitization & CWE-209 Defense', () => 
     it('sanitizes error thrown from verify useCase.execute and returns localized generic fallback', async () => {
       const distinctiveSecret = 'DISTINCTIVE_VERIFY_EXECUTE_CRASH_888';
       const mockAuthRepo: Partial<IAuthRepository> = {
-        getCurrentUser: async () => ({
+        getCurrentUser: async () => ok({
           id: 'user-123',
           email: 'test@example.com',
           role: 'customer',
@@ -194,7 +195,7 @@ describe('Payment Server Actions - Error Sanitization & CWE-209 Defense', () => 
 
     it('returns unauthorized error message when user is unauthenticated', async () => {
       const mockAuthRepo: Partial<IAuthRepository> = {
-        getCurrentUser: async () => null,
+        getCurrentUser: async () => ok(null),
       };
 
       setCustomAuthRepositoryFactoryForTesting(async () => mockAuthRepo as IAuthRepository);

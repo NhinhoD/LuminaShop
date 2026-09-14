@@ -1,10 +1,10 @@
 import Link from "next/link";
 import Image from "next/image";
-import { makeGetProductsUseCase, makeGetCategoriesUseCase, makeLanguageRepository } from "@/infrastructure/supabase/container";
+import { makeGetProductsUseCase, makeGetCategoriesUseCase, getAppDictionary } from "@/di/container";
 import { formatCurrency } from "@/lib/utils";
 import { ProductDeleteButton } from "@/app/admin/products/ProductDeleteButton";
 import { PaginationControls } from "@/presentation/components/common/PaginationControls";
-import { getDictionary, getLocale } from "@/i18n/getDictionary";
+import { getLocale } from "@/i18n/getDictionary";
 import { getLocalizedText } from "@/presentation/utils/locale";
 import { Plus, Search, Edit3, Package, Image as ImageIcon } from "lucide-react";
 
@@ -18,8 +18,7 @@ export default async function AdminProductsPage({
 }: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
-  const repo = await makeLanguageRepository();
-  const dictionary = await getDictionary(repo);
+  const dictionary = await getAppDictionary();
   const dict = (dictionary.products as Record<string, string>) || {};
   const locale = await getLocale();
   
@@ -43,11 +42,33 @@ export default async function AdminProductsPage({
   ]);
 
   if (!result.success) {
-    return <div>Error: {result.error?.message || "Failed to load products"}</div>;
+    return (
+      <div className="p-8 text-center bg-red-50 border border-red-200 rounded-2xl text-red-700 max-w-xl mx-auto my-12 font-sans">
+        <p className="font-semibold text-sm">
+          {locale === "vi" ? "Không thể tải danh sách sản phẩm từ máy chủ" : "Failed to load products from database"}
+        </p>
+        <p className="text-xs text-red-500 mt-1 font-mono">
+          {result.error?.message || "Failed to load products"}
+        </p>
+      </div>
+    );
+  }
+
+  if (!categoriesResult.success) {
+    return (
+      <div className="p-8 text-center bg-red-50 border border-red-200 rounded-2xl text-red-700 max-w-xl mx-auto my-12 font-sans">
+        <p className="font-semibold text-sm">
+          {locale === "vi" ? "Không thể tải danh mục sản phẩm từ máy chủ" : "Failed to load categories from database"}
+        </p>
+        <p className="text-xs text-red-500 mt-1 font-mono">
+          {categoriesResult.error?.message || "Failed to load categories"}
+        </p>
+      </div>
+    );
   }
 
   const { products, total } = result.data;
-  const categories = categoriesResult.success ? categoriesResult.data.categories : [];
+  const categories = categoriesResult.data.categories;
   const totalPages = Math.ceil(total / limit);
 
   return (

@@ -2,8 +2,8 @@ import { getOrderAction, cancelOrderAction } from "@/presentation/actions/order"
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { XCircle } from "lucide-react";
-import { getDictionary, getLocale } from "@/i18n/getDictionary";
-import { makeLanguageRepository } from "@/infrastructure/supabase/container";
+import { getLocale } from "@/i18n/getDictionary";
+import { getAppDictionary } from "@/di/container";
 import { StatusBadge } from "@/presentation/components/orders/StatusBadge";
 
 import { OrderStatus } from "@/domain/entities/Order";
@@ -40,8 +40,7 @@ export default async function OrderFailedPage(props: { params: Promise<{ id: str
   }
 
   const locale = await getLocale();
-  const langRepo = await makeLanguageRepository();
-  const dict = await getDictionary(langRepo);
+  const dict = await getAppDictionary();
   const orderDict = (dict?.orders as Record<string, string>) || {};
 
   const isCancelled = order.status === OrderStatus.CANCELLED;

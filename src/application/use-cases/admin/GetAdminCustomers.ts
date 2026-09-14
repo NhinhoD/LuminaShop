@@ -1,0 +1,15 @@
+import { IDashboardRepository, CustomerWithStats } from '@/domain/repositories/IDashboardRepository';
+import { Result, ok, fail } from '@/domain/shared/Result';
+
+export class GetAdminCustomersUseCase {
+  constructor(private dashboardRepository: IDashboardRepository) {}
+
+  async execute(search?: string): Promise<Result<CustomerWithStats[]>> {
+    try {
+      const customers = await this.dashboardRepository.getCustomers(search);
+      return ok(customers);
+    } catch (error) {
+      return fail(error instanceof Error ? error : new Error('Failed to retrieve customers'));
+    }
+  }
+}

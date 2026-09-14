@@ -1132,7 +1132,7 @@ export default function HomePageClient({ featuredProducts, categories }: HomePag
 
                                 {index < 3 && (
                                   <div className="flex justify-center text-slate-600 my-0.5">
-                                    <ChevronDown size={11} className="text-primary/70 animate-bounce" />
+                                    <ChevronDown size={11} className="text-primary/60" />
                                   </div>
                                 )}
                               </div>

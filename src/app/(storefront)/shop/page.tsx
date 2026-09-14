@@ -1,7 +1,7 @@
-import { makeProductRepository, makeLanguageRepository, makeCategoryRepository } from "@/infrastructure/supabase/container";
+import { makeGetProductsUseCase, makeGetCategoriesUseCase, getAppDictionary } from "@/di/container";
 import ShopProductGrid from "@/presentation/components/product/ShopProductGrid";
 import { PaginationControls } from "@/presentation/components/common/PaginationControls";
-import { getDictionary, getLocale } from "@/i18n/getDictionary";
+import { getLocale } from "@/i18n/getDictionary";
 import { Sparkles, Zap } from "lucide-react";
 import { sanitizeProductsForPublic } from "@/domain/entities/Product";
 
@@ -34,12 +34,30 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
     : undefined;
   
   const locale = await getLocale();
-  const langRepo = await makeLanguageRepository();
-  const dict = await getDictionary(langRepo);
+  const dict = await getAppDictionary();
   const shopDict = (dict?.shop as Record<string, string>) || {};
 
-  const categoryRepo = await makeCategoryRepository();
-  const { categories: dbCategories } = await categoryRepo.findAll();
+  const getCategoriesUseCase = await makeGetCategoriesUseCase();
+  const categoriesResult = await getCategoriesUseCase.execute();
+
+  if (!categoriesResult.success) {
+    return (
+      <main className="flex-grow bg-background-subtle/40 py-12 font-sans">
+        <div className="max-w-[1400px] mx-auto px-6 sm:px-8 lg:px-12">
+          <div className="p-8 text-center bg-red-50 border border-red-200 rounded-2xl text-red-700 max-w-xl mx-auto my-12 font-sans">
+            <p className="font-semibold text-sm">
+              {locale === "vi" ? "Không thể tải danh mục sản phẩm từ máy chủ" : "Failed to load product categories from database"}
+            </p>
+            <p className="text-xs text-red-500 mt-1 font-mono">
+              {categoriesResult.error?.message || "Unknown error"}
+            </p>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
+  const dbCategories = categoriesResult.data.categories;
 
   let categoryId: string | undefined = undefined;
   if (categorySlug && categorySlug !== 'all') {
@@ -53,8 +71,7 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
        if (matchedCategory) {
           categoryId = matchedCategory.id;
        } else {
-          const category = await categoryRepo.findBySlug(categorySlug);
-          categoryId = category ? category.id : "00000000-0000-0000-0000-000000000000";
+          categoryId = "00000000-0000-0000-0000-000000000000";
        }
     }
   }
@@ -67,8 +84,8 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
     sortType = params.sort as 'newest' | 'price_asc' | 'price_desc' | 'popular';
   }
 
-  const productRepository = await makeProductRepository();
-  const { products, total } = await productRepository.findAll({ 
+  const getProductsUseCase = await makeGetProductsUseCase();
+  const productsResult = await getProductsUseCase.execute({ 
     limit: itemsPerPage, 
     offset, 
     isActive: true,
@@ -76,6 +93,25 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
     categoryId,
     sort: sortType
   });
+
+  if (!productsResult.success) {
+    return (
+      <main className="flex-grow bg-background-subtle/40 py-12 font-sans">
+        <div className="max-w-[1400px] mx-auto px-6 sm:px-8 lg:px-12">
+          <div className="p-8 text-center bg-red-50 border border-red-200 rounded-2xl text-red-700 max-w-xl mx-auto my-12 font-sans">
+            <p className="font-semibold text-sm">
+              {locale === "vi" ? "Không thể tải danh sách sản phẩm từ máy chủ" : "Failed to load products from database"}
+            </p>
+            <p className="text-xs text-red-500 mt-1 font-mono">
+              {productsResult.error?.message || "Unknown error"}
+            </p>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
+  const { products, total } = productsResult.data;
   
   const totalPages = Math.ceil(total / itemsPerPage);
 

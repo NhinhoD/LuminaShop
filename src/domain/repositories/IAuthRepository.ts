@@ -1,5 +1,20 @@
 import { Result } from '../shared/Result';
 
+export interface AuthUser {
+  id: string;
+  email?: string;
+  fullName?: string;
+  phone?: string;
+}
+
+export interface AuthProfile {
+  id: string;
+  fullName?: string;
+  phone?: string;
+  avatarUrl?: string;
+  role?: string;
+}
+
 export interface IAuthRepository {
   signInWithPassword(email: string, password: string): Promise<Result<void>>;
   signUp(email: string, password: string, fullName: string): Promise<Result<void>>;
@@ -8,8 +23,8 @@ export interface IAuthRepository {
   signOut(): Promise<Result<void>>;
   getOtpRateLimit(email: string): Promise<Result<Date | null>>;
   upsertOtpRateLimit(email: string, date: Date): Promise<Result<void>>;
-  getCurrentUser(): Promise<{ id: string; email?: string; fullName?: string; phone?: string } | null>;
-  getProfile(userId: string): Promise<{ id: string; fullName?: string; phone?: string; avatarUrl?: string } | null>;
+  getCurrentUser(): Promise<Result<AuthUser | null>>;
+  getProfile(userId: string): Promise<Result<AuthProfile | null>>;
   updateProfile(userId: string, data: { fullName: string; phone?: string | null }): Promise<Result<void>>;
   resetPasswordForEmail(email: string, redirectTo: string): Promise<Result<void>>;
   updatePassword(newPassword: string): Promise<Result<void>>;

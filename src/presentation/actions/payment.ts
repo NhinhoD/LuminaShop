@@ -4,7 +4,7 @@ import {
   makeAuthRepository,
   makeProcessPaymentUseCase, 
   makeVerifyOrderPaymentUseCase 
-} from "@/infrastructure/supabase/container";
+} from "@/di/container";
 import { revalidatePath } from "next/cache";
 
 /**
@@ -19,7 +19,11 @@ import { revalidatePath } from "next/cache";
 export async function processPaymentAction(orderId: string, amount: number, method: string) {
   try {
     const authRepo = await makeAuthRepository();
-    const user = await authRepo.getCurrentUser();
+    const userResult = await authRepo.getCurrentUser();
+    if (!userResult.success) {
+      throw userResult.error;
+    }
+    const user = userResult.data;
     if (!user) {
       return { error: "Bạn cần đăng nhập để thực hiện thanh toán." };
     }
@@ -56,7 +60,11 @@ export async function processPaymentAction(orderId: string, amount: number, meth
 export async function verifyOrderPaymentAction(orderId: string, shouldRevalidate: boolean = false) {
   try {
     const authRepo = await makeAuthRepository();
-    const user = await authRepo.getCurrentUser();
+    const userResult = await authRepo.getCurrentUser();
+    if (!userResult.success) {
+      throw userResult.error;
+    }
+    const user = userResult.data;
     if (!user) {
       return { success: false, message: "Unauthorized" };
     }

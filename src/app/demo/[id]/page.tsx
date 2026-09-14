@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { makeProductRepository } from "@/infrastructure/supabase/container";
+import { makeGetProductByIdUseCase } from "@/di/container";
 import { cookies } from "next/headers";
 import { getStaticDictionary } from "@/i18n/getDictionary";
 import DemoViewerClient from "@/presentation/components/demo/DemoViewerClient";
@@ -19,8 +19,26 @@ export default async function DemoPage({ params }: DemoPageProps) {
   const demoDict = (dict?.demo as Record<string, string>) || {};
 
   const { id } = await params;
-  const productRepository = await makeProductRepository();
-  const product = await productRepository.findById(id);
+  const getProductByIdUseCase = await makeGetProductByIdUseCase();
+  const productResult = await getProductByIdUseCase.execute(id);
+
+  if (!productResult.success) {
+    console.error("DemoPage: failed to load product preview:", productResult.error);
+    return (
+      <div className="min-h-screen flex items-center justify-center p-6 bg-slate-50 font-sans">
+        <div className="p-8 text-center bg-red-50 border border-red-200 rounded-2xl text-red-700 max-w-xl mx-auto">
+          <p className="font-semibold text-sm">
+            {locale === "vi" ? "Không thể tải bản xem trước sản phẩm từ máy chủ" : "Failed to load product preview from database"}
+          </p>
+          <p className="text-xs text-red-500 mt-1">
+            {locale === "vi" ? "Vui lòng thử lại sau." : "Please try again later."}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  const product = productResult.data;
 
   if (!product || !product.demoUrl) {
     notFound();
