@@ -12,15 +12,34 @@ import { UserOrdersRealtimeTracker } from '@/presentation/components/orders/User
  */
 export default async function ProfilePage() {
   const getCurrentUserUseCase = await makeGetCurrentUserUseCase();
-  const user = await getCurrentUserUseCase.execute();
+  const userResult = await getCurrentUserUseCase.execute();
+  const locale = await getLocale();
 
+  if (!userResult.success) {
+    return (
+      <main className="flex-grow pt-16 pb-24 bg-background-subtle font-sans">
+        <div className="max-w-xl mx-auto px-6 text-center">
+          <div className="p-8 bg-red-50 border border-red-200 rounded-2xl text-red-700">
+            <p className="font-semibold text-sm">
+              {locale === "vi" ? "Không thể xác thực thông tin người dùng từ máy chủ" : "Failed to authenticate user from server"}
+            </p>
+            <p className="text-xs text-red-500 mt-1 font-mono">
+              {userResult.error.message || "Unknown error"}
+            </p>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
+  const user = userResult.data;
   if (!user) {
     redirect(ROUTES.LOGIN);
   }
 
   const getProfileUseCase = await makeGetProfileUseCase();
-  const profile = await getProfileUseCase.execute(user.id);
-  const locale = await getLocale();
+  const profileResult = await getProfileUseCase.execute(user.id);
+  const profile = profileResult.success ? profileResult.data : null;
   const dict = await getAppDictionary();
   const profileDict = (dict?.profile as Record<string, string>) || {};
 

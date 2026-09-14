@@ -1,4 +1,5 @@
-import { IAuthRepository } from '@/domain/repositories/IAuthRepository';
+import { IAuthRepository, AuthUser } from '@/domain/repositories/IAuthRepository';
+import { Result, fail } from '@/domain/shared/Result';
 
 /**
  * Use case to retrieve the currently authenticated user.
@@ -6,7 +7,11 @@ import { IAuthRepository } from '@/domain/repositories/IAuthRepository';
 export class GetCurrentUserUseCase {
   constructor(private authRepo: IAuthRepository) {}
 
-  async execute() {
-    return this.authRepo.getCurrentUser();
+  async execute(): Promise<Result<AuthUser | null>> {
+    try {
+      return await this.authRepo.getCurrentUser();
+    } catch (err) {
+      return fail(err instanceof Error ? err : new Error('Lỗi khi lấy thông tin người dùng'));
+    }
   }
 }

@@ -16,8 +16,8 @@ import { CartItem as DomainCartItem } from "@/domain/entities/Cart";
  */
 async function getUserId(): Promise<string | undefined> {
   const getCurrentUser = await makeGetCurrentUserUseCase();
-  const user = await getCurrentUser.execute();
-  return user?.id;
+  const userResult = await getCurrentUser.execute();
+  return userResult.success ? userResult.data?.id : undefined;
 }
 
 /**

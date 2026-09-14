@@ -15,7 +15,11 @@ export class UpdateProfileUseCase {
       let targetUserId = explicitUserId;
 
       if (!targetUserId) {
-        const currentUser = await this.authRepo.getCurrentUser();
+        const currentUserResult = await this.authRepo.getCurrentUser();
+        if (!currentUserResult.success) {
+          return fail(currentUserResult.error);
+        }
+        const currentUser = currentUserResult.data;
         if (!currentUser) {
           return fail(new Error('Vui lòng đăng nhập lại để cập nhật thông tin.'));
         }

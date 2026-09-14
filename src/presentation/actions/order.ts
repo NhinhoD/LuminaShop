@@ -35,7 +35,8 @@ export interface ActionResponse<T> {
  */
 async function getCurrentUser() {
   const getCurrentUserUseCase = await makeGetCurrentUserUseCase();
-  return getCurrentUserUseCase.execute();
+  const userResult = await getCurrentUserUseCase.execute();
+  return userResult.success ? userResult.data : null;
 }
 
 /**
@@ -47,8 +48,8 @@ async function isUserAdmin() {
 
   try {
     const getProfileUseCase = await makeGetProfileUseCase();
-    const profile = await getProfileUseCase.execute(user.id);
-    return profile?.role === ROLES.ADMIN;
+    const profileResult = await getProfileUseCase.execute(user.id);
+    return profileResult.success && profileResult.data?.role === ROLES.ADMIN;
   } catch {
     return false;
   }

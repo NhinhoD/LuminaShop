@@ -3,11 +3,11 @@ import Image from "next/image";
 import { Download, Package, ShoppingBag, ArrowRight, FileText, Receipt } from "lucide-react";
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { makeAuthRepository, makeLanguageRepository } from "@/di/container";
+import { makeGetCurrentUserUseCase, makeGetProfileUseCase, getAppDictionary } from "@/di/container";
 import { PaginationControls } from "@/presentation/components/common/PaginationControls";
 import { ProfileOrderSearch } from "./ProfileOrderSearch";
 import { getLocalizedText } from "@/presentation/utils/locale";
-import { getDictionary, getLocale } from "@/i18n/getDictionary";
+import { getLocale } from "@/i18n/getDictionary";
 import { formatDate, formatCurrency } from "@/lib/utils";
 import { getUserOrdersAction, getUserPurchasedTemplatesAction } from "@/presentation/actions/order";
 import { OrderStatus } from "@/domain/entities/Order";
@@ -36,17 +36,36 @@ interface OrderHistoryPageProps {
  * @returns JSX Element for the profile orders dashboard.
  */
 export default async function OrderHistoryPage({ searchParams }: OrderHistoryPageProps) {
-  const authRepo = await makeAuthRepository();
-  const user = await authRepo.getCurrentUser();
+  const getCurrentUserUseCase = await makeGetCurrentUserUseCase();
+  const userResult = await getCurrentUserUseCase.execute();
+  const locale = await getLocale();
 
+  if (!userResult.success) {
+    return (
+      <main className="flex-grow pt-16 pb-24 bg-background-subtle font-sans">
+        <div className="max-w-xl mx-auto px-6 text-center">
+          <div className="p-8 bg-red-50 border border-red-200 rounded-2xl text-red-700">
+            <p className="font-semibold text-sm">
+              {locale === "vi" ? "Không thể xác thực thông tin người dùng từ máy chủ" : "Failed to authenticate user from server"}
+            </p>
+            <p className="text-xs text-red-500 mt-1 font-mono">
+              {userResult.error.message || "Unknown error"}
+            </p>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
+  const user = userResult.data;
   if (!user) {
     redirect(ROUTES.LOGIN);
   }
 
-  const profile = await authRepo.getProfile(user.id);
-  const locale = await getLocale();
-  const langRepo = await makeLanguageRepository();
-  const dict = await getDictionary(langRepo);
+  const getProfileUseCase = await makeGetProfileUseCase();
+  const profileResult = await getProfileUseCase.execute(user.id);
+  const profile = profileResult.success ? profileResult.data : null;
+  const dict = await getAppDictionary();
   const orderDict = (dict?.orders as Record<string, string>) || {};
   const profileDict = (dict?.profile as Record<string, string>) || {};
 

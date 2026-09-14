@@ -4,7 +4,8 @@ import NavbarClient from "./NavbarClient";
 
 export async function Navbar() {
   const getCurrentUserUseCase = await makeGetCurrentUserUseCase();
-  const user = await getCurrentUserUseCase.execute();
+  const userResult = await getCurrentUserUseCase.execute();
+  const user = userResult.success ? userResult.data : null;
   const dict = await getAppDictionary();
 
   const navDict = (dict?.nav as Record<string, string>) || {};

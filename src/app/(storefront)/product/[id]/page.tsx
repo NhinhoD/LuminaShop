@@ -50,7 +50,8 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
   const product = productResult.data;
 
   const getCurrentUser = await makeGetCurrentUserUseCase();
-  const currentUser = await getCurrentUser.execute();
+  const userResult = await getCurrentUser.execute();
+  const currentUser = userResult.success ? userResult.data : null;
   let hasPurchased = false;
   let purchaseLookupError = false;
 

@@ -2,11 +2,12 @@ import { describe, it } from 'node:test';
 import assert from 'node:assert';
 import { GetCustomerCheckoutInfoUseCase } from './GetCustomerCheckoutInfo';
 import { IAuthRepository } from '@/domain/repositories/IAuthRepository';
+import { ok, fail } from '@/domain/shared/Result';
 
 describe('GetCustomerCheckoutInfoUseCase', () => {
   it('returns ok(null) when user is not authenticated', async () => {
     const mockAuthRepo: Partial<IAuthRepository> = {
-      getCurrentUser: async () => null,
+      getCurrentUser: async () => ok(null),
     };
 
     const useCase = new GetCustomerCheckoutInfoUseCase(mockAuthRepo as IAuthRepository);
@@ -20,11 +21,11 @@ describe('GetCustomerCheckoutInfoUseCase', () => {
 
   it('returns full customer checkout info from profile and user email', async () => {
     const mockAuthRepo: Partial<IAuthRepository> = {
-      getCurrentUser: async () => ({
+      getCurrentUser: async () => ok({
         id: 'usr-123',
         email: 'customer@example.com',
       }),
-      getProfile: async (id: string) => ({
+      getProfile: async (id: string) => ok({
         id,
         fullName: 'Nguyễn Văn A',
         phone: '0987654321',
@@ -46,13 +47,13 @@ describe('GetCustomerCheckoutInfoUseCase', () => {
 
   it('falls back to user metadata when profile fields are missing or null', async () => {
     const mockAuthRepo: Partial<IAuthRepository> = {
-      getCurrentUser: async () => ({
+      getCurrentUser: async () => ok({
         id: 'usr-456',
         email: 'user.fallback@example.com',
         fullName: 'Trần Thị B',
         phone: '0912345678',
       }),
-      getProfile: async () => null,
+      getProfile: async () => ok(null),
     };
 
     const useCase = new GetCustomerCheckoutInfoUseCase(mockAuthRepo as IAuthRepository);
@@ -70,11 +71,11 @@ describe('GetCustomerCheckoutInfoUseCase', () => {
 
   it('handles empty profile and metadata gracefully with empty strings', async () => {
     const mockAuthRepo: Partial<IAuthRepository> = {
-      getCurrentUser: async () => ({
+      getCurrentUser: async () => ok({
         id: 'usr-789',
         email: 'empty@example.com',
       }),
-      getProfile: async (id: string) => ({
+      getProfile: async (id: string) => ok({
         id,
         fullName: '',
         phone: '',
@@ -94,11 +95,9 @@ describe('GetCustomerCheckoutInfoUseCase', () => {
     }
   });
 
-  it('returns fail(error) when auth repository throws an unexpected error', async () => {
+  it('returns fail(error) when auth repository returns a failure result', async () => {
     const mockAuthRepo: Partial<IAuthRepository> = {
-      getCurrentUser: async () => {
-        throw new Error('Database connection failed');
-      },
+      getCurrentUser: async () => fail(new Error('Database connection failed')),
     };
 
     const useCase = new GetCustomerCheckoutInfoUseCase(mockAuthRepo as IAuthRepository);
@@ -107,6 +106,22 @@ describe('GetCustomerCheckoutInfoUseCase', () => {
     assert.strictEqual(result.success, false);
     if (!result.success) {
       assert.match(result.error.message, /Database connection failed/);
+    }
+  });
+
+  it('returns fail(error) when auth repository throws an unexpected error', async () => {
+    const mockAuthRepo: Partial<IAuthRepository> = {
+      getCurrentUser: async () => {
+        throw new Error('Database connection crashed');
+      },
+    };
+
+    const useCase = new GetCustomerCheckoutInfoUseCase(mockAuthRepo as IAuthRepository);
+    const result = await useCase.execute();
+
+    assert.strictEqual(result.success, false);
+    if (!result.success) {
+      assert.match(result.error.message, /Database connection crashed/);
     }
   });
 });

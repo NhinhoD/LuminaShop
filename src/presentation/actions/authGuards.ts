@@ -1,19 +1,31 @@
-import { makeAuthRepository } from "@/di/container";
+import { makeGetCurrentUserUseCase, makeGetProfileUseCase } from "@/di/container";
 import { ROLES } from "@/presentation/constants";
 
 /**
  * Validates that the current request is from an authenticated admin.
- * Throws an Error if unauthorized.
+ * Throws an Error if unauthorized or forbidden, or propagates lookup errors.
  */
 export async function assertAdmin(): Promise<{ id: string; email: string; fullName: string; role: string }> {
-  const authRepo = await makeAuthRepository();
-  const user = await authRepo.getCurrentUser();
+  const getCurrentUser = await makeGetCurrentUserUseCase();
+  const userResult = await getCurrentUser.execute();
 
+  if (!userResult.success) {
+    throw userResult.error;
+  }
+
+  const user = userResult.data;
   if (!user) {
     throw new Error("Unauthorized: Yêu cầu đăng nhập.");
   }
 
-  const profile = await authRepo.getProfile(user.id);
+  const getProfile = await makeGetProfileUseCase();
+  const profileResult = await getProfile.execute(user.id);
+
+  if (!profileResult.success) {
+    throw profileResult.error;
+  }
+
+  const profile = profileResult.data;
   if (!profile || profile.role !== ROLES.ADMIN) {
     throw new Error("Forbidden: Bạn không có quyền thực hiện thao tác này.");
   }
@@ -28,12 +40,17 @@ export async function assertAdmin(): Promise<{ id: string; email: string; fullNa
 
 /**
  * Validates that the current request is from an authenticated user.
- * Throws an Error if not authenticated.
+ * Throws an Error if not authenticated or propagates lookup errors.
  */
 export async function assertAuthenticated(): Promise<{ id: string; email: string }> {
-  const authRepo = await makeAuthRepository();
-  const user = await authRepo.getCurrentUser();
+  const getCurrentUser = await makeGetCurrentUserUseCase();
+  const userResult = await getCurrentUser.execute();
 
+  if (!userResult.success) {
+    throw userResult.error;
+  }
+
+  const user = userResult.data;
   if (!user) {
     throw new Error("Unauthorized: Yêu cầu đăng nhập.");
   }

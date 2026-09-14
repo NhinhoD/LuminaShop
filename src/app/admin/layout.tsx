@@ -21,8 +21,26 @@ export default async function AdminLayout({
 
   // Layer 2: Server-side admin guard (defense-in-depth via auth use cases)
   const getCurrentUser = await makeGetCurrentUserUseCase();
-  const user = await getCurrentUser.execute();
+  const userResult = await getCurrentUser.execute();
 
+  if (!userResult.success) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-6 bg-slate-50 font-sans">
+        <div className="p-8 text-center bg-red-50 border border-red-200 rounded-2xl text-red-700 max-w-xl mx-auto">
+          <p className="font-semibold text-sm">
+            {currentLocale === "vi"
+              ? "Không thể xác thực thông tin người dùng từ máy chủ"
+              : "Failed to authenticate user from server"}
+          </p>
+          <p className="text-xs text-red-500 mt-1 font-mono">
+            {userResult.error.message || "Unknown error"}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  const user = userResult.data;
   // If not logged in, redirect to login instead of 404 to improve UX
   if (!user) {
     redirect(ROUTES.LOGIN);
@@ -30,8 +48,26 @@ export default async function AdminLayout({
 
   // Check role from profiles use case
   const getProfile = await makeGetProfileUseCase();
-  const profile = await getProfile.execute(user.id);
+  const profileResult = await getProfile.execute(user.id);
 
+  if (!profileResult.success) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-6 bg-slate-50 font-sans">
+        <div className="p-8 text-center bg-red-50 border border-red-200 rounded-2xl text-red-700 max-w-xl mx-auto">
+          <p className="font-semibold text-sm">
+            {currentLocale === "vi"
+              ? "Không thể tải thông tin quyền quản trị từ máy chủ"
+              : "Failed to verify admin privileges from database"}
+          </p>
+          <p className="text-xs text-red-500 mt-1 font-mono">
+            {profileResult.error.message || "Unknown error"}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  const profile = profileResult.data;
   // If not an admin, show 404 to hide admin existence (security by obscurity)
   if (!profile || profile.role !== ROLES.ADMIN) {
     notFound();
