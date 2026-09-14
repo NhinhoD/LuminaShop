@@ -24,6 +24,7 @@ AS $$
   FROM customer_spending;
 $$;
 
+REVOKE EXECUTE ON FUNCTION public.get_customer_kpis() FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION public.get_customer_kpis() TO authenticated, service_role;
 
 CREATE OR REPLACE FUNCTION public.get_translation_namespaces()

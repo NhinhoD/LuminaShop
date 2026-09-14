@@ -139,6 +139,7 @@ export class SupabaseDashboardRepository implements IDashboardRepository {
       const { data: revenueData, error: revenueError } = await supabase
         .from('orders')
         .select('user_id, total_amount, status, payment_status')
+        .not('user_id', 'is', null)
         .or('status.in.(delivered,completed,paid),payment_status.eq.paid');
 
       if (revenueError) {
@@ -147,9 +148,9 @@ export class SupabaseDashboardRepository implements IDashboardRepository {
 
       const userSpentMap: Record<string, number> = {};
       (revenueData || []).forEach((r) => {
-        const amt = Number(r.total_amount || 0);
-        totalSpent += amt;
         if (r.user_id) {
+          const amt = Number(r.total_amount || 0);
+          totalSpent += amt;
           userSpentMap[r.user_id] = (userSpentMap[r.user_id] || 0) + amt;
         }
       });
