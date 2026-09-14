@@ -36,7 +36,10 @@ export class SupabaseCategoryRepository implements ICategoryRepository {
         if (filters?.search) {
           countQuery = countQuery.or(`name->>vi.ilike.%${filters.search}%,name->>en.ilike.%${filters.search}%`);
         }
-        const { count: actualCount } = await countQuery;
+        const { count: actualCount, error: countError } = await countQuery;
+        if (countError) {
+          throw new Error(`Failed to count categories: ${countError.message}`);
+        }
         return { categories: [], total: actualCount || 0 };
       }
       throw new Error(error.message);

@@ -101,7 +101,10 @@ export class SupabaseProductRepository implements IProductRepository {
         if (filters?.search) {
           countQuery = countQuery.or(`title->>vi.ilike.%${filters.search}%,title->>en.ilike.%${filters.search}%`);
         }
-        const { count: actualCount } = await countQuery;
+        const { count: actualCount, error: countError } = await countQuery;
+        if (countError) {
+          throw new Error(`Failed to count products: ${countError.message}`);
+        }
         return { products: [], total: actualCount || 0 };
       }
       throw new Error(error.message);

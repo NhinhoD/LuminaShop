@@ -42,7 +42,10 @@ export async function getTranslationsAction() {
 export async function getPaginatedTranslationsAction(filters?: TranslationFilters): Promise<PaginatedTranslations> {
   const useCase = await makeGetPaginatedTranslationsUseCase();
   const result = await useCase.execute(filters);
-  return result.success ? result.data : { translations: [], total: 0, namespaces: [] };
+  if (!result.success) {
+    throw new Error(result.error.message || "Failed to fetch paginated translations");
+  }
+  return result.data;
 }
 
 /**

@@ -206,7 +206,10 @@ export class SupabaseDashboardRepository implements IDashboardRepository {
         if (orConditions.length > 0) {
           countQuery = countQuery.or(orConditions.join(','));
         }
-        const { count: actualCount } = await countQuery;
+        const { count: actualCount, error: countError } = await countQuery;
+        if (countError) {
+          throw new Error(`Failed to count profiles: ${countError.message}`);
+        }
         return {
           customers: [],
           total: actualCount || 0,

@@ -66,7 +66,10 @@ export class SupabaseOrderRepository implements IOrderRepository {
         if (filters?.search) {
           countQuery = countQuery.ilike('id', `%${filters.search}%`);
         }
-        const { count: actualCount } = await countQuery;
+        const { count: actualCount, error: countError } = await countQuery;
+        if (countError) {
+          throw new Error(`Failed to count customer orders: ${countError.message}`);
+        }
         return { orders: [], total: actualCount ?? 0 };
       }
       throw new Error(error.message);
@@ -108,7 +111,10 @@ export class SupabaseOrderRepository implements IOrderRepository {
         if (filters?.search) {
           countQuery = countQuery.or(`id.ilike.%${filters.search}%,shipping_address->>fullName.ilike.%${filters.search}%`);
         }
-        const { count: actualCount } = await countQuery;
+        const { count: actualCount, error: countError } = await countQuery;
+        if (countError) {
+          throw new Error(`Failed to count orders: ${countError.message}`);
+        }
         return { orders: [], total: actualCount ?? 0 };
       }
       throw new Error(error.message);
@@ -307,7 +313,10 @@ export class SupabaseOrderRepository implements IOrderRepository {
           const escapedSearch = options.search.replace(/\\/g, '\\\\').replace(/[,()]/g, '\\$&');
           countQuery = countQuery.or(`title->>vi.ilike.%${escapedSearch}%,title->>en.ilike.%${escapedSearch}%`, { referencedTable: 'products' });
         }
-        const { count: actualCount } = await countQuery;
+        const { count: actualCount, error: countError } = await countQuery;
+        if (countError) {
+          throw new Error(`Failed to count purchased templates: ${countError.message}`);
+        }
         return { items: [], total: actualCount ?? 0 };
       }
       throw new Error(`Failed to fetch user purchased templates: ${error.message}`);

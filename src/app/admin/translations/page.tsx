@@ -20,16 +20,30 @@ export default async function AdminTranslationsPage({
   const search = typeof params?.q === 'string' ? params.q.trim() : undefined;
   const namespace = typeof params?.ns === 'string' && params.ns !== 'all' ? params.ns.trim() : undefined;
 
-  const paginatedData = await getPaginatedTranslationsAction({
-    limit: itemsPerPage,
-    offset,
-    search,
-    namespace,
-  });
-
   const dict = await getAppDictionary();
   const adminDict = (dict.admin as Record<string, string>) || {};
   const locale = await getLocale();
+
+  let paginatedData;
+  try {
+    paginatedData = await getPaginatedTranslationsAction({
+      limit: itemsPerPage,
+      offset,
+      search,
+      namespace,
+    });
+  } catch (error) {
+    return (
+      <div className="p-8 text-center bg-red-50 border border-red-200 rounded-2xl text-red-700 max-w-xl mx-auto my-12 font-sans">
+        <p className="font-semibold text-sm">
+          {locale === "vi" ? "Không thể tải danh sách bản dịch từ máy chủ" : "Failed to load translations from database"}
+        </p>
+        <p className="text-xs text-red-500 mt-1 font-mono">
+          {error instanceof Error ? error.message : "Failed to load translations"}
+        </p>
+      </div>
+    );
+  }
 
   const totalPages = Math.max(1, Math.ceil(paginatedData.total / itemsPerPage));
 

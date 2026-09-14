@@ -78,10 +78,13 @@ export class SupabaseTranslationRepository implements ITranslationRepository {
           const pattern = `"%${escapedTerm}%"`;
           countQuery = countQuery.or(`key.ilike.${pattern},vi.ilike.${pattern},en.ilike.${pattern}`);
         }
-        const { count: actualCount } = await countQuery;
+        const { count: actualCount, error: countError } = await countQuery;
+        if (countError) {
+          throw new Error(`Failed to count translations: ${countError.message}`);
+        }
         return { translations: [], total: actualCount || 0, namespaces };
       }
-      return { translations: [], total: 0, namespaces };
+      throw new Error(error.message);
     }
 
     return {
