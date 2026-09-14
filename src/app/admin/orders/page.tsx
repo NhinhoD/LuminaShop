@@ -59,11 +59,15 @@ export default async function AdminOrdersPage({ searchParams }: AdminOrdersPageP
 
       <OrderList initialOrders={orders} currentStatus={params.status || 'all'} currentSearch={search || ''} total={total} />
       
-      {totalPages > 1 && (
-        <div className="mt-8 flex justify-center">
-          <PaginationControls currentPage={currentPage} totalPages={totalPages} />
-        </div>
-      )}
+      <PaginationControls 
+        currentPage={currentPage} 
+        totalPages={totalPages} 
+        totalItems={total}
+        itemsPerPage={itemsPerPage}
+        itemName={{ vi: "đơn hàng", en: "orders" }}
+        layoutId="admin-orders-pagination"
+        className="mt-8"
+      />
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import { ITranslationRepository, TranslationEntry } from '@/domain/repositories/ITranslationRepository';
+import { ITranslationRepository, TranslationEntry, TranslationFilters, PaginatedTranslations } from '@/domain/repositories/ITranslationRepository';
 import { SupabaseClient } from '@supabase/supabase-js';
 
 export class SupabaseTranslationRepository implements ITranslationRepository {
@@ -14,6 +14,53 @@ export class SupabaseTranslationRepository implements ITranslationRepository {
     }
 
     return data as TranslationEntry[];
+  }
+
+  async getPaginatedTranslations(filters?: TranslationFilters): Promise<PaginatedTranslations> {
+    // 1. Fetch unique namespaces for filter tabs
+    const { data: nsData } = await this.supabase
+      .from('site_translations')
+      .select('namespace');
+
+    const namespaces = Array.from(
+      new Set(
+        (nsData || [])
+          .map((r: { namespace?: string }) => r.namespace || 'common')
+          .filter(Boolean)
+      )
+    ).sort();
+
+    // 2. Build filtered paginated query
+    let query = this.supabase
+      .from('site_translations')
+      .select('key, namespace, vi, en', { count: 'exact' });
+
+    if (filters?.namespace && filters.namespace !== 'all') {
+      query = query.eq('namespace', filters.namespace);
+    }
+
+    if (filters?.search && filters.search.trim()) {
+      const term = filters.search.trim();
+      query = query.or(`key.ilike.%${term}%,vi.ilike.%${term}%,en.ilike.%${term}%`);
+    }
+
+    query = query.order('key', { ascending: true });
+
+    const limit = filters?.limit ?? 10;
+    const offset = filters?.offset ?? 0;
+    query = query.range(offset, offset + limit - 1);
+
+    const { data, error, count } = await query;
+
+    if (error) {
+      return { translations: [], total: 0, namespaces };
+    }
+
+    return {
+      translations: (data || []) as TranslationEntry[],
+      total: count ?? (data?.length || 0),
+      namespaces,
+    };
   }
 
   async updateTranslation(key: string, vi: string, en: string): Promise<void> {

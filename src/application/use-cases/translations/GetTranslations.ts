@@ -17,8 +17,7 @@ export class GetTranslationsUseCase {
       const translations = await this.translationRepo.getAllTranslations();
       return ok(translations);
     } catch (error: unknown) {
-      console.error('GetTranslationsUseCase Error:', error);
-      return fail(new Error('Failed to retrieve translations.'));
+      return fail(error instanceof Error ? error : new Error('Failed to retrieve translations.'));
     }
   }
 }

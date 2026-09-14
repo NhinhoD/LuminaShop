@@ -1,17 +1,36 @@
-import { getTranslationsAction } from '@/presentation/actions/i18n';
+import { getPaginatedTranslationsAction } from '@/presentation/actions/i18n';
 import { getAppDictionary } from "@/di/container";
 import { getLocale } from "@/i18n/getDictionary";
 import { Languages } from 'lucide-react';
 import TranslationTableClient from './TranslationTableClient';
 
-export default async function AdminTranslationsPage(): Promise<React.ReactElement> {
-  const translations = await getTranslationsAction();
+interface AdminTranslationsPageProps {
+  searchParams: Promise<{ page?: string; q?: string; ns?: string }>;
+}
+
+export default async function AdminTranslationsPage({
+  searchParams,
+}: AdminTranslationsPageProps): Promise<React.ReactElement> {
+  const params = await searchParams;
+  const parsedPage = parseInt(params.page || '1', 10);
+  const currentPage = Number.isFinite(parsedPage) && parsedPage > 0 ? parsedPage : 1;
+  const itemsPerPage = 10;
+  const offset = (currentPage - 1) * itemsPerPage;
+  const search = typeof params.q === 'string' ? params.q.trim() : undefined;
+  const namespace = typeof params.ns === 'string' && params.ns !== 'all' ? params.ns.trim() : undefined;
+
+  const paginatedData = await getPaginatedTranslationsAction({
+    limit: itemsPerPage,
+    offset,
+    search,
+    namespace,
+  });
+
   const dict = await getAppDictionary();
   const adminDict = (dict.admin as Record<string, string>) || {};
   const locale = await getLocale();
 
-  // Sort by namespace then key
-  translations.sort((a, b) => a.key.localeCompare(b.key));
+  const totalPages = Math.ceil(paginatedData.total / itemsPerPage);
 
   return (
     <div className="space-y-6 max-w-container-max mx-auto font-sans">
@@ -27,7 +46,16 @@ export default async function AdminTranslationsPage(): Promise<React.ReactElemen
         </div>
       </div>
 
-      <TranslationTableClient initialTranslations={translations} />
+      <TranslationTableClient 
+        initialTranslations={paginatedData.translations}
+        namespaces={paginatedData.namespaces}
+        currentNamespace={params.ns || 'all'}
+        currentSearch={search || ''}
+        currentPage={currentPage}
+        totalPages={totalPages}
+        totalItems={paginatedData.total}
+        itemsPerPage={itemsPerPage}
+      />
     </div>
   );
 }

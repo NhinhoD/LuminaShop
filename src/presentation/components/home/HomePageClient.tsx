@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useTransition } from "react";
 import { AnimatePresence, motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 
@@ -45,6 +46,8 @@ import {
   Loader2,
 } from "lucide-react";
 import { toast } from "@/presentation/hooks/useToastStore";
+import type { vi } from "@/i18n/dictionaries/vi";
+import { PaginationControls } from "@/presentation/components/common/PaginationControls";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -52,8 +55,11 @@ if (typeof window !== "undefined") {
 
 interface HomePageClientProps {
   readonly featuredProducts: readonly Product[];
+  readonly totalProducts?: number;
+  readonly initialPage?: number;
+  readonly initialCategory?: string;
   readonly categories: readonly Category[];
-  readonly dict?: Record<string, Record<string, string>>;
+  readonly dict?: typeof vi;
 }
 
 const MARQUEE_ITEMS = [
@@ -218,7 +224,15 @@ function KineticTiltCard({
   );
 }
 
-export default function HomePageClient({ featuredProducts, categories }: HomePageClientProps) {
+export default function HomePageClient({ 
+  featuredProducts, 
+  totalProducts = featuredProducts.length,
+  initialPage = 1,
+  initialCategory = "all",
+  categories, 
+  dict 
+}: HomePageClientProps) {
+  const router = useRouter();
   const containerRef = useRef<HTMLDivElement>(null);
   const categoriesRef = useRef<HTMLDivElement>(null);
   const advantagesRef = useRef<HTMLElement>(null);
@@ -226,7 +240,21 @@ export default function HomePageClient({ featuredProducts, categories }: HomePag
   const testimonialsRef = useRef<HTMLElement>(null);
   const journeyRef = useRef<HTMLElement>(null);
 
-  const [activeCategory, setActiveCategory] = useState("all");
+  const [prevCategory, setPrevCategory] = useState(initialCategory);
+  const [activeCategory, setActiveCategory] = useState(initialCategory);
+  if (initialCategory !== prevCategory) {
+    setPrevCategory(initialCategory);
+    setActiveCategory(initialCategory);
+  }
+
+  const [prevPage, setPrevPage] = useState(initialPage);
+  const [currentPage, setCurrentPage] = useState(initialPage);
+  if (initialPage !== prevPage) {
+    setPrevPage(initialPage);
+    setCurrentPage(initialPage);
+  }
+
+  const ITEMS_PER_PAGE = 6;
   const [activeLabTab, setActiveLabTab] = useState<"preview" | "architecture" | "telemetry">("preview");
   const [viewportMode, setViewportMode] = useState<"desktop" | "tablet" | "mobile">("desktop");
   const [copiedCli, setCopiedCli] = useState(false);
@@ -234,8 +262,8 @@ export default function HomePageClient({ featuredProducts, categories }: HomePag
   const [copiedCode, setCopiedCode] = useState(false);
   const [isRunningDiagnostic, setIsRunningDiagnostic] = useState(false);
   const [hoveredArchLayer, setHoveredArchLayer] = useState<string | null>(null);
-  const [, startTransition] = useTransition();
-  const { dict, locale } = useI18n();
+  const [isPending, startTransition] = useTransition();
+  const { locale } = useI18n();
 
   // 3D Motion values for Hero Sandbox Window
   const heroX = useMotionValue(0);
@@ -354,20 +382,47 @@ export default function HomePageClient({ featuredProducts, categories }: HomePag
     }, 1200);
   };
 
-  const displayShowcaseProducts = featuredProducts.length >= 3 
+  const displayShowcaseProducts = (totalProducts > 0 || featuredProducts.length > 0)
     ? featuredProducts 
     : (CURATED_SAMPLE_TEMPLATES as unknown as Product[]);
 
-  const filteredProducts = displayShowcaseProducts.filter((product) => {
-    if (activeCategory === "all") return true;
-    const titleText = typeof product.title === "string" ? product.title : getLocalizedText(product.title as unknown as Record<string, string>, locale);
-    const descText = typeof product.description === "string" ? product.description : getLocalizedText(product.description as unknown as Record<string, string>, locale);
-    return (
-      product.categoryId === activeCategory ||
-      titleText.toLowerCase().includes(activeCategory.toLowerCase()) ||
-      descText.toLowerCase().includes(activeCategory.toLowerCase())
-    );
-  });
+  const totalCount = totalProducts > 0 ? totalProducts : displayShowcaseProducts.length;
+  const totalPages = Math.max(1, Math.ceil(totalCount / ITEMS_PER_PAGE));
+  const safeCurrentPage = Math.min(currentPage, totalPages);
+  const paginatedProducts = displayShowcaseProducts;
+
+  const handlePageChange = (newPage: number) => {
+    if (newPage < 1 || newPage > totalPages || newPage === safeCurrentPage) return;
+    setCurrentPage(newPage);
+    startTransition(() => {
+      const params = new URLSearchParams();
+      if (activeCategory && activeCategory !== "all") {
+        params.set("category", activeCategory);
+      }
+      params.set("page", newPage.toString());
+      router.push(`/?${params.toString()}#showcase`, { scroll: false });
+    });
+    if (showcaseRef.current) {
+      const rect = showcaseRef.current.getBoundingClientRect();
+      if (rect.top < 0 || rect.top > window.innerHeight / 2) {
+        showcaseRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }
+  };
+
+  const handleCategorySelect = (categoryFilter: string) => {
+    setActiveCategory(categoryFilter);
+    setCurrentPage(1);
+    startTransition(() => {
+      const params = new URLSearchParams();
+      if (categoryFilter && categoryFilter !== "all") {
+        params.set("category", categoryFilter);
+      }
+      params.set("page", "1");
+      const qs = params.toString();
+      router.push(qs ? `/?${qs}#showcase` : "/#showcase", { scroll: false });
+    });
+  };
 
   const testimonials = [
     {
@@ -1493,7 +1548,7 @@ export default function HomePageClient({ featuredProducts, categories }: HomePag
                   key={cat.filter}
                   whileHover={{ scale: 1.01 }}
                   whileTap={{ scale: 0.99 }}
-                  onClick={() => startTransition(() => setActiveCategory(cat.filter))}
+                  onClick={() => handleCategorySelect(cat.filter)}
                   className={`cat-card text-left rounded-xl p-4 border transition-all duration-200 cursor-pointer ${
                     isSelected
                       ? "bg-primary border-primary text-white shadow-xs"
@@ -1518,7 +1573,7 @@ export default function HomePageClient({ featuredProducts, categories }: HomePag
       </section>
 
       {/* ══════════ SHOWCASE TEMPLATES GRID ══════════ */}
-      <section ref={showcaseRef} className="py-20 bg-white">
+      <section ref={showcaseRef} id="showcase" className="py-20 bg-white">
         <div className="max-w-[1360px] mx-auto px-6 sm:px-8">
 
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 border-b border-slate-100 pb-5">
@@ -1539,141 +1594,165 @@ export default function HomePageClient({ featuredProducts, categories }: HomePag
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredProducts.slice(0, 6).map((product) => {
-              const isFree = product.price === 0;
-              const productTitle = typeof product.title === "string" ? product.title : getLocalizedText(product.title as unknown as Record<string, string>, locale);
-              const productDesc = typeof product.description === "string" ? product.description : getLocalizedText(product.description as unknown as Record<string, string>, locale);
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={`showcase-page-${safeCurrentPage}-${activeCategory}`}
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -16 }}
+              transition={{ duration: 0.3, ease: [0.25, 1, 0.5, 1] }}
+              className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 transition-opacity duration-200 ${
+                isPending ? "opacity-60 pointer-events-none" : "opacity-100"
+              }`}
+            >
+              {paginatedProducts.map((product) => {
+                const isFree = product.price === 0;
+                const productTitle = typeof product.title === "string" ? product.title : getLocalizedText(product.title as unknown as Record<string, string>, locale);
+                const productDesc = typeof product.description === "string" ? product.description : getLocalizedText(product.description as unknown as Record<string, string>, locale);
 
-              return (
-                <KineticTiltCard
-                  key={product.id}
-                  className="prod-card bg-white rounded-xl border border-slate-100 overflow-hidden shadow-xs hover:shadow-md hover:border-slate-200 transition-all duration-200 flex flex-col h-full group"
-                >
+                return (
+                  <KineticTiltCard
+                    key={product.id}
+                    className="prod-card bg-white rounded-xl border border-slate-100 overflow-hidden shadow-xs hover:shadow-md hover:border-slate-200 transition-all duration-200 flex flex-col h-full group"
+                  >
 
-                  {/* Visual Frame 16:10 with Smooth Zoom */}
-                  <Link href={`${ROUTES.PRODUCT}/${product.id}`} className="relative overflow-hidden aspect-[16/10] bg-slate-900 block">
-                    {product.imageUrl ? (
-                      <Image
-                        src={product.imageUrl}
-                        alt={productTitle}
-                        fill
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                        className="object-cover transition-transform duration-500 group-hover:scale-103"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-slate-400">
-                        <Monitor size={32} />
-                      </div>
-                    )}
+                    {/* Visual Frame 16:10 with Smooth Zoom */}
+                    <Link href={`${ROUTES.PRODUCT}/${product.id}`} className="relative overflow-hidden aspect-[16/10] bg-slate-900 block">
+                      {product.imageUrl ? (
+                        <Image
+                          src={product.imageUrl}
+                          alt={productTitle}
+                          fill
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                          className="object-cover transition-transform duration-500 group-hover:scale-103"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-slate-400">
+                          <Monitor size={32} />
+                        </div>
+                      )}
 
-                    {/* Status Badges */}
-                    <div className="absolute top-3 left-3 flex gap-2">
-                      <span className={`px-2 py-0.5 rounded text-[10px] font-semibold uppercase font-mono ${
-                        isFree ? "bg-emerald-500 text-white" : "bg-slate-900/90 text-white"
-                      }`}>
-                        {isFree ? (dict?.home?.showcase?.freeBadge || (locale === "vi" ? "Miễn phí" : "Free")) : "Premium"}
-                      </span>
-                    </div>
-
-                    <div className="absolute top-3 right-3">
-                      <span className="bg-white/95 backdrop-blur-xs px-2 py-0.5 rounded text-[10px] font-medium text-slate-700 shadow-2xs flex items-center gap-1">
-                        <Box size={10} className="text-primary" />
-                        <span>Source .zip</span>
-                      </span>
-                    </div>
-                  </Link>
-
-                  {/* Template Info Body */}
-                  <div className="p-5 flex flex-col flex-grow justify-between">
-                    <div className="space-y-2 mb-4">
-                      <div className="flex flex-wrap gap-1">
-                        {product.techStack && product.techStack.length > 0 ? (
-                          product.techStack.map((tech) => (
-                            <span key={tech} className="bg-slate-50 border border-slate-100 text-slate-600 text-[10px] font-normal px-2 py-0.2 rounded">
-                              {tech}
-                            </span>
-                          ))
-                        ) : (
-                          <>
-                            <span className="bg-slate-50 border border-slate-100 text-slate-600 text-[10px] font-normal px-2 py-0.2 rounded">Next.js 16</span>
-                            <span className="bg-slate-50 border border-slate-100 text-slate-600 text-[10px] font-normal px-2 py-0.2 rounded">Tailwind 4</span>
-                            <span className="bg-slate-50 border border-slate-100 text-slate-600 text-[10px] font-normal px-2 py-0.2 rounded">GSAP</span>
-                          </>
-                        )}
+                      {/* Status Badges */}
+                      <div className="absolute top-3 left-3 flex gap-2">
+                        <span className={`px-2 py-0.5 rounded text-[10px] font-semibold uppercase font-mono ${
+                          isFree ? "bg-emerald-500 text-white" : "bg-slate-900/90 text-white"
+                        }`}>
+                          {isFree ? (dict?.home?.showcase?.freeBadge || (locale === "vi" ? "Miễn phí" : "Free")) : "Premium"}
+                        </span>
                       </div>
 
-                      <Link href={`${ROUTES.PRODUCT}/${product.id}`}>
-                        <h3 className="text-sm sm:text-[15px] font-semibold text-slate-900 truncate hover:text-primary transition-colors">
-                          {productTitle}
-                        </h3>
-                      </Link>
-                      <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed font-normal min-h-[38px]">
-                        {productDesc || (locale === "vi" ? "Website Template chất lượng cao, tích hợp đầy đủ công nghệ hiện đại nhất." : "High-fidelity website template engineered with state-of-the-art technologies.")}
-                      </p>
-                    </div>
+                      <div className="absolute top-3 right-3">
+                        <span className="bg-white/95 backdrop-blur-xs px-2 py-0.5 rounded text-[10px] font-medium text-slate-700 shadow-2xs flex items-center gap-1">
+                          <Box size={10} className="text-primary" />
+                          <span>Source .zip</span>
+                        </span>
+                      </div>
+                    </Link>
 
-                    {/* Card Footer */}
-                    <div className="pt-3.5 border-t border-slate-100 mt-auto">
-                      <div className="flex items-end justify-between gap-2 mb-3">
-                        <div className="min-w-0">
-                          <span className="block text-[10px] text-slate-400 font-medium uppercase tracking-wider mb-0.5">
-                            {dict?.home?.showcase?.priceLabel || (locale === "vi" ? "Bản quyền trọn đời" : "Lifetime License")}
-                          </span>
-                          <div className="flex items-baseline gap-1 font-mono">
-                            <span className="text-sm font-bold text-primary tracking-tight">
-                              {isFree ? (dict?.common?.free?.toUpperCase() || (locale === "vi" ? "MIỄN PHÍ" : "FREE")) : formatCurrency(product.price, locale)}
-                            </span>
-                            {!isFree && (
-                              <span className="text-[10px] font-normal text-slate-400 font-sans">
-                                {locale === "vi" ? "/ trọn đời" : "/ lifetime"}
+                    {/* Template Info Body */}
+                    <div className="p-5 flex flex-col flex-grow justify-between">
+                      <div className="space-y-2 mb-4">
+                        <div className="flex flex-wrap gap-1">
+                          {product.techStack && product.techStack.length > 0 ? (
+                            product.techStack.map((tech) => (
+                              <span key={tech} className="bg-slate-50 border border-slate-100 text-slate-600 text-[10px] font-normal px-2 py-0.2 rounded">
+                                {tech}
                               </span>
-                            )}
-                          </div>
+                            ))
+                          ) : (
+                            <>
+                              <span className="bg-slate-50 border border-slate-100 text-slate-600 text-[10px] font-normal px-2 py-0.2 rounded">Next.js 16</span>
+                              <span className="bg-slate-50 border border-slate-100 text-slate-600 text-[10px] font-normal px-2 py-0.2 rounded">Tailwind 4</span>
+                              <span className="bg-slate-50 border border-slate-100 text-slate-600 text-[10px] font-normal px-2 py-0.2 rounded">GSAP</span>
+                            </>
+                          )}
                         </div>
 
-                        <div className="shrink-0">
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200/60">
-                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                            <span>{locale === "vi" ? "Sẵn sàng" : "Instant"}</span>
-                          </span>
-                        </div>
+                        <Link href={`${ROUTES.PRODUCT}/${product.id}`}>
+                          <h3 className="text-sm sm:text-[15px] font-semibold text-slate-900 truncate hover:text-primary transition-colors">
+                            {productTitle}
+                          </h3>
+                        </Link>
+                        <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed font-normal min-h-[38px]">
+                          {productDesc || (locale === "vi" ? "Website Template chất lượng cao, tích hợp đầy đủ công nghệ hiện đại nhất." : "High-fidelity website template engineered with state-of-the-art technologies.")}
+                        </p>
                       </div>
 
-                      <div className="grid grid-cols-2 gap-2">
-                        {product.demoUrl ? (
-                          <a
-                            href={product.demoUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="h-8.5 rounded-xl text-xs font-medium bg-slate-50 hover:bg-slate-100 text-slate-700 hover:text-slate-900 border border-slate-200/80 transition-all flex items-center justify-center gap-1 shadow-2xs active:scale-[0.98]"
-                          >
-                            <span>Demo</span>
-                            <ExternalLink size={11} />
-                          </a>
-                        ) : (
-                          <div className="h-8.5 rounded-xl text-xs font-medium bg-slate-50/60 text-slate-400 border border-slate-100 flex items-center justify-center gap-1 cursor-default select-none">
-                            <Code2 size={11} className="text-slate-300" />
-                            <span>Code</span>
+                      {/* Card Footer */}
+                      <div className="pt-3.5 border-t border-slate-100 mt-auto">
+                        <div className="flex items-end justify-between gap-2 mb-3">
+                          <div className="min-w-0">
+                            <span className="block text-[10px] text-slate-400 font-medium uppercase tracking-wider mb-0.5">
+                              {dict?.home?.showcase?.priceLabel || (locale === "vi" ? "Bản quyền trọn đời" : "Lifetime License")}
+                            </span>
+                            <div className="flex items-baseline gap-1 font-mono">
+                              <span className="text-sm font-bold text-primary tracking-tight">
+                                {isFree ? (dict?.common?.free?.toUpperCase() || (locale === "vi" ? "MIỄN PHÍ" : "FREE")) : formatCurrency(product.price, locale)}
+                              </span>
+                              {!isFree && (
+                                <span className="text-[10px] font-normal text-slate-400 font-sans">
+                                  {locale === "vi" ? "/ trọn đời" : "/ lifetime"}
+                                </span>
+                              )}
+                            </div>
                           </div>
-                        )}
-                        <Link
-                          href={`${ROUTES.PRODUCT}/${product.id}`}
-                          className="h-8.5 rounded-xl text-xs font-semibold bg-primary hover:bg-primary-dark text-white shadow-2xs shadow-primary/20 transition-all flex items-center justify-center gap-1 group/btn active:scale-[0.98]"
-                        >
-                          <span>{dict?.shop?.detailsButton || (locale === "vi" ? "Chi tiết" : "Details")}</span>
-                          <ArrowRight size={11} className="transition-transform group-hover/btn:translate-x-0.5" />
-                        </Link>
+
+                          <div className="shrink-0">
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200/60">
+                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                              <span>{locale === "vi" ? "Sẵn sàng" : "Instant"}</span>
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-2">
+                          {product.demoUrl ? (
+                            <a
+                              href={product.demoUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="h-8.5 rounded-xl text-xs font-medium bg-slate-50 hover:bg-slate-100 text-slate-700 hover:text-slate-900 border border-slate-200/80 transition-all flex items-center justify-center gap-1 shadow-2xs active:scale-[0.98]"
+                            >
+                              <span>Demo</span>
+                              <ExternalLink size={11} />
+                            </a>
+                          ) : (
+                            <div className="h-8.5 rounded-xl text-xs font-medium bg-slate-50/60 text-slate-400 border border-slate-100 flex items-center justify-center gap-1 cursor-default select-none">
+                              <Code2 size={11} className="text-slate-300" />
+                              <span>Code</span>
+                            </div>
+                          )}
+                          <Link
+                            href={`${ROUTES.PRODUCT}/${product.id}`}
+                            className="h-8.5 rounded-xl text-xs font-semibold bg-primary hover:bg-primary-dark text-white shadow-2xs shadow-primary/20 transition-all flex items-center justify-center gap-1 group/btn active:scale-[0.98]"
+                          >
+                            <span>{dict?.shop?.detailsButton || (locale === "vi" ? "Chi tiết" : "Details")}</span>
+                            <ArrowRight size={11} className="transition-transform group-hover/btn:translate-x-0.5" />
+                          </Link>
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                </KineticTiltCard>
-              );
-            })}
-          </div>
+                  </KineticTiltCard>
+                );
+              })}
+            </motion.div>
+          </AnimatePresence>
 
-          {filteredProducts.length === 0 && (
+          {/* ══════════ SHOWCASE PAGINATION CONTROLS ══════════ */}
+          <PaginationControls
+            currentPage={safeCurrentPage}
+            totalPages={totalPages}
+            totalItems={totalCount}
+            itemsPerPage={ITEMS_PER_PAGE}
+            onPageChange={handlePageChange}
+            isPending={isPending}
+            itemName={{ vi: "template", en: "templates" }}
+            layoutId="home-showcase-page-indicator"
+            className="mt-12"
+          />
+
+          {paginatedProducts.length === 0 && (
             <div className="text-center py-14 border border-dashed border-slate-200 rounded-xl">
               <Code2 size={36} className="mx-auto text-slate-300 mb-2" />
               <p className="text-slate-500 text-xs font-medium">

@@ -202,14 +202,17 @@ export default async function AdminProductsPage({
         </div>
         
         {/* Pagination Footer */}
-        {totalPages > 1 && (
-          <div className="p-4 border-t border-slate-100 bg-slate-50/50 flex justify-center flex-col items-center">
-            <div className="text-center mb-3 text-xs font-normal text-slate-500">
-              {locale === "vi" ? "Hiển thị" : "Showing"} <span className="text-slate-900 font-medium">{offset + 1}</span> - <span className="text-slate-900 font-medium">{Math.min(offset + limit, total)}</span> {locale === "vi" ? "trên" : "of"} <span className="text-slate-900 font-medium">{total}</span>
-            </div>
-            <PaginationControls currentPage={page} totalPages={totalPages} />
-          </div>
-        )}
+        <div className="p-4 border-t border-slate-100 bg-slate-50/50">
+          <PaginationControls 
+            currentPage={page} 
+            totalPages={totalPages} 
+            totalItems={total}
+            itemsPerPage={limit}
+            itemName={{ vi: "sản phẩm", en: "products" }}
+            layoutId="admin-products-pagination"
+            bordered={false}
+          />
+        </div>
       </div>
     </div>
   );

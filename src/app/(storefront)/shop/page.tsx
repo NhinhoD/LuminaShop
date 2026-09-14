@@ -21,7 +21,7 @@ const CATEGORY_SLUG_MAP: Record<string, string> = {
 export default async function ShopPage({ searchParams }: ShopPageProps) {
   const params = await searchParams;
   const currentPage = parseInt((params?.page as string) || "1", 10);
-  const itemsPerPage = parseInt((params?.limit as string) || "9", 10);
+  const itemsPerPage = parseInt((params?.limit as string) || "6", 10);
   const offset = (currentPage - 1) * itemsPerPage;
   const search = typeof params?.q === 'string' ? params.q : undefined;
 
@@ -184,11 +184,15 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
           dbCategories={dbCategories}
         />
         
-        {totalPages > 1 && (
-          <div className="mt-12 flex justify-center">
-            <PaginationControls currentPage={currentPage} totalPages={totalPages} />
-          </div>
-        )}
+        <PaginationControls 
+          currentPage={currentPage} 
+          totalPages={totalPages} 
+          totalItems={total}
+          itemsPerPage={itemsPerPage}
+          itemName={{ vi: "template", en: "templates" }}
+          layoutId="shop-page-pagination"
+          className="mt-12"
+        />
       </div>
     </main>
   );

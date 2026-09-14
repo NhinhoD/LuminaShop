@@ -27,11 +27,15 @@ export default async function AdminCategoriesPage({ searchParams }: AdminCategor
   return (
     <div className="container mx-auto">
       <CategoryList initialCategories={categories} total={total} currentPage={currentPage} totalPages={totalPages} search={search} />
-      {totalPages > 1 && (
-        <div className="mt-8 mb-12 flex justify-center">
-          <PaginationControls currentPage={currentPage} totalPages={totalPages} />
-        </div>
-      )}
+      <PaginationControls 
+        currentPage={currentPage} 
+        totalPages={totalPages} 
+        totalItems={total}
+        itemsPerPage={itemsPerPage}
+        itemName={{ vi: "danh mục", en: "categories" }}
+        layoutId="admin-categories-pagination"
+        className="mt-8 mb-12"
+      />
     </div>
   );
 }
