@@ -1,4 +1,5 @@
 import React from "react";
+import { redirect } from "next/navigation";
 import { makeGetProductsUseCase, makeGetCategoriesUseCase, getAppDictionary } from "@/di/container";
 import HomePageClient from "@/presentation/components/home/HomePageClient";
 import { sanitizeProductsForPublic } from "@/domain/entities/Product";
@@ -13,7 +14,8 @@ interface HomePageProps {
 
 export default async function HomePage({ searchParams }: HomePageProps): Promise<React.ReactElement> {
   const params = await searchParams;
-  const currentPage = Math.max(1, parseInt((params?.page as string) || "1", 10));
+  const rawPage = typeof params?.page === "string" ? parseInt(params.page, 10) : 1;
+  const currentPage = Number.isSafeInteger(rawPage) && rawPage >= 1 ? rawPage : 1;
   const categoryParam = typeof params?.category === "string" ? params.category : "all";
   const limit = 6;
   const offset = (currentPage - 1) * limit;
@@ -72,6 +74,19 @@ export default async function HomePage({ searchParams }: HomePageProps): Promise
   const featuredProducts = z.array(productSchema).parse(rawProducts);
   const totalProducts = productsResult.data.total;
   const categories = categoriesResult.data.categories;
+
+  const totalPages = Math.max(1, Math.ceil(totalProducts / limit));
+  if (totalProducts > 0 && currentPage > totalPages) {
+    const redirectParams = new URLSearchParams();
+    if (categoryParam !== "all") {
+      redirectParams.set("category", categoryParam);
+    }
+    if (totalPages > 1) {
+      redirectParams.set("page", totalPages.toString());
+    }
+    const qs = redirectParams.toString();
+    redirect(qs ? `/?${qs}#showcase` : "/#showcase");
+  }
 
   return (
     <main className="flex flex-col min-h-screen">

@@ -17,18 +17,28 @@ export class SupabaseTranslationRepository implements ITranslationRepository {
   }
 
   async getPaginatedTranslations(filters?: TranslationFilters): Promise<PaginatedTranslations> {
-    // 1. Fetch unique namespaces for filter tabs
-    const { data: nsData } = await this.supabase
-      .from('site_translations')
-      .select('namespace');
+    // 1. Fetch unique namespaces for filter tabs via RPC with fallback
+    let namespaces: string[] = [];
+    const { data: rpcNs, error: rpcNsError } = await this.supabase.rpc('get_translation_namespaces');
 
-    const namespaces = Array.from(
-      new Set(
-        (nsData || [])
-          .map((r: { namespace?: string }) => r.namespace || 'common')
-          .filter(Boolean)
-      )
-    ).sort();
+    if (!rpcNsError && Array.isArray(rpcNs) && rpcNs.length > 0) {
+      namespaces = rpcNs
+        .map((r: { namespace?: string }) => r.namespace || '')
+        .filter(Boolean)
+        .sort();
+    } else {
+      const { data: nsData } = await this.supabase
+        .from('site_translations')
+        .select('namespace');
+
+      namespaces = Array.from(
+        new Set(
+          (nsData || [])
+            .map((r: { namespace?: string }) => r.namespace || 'common')
+            .filter(Boolean)
+        )
+      ).sort();
+    }
 
     // 2. Build filtered paginated query
     let query = this.supabase
@@ -41,7 +51,9 @@ export class SupabaseTranslationRepository implements ITranslationRepository {
 
     if (filters?.search && filters.search.trim()) {
       const term = filters.search.trim();
-      query = query.or(`key.ilike.%${term}%,vi.ilike.%${term}%,en.ilike.%${term}%`);
+      const escapedTerm = term.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+      const pattern = `"%${escapedTerm}%"`;
+      query = query.or(`key.ilike.${pattern},vi.ilike.${pattern},en.ilike.${pattern}`);
     }
 
     query = query.order('key', { ascending: true });

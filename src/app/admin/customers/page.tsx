@@ -1,4 +1,5 @@
 import React from "react";
+import { redirect } from "next/navigation";
 import { getAppDictionary } from "@/di/container";
 import { getLocale } from "@/i18n/getDictionary";
 import { formatCurrency } from "@/lib/utils";
@@ -36,11 +37,11 @@ export default async function AdminCustomersPage({
   const locale = await getLocale();
 
   const params = await searchParams;
-  const parsedPage = parseInt(typeof params.page === "string" ? params.page : "1", 10);
-  const page = Number.isFinite(parsedPage) && parsedPage > 0 ? parsedPage : 1;
+  const rawPage = typeof params?.page === "string" ? parseInt(params.page, 10) : 1;
+  const page = Number.isSafeInteger(rawPage) && rawPage >= 1 ? rawPage : 1;
   const itemsPerPage = 10;
   const offset = (page - 1) * itemsPerPage;
-  const search = typeof params.q === "string" ? params.q.trim() : undefined;
+  const search = typeof params?.q === "string" ? params.q.trim() : undefined;
 
   const result = await getPaginatedAdminCustomersAction({
     limit: itemsPerPage,
@@ -62,7 +63,16 @@ export default async function AdminCustomersPage({
   }
 
   const { customers, total, vipCount, totalSpent } = result.data;
-  const totalPages = Math.ceil(total / itemsPerPage);
+  const totalPages = Math.max(1, Math.ceil(total / itemsPerPage));
+
+  if (total > 0 && page > totalPages) {
+    const redirectParams = new URLSearchParams();
+    if (search) {
+      redirectParams.set("q", search);
+    }
+    redirectParams.set("page", totalPages.toString());
+    redirect(`/admin/customers?${redirectParams.toString()}`);
+  }
 
   return (
     <div className="space-y-6 font-sans">
@@ -99,7 +109,7 @@ export default async function AdminCustomersPage({
             <p className="text-xs font-medium text-slate-500">{locale === "vi" ? "Khách hàng VIP" : "VIP Customers"}</p>
             <p className="text-2xl font-bold text-slate-900 font-mono">{vipCount}</p>
             <p className="text-[11px] text-purple-600 font-medium flex items-center gap-1">
-              <Award size={13} /> {locale === "vi" ? "Chi tiêu > 500k" : "Spent > 500k"}
+              <Award size={13} /> {locale === "vi" ? "Chi tiêu ≥ 2.000.000₫" : "Spent ≥ 2,000,000₫"}
             </p>
           </div>
           <div className="w-11 h-11 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center">

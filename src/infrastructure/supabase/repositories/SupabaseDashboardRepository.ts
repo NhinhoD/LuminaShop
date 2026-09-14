@@ -126,22 +126,35 @@ export class SupabaseDashboardRepository implements IDashboardRepository {
   async getPaginatedCustomers(filters?: CustomerFilters): Promise<PaginatedCustomersResult> {
     const supabase = this.supabase;
 
-    // 1. Compute global aggregated KPIs for metrics cards without unbounded row fetching
-    const { data: revenueData } = await supabase
-      .from('orders')
-      .select('user_id, total_amount')
-      .in('status', ['delivered', 'completed', 'paid']);
-
-    const userSpentMap: Record<string, number> = {};
+    // 1. Compute global aggregated KPIs for metrics cards via database RPC
     let totalSpent = 0;
-    (revenueData || []).forEach((r) => {
-      const amt = Number(r.total_amount || 0);
-      totalSpent += amt;
-      if (r.user_id) {
-        userSpentMap[r.user_id] = (userSpentMap[r.user_id] || 0) + amt;
+    let vipCount = 0;
+
+    const { data: rpcKpiData, error: rpcError } = await supabase.rpc('get_customer_kpis');
+    if (!rpcError && rpcKpiData && rpcKpiData.length > 0) {
+      totalSpent = Number(rpcKpiData[0].total_spent || 0);
+      vipCount = Number(rpcKpiData[0].vip_count || 0);
+    } else {
+      // Fallback query if RPC fails or is unavailable
+      const { data: revenueData, error: revenueError } = await supabase
+        .from('orders')
+        .select('user_id, total_amount, status, payment_status')
+        .or('status.in.(delivered,completed,paid),payment_status.eq.paid');
+
+      if (revenueError) {
+        throw new Error(`Failed to fetch orders for customer KPIs: ${revenueError.message}`);
       }
-    });
-    const vipCount = Object.values(userSpentMap).filter((spent) => spent > 500000).length;
+
+      const userSpentMap: Record<string, number> = {};
+      (revenueData || []).forEach((r) => {
+        const amt = Number(r.total_amount || 0);
+        totalSpent += amt;
+        if (r.user_id) {
+          userSpentMap[r.user_id] = (userSpentMap[r.user_id] || 0) + amt;
+        }
+      });
+      vipCount = Object.values(userSpentMap).filter((spent) => spent >= 2000000).length;
+    }
 
     // 2. Build filtered paginated profiles query
     let query = supabase
@@ -152,20 +165,30 @@ export class SupabaseDashboardRepository implements IDashboardRepository {
       const term = filters.search.trim();
 
       // Check if term matches email in orders to find matching user IDs
-      const { data: emailMatches } = await supabase
+      const { data: emailMatches, error: emailError } = await supabase
         .from('orders')
         .select('user_id')
         .ilike('contact_email', `%${term}%`);
+
+      if (emailError) {
+        throw new Error(`Failed to search orders by contact email: ${emailError.message}`);
+      }
 
       const userIdsFromEmail = Array.from(
         new Set((emailMatches || []).map((o: { user_id?: string }) => o.user_id).filter(Boolean))
       );
 
-      if (userIdsFromEmail.length > 0) {
-        query = query.or(`full_name.ilike.%${term}%,id.in.(${userIdsFromEmail.join(',')})`);
-      } else {
-        query = query.ilike('full_name', `%${term}%`);
+      const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(term);
+      const escapedTerm = term.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+      const orConditions: string[] = [`full_name.ilike."%${escapedTerm}%"`];
+
+      if (isUuid) {
+        orConditions.push(`id.eq.${term}`);
       }
+      if (userIdsFromEmail.length > 0) {
+        orConditions.push(`id.in.(${userIdsFromEmail.join(',')})`);
+      }
+      query = query.or(orConditions.join(','));
     }
 
     const limit = filters?.limit ?? 10;

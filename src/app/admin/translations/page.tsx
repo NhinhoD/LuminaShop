@@ -1,3 +1,4 @@
+import { redirect } from 'next/navigation';
 import { getPaginatedTranslationsAction } from '@/presentation/actions/i18n';
 import { getAppDictionary } from "@/di/container";
 import { getLocale } from "@/i18n/getDictionary";
@@ -12,12 +13,12 @@ export default async function AdminTranslationsPage({
   searchParams,
 }: AdminTranslationsPageProps): Promise<React.ReactElement> {
   const params = await searchParams;
-  const parsedPage = parseInt(params.page || '1', 10);
-  const currentPage = Number.isFinite(parsedPage) && parsedPage > 0 ? parsedPage : 1;
+  const rawPage = typeof params?.page === 'string' ? parseInt(params.page, 10) : 1;
+  const currentPage = Number.isSafeInteger(rawPage) && rawPage >= 1 ? rawPage : 1;
   const itemsPerPage = 10;
   const offset = (currentPage - 1) * itemsPerPage;
-  const search = typeof params.q === 'string' ? params.q.trim() : undefined;
-  const namespace = typeof params.ns === 'string' && params.ns !== 'all' ? params.ns.trim() : undefined;
+  const search = typeof params?.q === 'string' ? params.q.trim() : undefined;
+  const namespace = typeof params?.ns === 'string' && params.ns !== 'all' ? params.ns.trim() : undefined;
 
   const paginatedData = await getPaginatedTranslationsAction({
     limit: itemsPerPage,
@@ -30,7 +31,19 @@ export default async function AdminTranslationsPage({
   const adminDict = (dict.admin as Record<string, string>) || {};
   const locale = await getLocale();
 
-  const totalPages = Math.ceil(paginatedData.total / itemsPerPage);
+  const totalPages = Math.max(1, Math.ceil(paginatedData.total / itemsPerPage));
+
+  if (paginatedData.total > 0 && currentPage > totalPages) {
+    const redirectParams = new URLSearchParams();
+    if (params?.ns && params.ns !== 'all') {
+      redirectParams.set('ns', params.ns);
+    }
+    if (search) {
+      redirectParams.set('q', search);
+    }
+    redirectParams.set('page', totalPages.toString());
+    redirect(`/admin/translations?${redirectParams.toString()}`);
+  }
 
   return (
     <div className="space-y-6 max-w-container-max mx-auto font-sans">

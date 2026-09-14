@@ -98,6 +98,7 @@ export default function TranslationTableClient({
   };
 
   const handleNamespaceChange = (ns: string) => {
+    debouncedSearch.cancel();
     updateUrl(ns, search);
   };
 
@@ -209,7 +210,7 @@ export default function TranslationTableClient({
               : "bg-slate-50 text-slate-600 hover:bg-slate-100"
           }`}
         >
-          {locale === "vi" ? "Tất cả" : "All"} ({totalItems})
+          {locale === "vi" ? "Tất cả" : "All"}
         </button>
         {namespaces.map(ns => (
           <button

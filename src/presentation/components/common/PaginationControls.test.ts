@@ -33,4 +33,9 @@ describe('PaginationControls - getPageNumbers windowing algorithm', () => {
     assert.deepStrictEqual(getPageNumbers(6, 10), [1, '...', 5, 6, 7, '...', 10]);
     assert.deepStrictEqual(getPageNumbers(10, 20), [1, '...', 9, 10, 11, '...', 20]);
   });
+
+  it('handles negative or zero currentPage gracefully', () => {
+    assert.deepStrictEqual(getPageNumbers(0, 5), [1, 2, 3, 4, 5]);
+    assert.deepStrictEqual(getPageNumbers(-1, 5), [1, 2, 3, 4, 5]);
+  });
 });

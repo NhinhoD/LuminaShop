@@ -89,7 +89,48 @@ export function PaginationControls({
   const searchParams = useSearchParams();
   const { locale } = useI18n();
 
-  if (totalPages <= 1) return null;
+  const shouldShowCount = showItemCount ?? (totalItems !== undefined && totalItems > 0);
+  const resolvedItemName = typeof itemName === "object"
+    ? (locale === "vi" ? itemName.vi : itemName.en)
+    : (itemName || (locale === "vi" ? "kết quả" : "items"));
+
+  // If there is only 1 page (or 0):
+  // Render item count summary if requested and items exist, otherwise return null
+  if (totalPages <= 1) {
+    if (!shouldShowCount || totalItems === undefined || totalItems <= 0) {
+      return null;
+    }
+
+    return (
+      <div
+        className={`flex items-center justify-between gap-4 pt-6 font-sans ${bordered ? "border-t border-slate-100" : ""} ${className}`}
+      >
+        <div className="text-xs font-medium text-slate-500 text-center sm:text-left">
+          {locale === "vi" ? (
+            <span>
+              Hiển thị{" "}
+              <span className="font-semibold text-slate-900">
+                1 - {totalItems}
+              </span>{" "}
+              trên{" "}
+              <span className="font-semibold text-slate-900">{totalItems}</span>{" "}
+              {resolvedItemName}
+            </span>
+          ) : (
+            <span>
+              Showing{" "}
+              <span className="font-semibold text-slate-900">
+                1 - {totalItems}
+              </span>{" "}
+              of{" "}
+              <span className="font-semibold text-slate-900">{totalItems}</span>{" "}
+              {resolvedItemName}
+            </span>
+          )}
+        </div>
+      </div>
+    );
+  }
 
   const safeCurrentPage = Math.min(Math.max(1, currentPage), totalPages);
 
@@ -102,11 +143,6 @@ export function PaginationControls({
 
   const isPrevDisabled = safeCurrentPage <= 1 || isPending;
   const isNextDisabled = safeCurrentPage >= totalPages || isPending;
-
-  const shouldShowCount = showItemCount ?? (totalItems !== undefined && totalItems > 0);
-  const resolvedItemName = typeof itemName === "object"
-    ? (locale === "vi" ? itemName.vi : itemName.en)
-    : (itemName || (locale === "vi" ? "kết quả" : "items"));
 
   const from = totalItems && totalItems > 0 && itemsPerPage
     ? (safeCurrentPage - 1) * itemsPerPage + 1

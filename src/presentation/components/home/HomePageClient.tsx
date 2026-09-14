@@ -382,9 +382,12 @@ export default function HomePageClient({
     }, 1200);
   };
 
+  const shouldShowSamples = activeCategory === "all" && totalProducts === 0 && featuredProducts.length === 0;
   const displayShowcaseProducts = (totalProducts > 0 || featuredProducts.length > 0)
     ? featuredProducts 
-    : (CURATED_SAMPLE_TEMPLATES as unknown as Product[]);
+    : shouldShowSamples
+      ? (CURATED_SAMPLE_TEMPLATES as unknown as Product[])
+      : [];
 
   const totalCount = totalProducts > 0 ? totalProducts : displayShowcaseProducts.length;
   const totalPages = Math.max(1, Math.ceil(totalCount / ITEMS_PER_PAGE));
