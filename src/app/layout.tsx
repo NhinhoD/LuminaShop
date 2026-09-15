@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { SpeedInsights } from '@vercel/speed-insights/next';
 
 export const metadata: Metadata = {
   title: "KhoUI - Premium UI Templates & Themes",
@@ -41,6 +42,7 @@ export default async function RootLayout({
             <ToastContainer />
           </BreadcrumbProvider>
         </I18nProvider>
+        <SpeedInsights />
       </body>
     </html>
   );
