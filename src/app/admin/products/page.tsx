@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import { redirect } from "next/navigation";
 import { makeGetProductsUseCase, makeGetCategoriesUseCase, getAppDictionary } from "@/di/container";
 import { formatCurrency } from "@/lib/utils";
 import { ProductDeleteButton } from "@/app/admin/products/ProductDeleteButton";
@@ -23,7 +24,8 @@ export default async function AdminProductsPage({
   const locale = await getLocale();
   
   const params = await searchParams;
-  const page = typeof params.page === 'string' ? parseInt(params.page) : 1;
+  const rawPage = typeof params?.page === 'string' ? parseInt(params.page, 10) : 1;
+  const page = Number.isSafeInteger(rawPage) && rawPage >= 1 ? rawPage : 1;
   const limit = 10;
   const offset = (page - 1) * limit;
   const search = typeof params.q === 'string' ? params.q : undefined;
@@ -69,7 +71,16 @@ export default async function AdminProductsPage({
 
   const { products, total } = result.data;
   const categories = categoriesResult.data.categories;
-  const totalPages = Math.ceil(total / limit);
+  const totalPages = Math.max(1, Math.ceil(total / limit));
+
+  if (total > 0 && page > totalPages) {
+    const redirectParams = new URLSearchParams();
+    if (search) redirectParams.set("q", search);
+    if (params?.category && params.category !== "all") redirectParams.set("category", params.category as string);
+    if (params?.status) redirectParams.set("status", params.status as string);
+    redirectParams.set("page", totalPages.toString());
+    redirect(`/admin/products?${redirectParams.toString()}`);
+  }
 
   return (
     <div className="max-w-[1600px] mx-auto w-full space-y-8 font-sans">
@@ -202,14 +213,17 @@ export default async function AdminProductsPage({
         </div>
         
         {/* Pagination Footer */}
-        {totalPages > 1 && (
-          <div className="p-4 border-t border-slate-100 bg-slate-50/50 flex justify-center flex-col items-center">
-            <div className="text-center mb-3 text-xs font-normal text-slate-500">
-              {locale === "vi" ? "Hiển thị" : "Showing"} <span className="text-slate-900 font-medium">{offset + 1}</span> - <span className="text-slate-900 font-medium">{Math.min(offset + limit, total)}</span> {locale === "vi" ? "trên" : "of"} <span className="text-slate-900 font-medium">{total}</span>
-            </div>
-            <PaginationControls currentPage={page} totalPages={totalPages} />
-          </div>
-        )}
+        <div className="p-4 border-t border-slate-100 bg-slate-50/50">
+          <PaginationControls 
+            currentPage={page} 
+            totalPages={totalPages} 
+            totalItems={total}
+            itemsPerPage={limit}
+            itemName={{ vi: "sản phẩm", en: "products" }}
+            layoutId="admin-products-pagination"
+            bordered={false}
+          />
+        </div>
       </div>
     </div>
   );

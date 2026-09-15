@@ -1,12 +1,14 @@
 import React from "react";
+import { redirect } from "next/navigation";
 import { getAppDictionary } from "@/di/container";
 import { getLocale } from "@/i18n/getDictionary";
 import { formatCurrency } from "@/lib/utils";
 import { formatDate } from "@/presentation/utils";
-import { getAdminCustomersAction } from "@/presentation/actions/admin";
+import { getPaginatedAdminCustomersAction } from "@/presentation/actions/admin";
+import { CustomerSearchInput } from "./CustomerSearchInput";
+import { PaginationControls } from "@/presentation/components/common/PaginationControls";
 import { 
   Users, 
-  Search, 
   Mail, 
   ShoppingBag, 
   CreditCard, 
@@ -18,63 +20,59 @@ import {
 
 export const dynamic = "force-dynamic";
 
+interface AdminCustomersPageProps {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}
+
 /**
  * Admin customers management page.
  * Displays registered users with aggregated order statistics (total orders, total spent, last order).
- * Supports search filtering by name, email, or user ID.
+ * Supports database-level search filtering by name, email, or user ID, and unified pagination.
  */
 export default async function AdminCustomersPage({
   searchParams,
-}: {
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
-}) {
+}: AdminCustomersPageProps): Promise<React.ReactElement> {
   const dict = await getAppDictionary();
   const adminDict = (dict.admin as Record<string, string>) || {};
   const locale = await getLocale();
 
   const params = await searchParams;
-  const search = typeof params.q === "string" ? params.q.toLowerCase() : "";
+  const rawPage = typeof params?.page === "string" ? parseInt(params.page, 10) : 1;
+  const page = Number.isSafeInteger(rawPage) && rawPage >= 1 ? rawPage : 1;
+  const itemsPerPage = 10;
+  const offset = (page - 1) * itemsPerPage;
+  const search = typeof params?.q === "string" ? params.q.trim() : undefined;
 
-  const [allCustomersResult, filteredCustomersResult] = await Promise.all([
-    getAdminCustomersAction(),
-    search ? getAdminCustomersAction(search) : Promise.resolve(null)
-  ]);
+  const result = await getPaginatedAdminCustomersAction({
+    limit: itemsPerPage,
+    offset,
+    search,
+  });
 
-  if (!allCustomersResult.success || !allCustomersResult.data) {
-    console.error("AdminCustomersPage: failed to load all customers:", allCustomersResult.error);
+  if (!result.success || !result.data) {
     return (
       <div className="p-8 text-center bg-red-50 border border-red-200 rounded-2xl text-red-700 max-w-xl mx-auto my-12 font-sans">
         <p className="font-semibold text-sm">
           {locale === "vi" ? "Không thể tải dữ liệu khách hàng từ máy chủ" : "Failed to load customer metrics from database"}
         </p>
         <p className="text-xs text-red-500 mt-1">
-          {locale === "vi" ? "Vui lòng thử lại sau." : "Please try again later."}
+          {result.error || (locale === "vi" ? "Vui lòng thử lại sau." : "Please try again later.")}
         </p>
       </div>
     );
   }
 
-  if (search && filteredCustomersResult && (!filteredCustomersResult.success || !filteredCustomersResult.data)) {
-    console.error("AdminCustomersPage: failed to search customers:", filteredCustomersResult.error);
-    return (
-      <div className="p-8 text-center bg-red-50 border border-red-200 rounded-2xl text-red-700 max-w-xl mx-auto my-12 font-sans">
-        <p className="font-semibold text-sm">
-          {locale === "vi" ? "Không thể tìm kiếm khách hàng" : "Failed to search customers"}
-        </p>
-        <p className="text-xs text-red-500 mt-1">
-          {locale === "vi" ? "Vui lòng thử lại sau." : "Please try again later."}
-        </p>
-      </div>
-    );
+  const { customers, total, vipCount, totalSpent } = result.data;
+  const totalPages = Math.max(1, Math.ceil(total / itemsPerPage));
+
+  if (total > 0 && page > totalPages) {
+    const redirectParams = new URLSearchParams();
+    if (search) {
+      redirectParams.set("q", search);
+    }
+    redirectParams.set("page", totalPages.toString());
+    redirect(`/admin/customers?${redirectParams.toString()}`);
   }
-
-  const allCustomers = allCustomersResult.data;
-  const filteredCustomers = search && filteredCustomersResult?.data ? filteredCustomersResult.data : allCustomers;
-
-  // KPI calculations
-  const totalCustomersCount = allCustomers.length;
-  const vipCustomersCount = allCustomers.filter((c) => c.totalSpent > 500000).length;
-  const totalCustomerSpend = allCustomers.reduce((acc, c) => acc + c.totalSpent, 0);
 
   return (
     <div className="space-y-6 font-sans">
@@ -96,7 +94,7 @@ export default async function AdminCustomersPage({
         <div className="p-5 bg-white border border-slate-100 rounded-2xl shadow-xs flex items-center justify-between">
           <div className="space-y-1">
             <p className="text-xs font-medium text-slate-500">{locale === "vi" ? "Tổng tài khoản" : "Total Accounts"}</p>
-            <p className="text-2xl font-bold text-slate-900 font-mono">{totalCustomersCount}</p>
+            <p className="text-2xl font-bold text-slate-900 font-mono">{total}</p>
             <p className="text-[11px] text-emerald-600 font-medium flex items-center gap-1">
               <UserCheck size={13} /> {locale === "vi" ? "Đang hoạt động" : "Active status"}
             </p>
@@ -109,9 +107,9 @@ export default async function AdminCustomersPage({
         <div className="p-5 bg-white border border-slate-100 rounded-2xl shadow-xs flex items-center justify-between">
           <div className="space-y-1">
             <p className="text-xs font-medium text-slate-500">{locale === "vi" ? "Khách hàng VIP" : "VIP Customers"}</p>
-            <p className="text-2xl font-bold text-slate-900 font-mono">{vipCustomersCount}</p>
+            <p className="text-2xl font-bold text-slate-900 font-mono">{vipCount}</p>
             <p className="text-[11px] text-purple-600 font-medium flex items-center gap-1">
-              <Award size={13} /> {locale === "vi" ? "Chi tiêu > 500k" : "Spent > 500k"}
+              <Award size={13} /> {locale === "vi" ? "Chi tiêu ≥ 2.000.000₫" : "Spent ≥ 2,000,000₫"}
             </p>
           </div>
           <div className="w-11 h-11 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center">
@@ -122,7 +120,7 @@ export default async function AdminCustomersPage({
         <div className="p-5 bg-white border border-slate-100 rounded-2xl shadow-xs flex items-center justify-between">
           <div className="space-y-1">
             <p className="text-xs font-medium text-slate-500">{locale === "vi" ? "Tổng tích lũy mua sắm" : "Total Lifetime Value"}</p>
-            <p className="text-2xl font-bold text-primary font-mono">{formatCurrency(totalCustomerSpend, locale)}</p>
+            <p className="text-2xl font-bold text-primary font-mono">{formatCurrency(totalSpent, locale)}</p>
             <p className="text-[11px] text-emerald-600 font-medium flex items-center gap-1">
               <TrendingUp size={13} /> {locale === "vi" ? "Bản quyền số" : "Digital licenses"}
             </p>
@@ -136,23 +134,17 @@ export default async function AdminCustomersPage({
       {/* Main Table Card */}
       <div className="bg-white border border-slate-100 rounded-2xl shadow-xs overflow-hidden">
         {/* Toolbar */}
-        <form className="p-4 border-b border-slate-100 flex flex-col sm:flex-row gap-3 items-center justify-between bg-slate-50/50">
-          <div className="relative w-full sm:w-80">
-            <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
-            <input
-              type="text"
-              name="q"
-              defaultValue={search}
-              placeholder={locale === "vi" ? "Tìm theo tên, email, ID..." : "Search name, email, ID..."}
-              className="w-full pl-9 pr-4 py-2 bg-white border border-slate-200/80 rounded-xl text-xs font-normal focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all placeholder:text-slate-400"
-            />
-          </div>
+        <div className="p-4 border-b border-slate-100 flex flex-col sm:flex-row gap-3 items-center justify-between bg-slate-50/50">
+          <CustomerSearchInput
+            initialSearch={search || ""}
+            placeholder={locale === "vi" ? "Tìm theo tên, email, ID..." : "Search name, email, ID..."}
+          />
           <div className="text-xs text-slate-500 font-medium">
-            {locale === "vi" ? "Hiển thị" : "Showing"}{" "}
-            <span className="font-bold text-slate-900 font-mono">{filteredCustomers.length}</span>{" "}
+            {locale === "vi" ? "Tổng cộng" : "Total"}{" "}
+            <span className="font-bold text-slate-900 font-mono">{total}</span>{" "}
             {locale === "vi" ? "khách hàng" : "customers"}
           </div>
-        </form>
+        </div>
 
         {/* Table Content */}
         <div className="overflow-x-auto">
@@ -167,14 +159,14 @@ export default async function AdminCustomersPage({
               </tr>
             </thead>
             <tbody className="text-xs text-slate-700 divide-y divide-slate-100">
-              {filteredCustomers.length === 0 ? (
+              {customers.length === 0 ? (
                 <tr>
                   <td colSpan={5} className="p-8 text-center text-slate-400 font-normal">
                     {locale === "vi" ? "Không tìm thấy khách hàng nào." : "No customers found."}
                   </td>
                 </tr>
               ) : (
-                filteredCustomers.map((cust) => (
+                customers.map((cust) => (
                   <tr key={cust.id} className="hover:bg-slate-50/60 transition-colors group">
                     <td className="p-4 pl-6">
                       <div className="flex items-center gap-3">
@@ -225,6 +217,17 @@ export default async function AdminCustomersPage({
             </tbody>
           </table>
         </div>
+
+        {/* Unified Pagination Controls */}
+        <PaginationControls
+          currentPage={page}
+          totalPages={totalPages}
+          totalItems={total}
+          itemsPerPage={itemsPerPage}
+          itemName={{ vi: "khách hàng", en: "customers" }}
+          layoutId="admin-customers-pagination"
+          className="p-4 border-t border-slate-100"
+        />
       </div>
     </div>
   );

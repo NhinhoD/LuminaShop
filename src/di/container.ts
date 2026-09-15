@@ -58,6 +58,7 @@ import { AddTranslationUseCase } from '@/application/use-cases/translations/AddT
 import { UpdateTranslationUseCase } from '@/application/use-cases/translations/UpdateTranslation';
 import { DeleteTranslationUseCase } from '@/application/use-cases/translations/DeleteTranslation';
 import { GetTranslationsUseCase } from '@/application/use-cases/translations/GetTranslations';
+import { GetPaginatedTranslationsUseCase } from '@/application/use-cases/translations/GetPaginatedTranslations';
 import { SyncTranslationsUseCase } from '@/application/use-cases/translations/SyncTranslations';
 import { GetLanguagesUseCase } from '@/application/use-cases/languages/GetLanguages';
 import { SetDefaultLanguageUseCase } from '@/application/use-cases/languages/SetDefaultLanguage';
@@ -344,6 +345,11 @@ export async function makeGetAdminCustomersUseCase() {
 export async function makeGetTranslationsUseCase() {
   const repo = await makeTranslationRepository();
   return new GetTranslationsUseCase(repo);
+}
+
+export async function makeGetPaginatedTranslationsUseCase() {
+  const repo = await makeTranslationRepository();
+  return new GetPaginatedTranslationsUseCase(repo);
 }
 
 export async function makeSyncTranslationsUseCase() {

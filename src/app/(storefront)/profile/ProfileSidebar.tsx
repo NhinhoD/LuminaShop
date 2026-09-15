@@ -56,7 +56,7 @@ export function ProfileSidebar({
   ];
 
   return (
-    <aside className="lg:col-span-3 space-y-6">
+    <aside className="lg:col-span-3 lg:sticky lg:top-24 z-10 self-start space-y-6">
       <div className="bg-white rounded-3xl border border-slate-100 p-6 shadow-[0_4px_24px_rgba(0,0,0,0.02)]">
         {/* User Identity */}
         <div className="flex flex-col items-center text-center mb-8">

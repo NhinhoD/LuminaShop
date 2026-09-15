@@ -4,20 +4,60 @@ import { useState, useTransition } from 'react';
 import { TranslationEntry } from '@/domain/repositories/ITranslationRepository';
 import { Edit3, Plus, Trash2, Search, Check, X, RefreshCw, Layers } from 'lucide-react';
 import { addTranslationAction, updateTranslationAction, deleteTranslationAction, syncAllTranslationsAction } from '@/presentation/actions/i18n';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname, useSearchParams } from 'next/navigation';
+import { useDebouncedCallback } from 'use-debounce';
 import { toast } from '@/presentation/hooks/useToastStore';
 import { useLocale } from "@/presentation/hooks/useLocale";
+import { PaginationControls } from "@/presentation/components/common/PaginationControls";
 import React from 'react';
 
-export default function TranslationTableClient({ initialTranslations }: { initialTranslations: TranslationEntry[] }): React.ReactElement {
+export interface TranslationTableClientProps {
+  readonly initialTranslations: TranslationEntry[];
+  readonly namespaces: string[];
+  readonly currentNamespace: string;
+  readonly currentSearch: string;
+  readonly currentPage: number;
+  readonly totalPages: number;
+  readonly totalItems: number;
+  readonly itemsPerPage: number;
+}
+
+export default function TranslationTableClient({
+  initialTranslations,
+  namespaces,
+  currentNamespace,
+  currentSearch,
+  currentPage,
+  totalPages,
+  totalItems,
+  itemsPerPage,
+}: TranslationTableClientProps): React.ReactElement {
+  // Sync state with props during render (React 19 pattern)
+  const [prevInitialTranslations, setPrevInitialTranslations] = useState(initialTranslations);
   const [translations, setTranslations] = useState<TranslationEntry[]>(initialTranslations);
-  const [search, setSearch] = useState("");
-  const [selectedNamespace, setSelectedNamespace] = useState<string>("all");
+  if (prevInitialTranslations !== initialTranslations) {
+    setPrevInitialTranslations(initialTranslations);
+    setTranslations(initialTranslations);
+  }
+
+  const [prevSearch, setPrevSearch] = useState(currentSearch);
+  const [search, setSearch] = useState(currentSearch);
+  if (prevSearch !== currentSearch) {
+    setPrevSearch(currentSearch);
+    setSearch(currentSearch);
+  }
+
+  const selectedNamespace = currentNamespace;
+
   const [adding, setAdding] = useState(false);
   const [editingKey, setEditingKey] = useState<string | null>(null);
   const [isSyncing, startSyncTransition] = useTransition();
   const locale = useLocale();
-  
+
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
   // New translation state
   const [newKey, setNewKey] = useState("");
   const [newNamespace, setNewNamespace] = useState("");
@@ -28,20 +68,39 @@ export default function TranslationTableClient({ initialTranslations }: { initia
   const [editVi, setEditVi] = useState("");
   const [editEn, setEditEn] = useState("");
 
-  const router = useRouter();
+  const updateUrl = (ns: string, term: string) => {
+    const params = new URLSearchParams(searchParams ? searchParams.toString() : "");
+    if (ns !== "all") {
+      params.set("ns", ns);
+    } else {
+      params.delete("ns");
+    }
 
-  // Extract unique namespaces for filter tabs
-  const namespaces = Array.from(new Set(translations.map(t => t.namespace || t.key.split('.')[0] || 'common'))).sort();
+    if (term.trim()) {
+      params.set("q", term.trim());
+    } else {
+      params.delete("q");
+    }
 
-  const filtered = translations.filter(t => {
-    const ns = t.namespace || t.key.split('.')[0] || 'common';
-    const matchesNs = selectedNamespace === "all" || ns === selectedNamespace;
-    const matchesSearch = 
-      t.key.toLowerCase().includes(search.toLowerCase()) || 
-      t.vi.toLowerCase().includes(search.toLowerCase()) ||
-      t.en.toLowerCase().includes(search.toLowerCase());
-    return matchesNs && matchesSearch;
-  });
+    params.delete("page"); // reset to page 1 on filter/search change
+    const qs = params.toString();
+    router.push(qs ? `${pathname}?${qs}` : pathname);
+  };
+
+  const debouncedSearch = useDebouncedCallback((term: string) => {
+    updateUrl(selectedNamespace, term);
+  }, 400);
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value;
+    setSearch(val);
+    debouncedSearch(val);
+  };
+
+  const handleNamespaceChange = (ns: string) => {
+    debouncedSearch.cancel();
+    updateUrl(ns, search);
+  };
 
   async function handleAdd() {
     if (!newKey || !newNamespace || (!newVi && !newEn)) {
@@ -50,7 +109,6 @@ export default function TranslationTableClient({ initialTranslations }: { initia
     }
     const res = await addTranslationAction(newKey, newNamespace, newVi, newEn);
     if (res.success) {
-      setTranslations(prev => [...prev, { key: newKey, namespace: newNamespace, vi: newVi, en: newEn }]);
       setAdding(false);
       setNewKey("");
       setNewNamespace("");
@@ -66,7 +124,6 @@ export default function TranslationTableClient({ initialTranslations }: { initia
   async function handleSaveEdit(key: string) {
     const res = await updateTranslationAction(key, editVi, editEn);
     if (res.success) {
-      setTranslations(prev => prev.map(t => t.key === key ? { ...t, vi: editVi, en: editEn } : t));
       setEditingKey(null);
       toast.success(locale === "vi" ? "Lưu bản dịch thành công!" : "Translation saved successfully!", `"${key}"`);
       router.refresh();
@@ -79,7 +136,6 @@ export default function TranslationTableClient({ initialTranslations }: { initia
     if (!confirm(locale === "vi" ? `Bạn có chắc chắn muốn xóa bản dịch cho khóa: ${key}?` : `Are you sure you want to delete translation for key: ${key}?`)) return;
     const res = await deleteTranslationAction(key);
     if (res.success) {
-      setTranslations(prev => prev.filter(t => t.key !== key));
       toast.info(locale === "vi" ? "Đã xóa khóa bản dịch" : "Translation key removed", `"${key}"`);
       router.refresh();
     } else {
@@ -115,7 +171,7 @@ export default function TranslationTableClient({ initialTranslations }: { initia
             type="text" 
             placeholder={locale === "vi" ? "Tìm kiếm theo mã key (ví dụ: home.hero.title1, nav.home) hoặc nội dung..." : "Search by key (e.g. home.hero.title1, nav.home) or text..."}
             value={search}
-            onChange={e => setSearch(e.target.value)}
+            onChange={handleSearchChange}
             className="w-full pl-10 pr-4 py-2 bg-white border border-slate-200/80 rounded-xl text-xs font-normal focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all placeholder:text-slate-400"
           />
         </div>
@@ -147,19 +203,19 @@ export default function TranslationTableClient({ initialTranslations }: { initia
           <Layers size={14} /> {locale === "vi" ? "Nhóm:" : "Namespace:"}
         </span>
         <button
-          onClick={() => setSelectedNamespace("all")}
+          onClick={() => handleNamespaceChange("all")}
           className={`px-3 py-1.5 rounded-xl text-xs font-medium transition-all cursor-pointer ${
             selectedNamespace === "all"
               ? "bg-primary text-white shadow-xs"
               : "bg-slate-50 text-slate-600 hover:bg-slate-100"
           }`}
         >
-          {locale === "vi" ? "Tất cả" : "All"} ({translations.length})
+          {locale === "vi" ? "Tất cả" : "All"}
         </button>
         {namespaces.map(ns => (
           <button
             key={ns}
-            onClick={() => setSelectedNamespace(ns)}
+            onClick={() => handleNamespaceChange(ns)}
             className={`px-3 py-1.5 rounded-xl text-xs font-medium transition-all cursor-pointer ${
               selectedNamespace === ns
                 ? "bg-primary text-white shadow-xs"
@@ -208,7 +264,7 @@ export default function TranslationTableClient({ initialTranslations }: { initia
                 </tr>
               )}
               
-              {filtered.length === 0 && !adding ? (
+              {translations.length === 0 && !adding ? (
                 <tr>
                   <td colSpan={5} className="px-6 py-12 text-center text-slate-400">
                     <p className="font-medium text-xs font-sans text-slate-700">{locale === "vi" ? "Không tìm thấy từ khóa dịch nào phù hợp." : "No matching translations found."}</p>
@@ -216,7 +272,7 @@ export default function TranslationTableClient({ initialTranslations }: { initia
                   </td>
                 </tr>
               ) : (
-                filtered.map((t) => (
+                translations.map((t) => (
                   <tr key={t.key} className="hover:bg-slate-50/60 transition-colors">
                     <td className="px-6 py-4 font-mono text-xs font-medium text-slate-900 break-all">{t.key}</td>
                     <td className="px-4 py-4">
@@ -271,8 +327,18 @@ export default function TranslationTableClient({ initialTranslations }: { initia
             </tbody>
           </table>
         </div>
+
+        {/* Unified Pagination Controls */}
+        <PaginationControls
+          currentPage={currentPage}
+          totalPages={totalPages}
+          totalItems={totalItems}
+          itemsPerPage={itemsPerPage}
+          itemName={{ vi: "từ khóa", en: "translations" }}
+          layoutId="admin-translations-pagination"
+          className="p-4 border-t border-slate-100"
+        />
       </div>
     </div>
   );
 }
-

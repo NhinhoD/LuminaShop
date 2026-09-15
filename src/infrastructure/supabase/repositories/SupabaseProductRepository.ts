@@ -89,7 +89,26 @@ export class SupabaseProductRepository implements IProductRepository {
 
     const { data, error, count } = await query;
     
-    if (error) throw new Error(error.message);
+    if (error) {
+      if (error.code === 'PGRST103' || error.message?.includes('satisfiable')) {
+        let countQuery = supabase
+          .from('products')
+          .select('id', { count: 'exact', head: true })
+          .is('deleted_at', null);
+
+        if (filters?.categoryId) countQuery = countQuery.eq('category_id', filters.categoryId);
+        if (filters?.isActive !== undefined) countQuery = countQuery.eq('is_active', filters.isActive);
+        if (filters?.search) {
+          countQuery = countQuery.or(`title->>vi.ilike.%${filters.search}%,title->>en.ilike.%${filters.search}%`);
+        }
+        const { count: actualCount, error: countError } = await countQuery;
+        if (countError) {
+          throw new Error(`Failed to count products: ${countError.message}`);
+        }
+        return { products: [], total: actualCount || 0 };
+      }
+      throw new Error(error.message);
+    }
     
     return {
       products: (data as ProductRow[] || []).map((row) => this.mapToEntity(row)),

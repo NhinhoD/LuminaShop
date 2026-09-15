@@ -90,13 +90,13 @@ export default async function OrderHistoryPage({ searchParams }: OrderHistoryPag
   const profileDict = (dict?.profile as Record<string, string>) || {};
 
   const params = await searchParams;
-  const currentTab = params.tab === "templates" ? "templates" : "orders";
-  const parsedPage = parseInt(params.page || "1", 10);
-  const safePage = Number.isFinite(parsedPage) && parsedPage > 0 ? parsedPage : 1;
-  const search = typeof params.q === "string" ? params.q.trim() : undefined;
+  const currentTab = params?.tab === "templates" ? "templates" : "orders";
+  const rawPage = typeof params?.page === "string" ? parseInt(params.page, 10) : 1;
+  const safePage = Number.isSafeInteger(rawPage) && rawPage >= 1 ? rawPage : 1;
+  const search = typeof params?.q === "string" ? params.q.trim() : undefined;
 
   // 1. Query user orders for "Lịch sử đơn hàng & thanh toán"
-  const ordersPerPage = 10;
+  const ordersPerPage = 6;
   const ordersOffset = (safePage - 1) * ordersPerPage;
   const ordersResult = await getUserOrdersAction(
     ordersPerPage, 
@@ -106,10 +106,10 @@ export default async function OrderHistoryPage({ searchParams }: OrderHistoryPag
   const ordersError = ordersResult.success ? null : ordersResult.error;
   const orders = ordersResult.data?.orders || [];
   const totalOrders = ordersResult.data?.total || 0;
-  const totalOrdersPages = Math.ceil(totalOrders / ordersPerPage);
+  const totalOrdersPages = Math.max(1, Math.ceil(totalOrders / ordersPerPage));
 
   // 2. Query user purchased templates for "Kho mã nguồn đã sở hữu" via application action
-  const templatesPerPage = 9;
+  const templatesPerPage = 6;
   const templatesOffset = (safePage - 1) * templatesPerPage;
 
   const templatesResult = await getUserPurchasedTemplatesAction(
@@ -119,7 +119,18 @@ export default async function OrderHistoryPage({ searchParams }: OrderHistoryPag
   );
   const templatesError = templatesResult.success ? null : templatesResult.error;
   const totalTemplates = templatesResult.data?.total || 0;
-  const totalTemplatesPages = Math.ceil(totalTemplates / templatesPerPage);
+  const totalTemplatesPages = Math.max(1, Math.ceil(totalTemplates / templatesPerPage));
+
+  const activeTotal = currentTab === "orders" ? totalOrders : totalTemplates;
+  const activeTotalPages = currentTab === "orders" ? totalOrdersPages : totalTemplatesPages;
+
+  if (activeTotal > 0 && safePage > activeTotalPages) {
+    const redirectParams = new URLSearchParams();
+    if (params?.tab) redirectParams.set("tab", params.tab);
+    if (search) redirectParams.set("q", search);
+    redirectParams.set("page", activeTotalPages.toString());
+    redirect(`/profile/orders?${redirectParams.toString()}`);
+  }
 
   const templateItems = (templatesResult.data?.items || []).map((item) => ({
     id: item.id,
@@ -354,11 +365,15 @@ export default async function OrderHistoryPage({ searchParams }: OrderHistoryPag
                     </div>
                   )}
 
-                  {totalOrdersPages > 1 && (
-                    <div className="mt-8 flex justify-center">
-                      <PaginationControls currentPage={safePage} totalPages={totalOrdersPages} />
-                    </div>
-                  )}
+                  <PaginationControls 
+                    currentPage={safePage} 
+                    totalPages={totalOrdersPages} 
+                    totalItems={totalOrders}
+                    itemsPerPage={ordersPerPage}
+                    itemName={{ vi: "đơn hàng", en: "orders" }}
+                    layoutId="profile-orders-pagination"
+                    className="mt-8"
+                  />
                 </div>
               )}
 
@@ -490,11 +505,15 @@ export default async function OrderHistoryPage({ searchParams }: OrderHistoryPag
                     </div>
                   )}
 
-                  {totalTemplatesPages > 1 && (
-                    <div className="mt-8 flex justify-center">
-                      <PaginationControls currentPage={safePage} totalPages={totalTemplatesPages} />
-                    </div>
-                  )}
+                  <PaginationControls 
+                    currentPage={safePage} 
+                    totalPages={totalTemplatesPages} 
+                    totalItems={totalTemplates}
+                    itemsPerPage={templatesPerPage}
+                    itemName={{ vi: "mã nguồn", en: "templates" }}
+                    layoutId="profile-templates-pagination"
+                    className="mt-8"
+                  />
                 </div>
               )}
             </section>

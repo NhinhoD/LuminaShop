@@ -7,12 +7,13 @@ import {
   makeUpdateTranslationUseCase, 
   makeDeleteTranslationUseCase, 
   makeGetTranslationsUseCase,
+  makeGetPaginatedTranslationsUseCase,
   makeSyncTranslationsUseCase 
 } from "@/di/container";
 import { clearDictionaryCache } from "@/i18n/getDictionary";
 import { vi } from "@/i18n/dictionaries/vi";
 import { en } from "@/i18n/dictionaries/en";
-import { TranslationEntry } from "@/domain/repositories/ITranslationRepository";
+import { TranslationEntry, TranslationFilters, PaginatedTranslations } from "@/domain/repositories/ITranslationRepository";
 import { assertAdmin } from "./authGuards";
 
 /**
@@ -33,6 +34,18 @@ export async function getTranslationsAction() {
   const useCase = await makeGetTranslationsUseCase();
   const result = await useCase.execute();
   return result.success ? result.data : [];
+}
+
+/**
+ * Retrieves paginated translation entries from the database with server-side filters.
+ */
+export async function getPaginatedTranslationsAction(filters?: TranslationFilters): Promise<PaginatedTranslations> {
+  const useCase = await makeGetPaginatedTranslationsUseCase();
+  const result = await useCase.execute(filters);
+  if (!result.success) {
+    throw new Error(result.error.message || "Failed to fetch paginated translations");
+  }
+  return result.data;
 }
 
 /**

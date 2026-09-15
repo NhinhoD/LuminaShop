@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import { getAllOrdersAction } from "@/presentation/actions/order";
 import { OrderList } from "@/presentation/components/admin/orders/OrderList";
 import { PaginationControls } from "@/presentation/components/common/PaginationControls";
@@ -21,11 +22,12 @@ interface AdminOrdersPageProps {
  */
 export default async function AdminOrdersPage({ searchParams }: AdminOrdersPageProps) {
   const params = await searchParams;
-  const currentPage = parseInt(params.page || "1", 10);
+  const rawPage = typeof params?.page === "string" ? parseInt(params.page, 10) : 1;
+  const currentPage = Number.isSafeInteger(rawPage) && rawPage >= 1 ? rawPage : 1;
   const itemsPerPage = 10;
   const offset = (currentPage - 1) * itemsPerPage;
-  const search = typeof params.q === 'string' ? params.q : undefined;
-  const status = typeof params.status === 'string' && params.status !== 'all' ? params.status as OrderStatus : undefined;
+  const search = typeof params?.q === 'string' ? params.q.trim() : undefined;
+  const status = typeof params?.status === 'string' && params.status !== 'all' ? params.status as OrderStatus : undefined;
 
   const dict = await getAppDictionary();
   const adminDict = (dict.admin as Record<string, string>) || {};
@@ -35,7 +37,15 @@ export default async function AdminOrdersPage({ searchParams }: AdminOrdersPageP
   
   const orders = response.success ? response.data?.orders || [] : [];
   const total = response.success ? response.data?.total || 0 : 0;
-  const totalPages = Math.ceil(total / itemsPerPage);
+  const totalPages = Math.max(1, Math.ceil(total / itemsPerPage));
+
+  if (total > 0 && currentPage > totalPages) {
+    const redirectParams = new URLSearchParams();
+    if (search) redirectParams.set("q", search);
+    if (params?.status && params.status !== "all") redirectParams.set("status", params.status);
+    redirectParams.set("page", totalPages.toString());
+    redirect(`/admin/orders?${redirectParams.toString()}`);
+  }
 
   return (
     <div className="space-y-8 font-sans">
@@ -59,11 +69,15 @@ export default async function AdminOrdersPage({ searchParams }: AdminOrdersPageP
 
       <OrderList initialOrders={orders} currentStatus={params.status || 'all'} currentSearch={search || ''} total={total} />
       
-      {totalPages > 1 && (
-        <div className="mt-8 flex justify-center">
-          <PaginationControls currentPage={currentPage} totalPages={totalPages} />
-        </div>
-      )}
+      <PaginationControls 
+        currentPage={currentPage} 
+        totalPages={totalPages} 
+        totalItems={total}
+        itemsPerPage={itemsPerPage}
+        itemName={{ vi: "đơn hàng", en: "orders" }}
+        layoutId="admin-orders-pagination"
+        className="mt-8"
+      />
     </div>
   );
 }

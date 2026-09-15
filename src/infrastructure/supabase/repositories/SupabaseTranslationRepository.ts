@@ -1,4 +1,4 @@
-import { ITranslationRepository, TranslationEntry } from '@/domain/repositories/ITranslationRepository';
+import { ITranslationRepository, TranslationEntry, TranslationFilters, PaginatedTranslations } from '@/domain/repositories/ITranslationRepository';
 import { SupabaseClient } from '@supabase/supabase-js';
 
 export class SupabaseTranslationRepository implements ITranslationRepository {
@@ -14,6 +14,84 @@ export class SupabaseTranslationRepository implements ITranslationRepository {
     }
 
     return data as TranslationEntry[];
+  }
+
+  async getPaginatedTranslations(filters?: TranslationFilters): Promise<PaginatedTranslations> {
+    // 1. Fetch unique namespaces for filter tabs via RPC with fallback
+    let namespaces: string[] = [];
+    const { data: rpcNs, error: rpcNsError } = await this.supabase.rpc('get_translation_namespaces');
+
+    if (!rpcNsError && Array.isArray(rpcNs) && rpcNs.length > 0) {
+      namespaces = rpcNs
+        .map((r: { namespace?: string }) => r.namespace || '')
+        .filter(Boolean)
+        .sort();
+    } else {
+      const { data: nsData } = await this.supabase
+        .from('site_translations')
+        .select('namespace');
+
+      namespaces = Array.from(
+        new Set(
+          (nsData || [])
+            .map((r: { namespace?: string }) => r.namespace || 'common')
+            .filter(Boolean)
+        )
+      ).sort();
+    }
+
+    // 2. Build filtered paginated query
+    let query = this.supabase
+      .from('site_translations')
+      .select('key, namespace, vi, en', { count: 'exact' });
+
+    if (filters?.namespace && filters.namespace !== 'all') {
+      query = query.eq('namespace', filters.namespace);
+    }
+
+    if (filters?.search && filters.search.trim()) {
+      const term = filters.search.trim();
+      const escapedTerm = term.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+      const pattern = `"%${escapedTerm}%"`;
+      query = query.or(`key.ilike.${pattern},vi.ilike.${pattern},en.ilike.${pattern}`);
+    }
+
+    query = query.order('key', { ascending: true });
+
+    const limit = filters?.limit ?? 10;
+    const offset = filters?.offset ?? 0;
+    query = query.range(offset, offset + limit - 1);
+
+    const { data, error, count } = await query;
+
+    if (error) {
+      if (error.code === 'PGRST103' || error.message?.includes('satisfiable')) {
+        let countQuery = this.supabase
+          .from('site_translations')
+          .select('id', { count: 'exact', head: true });
+        if (filters?.namespace && filters.namespace !== 'all') {
+          countQuery = countQuery.eq('namespace', filters.namespace);
+        }
+        if (filters?.search && filters.search.trim()) {
+          const term = filters.search.trim();
+          const escapedTerm = term.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+          const pattern = `"%${escapedTerm}%"`;
+          countQuery = countQuery.or(`key.ilike.${pattern},vi.ilike.${pattern},en.ilike.${pattern}`);
+        }
+        const { count: actualCount, error: countError } = await countQuery;
+        if (countError) {
+          throw new Error(`Failed to count translations: ${countError.message}`);
+        }
+        return { translations: [], total: actualCount || 0, namespaces };
+      }
+      throw new Error(error.message);
+    }
+
+    return {
+      translations: (data || []) as TranslationEntry[],
+      total: count ?? (data?.length || 0),
+      namespaces,
+    };
   }
 
   async updateTranslation(key: string, vi: string, en: string): Promise<void> {

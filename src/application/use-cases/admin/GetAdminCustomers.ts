@@ -1,4 +1,9 @@
-import { IDashboardRepository, CustomerWithStats } from '@/domain/repositories/IDashboardRepository';
+import { 
+  IDashboardRepository, 
+  CustomerWithStats, 
+  CustomerFilters, 
+  PaginatedCustomersResult 
+} from '@/domain/repositories/IDashboardRepository';
 import { Result, ok, fail } from '@/domain/shared/Result';
 
 export class GetAdminCustomersUseCase {
@@ -10,6 +15,15 @@ export class GetAdminCustomersUseCase {
       return ok(customers);
     } catch (error) {
       return fail(error instanceof Error ? error : new Error('Failed to retrieve customers'));
+    }
+  }
+
+  async executePaginated(filters?: CustomerFilters): Promise<Result<PaginatedCustomersResult>> {
+    try {
+      const result = await this.dashboardRepository.getPaginatedCustomers(filters);
+      return ok(result);
+    } catch (error) {
+      return fail(error instanceof Error ? error : new Error('Failed to retrieve paginated customers'));
     }
   }
 }

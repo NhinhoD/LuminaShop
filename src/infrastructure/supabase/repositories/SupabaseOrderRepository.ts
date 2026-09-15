@@ -57,7 +57,23 @@ export class SupabaseOrderRepository implements IOrderRepository {
 
     const { data, error, count } = await query.order('created_at', { ascending: false });
 
-    if (error) throw new Error(error.message);
+    if (error) {
+      if (error.code === 'PGRST103' || error.message?.includes('satisfiable')) {
+        let countQuery = supabase
+          .from('orders')
+          .select('id', { count: 'exact', head: true })
+          .eq('user_id', userId);
+        if (filters?.search) {
+          countQuery = countQuery.ilike('id', `%${filters.search}%`);
+        }
+        const { count: actualCount, error: countError } = await countQuery;
+        if (countError) {
+          throw new Error(`Failed to count customer orders: ${countError.message}`);
+        }
+        return { orders: [], total: actualCount ?? 0 };
+      }
+      throw new Error(error.message);
+    }
     return {
       orders: (data as OrderRow[] || []).map((row) => this.mapToEntity(row)),
       total: count || 0
@@ -84,7 +100,25 @@ export class SupabaseOrderRepository implements IOrderRepository {
     }
 
     const { data, error, count } = await query.order('created_at', { ascending: false });
-    if (error) throw new Error(error.message);
+    if (error) {
+      if (error.code === 'PGRST103' || error.message?.includes('satisfiable')) {
+        let countQuery = supabase
+          .from('orders')
+          .select('id', { count: 'exact', head: true });
+        if (filters?.status) {
+          countQuery = countQuery.eq('status', filters.status);
+        }
+        if (filters?.search) {
+          countQuery = countQuery.or(`id.ilike.%${filters.search}%,shipping_address->>fullName.ilike.%${filters.search}%`);
+        }
+        const { count: actualCount, error: countError } = await countQuery;
+        if (countError) {
+          throw new Error(`Failed to count orders: ${countError.message}`);
+        }
+        return { orders: [], total: actualCount ?? 0 };
+      }
+      throw new Error(error.message);
+    }
     return {
       orders: (data as OrderRow[] || []).map((row) => this.mapToEntity(row)),
       total: count || 0
@@ -267,6 +301,24 @@ export class SupabaseOrderRepository implements IOrderRepository {
       .range(offset, offset + limit - 1);
 
     if (error) {
+      if (error.code === 'PGRST103' || error.message?.includes('satisfiable')) {
+        let countQuery = this.supabase
+          .from('order_items')
+          .select('id, products!inner(id, title), orders!inner(user_id, status, payment_status)', { count: 'exact', head: true })
+          .eq('orders.user_id', userId)
+          .neq('orders.status', 'cancelled')
+          .or('payment_status.eq.paid,status.eq.completed,status.eq.delivered', { referencedTable: 'orders' });
+
+        if (options?.search) {
+          const escapedSearch = options.search.replace(/\\/g, '\\\\').replace(/[,()]/g, '\\$&');
+          countQuery = countQuery.or(`title->>vi.ilike.%${escapedSearch}%,title->>en.ilike.%${escapedSearch}%`, { referencedTable: 'products' });
+        }
+        const { count: actualCount, error: countError } = await countQuery;
+        if (countError) {
+          throw new Error(`Failed to count purchased templates: ${countError.message}`);
+        }
+        return { items: [], total: actualCount ?? 0 };
+      }
       throw new Error(`Failed to fetch user purchased templates: ${error.message}`);
     }
 

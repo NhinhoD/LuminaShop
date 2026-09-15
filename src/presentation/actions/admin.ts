@@ -1,7 +1,11 @@
 "use server";
 
 import { makeGetAdminCustomersUseCase } from "@/di/container";
-import { CustomerWithStats } from "@/domain/repositories/IDashboardRepository";
+import { 
+  CustomerWithStats, 
+  CustomerFilters, 
+  PaginatedCustomersResult 
+} from "@/domain/repositories/IDashboardRepository";
 import { assertAdmin } from "./authGuards";
 
 export interface AdminActionResponse<T> {
@@ -18,6 +22,30 @@ export async function getAdminCustomersAction(search?: string): Promise<AdminAct
     await assertAdmin();
     const useCase = await makeGetAdminCustomersUseCase();
     const result = await useCase.execute(search);
+
+    if (!result.success) {
+      return { success: false, error: result.error.message };
+    }
+
+    return { success: true, data: result.data };
+  } catch (error: unknown) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Không thể tải danh sách khách hàng."
+    };
+  }
+}
+
+/**
+ * Server action to retrieve paginated customers with server-side filters and global stats.
+ */
+export async function getPaginatedAdminCustomersAction(
+  filters?: CustomerFilters
+): Promise<AdminActionResponse<PaginatedCustomersResult>> {
+  try {
+    await assertAdmin();
+    const useCase = await makeGetAdminCustomersUseCase();
+    const result = await useCase.executePaginated(filters);
 
     if (!result.success) {
       return { success: false, error: result.error.message };
