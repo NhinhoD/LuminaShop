@@ -1,0 +1,23 @@
+﻿import { ITranslationRepository, TranslationEntry } from '@/server/domain/repositories/ITranslationRepository';
+import { Result, ok, fail } from '@/server/domain/shared/Result';
+
+/**
+ * Use case to retrieve all translation entries from the repository.
+ */
+export class GetTranslationsUseCase {
+  constructor(private translationRepo: ITranslationRepository) {}
+
+  /**
+   * Retrieves all translation entries.
+   *
+   * @returns Result containing an array of TranslationEntry.
+   */
+  async execute(): Promise<Result<TranslationEntry[]>> {
+    try {
+      const translations = await this.translationRepo.getAllTranslations();
+      return ok(translations);
+    } catch (error: unknown) {
+      return fail(error instanceof Error ? error : new Error('Failed to retrieve translations.'));
+    }
+  }
+}
