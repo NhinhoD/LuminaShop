@@ -1,13 +1,13 @@
-"use client";
+﻿"use client";
 
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { createProductAction, updateProductAction } from "@/presentation/actions/product";
-import { Category } from "@/domain/entities/Category";
-import { CreateProductDTO, UpdateProductDTO, Product } from "@/domain/entities/Product";
-import { createClient } from "@/infrastructure/supabase/client";
+import { createProductAction, updateProductAction } from "@/server/presentation/actions/product";
+import { Category } from "@/server/domain/entities/Category";
+import { CreateProductDTO, UpdateProductDTO, Product } from "@/server/domain/entities/Product";
+import { createClient } from "@/server/infrastructure/supabase/client";
 import { UploadCloud, CheckCircle, FileArchive, ImageIcon, Loader2 } from "lucide-react";
-import { toast } from "@/presentation/hooks/useToastStore";
+import { toast } from "@/client/hooks/useToastStore";
 
 interface ProductFormProps {
   categories: Category[];

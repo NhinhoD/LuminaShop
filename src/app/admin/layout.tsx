@@ -1,8 +1,8 @@
-import { notFound, redirect } from "next/navigation";
-import { makeGetCurrentUserUseCase, makeGetProfileUseCase, getAppDictionary } from "@/di/container";
+﻿import { notFound, redirect } from "next/navigation";
+import { makeGetCurrentUserUseCase, makeGetProfileUseCase, getAppDictionary } from "@/server/di/container";
 import { getLocale } from "@/i18n/getDictionary";
-import { ROLES, ROUTES } from "@/presentation/constants";
-import { AdminShell } from "@/presentation/components/admin/layout/AdminShell";
+import { ROLES, ROUTES } from "@/shared/constants";
+import { AdminShell } from "@/client/components/admin/layout/AdminShell";
 
 export const dynamic = "force-dynamic";
 

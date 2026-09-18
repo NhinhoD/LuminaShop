@@ -1,7 +1,7 @@
-import Link from 'next/link';
+﻿import Link from 'next/link';
 import Image from 'next/image';
 import { User, Lock, LogOut, ShoppingBag } from 'lucide-react';
-import { signout } from '@/presentation/actions/auth';
+import { signout } from '@/server/presentation/actions/auth';
 
 interface ProfileSidebarProps {
   user: {

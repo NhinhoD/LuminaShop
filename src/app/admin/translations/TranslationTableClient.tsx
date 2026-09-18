@@ -1,14 +1,14 @@
-"use client";
+﻿"use client";
 
 import { useState, useTransition } from 'react';
-import { TranslationEntry } from '@/domain/repositories/ITranslationRepository';
+import { TranslationEntry } from '@/server/domain/repositories/ITranslationRepository';
 import { Edit3, Plus, Trash2, Search, Check, X, RefreshCw, Layers } from 'lucide-react';
-import { addTranslationAction, updateTranslationAction, deleteTranslationAction, syncAllTranslationsAction } from '@/presentation/actions/i18n';
+import { addTranslationAction, updateTranslationAction, deleteTranslationAction, syncAllTranslationsAction } from '@/server/presentation/actions/i18n';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { useDebouncedCallback } from 'use-debounce';
-import { toast } from '@/presentation/hooks/useToastStore';
-import { useLocale } from "@/presentation/hooks/useLocale";
-import { PaginationControls } from "@/presentation/components/common/PaginationControls";
+import { toast } from '@/client/hooks/useToastStore';
+import { useLocale } from "@/client/hooks/useLocale";
+import { PaginationControls } from "@/client/components/common/PaginationControls";
 import React from 'react';
 
 export interface TranslationTableClientProps {

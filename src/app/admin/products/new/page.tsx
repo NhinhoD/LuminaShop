@@ -1,4 +1,4 @@
-import { makeGetCategoriesUseCase, getAppDictionary } from "@/di/container";
+﻿import { makeGetCategoriesUseCase, getAppDictionary } from "@/server/di/container";
 import { ProductForm } from "@/app/admin/products/ProductForm";
 import { getLocale } from "@/i18n/getDictionary";
 

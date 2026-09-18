@@ -1,18 +1,18 @@
-import { notFound } from "next/navigation";
+﻿import { notFound } from "next/navigation";
 import { 
   makeGetProductByIdUseCase, 
   makeCheckProductPurchasedUseCase, 
   makeGetCurrentUserUseCase, 
   getAppDictionary 
-} from "@/di/container";
-import { BreadcrumbSetter } from "@/presentation/components/common/BreadcrumbSetter";
-import { ROUTES } from "@/presentation/constants";
-import ProductSelection from "@/presentation/components/product/ProductSelection";
-import ProductMediaGallery from "@/presentation/components/product/ProductMediaGallery";
+} from "@/server/di/container";
+import { BreadcrumbSetter } from "@/client/components/common/BreadcrumbSetter";
+import { ROUTES } from "@/shared/constants";
+import ProductSelection from "@/client/components/product/ProductSelection";
+import ProductMediaGallery from "@/client/components/product/ProductMediaGallery";
 import { getLocale } from "@/i18n/getDictionary";
-import { getLocalizedText } from "@/presentation/utils/locale";
+import { getLocalizedText } from "@/shared/utils/locale";
 import { Zap, Layers, ShieldCheck, HelpCircle, Star } from "lucide-react";
-import { sanitizeProductForPublic } from "@/domain/entities/Product";
+import { sanitizeProductForPublic } from "@/server/domain/entities/Product";
 
 interface ProductPageProps {
   params: Promise<{ id: string }>;

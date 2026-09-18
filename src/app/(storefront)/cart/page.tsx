@@ -1,13 +1,13 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import Image from "next/image";
-import { useCart } from "@/presentation/hooks/useCart";
-import { useI18n } from "@/presentation/components/common/I18nContext";
-import { getLocalizedText } from "@/presentation/utils/locale";
-import { ROUTES } from "@/presentation/constants";
-import { formatCurrency } from "@/lib/utils";
-import { toast } from "@/presentation/hooks/useToastStore";
+import { useCart } from "@/client/hooks/useCart";
+import { useI18n } from "@/client/components/common/I18nContext";
+import { getLocalizedText } from "@/shared/utils/locale";
+import { ROUTES } from "@/shared/constants";
+import { formatCurrency } from "@/shared/utils";
+import { toast } from "@/client/hooks/useToastStore";
 import { ShoppingBag, Image as ImageIcon, Minus, Plus, ArrowRight, ShieldCheck, Zap } from "lucide-react";
 
 /**

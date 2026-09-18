@@ -1,6 +1,6 @@
-import React from "react";
+﻿import React from "react";
 import Link from "next/link";
-import { getAppDictionary } from "@/di/container";
+import { getAppDictionary } from "@/server/di/container";
 import { getLocale } from "@/i18n/getDictionary";
 import { 
   Settings, 

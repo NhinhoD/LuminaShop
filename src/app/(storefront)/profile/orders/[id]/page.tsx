@@ -1,19 +1,19 @@
-import { getOrderAction } from "@/presentation/actions/order";
-import { verifyOrderPaymentAction } from "@/presentation/actions/payment";
-import { OrderRealtimeTracker } from "@/presentation/components/orders/OrderRealtimeTracker";
-import { StatusBadge } from "@/presentation/components/orders/StatusBadge";
-import { CancelOrderButton } from "@/presentation/components/orders/CancelOrderButton";
-import { cn } from "@/presentation/utils";
-import { formatCurrency, formatDate } from "@/lib/utils";
-import { BackButton } from "@/presentation/components/common/BackButton";
+﻿import { getOrderAction } from "@/server/presentation/actions/order";
+import { verifyOrderPaymentAction } from "@/server/presentation/actions/payment";
+import { OrderRealtimeTracker } from "@/client/components/orders/OrderRealtimeTracker";
+import { StatusBadge } from "@/client/components/orders/StatusBadge";
+import { CancelOrderButton } from "@/client/components/orders/CancelOrderButton";
+import { cn } from "@/shared/utils";
+import { formatCurrency, formatDate } from "@/shared/utils";
+import { BackButton } from "@/client/components/common/BackButton";
 import Link from "next/link";
 import { Package, MapPin, CreditCard, ShoppingBag, Download, ExternalLink, CheckCircle2, QrCode, AlertTriangle, RefreshCw } from "lucide-react";
-import { ImageWithFallback } from "@/presentation/components/common/ImageWithFallback";
-import { OrderStatus } from "@/domain/entities/Order";
+import { ImageWithFallback } from "@/client/components/common/ImageWithFallback";
+import { OrderStatus } from "@/server/domain/entities/Order";
 import { Metadata } from "next";
 import { getDictionary, getLocale } from "@/i18n/getDictionary";
-import { getLocalizedText } from "@/presentation/utils/locale";
-import { makeLanguageRepository, makeGetProductByIdUseCase } from "@/di/container";
+import { getLocalizedText } from "@/shared/utils/locale";
+import { makeLanguageRepository, makeGetProductByIdUseCase } from "@/server/di/container";
 
 export const metadata: Metadata = {
   title: "Chi tiết đơn hàng | KhoUI",

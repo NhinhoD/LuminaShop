@@ -1,10 +1,10 @@
-"use client";
+﻿"use client";
 
 import { useState, useTransition } from "react";
-import { updateTranslationAction } from "@/presentation/actions/i18n";
-import { TranslationEntry } from "@/domain/repositories/ITranslationRepository";
+import { updateTranslationAction } from "@/server/presentation/actions/i18n";
+import { TranslationEntry } from "@/server/domain/repositories/ITranslationRepository";
 import { Edit3 } from "lucide-react";
-import { toast } from "@/presentation/hooks/useToastStore";
+import { toast } from "@/client/hooks/useToastStore";
 
 export default function LanguageTableClient({ 
   initialTranslations,
