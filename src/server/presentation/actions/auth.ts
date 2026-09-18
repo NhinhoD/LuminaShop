@@ -1,0 +1,324 @@
+﻿'use server'
+
+import { revalidatePath } from 'next/cache'
+import { redirect } from 'next/navigation'
+import { cookies } from 'next/headers'
+import { 
+  makeLoginUseCase, 
+  makeSignupUseCase, 
+  makeVerifyOtpUseCase, 
+  makeResendOtpUseCase, 
+  makeSignoutUseCase,
+  makeForgotPasswordUseCase,
+  makeUpdatePasswordUseCase,
+  makeChangePasswordUseCase,
+  makeUpdateProfileUseCase,
+  makeGetCurrentUserUseCase,
+  makeGetProfileUseCase
+} from '@/server/di/container'
+import { unstable_rethrow } from 'next/navigation'
+import {
+  credentialsSchema,
+  signUpFormSchema as SignUpFormSchema,
+  otpVerificationSchema,
+  emailCookieSchema,
+  forgotPasswordSchema,
+  updatePasswordSchema,
+  changePasswordSchema
+} from '@/shared/validations/auth'
+
+export async function login(formData: FormData): Promise<never> {
+  try {
+    const email = formData.get('email')
+    const password = formData.get('password')
+
+    const parsed = credentialsSchema.safeParse({ email, password })
+    if (!parsed.success) {
+      redirect('/login?error=InvalidCredentials')
+    }
+
+    const { email: parsedEmail, password: parsedPassword } = parsed.data
+
+    const loginUseCase = await makeLoginUseCase()
+    const result = await loginUseCase.execute(parsedEmail, parsedPassword)
+
+    if (!result.success) {
+      redirect('/login?error=InvalidCredentials')
+    }
+
+    revalidatePath('/', 'layout')
+    redirect('/profile')
+  } catch (error: unknown) {
+    unstable_rethrow(error)
+    redirect('/login?error=ServerError')
+  }
+}
+
+export async function signup(formData: FormData): Promise<never> {
+  try {
+    const email = formData.get('email')
+    const password = formData.get('password')
+
+    const parsedCredentials = credentialsSchema.safeParse({ email, password })
+    if (!parsedCredentials.success) {
+      redirect('/register?error=SignUpFailed')
+    }
+
+    const parsedNames = SignUpFormSchema.safeParse({
+      firstName: formData.get('firstName'),
+      lastName: formData.get('lastName'),
+    })
+
+    if (!parsedNames.success) {
+      redirect('/register?error=SignUpFailed')
+    }
+
+    const { email: parsedEmail, password: parsedPassword } = parsedCredentials.data
+    const { firstName, lastName } = parsedNames.data
+
+    const signupUseCase = await makeSignupUseCase()
+    const fullName = `${firstName || ''} ${lastName || ''}`.trim()
+    
+    const result = await signupUseCase.execute(parsedEmail, parsedPassword, fullName)
+
+    if (!result.success) {
+      redirect('/register?error=SignUpFailed')
+    }
+
+    // Store email in cookie for OTP page
+    const cookieStore = await cookies()
+    cookieStore.set('pending_verification_email', parsedEmail, { 
+      httpOnly: true, 
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 60 * 10 // 10 minutes
+    })
+
+    redirect('/verify-otp')
+  } catch (error: unknown) {
+    unstable_rethrow(error)
+    redirect('/register?error=ServerError')
+  }
+}
+
+export async function verifySignupOtpAction(formData: FormData): Promise<{ error?: string }> {
+  try {
+    const cookieStore = await cookies()
+    const email = cookieStore.get('pending_verification_email')?.value
+    const token = formData.get('token')
+
+    const parsed = otpVerificationSchema.safeParse({ email, token })
+    if (!parsed.success) {
+      const errors = parsed.error.format()
+      if (errors.email) {
+        return { error: 'Phiên bản đã hết hạn hoặc không tìm thấy email' }
+      }
+      if (errors.token) {
+        return { error: errors.token._errors[0] || 'Vui lòng nhập mã OTP' }
+      }
+      return { error: 'Dữ liệu không hợp lệ' }
+    }
+
+    const { email: validatedEmail, token: validatedToken } = parsed.data
+
+    const verifyOtpUseCase = await makeVerifyOtpUseCase()
+    const result = await verifyOtpUseCase.execute(validatedEmail, validatedToken)
+
+    if (!result.success) {
+      return { error: result.error.message || 'Mã OTP không hợp lệ hoặc đã hết hạn' }
+    }
+
+    // Clear the cookie upon success
+    cookieStore.delete('pending_verification_email')
+
+    revalidatePath('/', 'layout')
+    redirect('/')
+  } catch (error: unknown) {
+    unstable_rethrow(error)
+    return { error: 'Lỗi máy chủ khi xác nhận mã OTP' }
+  }
+}
+
+export async function resendOtpAction(): Promise<{ success?: boolean; error?: string }> {
+  try {
+    const cookieStore = await cookies()
+    const email = cookieStore.get('pending_verification_email')?.value
+
+    const parsed = emailCookieSchema.safeParse(email)
+    if (!parsed.success) {
+      return { error: 'Phiên bản đã hết hạn hoặc không tìm thấy email' }
+    }
+
+    const validatedEmail = parsed.data
+
+    const resendOtpUseCase = await makeResendOtpUseCase()
+    const result = await resendOtpUseCase.execute(validatedEmail)
+
+    if (!result.success) {
+      return { error: result.error.message }
+    }
+
+    // Refresh the pending_verification_email cookie with updated expiry (10 more minutes)
+    cookieStore.set('pending_verification_email', validatedEmail, { 
+      httpOnly: true, 
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 60 * 10 // 10 minutes
+    })
+
+    return { success: true }
+  } catch {
+    return { error: 'Lỗi máy chủ khi gửi lại mã OTP' }
+  }
+}
+
+export async function updateProfileAction(fullName: string, phone: string): Promise<{ success: boolean; error?: string }> {
+  try {
+    const useCase = await makeUpdateProfileUseCase();
+    const result = await useCase.execute(fullName, phone);
+
+    if (!result.success) {
+      return { success: false, error: result.error.message };
+    }
+
+    revalidatePath('/profile');
+    return { success: true };
+  } catch (error) {
+    return { 
+      success: false, 
+      error: error instanceof Error ? error.message : "Đã có lỗi xảy ra khi cập nhật hồ sơ." 
+    };
+  }
+}
+
+export async function signout(): Promise<never> {
+  try {
+    const signoutUseCase = await makeSignoutUseCase()
+    const result = await signoutUseCase.execute()
+
+    if (!result.success) {
+      redirect('/')
+    }
+
+    revalidatePath('/', 'layout')
+    redirect('/')
+  } catch (error: unknown) {
+    unstable_rethrow(error)
+    redirect('/')
+  }
+}
+
+
+
+export async function forgotPasswordAction(formData: FormData): Promise<{ success?: boolean; error?: string }> {
+  try {
+    const rawEmail = formData.get('email');
+    const parsed = forgotPasswordSchema.safeParse({ email: rawEmail });
+    if (!parsed.success) {
+      return { error: 'Địa chỉ email không hợp lệ' };
+    }
+
+    const { email } = parsed.data;
+
+    // Strictly resolve baseUrl from configured environment origin, avoiding unvalidated Host headers
+    let baseUrl: string | undefined;
+    const rawEnvUrl = process.env.APP_URL || process.env.NEXT_PUBLIC_SITE_URL;
+    if (rawEnvUrl) {
+      try {
+        const parsed = new URL(rawEnvUrl);
+        if (parsed.protocol === 'https:' || (process.env.NODE_ENV === 'development' && parsed.protocol === 'http:')) {
+          baseUrl = parsed.origin;
+        }
+      } catch {
+        baseUrl = undefined;
+      }
+    }
+
+    if (!baseUrl) {
+      if (process.env.NODE_ENV === 'development') {
+        baseUrl = 'http://localhost:3000';
+      } else {
+        return { error: 'Cấu hình hệ thống chưa hoàn tất: vui lòng cấu hình APP_URL hoặc NEXT_PUBLIC_SITE_URL.' };
+      }
+    }
+
+    const redirectTo = `${baseUrl}/reset-password`;
+
+    const useCase = await makeForgotPasswordUseCase();
+    const result = await useCase.execute(email, redirectTo);
+
+    if (!result.success) {
+      return { error: result.error.message || 'Không thể gửi email đặt lại mật khẩu' };
+    }
+
+    return { success: true };
+  } catch (error) {
+    return { error: error instanceof Error ? error.message : 'Lỗi hệ thống khi gửi email đặt lại mật khẩu' };
+  }
+}
+
+export async function updatePasswordAction(formData: FormData): Promise<{ success?: boolean; error?: string }> {
+  try {
+    const rawPassword = formData.get('password');
+    const parsed = updatePasswordSchema.safeParse({ password: rawPassword });
+    if (!parsed.success) {
+      return { error: 'Mật khẩu phải có ít nhất 6 ký tự' };
+    }
+
+    const { password } = parsed.data;
+    const useCase = await makeUpdatePasswordUseCase();
+    const result = await useCase.execute(password);
+
+    if (!result.success) {
+      return { error: result.error.message || 'Không thể cập nhật mật khẩu' };
+    }
+
+    revalidatePath('/profile');
+    return { success: true };
+  } catch (error) {
+    return { error: error instanceof Error ? error.message : 'Lỗi hệ thống khi cập nhật mật khẩu' };
+  }
+}
+
+
+
+export async function changePasswordAction(formData: FormData): Promise<{ success?: boolean; error?: string }> {
+  try {
+    const rawCurrentPassword = formData.get('currentPassword');
+    const rawNewPassword = formData.get('newPassword');
+    const rawConfirmPassword = formData.get('confirmPassword');
+
+    const parsed = changePasswordSchema.safeParse({
+      currentPassword: rawCurrentPassword,
+      newPassword: rawNewPassword,
+      confirmPassword: rawConfirmPassword,
+    });
+
+    if (!parsed.success) {
+      return { error: parsed.error.issues[0]?.message || 'Dữ liệu không hợp lệ' };
+    }
+
+    const { currentPassword, newPassword } = parsed.data;
+    const useCase = await makeChangePasswordUseCase();
+    const result = await useCase.execute(currentPassword, newPassword);
+
+    if (!result.success) {
+      return { error: result.error.message || 'Không thể đổi mật khẩu' };
+    }
+
+    revalidatePath('/profile');
+    revalidatePath('/profile/password');
+    return { success: true };
+  } catch (error) {
+    return { error: error instanceof Error ? error.message : 'Lỗi hệ thống khi đổi mật khẩu' };
+  }
+}
+
+export async function getCurrentUserAction() {
+  const useCase = await makeGetCurrentUserUseCase();
+  return useCase.execute();
+}
+
+export async function getProfileAction(userId: string) {
+  const useCase = await makeGetProfileUseCase();
+  return useCase.execute(userId);
+}
+

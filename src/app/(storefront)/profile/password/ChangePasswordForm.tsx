@@ -1,9 +1,9 @@
-"use client";
+﻿"use client";
 
 import { useState, useTransition } from "react";
 import Link from "next/link";
-import { changePasswordAction } from "@/presentation/actions/auth";
-import { toast } from "@/presentation/hooks/useToastStore";
+import { changePasswordAction } from "@/server/presentation/actions/auth";
+import { toast } from "@/client/hooks/useToastStore";
 import { Lock, KeyRound, Eye, EyeOff, Loader2, CheckCircle2 } from "lucide-react";
 
 interface Props {

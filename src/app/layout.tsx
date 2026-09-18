@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -6,10 +6,10 @@ export const metadata: Metadata = {
   description: "Discover exclusive, high-quality website templates and themes. Built with Next.js, Tailwind CSS, and GSAP for modern web development.",
 };
 
-import { BreadcrumbProvider } from "@/presentation/components/common/BreadcrumbContext";
-import { I18nProvider, Locale } from "@/presentation/components/common/I18nContext";
-import { getAppDictionary } from "@/di/container";
-import { ToastContainer } from "@/presentation/components/common/ToastContainer";
+import { BreadcrumbProvider } from "@/client/components/common/BreadcrumbContext";
+import { I18nProvider, Locale } from "@/client/components/common/I18nContext";
+import { getAppDictionary } from "@/server/di/container";
+import { ToastContainer } from "@/client/components/common/ToastContainer";
 
 import { Plus_Jakarta_Sans } from "next/font/google";
 

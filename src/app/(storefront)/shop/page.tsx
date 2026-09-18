@@ -1,10 +1,10 @@
-import { redirect } from "next/navigation";
-import { makeGetProductsUseCase, makeGetCategoriesUseCase, getAppDictionary } from "@/di/container";
-import ShopProductGrid from "@/presentation/components/product/ShopProductGrid";
-import { PaginationControls } from "@/presentation/components/common/PaginationControls";
+﻿import { redirect } from "next/navigation";
+import { makeGetProductsUseCase, makeGetCategoriesUseCase, getAppDictionary } from "@/server/di/container";
+import ShopProductGrid from "@/client/components/product/ShopProductGrid";
+import { PaginationControls } from "@/client/components/common/PaginationControls";
 import { getLocale } from "@/i18n/getDictionary";
 import { Sparkles, Zap } from "lucide-react";
-import { sanitizeProductsForPublic } from "@/domain/entities/Product";
+import { sanitizeProductsForPublic } from "@/server/domain/entities/Product";
 
 interface ShopPageProps {
   searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;

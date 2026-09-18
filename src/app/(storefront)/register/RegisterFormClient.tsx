@@ -1,8 +1,8 @@
-"use client";
+﻿"use client";
 
 import { useState, useTransition } from "react";
-import { signup } from "@/presentation/actions/auth";
-import { toast } from "@/presentation/hooks/useToastStore";
+import { signup } from "@/server/presentation/actions/auth";
+import { toast } from "@/client/hooks/useToastStore";
 import { Mail, Lock, Eye, EyeOff, User, ArrowRight, Loader2, Info } from "lucide-react";
 
 interface RegisterFormClientProps {

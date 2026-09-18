@@ -1,11 +1,11 @@
-import Link from "next/link";
-import { makeGetDashboardMetricsUseCase, getAppDictionary } from "@/di/container";
-import { getAllOrdersAction } from "@/presentation/actions/order";
+﻿import Link from "next/link";
+import { makeGetDashboardMetricsUseCase, getAppDictionary } from "@/server/di/container";
+import { getAllOrdersAction } from "@/server/presentation/actions/order";
 import { getLocale } from "@/i18n/getDictionary";
-import { formatCurrency } from "@/lib/utils";
-import { StatusBadge } from "@/presentation/components/orders/StatusBadge";
-import { formatDate } from "@/presentation/utils";
-import { Order } from "@/domain/entities/Order";
+import { formatCurrency } from "@/shared/utils";
+import { StatusBadge } from "@/client/components/orders/StatusBadge";
+import { formatDate } from "@/shared/utils";
+import { Order } from "@/server/domain/entities/Order";
 import { 
   Download, 
   TrendingUp, 

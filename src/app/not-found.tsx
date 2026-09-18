@@ -1,9 +1,9 @@
-import Link from "next/link";
-import { Navbar } from "@/presentation/components/layout/Navbar";
-import { Footer } from "@/presentation/components/layout/Footer";
-import CartDrawer from "@/presentation/components/layout/CartDrawer";
+﻿import Link from "next/link";
+import { Navbar } from "@/client/components/layout/Navbar";
+import { Footer } from "@/client/components/layout/Footer";
+import CartDrawer from "@/client/components/layout/CartDrawer";
 import { cookies } from "next/headers";
-import { getAppDictionary } from "@/di/container";
+import { getAppDictionary } from "@/server/di/container";
 import { Locale } from "@/i18n/getDictionary";
 import { Home, ShoppingBag, ArrowLeft } from "lucide-react";
 

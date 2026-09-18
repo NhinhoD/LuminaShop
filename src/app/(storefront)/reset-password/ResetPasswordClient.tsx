@@ -1,10 +1,10 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { updatePasswordAction } from "@/presentation/actions/auth";
-import { createClient } from "@/infrastructure/supabase/client";
-import { ROUTES } from "@/presentation/constants";
+import { updatePasswordAction } from "@/server/presentation/actions/auth";
+import { createClient } from "@/server/infrastructure/supabase/client";
+import { ROUTES } from "@/shared/constants";
 import { Lock, ArrowRight, CheckCircle2, Eye, EyeOff, Loader2 } from "lucide-react";
 
 interface Props {

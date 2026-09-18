@@ -1,4 +1,4 @@
-import { makeGetCustomerCheckoutInfoUseCase } from "@/di/container";
+﻿import { makeGetCustomerCheckoutInfoUseCase } from "@/server/di/container";
 import CheckoutClient, { CustomerCheckoutInfo } from "./CheckoutClient";
 
 export const dynamic = "force-dynamic";
