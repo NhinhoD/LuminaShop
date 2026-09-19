@@ -1,10 +1,10 @@
-import { redirect } from 'next/navigation';
-import { makeGetCurrentUserUseCase, makeGetProfileUseCase, getAppDictionary } from '@/di/container';
-import { ROUTES } from '@/presentation/constants';
+﻿import { redirect } from 'next/navigation';
+import { makeGetCurrentUserUseCase, makeGetProfileUseCase, getAppDictionary } from '@/server/di/container';
+import { ROUTES } from '@/shared/constants';
 import { getLocale } from '@/i18n/getDictionary';
 import { ProfileFormClient } from './ProfileFormClient';
 import { ProfileSidebar } from './ProfileSidebar';
-import { UserOrdersRealtimeTracker } from '@/presentation/components/orders/UserOrdersRealtimeTracker';
+import { UserOrdersRealtimeTracker } from '@/client/components/orders/UserOrdersRealtimeTracker';
 
 /**
  * User profile page displaying account information and navigation sidebar.

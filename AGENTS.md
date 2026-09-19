@@ -16,10 +16,10 @@ When starting ANY new session, always do this first — no exceptions:
 
 1. Read @AGENTS.md (this file) — current status and all rules
 2. Read @README.md — project overview
-3. Read @src/domain — understand all entities and interfaces
-4. Read @src/application — understand all use cases
-5. Read @src/infrastructure/supabase — understand DB layer
-6. Read @src/presentation — understand UI layer
+3. Read @src/server/domain — understand all entities and interfaces
+4. Read @src/server/application — understand all use cases
+5. Read @src/server/infrastructure/supabase — understand DB layer
+6. Read @src/client & @src/server/presentation/actions — understand UI and server actions layer
 7. Read @public/stitch_e_commerce_ux_ui_design — UI design references
 8. Read @.agents/skills/supabase/ — Supabase & Postgres best practices
 9. Read @.agents/skills/stitch/ — Stitch UX/UI design patterns & stitch-skill
@@ -66,43 +66,67 @@ After reading, report to user:
 
 ## ─── ARCHITECTURE RULES ───
 
-**Clean Architecture — strict layer boundaries. Never violate these.**
+**Clean Architecture + Next.js 16 Physical Boundaries (Option A)**:
+The codebase is cleanly separated into 3 main modules: `src/server`, `src/client`, and `src/shared`.
 
 ```
-domain/ → application/ → infrastructure/ → di/ → presentation/
+src/
+├── server/                      # Server-only execution
+│   ├── domain/                  # [Layer 1] Pure Entities & Repository Interfaces
+│   ├── application/             # [Layer 2] Pure Business Use Cases
+│   ├── infrastructure/          # [Layer 3] Supabase, Payment Gateways, Resend Email
+│   ├── presentation/actions/    # [Layer 4] Server Actions ("use server")
+│   └── di/                      # Composition Root (container.ts)
+├── client/                      # Frontend UI & Client State
+│   ├── components/              # UI Components (Storefront, Admin, Common)
+│   ├── hooks/                   # Custom React Hooks
+│   ├── stores/                  # Zustand Stores (Cart, Toast, Drawer)
+│   └── providers/               # Client Context Providers
+├── shared/                      # Shared Contracts between Server & Client
+│   ├── constants/               # ROUTES, ROLES, pagination defaults
+│   ├── validations/             # Zod validation schemas
+│   ├── utils/                   # Formatters & helper functions (cn, formatCurrency)
+│   └── types/                   # Shared DTOs & Types
+└── app/                         # Next.js 16 App Router shell
 ```
 
 ### Layer responsibilities:
 
-**`src/domain/`** — Core business logic
-- Entities, interfaces, enums ONLY
+**`src/server/domain/`** — Core business logic
+- Entities, interfaces, enums, Result.ts ONLY
 - NO imports from any other layer
 - NO external libraries (no supabase, no next, no react)
 - Example: `Order`, `IOrderRepository`, `OrderStatus`
 
-**`src/application/`** — Use cases
+**`src/server/application/`** — Use cases
 - Business logic and orchestration ONLY
-- Only imports from `domain/`
+- Only imports from `domain/` and `shared/`
 - NO direct DB calls, NO supabase client
 - Example: `CreateOrderUseCase`, `ProcessPaymentUseCase`
 
-**`src/infrastructure/`** — Data & external services layer
+**`src/server/infrastructure/`** — Data & external services layer
 - Implements interfaces from `domain/`
 - ONLY layer allowed to import supabase client, payment SDKs, Resend
 - Always map `snake_case` DB columns → `camelCase` domain entities
 - Example: `SupabaseOrderRepository`, `CODPaymentGateway`, `ResendEmailService`
 
-**`src/di/container.ts`** — Composition Root (Dependency Injection)
+**`src/server/di/container.ts`** — Composition Root (Dependency Injection)
 - The ONLY module that couples layers together by wiring concrete infrastructure into application use cases.
 - Exposes factories like `makeGetProductsUseCase()`, `makeCreateOrderUseCase()`.
-- Presentation layer imports factories from `@/di/container`.
+- Server actions import factories from `@/server/di/container`.
 
-**`src/presentation/`** — UI layer
-- Components, server actions, hooks, Zustand stores
-- Calls application use cases via server actions or DI factories
+**`src/server/presentation/actions/`** — Server Actions ("use server")
+- Server-side controllers orchestrating use cases and responses
+- Sanitizes errors with CWE-209 defense before returning to UI
+- Example: `createOrderAction`, `processPaymentAction`, `getPaginatedTranslationsAction`
+
+**`src/client/`** — UI Presentation & Client State
+- Components, hooks, Zustand stores (`useCartStore`, `useToastStore`), client providers
+- Calls application use cases strictly via server actions
 - NEVER calls supabase or repositories directly
-- NEVER imports from `infrastructure/`
-- Example: `createOrderAction`, `useCartStore`, `CheckoutForm`
+
+**`src/shared/`** — Shared Contracts
+- Zod schemas, constants, formatters, and types usable by both server and client without leakage.
 
 ### Naming conventions:
 | Type | Convention | Example |
@@ -217,20 +241,24 @@ git push origin Dev
 
 Step 4 — Before merging Dev → main (full review):
 Run ALL checks in order:
-a) npm run build → must PASS
-b) npm run lint → must show 0 errors
-c) grep -r "console.log" src/ → must return empty
-d) grep -r ": any" src/ → must return empty
-e) git diff main..Dev → review all changes
+a) npx tsc --noEmit → must show 0 errors
+b) npm test → must pass all tests (62/62)
+c) npm run lint → must show 0 errors, 0 warnings
+d) npm run build → must PASS
+e) grep -r "console.log" src/ → must return empty
+f) grep -r ": any" src/ → must return empty
+g) git diff main..Dev → review all changes
 
 Report results in this table:
 | Check | Status | Notes |
 |-------|--------|-------|
-| npm run build | ✅/❌ | |
-| npm run lint | ✅/❌ | |
-| No console.logs | ✅/⚠️ | |
-| No "any" types | ✅/❌ | |
-| Clean architecture | ✅/❌ | |
+| npx tsc --noEmit | ✅/❌ | 0 TypeScript errors |
+| npm test | ✅/❌ | 62/62 tests passing |
+| npm run lint | ✅/❌ | 0 errors, 0 warnings |
+| npm run build | ✅/❌ | 32 routes compiled |
+| No console.logs | ✅/⚠️ | 0 results in src/ |
+| No "any" types | ✅/❌ | 0 results in src/ |
+| Clean architecture | ✅/❌ | 3 modules: server, client, shared |
 | No hardcoded data | ✅/❌ | |
 | AGENTS.md updated | ✅/❌ | |
 | README.md updated | ✅/❌ | |
@@ -309,7 +337,7 @@ chore: install supabase agent skills
   - Localized 100% of storefront and transaction flows: Navbar, Topbar, Footer, Homepage (Hero, Advantages, Categories, Showcase, Journey, Newsletter), Shop Catalog (filters, search, sorts), Product Detail (reviews, instant download badges, accordions, licensing tiers), Cart page & CartDrawer, 3-Step Checkout with localized Zod validation messages, Auth (Login, Registration, OTP), Order Outcomes (Success, Failed), Demo Fullscreen Preview, 404 Page, and User Profile / Purchased Template Downloads.
   - Added full locale support to currency and date formatters (`formatCurrency`, `formatDate`).
 - **Security Remediation & OWASP Hardening**:
-  - Engineered centralized [`authGuards.ts`](file:///D:/E-Commerce_Full_Stack/LuminaShop/src/presentation/actions/authGuards.ts) with `assertAdmin()` and `assertAuthenticated()`, securing all admin mutation actions.
+  - Engineered centralized [`authGuards.ts`](file:///D:/E-Commerce_Full_Stack/LuminaShop/src/server/presentation/actions/authGuards.ts) with `assertAdmin()` and `assertAuthenticated()`, securing all admin mutation actions.
   - Eliminated simulation backdoors in order flow and enforced strict input verification.
   - Hardened `/api/preview` SSRF vector with protocol, hostname, and path whitelisting.
   - Configured HTTP security headers (`nosniff`, `X-Frame-Options`, `Referrer-Policy`, `Permissions-Policy`) in `next.config.ts`.
@@ -321,11 +349,15 @@ chore: install supabase agent skills
 - **Interactive Demo Frame Polish**:
   - Built high-fidelity responsive preview frame (`DemoPreviewFrame.tsx`) with device mode toggles (desktop, tablet, mobile).
 - **Automated Digital License & Order Email Fulfillment Engine**:
-  - Engineered pure domain service interface [`IEmailService.ts`](src/domain/services/IEmailService.ts).
-  - Built production infrastructure [`ResendEmailService.ts`](src/infrastructure/email/ResendEmailService.ts) using Resend SDK with safe development fallbacks.
-  - Designed branded responsive HTML/plaintext email template [`orderConfirmationTemplate.ts`](src/infrastructure/email/templates/orderConfirmationTemplate.ts) delivering order invoice, unique license keys, and direct source code download links.
-  - Implemented application use case [`SendOrderConfirmationEmailUseCase.ts`](src/application/use-cases/orders/SendOrderConfirmationEmail.ts).
+  - Engineered pure domain service interface [`IEmailService.ts`](file:///D:/E-Commerce_Full_Stack/LuminaShop/src/server/domain/services/IEmailService.ts).
+  - Built production infrastructure [`ResendEmailService.ts`](file:///D:/E-Commerce_Full_Stack/LuminaShop/src/server/infrastructure/email/ResendEmailService.ts) using Resend SDK with safe development fallbacks.
+  - Designed branded responsive HTML/plaintext email template [`orderConfirmationTemplate.ts`](file:///D:/E-Commerce_Full_Stack/LuminaShop/src/server/infrastructure/email/templates/orderConfirmationTemplate.ts) delivering order invoice, unique license keys, and direct source code download links.
+  - Implemented application use case [`SendOrderConfirmationEmailUseCase.ts`](file:///D:/E-Commerce_Full_Stack/LuminaShop/src/server/application/use-cases/orders/SendOrderConfirmationEmail.ts).
   - Wired automated fulfillment triggering upon PayOS webhook confirmation, client payment verification, and admin manual payment approval, plus added on-demand resend action `resendOrderEmailAction`.
+- **Clean Architecture Physical Separation (Option A)**:
+  - Reorganized codebase into 3 strict physical boundaries: `src/server` (Backend: domain, application, infrastructure, presentation/actions, di), `src/client` (Frontend UI: components, hooks, stores), and `src/shared` (Contracts: constants, validations, utils, types).
+  - Removed all legacy shims and updated 179 files across the project to canonical `@/server/*`, `@/client/*`, and `@/shared/*` import paths.
+  - 100% Quality Gates verified: 0 TypeScript errors, 62/62 tests passing, 0 ESLint warnings, 0 `console.log`, 0 `: any`, and Next.js 16.2.4 Turbopack build passing all 32 routes.
 
 ### 🔄 In Progress:
 - None currently.

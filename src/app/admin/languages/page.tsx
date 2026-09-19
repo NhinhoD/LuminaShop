@@ -1,5 +1,5 @@
-import { getLanguagesAction, setDefaultLanguageAction } from '@/presentation/actions/languageActions';
-import { getAppDictionary } from "@/di/container";
+﻿import { getLanguagesAction, setDefaultLanguageAction } from '@/server/presentation/actions/languageActions';
+import { getAppDictionary } from "@/server/di/container";
 import { getLocale } from "@/i18n/getDictionary";
 import { Globe } from 'lucide-react';
 import { revalidatePath } from 'next/cache';

@@ -1,7 +1,7 @@
-import { cookies } from 'next/headers';
+﻿import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import VerifyOtpForm from '@/presentation/components/VerifyOtpForm';
-import { ROUTES } from '@/presentation/constants';
+import VerifyOtpForm from '@/client/components/VerifyOtpForm';
+import { ROUTES } from '@/shared/constants';
 import Link from 'next/link';
 import Image from 'next/image';
 import React from 'react';

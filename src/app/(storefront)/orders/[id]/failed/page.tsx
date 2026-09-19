@@ -1,12 +1,12 @@
-import { getOrderAction, cancelOrderAction } from "@/presentation/actions/order";
+﻿import { getOrderAction, cancelOrderAction } from "@/server/presentation/actions/order";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { XCircle } from "lucide-react";
 import { getLocale } from "@/i18n/getDictionary";
-import { getAppDictionary } from "@/di/container";
-import { StatusBadge } from "@/presentation/components/orders/StatusBadge";
+import { getAppDictionary } from "@/server/di/container";
+import { StatusBadge } from "@/client/components/orders/StatusBadge";
 
-import { OrderStatus } from "@/domain/entities/Order";
+import { OrderStatus } from "@/server/domain/entities/Order";
 
 /**
  * Order failure/cancelled page displayed when payment is cancelled or failed.

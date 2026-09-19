@@ -1,7 +1,7 @@
-import { redirect } from "next/navigation";
-import { CategoryList } from "@/presentation/components/category/CategoryList";
-import { getCategoriesAction } from "@/presentation/actions/category";
-import { PaginationControls } from "@/presentation/components/common/PaginationControls";
+﻿import { redirect } from "next/navigation";
+import { CategoryList } from "@/client/components/category/CategoryList";
+import { getCategoriesAction } from "@/server/presentation/actions/category";
+import { PaginationControls } from "@/client/components/common/PaginationControls";
 
 export const metadata = {
   title: "Quản lý danh mục - Admin KhoUI",

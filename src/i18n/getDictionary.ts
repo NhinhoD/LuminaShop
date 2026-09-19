@@ -1,5 +1,5 @@
-import { cookies } from "next/headers";
-import { ILanguageRepository, Locale as DomainLocale } from "@/domain/repositories/ILanguageRepository";
+﻿import { cookies } from "next/headers";
+import { ILanguageRepository, Locale as DomainLocale } from "@/server/domain/repositories/ILanguageRepository";
 import { vi } from "./dictionaries/vi";
 import { en } from "./dictionaries/en";
 

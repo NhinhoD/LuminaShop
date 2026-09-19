@@ -1,12 +1,12 @@
-import React from "react";
+﻿import React from "react";
 import { redirect } from "next/navigation";
-import { getAppDictionary } from "@/di/container";
+import { getAppDictionary } from "@/server/di/container";
 import { getLocale } from "@/i18n/getDictionary";
-import { formatCurrency } from "@/lib/utils";
-import { formatDate } from "@/presentation/utils";
-import { getPaginatedAdminCustomersAction } from "@/presentation/actions/admin";
+import { formatCurrency } from "@/shared/utils";
+import { formatDate } from "@/shared/utils";
+import { getPaginatedAdminCustomersAction } from "@/server/presentation/actions/admin";
 import { CustomerSearchInput } from "./CustomerSearchInput";
-import { PaginationControls } from "@/presentation/components/common/PaginationControls";
+import { PaginationControls } from "@/client/components/common/PaginationControls";
 import { 
   Users, 
   Mail, 

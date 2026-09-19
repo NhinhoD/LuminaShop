@@ -1,8 +1,8 @@
-import LanguageTableClient from "./LanguageTableClient";
-import { TranslationEntry } from "@/domain/repositories/ITranslationRepository";
-import { getAppDictionary } from "@/di/container";
+﻿import LanguageTableClient from "./LanguageTableClient";
+import { TranslationEntry } from "@/server/domain/repositories/ITranslationRepository";
+import { getAppDictionary } from "@/server/di/container";
 import { getLocale } from "@/i18n/getDictionary";
-import { getTranslationsAction } from "@/presentation/actions/i18n";
+import { getTranslationsAction } from "@/server/presentation/actions/i18n";
 
 export const dynamic = 'force-dynamic';
 

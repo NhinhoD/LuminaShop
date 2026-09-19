@@ -64,14 +64,24 @@ KhoUI is a high-performance, visually stunning marketplace specialized in provid
 ```
 KhoUI/
 ├── src/
-│   ├── app/                # Next.js App Router (Pages & Layouts)
-│   ├── application/        # Business Logic & Use Cases (Application Layer)
-│   ├── di/                 # Dependency Injection & Composition Root
-│   ├── domain/             # Entities & Models (Core Domain Layer)
-│   ├── infrastructure/     # Data Repositories, Gateways & API Clients (Supabase, PayOS)
-│   ├── presentation/       # Shared Components, Server Actions, Hooks & UI Library
-│   ├── i18n/               # Multi-Language Dictionaries & Localization
-│   └── lib/                # Shared Utilities & Centralized Validations
+│   ├── server/             # Server-only Execution (Clean Architecture)
+│   │   ├── domain/         # Pure Entities, Repository Interfaces & Result
+│   │   ├── application/    # Core Business Use Cases
+│   │   ├── infrastructure/ # Supabase, PayOS Gateways, Resend Email
+│   │   ├── presentation/   # Server Actions ("use server") with CWE-209 Sanitization
+│   │   └── di/             # Composition Root (Dependency Injection container)
+│   ├── client/             # Frontend UI Presentation & State
+│   │   ├── components/     # UI Components (Storefront, Admin, Common)
+│   │   ├── hooks/          # Custom React Hooks
+│   │   ├── stores/         # Zustand State Stores (Cart, Drawer, Toast)
+│   │   └── providers/      # React Context Providers (I18nProvider)
+│   ├── shared/             # Shared Contracts (Safe for Client & Server)
+│   │   ├── constants/      # App Constants & Routes
+│   │   ├── validations/    # Zod Schemas
+│   │   ├── utils/          # Helpers & Formatters (cn, formatCurrency)
+│   │   └── types/          # Shared DTOs & Types
+│   ├── app/                # Next.js 16 App Router (Orchestrator Shell)
+│   └── i18n/               # Multi-Language Central Dictionaries & Helpers
 ├── public/                 # Static Assets (Images, Icons)
 └── ...configs              # TypeScript, ESLint, Next.js configs
 ```

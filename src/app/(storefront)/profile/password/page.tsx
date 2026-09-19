@@ -1,11 +1,11 @@
-import { redirect } from 'next/navigation';
+﻿import { redirect } from 'next/navigation';
 import { Metadata } from 'next';
-import { makeGetCurrentUserUseCase, makeGetProfileUseCase, getAppDictionary } from '@/di/container';
-import { ROUTES } from '@/presentation/constants';
+import { makeGetCurrentUserUseCase, makeGetProfileUseCase, getAppDictionary } from '@/server/di/container';
+import { ROUTES } from '@/shared/constants';
 import { getLocale } from '@/i18n/getDictionary';
 import { ProfileSidebar } from '../ProfileSidebar';
 import { ChangePasswordForm } from './ChangePasswordForm';
-import { UserOrdersRealtimeTracker } from '@/presentation/components/orders/UserOrdersRealtimeTracker';
+import { UserOrdersRealtimeTracker } from '@/client/components/orders/UserOrdersRealtimeTracker';
 
 export const metadata: Metadata = {
   title: 'Đổi mật khẩu | KhoUI',

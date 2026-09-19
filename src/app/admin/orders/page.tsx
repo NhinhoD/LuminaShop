@@ -1,12 +1,12 @@
-import { redirect } from "next/navigation";
-import { getAllOrdersAction } from "@/presentation/actions/order";
-import { OrderList } from "@/presentation/components/admin/orders/OrderList";
-import { PaginationControls } from "@/presentation/components/common/PaginationControls";
-import { getAppDictionary } from "@/di/container";
+﻿import { redirect } from "next/navigation";
+import { getAllOrdersAction } from "@/server/presentation/actions/order";
+import { OrderList } from "@/client/components/admin/orders/OrderList";
+import { PaginationControls } from "@/client/components/common/PaginationControls";
+import { getAppDictionary } from "@/server/di/container";
 import { getLocale } from "@/i18n/getDictionary";
 import { Package } from "lucide-react";
 import { Metadata } from "next";
-import { OrderStatus } from "@/domain/entities/Order";
+import { OrderStatus } from "@/server/domain/entities/Order";
 
 export const metadata: Metadata = {
   title: "Quản lý đơn hàng | KhoUI Admin",

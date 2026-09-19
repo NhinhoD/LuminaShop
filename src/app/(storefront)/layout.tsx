@@ -1,7 +1,7 @@
-import { Navbar } from "@/presentation/components/layout/Navbar";
-import { Footer } from "@/presentation/components/layout/Footer";
-import { AutoBreadcrumbs } from "@/presentation/components/common/AutoBreadcrumbs";
-import CartDrawer from "@/presentation/components/layout/CartDrawer";
+﻿import { Navbar } from "@/client/components/layout/Navbar";
+import { Footer } from "@/client/components/layout/Footer";
+import { AutoBreadcrumbs } from "@/client/components/common/AutoBreadcrumbs";
+import CartDrawer from "@/client/components/layout/CartDrawer";
 
 export default function StorefrontLayout({
   children,

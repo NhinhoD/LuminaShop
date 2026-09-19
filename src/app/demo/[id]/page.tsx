@@ -1,8 +1,8 @@
-import { notFound } from "next/navigation";
-import { makeGetProductByIdUseCase } from "@/di/container";
+﻿import { notFound } from "next/navigation";
+import { makeGetProductByIdUseCase } from "@/server/di/container";
 import { cookies } from "next/headers";
 import { getStaticDictionary } from "@/i18n/getDictionary";
-import DemoViewerClient from "@/presentation/components/demo/DemoViewerClient";
+import DemoViewerClient from "@/client/components/demo/DemoViewerClient";
 
 interface DemoPageProps {
   params: Promise<{ id: string }>;
