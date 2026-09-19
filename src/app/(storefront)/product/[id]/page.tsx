@@ -1,4 +1,4 @@
-﻿import { notFound } from "next/navigation";
+import { notFound } from "next/navigation";
 import { 
   makeGetProductByIdUseCase, 
   makeCheckProductPurchasedUseCase, 
@@ -20,12 +20,21 @@ interface ProductPageProps {
 
 export default async function ProductDetailPage({ params }: ProductPageProps) {
   const { id } = await params;
-  const locale = await getLocale();
-  const dict = await getAppDictionary();
+
+  // Parallelize initial independent tasks: locale, dictionary, and DI factory creation
+  const [locale, dict, getProductUseCase, getCurrentUserUseCase] = await Promise.all([
+    getLocale(),
+    getAppDictionary(),
+    makeGetProductByIdUseCase(),
+    makeGetCurrentUserUseCase(),
+  ]);
   const prodDict = (dict?.product as Record<string, string>) || {};
 
-  const getProductUseCase = await makeGetProductByIdUseCase();
-  const productResult = await getProductUseCase.execute(id);
+  // Execute product query and user lookup in parallel to eliminate waterfall latency
+  const [productResult, userResult] = await Promise.all([
+    getProductUseCase.execute(id),
+    getCurrentUserUseCase.execute(),
+  ]);
 
   if (!productResult.success) {
     console.error("ProductDetailPage: failed to load product:", productResult.error);
@@ -50,8 +59,6 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
   }
   const product = productResult.data;
 
-  const getCurrentUser = await makeGetCurrentUserUseCase();
-  const userResult = await getCurrentUser.execute();
   let currentUser = null;
   let hasPurchased = false;
   let purchaseLookupError = false;

@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import Image from "next/image";
@@ -27,7 +27,11 @@ function getProxiedPreviewUrl(url: string): string {
 }
 
 export default function ProductMediaGallery({ productId, title, imageUrl, demoUrl }: ProductMediaGalleryProps) {
-  const [activeTab, setActiveTab] = useState<"image" | "live">(demoUrl ? "live" : "image");
+  // Optimize LCP & Core Web Vitals: Default to static mockup image so the browser paints instantly.
+  // The interactive iframe is lazy-mounted only when the user explicitly chooses the "live" tab.
+  const [activeTab, setActiveTab] = useState<"image" | "live">(
+    imageUrl ? "image" : demoUrl ? "live" : "image"
+  );
   const [iframeLoading, setIframeLoading] = useState(true);
   const [prevDemoUrl, setPrevDemoUrl] = useState(demoUrl);
   const { dict, locale } = useI18n();
@@ -124,6 +128,7 @@ export default function ProductMediaGallery({ productId, title, imageUrl, demoUr
               sandbox="allow-scripts allow-popups allow-forms"
               allow="autoplay; fullscreen; clipboard-read; clipboard-write; encrypted-media"
               onLoad={() => setIframeLoading(false)}
+              loading="lazy"
             />
 
             {/* Loader Overlay */}
