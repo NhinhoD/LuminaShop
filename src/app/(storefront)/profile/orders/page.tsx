@@ -1,4 +1,4 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 import Image from "next/image";
 import { Download, Package, ShoppingBag, ArrowRight, FileText, Receipt } from "lucide-react";
 import { Metadata } from "next";
@@ -36,9 +36,17 @@ interface OrderHistoryPageProps {
  * @returns JSX Element for the profile orders dashboard.
  */
 export default async function OrderHistoryPage({ searchParams }: OrderHistoryPageProps) {
-  const getCurrentUserUseCase = await makeGetCurrentUserUseCase();
+  // Parallelize initial independent tasks: locale, dictionary, and DI factory creation
+  const [locale, dict, getCurrentUserUseCase, getProfileUseCase] = await Promise.all([
+    getLocale(),
+    getAppDictionary(),
+    makeGetCurrentUserUseCase(),
+    makeGetProfileUseCase(),
+  ]);
+  const orderDict = (dict?.orders as Record<string, string>) || {};
+  const profileDict = (dict?.profile as Record<string, string>) || {};
+
   const userResult = await getCurrentUserUseCase.execute();
-  const locale = await getLocale();
 
   if (!userResult.success) {
     console.error("OrderHistoryPage: failed to authenticate user:", userResult.error);
@@ -63,7 +71,6 @@ export default async function OrderHistoryPage({ searchParams }: OrderHistoryPag
     redirect(ROUTES.LOGIN);
   }
 
-  const getProfileUseCase = await makeGetProfileUseCase();
   const profileResult = await getProfileUseCase.execute(user.id);
 
   if (!profileResult.success) {
@@ -85,9 +92,6 @@ export default async function OrderHistoryPage({ searchParams }: OrderHistoryPag
   }
 
   const profile = profileResult.data;
-  const dict = await getAppDictionary();
-  const orderDict = (dict?.orders as Record<string, string>) || {};
-  const profileDict = (dict?.profile as Record<string, string>) || {};
 
   const params = await searchParams;
   const currentTab = params?.tab === "templates" ? "templates" : "orders";
@@ -95,28 +99,30 @@ export default async function OrderHistoryPage({ searchParams }: OrderHistoryPag
   const safePage = Number.isSafeInteger(rawPage) && rawPage >= 1 ? rawPage : 1;
   const search = typeof params?.q === "string" ? params.q.trim() : undefined;
 
-  // 1. Query user orders for "Lịch sử đơn hàng & thanh toán"
+  // Parallelize orders and purchased templates queries concurrently
   const ordersPerPage = 6;
   const ordersOffset = (safePage - 1) * ordersPerPage;
-  const ordersResult = await getUserOrdersAction(
-    ordersPerPage, 
-    ordersOffset, 
-    currentTab === "orders" ? search : undefined
-  );
+  const templatesPerPage = 6;
+  const templatesOffset = (safePage - 1) * templatesPerPage;
+
+  const [ordersResult, templatesResult] = await Promise.all([
+    getUserOrdersAction(
+      ordersPerPage, 
+      ordersOffset, 
+      currentTab === "orders" ? search : undefined
+    ),
+    getUserPurchasedTemplatesAction(
+      templatesPerPage,
+      templatesOffset,
+      currentTab === "templates" ? search : undefined
+    ),
+  ]);
+
   const ordersError = ordersResult.success ? null : ordersResult.error;
   const orders = ordersResult.data?.orders || [];
   const totalOrders = ordersResult.data?.total || 0;
   const totalOrdersPages = Math.max(1, Math.ceil(totalOrders / ordersPerPage));
 
-  // 2. Query user purchased templates for "Kho mã nguồn đã sở hữu" via application action
-  const templatesPerPage = 6;
-  const templatesOffset = (safePage - 1) * templatesPerPage;
-
-  const templatesResult = await getUserPurchasedTemplatesAction(
-    templatesPerPage,
-    templatesOffset,
-    currentTab === "templates" ? search : undefined
-  );
   const templatesError = templatesResult.success ? null : templatesResult.error;
   const totalTemplates = templatesResult.data?.total || 0;
   const totalTemplatesPages = Math.max(1, Math.ceil(totalTemplates / templatesPerPage));

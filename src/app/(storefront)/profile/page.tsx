@@ -1,4 +1,4 @@
-﻿import { redirect } from 'next/navigation';
+import { redirect } from 'next/navigation';
 import { makeGetCurrentUserUseCase, makeGetProfileUseCase, getAppDictionary } from '@/server/di/container';
 import { ROUTES } from '@/shared/constants';
 import { getLocale } from '@/i18n/getDictionary';
@@ -11,9 +11,16 @@ import { UserOrdersRealtimeTracker } from '@/client/components/orders/UserOrders
  * Requires authentication; redirects to login if not authenticated.
  */
 export default async function ProfilePage() {
-  const getCurrentUserUseCase = await makeGetCurrentUserUseCase();
+  // Parallelize independent initial tasks: locale, dictionary, and DI factory creation
+  const [locale, dict, getCurrentUserUseCase, getProfileUseCase] = await Promise.all([
+    getLocale(),
+    getAppDictionary(),
+    makeGetCurrentUserUseCase(),
+    makeGetProfileUseCase(),
+  ]);
+  const profileDict = (dict?.profile as Record<string, string>) || {};
+
   const userResult = await getCurrentUserUseCase.execute();
-  const locale = await getLocale();
 
   if (!userResult.success) {
     console.error("ProfilePage: failed to authenticate user:", userResult.error);
@@ -38,7 +45,6 @@ export default async function ProfilePage() {
     redirect(ROUTES.LOGIN);
   }
 
-  const getProfileUseCase = await makeGetProfileUseCase();
   const profileResult = await getProfileUseCase.execute(user.id);
 
   if (!profileResult.success) {
@@ -60,8 +66,6 @@ export default async function ProfilePage() {
   }
 
   const profile = profileResult.data;
-  const dict = await getAppDictionary();
-  const profileDict = (dict?.profile as Record<string, string>) || {};
 
   return (
     <main className="flex-grow pt-16 pb-24 bg-background-subtle">
