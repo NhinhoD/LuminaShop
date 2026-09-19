@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -10,7 +10,6 @@ import { BreadcrumbProvider } from "@/client/components/common/BreadcrumbContext
 import { I18nProvider, Locale } from "@/client/components/common/I18nContext";
 import { getAppDictionary } from "@/server/di/container";
 import { ToastContainer } from "@/client/components/common/ToastContainer";
-import { SpeedInsights } from "@vercel/speed-insights/next";
 
 import { Plus_Jakarta_Sans } from "next/font/google";
 
@@ -40,7 +39,6 @@ export default async function RootLayout({
           <BreadcrumbProvider>
             {children}
             <ToastContainer />
-            <SpeedInsights />
           </BreadcrumbProvider>
         </I18nProvider>
       </body>
