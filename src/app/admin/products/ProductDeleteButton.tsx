@@ -1,9 +1,9 @@
-"use client";
+﻿"use client";
 
-import { deleteProductAction } from "@/presentation/actions/product";
+import { deleteProductAction } from "@/server/presentation/actions/product";
 import { useState } from "react";
 import { Trash2, Loader2 } from "lucide-react";
-import { toast } from "@/presentation/hooks/useToastStore";
+import { toast } from "@/client/hooks/useToastStore";
 
 export function ProductDeleteButton({ id }: { id: string }) {
   const [isDeleting, setIsDeleting] = useState(false);

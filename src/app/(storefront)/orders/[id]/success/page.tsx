@@ -1,13 +1,13 @@
-import { getOrderAction } from "@/presentation/actions/order";
-import { verifyOrderPaymentAction } from "@/presentation/actions/payment";
-import { OrderItem } from "@/domain/entities/Order";
-import { formatCurrency } from "@/lib/utils";
+﻿import { getOrderAction } from "@/server/presentation/actions/order";
+import { verifyOrderPaymentAction } from "@/server/presentation/actions/payment";
+import { OrderItem } from "@/server/domain/entities/Order";
+import { formatCurrency } from "@/shared/utils";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { CheckCircle2, Download, AlertTriangle, RefreshCw } from "lucide-react";
 import { getLocale } from "@/i18n/getDictionary";
-import { getLocalizedText } from "@/presentation/utils/locale";
-import { makeGetProductByIdUseCase, getAppDictionary } from "@/di/container";
+import { getLocalizedText } from "@/shared/utils/locale";
+import { makeGetProductByIdUseCase, getAppDictionary } from "@/server/di/container";
 
 /**
  * Order success confirmation page displayed after successful payment.

@@ -1,16 +1,16 @@
-"use client";
+﻿"use client";
 
-import { useCart } from "@/presentation/hooks/useCart";
-import { createOrderAction, getCustomerCheckoutInfoAction } from "@/presentation/actions/order";
-import { processPaymentAction } from "@/presentation/actions/payment";
-import { formatCurrency } from "@/lib/utils";
-import { useI18n } from "@/presentation/components/common/I18nContext";
-import { getLocalizedText } from "@/presentation/utils/locale";
+import { useCart } from "@/client/hooks/useCart";
+import { createOrderAction, getCustomerCheckoutInfoAction } from "@/server/presentation/actions/order";
+import { processPaymentAction } from "@/server/presentation/actions/payment";
+import { formatCurrency } from "@/shared/utils";
+import { useI18n } from "@/client/components/common/I18nContext";
+import { getLocalizedText } from "@/shared/utils/locale";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { PaymentMethod } from "@/domain/entities/Order";
-import { createDigitalCheckoutSchema } from "@/lib/validations/checkout";
+import { PaymentMethod } from "@/server/domain/entities/Order";
+import { createDigitalCheckoutSchema } from "@/shared/validations/checkout";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   User, 
@@ -24,7 +24,7 @@ import {
   QrCode,
   Sparkles
 } from "lucide-react";
-import { toast } from "@/presentation/hooks/useToastStore";
+import { toast } from "@/client/hooks/useToastStore";
 
 export interface CustomerCheckoutInfo {
   fullName: string;

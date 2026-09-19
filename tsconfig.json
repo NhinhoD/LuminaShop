@@ -20,10 +20,9 @@
     ],
     "paths": {
       "@/*": ["./src/*"],
-      "@/server/domain/*": ["./src/server/domain/*"],
-      "@/server/application/*": ["./src/server/application/*"],
-      "@/domain/*": ["./src/server/domain/*"],
-      "@/application/*": ["./src/server/application/*"]
+      "@/server/*": ["./src/server/*"],
+      "@/client/*": ["./src/client/*"],
+      "@/shared/*": ["./src/shared/*"]
     }
   },
   "include": [

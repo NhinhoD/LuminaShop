@@ -1,6 +1,6 @@
-import { redirect } from 'next/navigation';
-import { getPaginatedTranslationsAction } from '@/presentation/actions/i18n';
-import { getAppDictionary } from "@/di/container";
+﻿import { redirect } from 'next/navigation';
+import { getPaginatedTranslationsAction } from '@/server/presentation/actions/i18n';
+import { getAppDictionary } from "@/server/di/container";
 import { getLocale } from "@/i18n/getDictionary";
 import { Languages } from 'lucide-react';
 import TranslationTableClient from './TranslationTableClient';

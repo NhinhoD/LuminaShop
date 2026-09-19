@@ -1,10 +1,10 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import Link from "next/link";
-import { forgotPasswordAction } from "@/presentation/actions/auth";
-import { createClient } from "@/infrastructure/supabase/client";
-import { ROUTES } from "@/presentation/constants";
+import { forgotPasswordAction } from "@/server/presentation/actions/auth";
+import { createClient } from "@/server/infrastructure/supabase/client";
+import { ROUTES } from "@/shared/constants";
 import { Mail, ArrowRight, ArrowLeft, CheckCircle2, Loader2 } from "lucide-react";
 
 interface Props {

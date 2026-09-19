@@ -1,22 +1,22 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import Image from "next/image";
 import { Download, Package, ShoppingBag, ArrowRight, FileText, Receipt } from "lucide-react";
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { makeGetCurrentUserUseCase, makeGetProfileUseCase, getAppDictionary } from "@/di/container";
-import { PaginationControls } from "@/presentation/components/common/PaginationControls";
+import { makeGetCurrentUserUseCase, makeGetProfileUseCase, getAppDictionary } from "@/server/di/container";
+import { PaginationControls } from "@/client/components/common/PaginationControls";
 import { ProfileOrderSearch } from "./ProfileOrderSearch";
-import { getLocalizedText } from "@/presentation/utils/locale";
+import { getLocalizedText } from "@/shared/utils/locale";
 import { getLocale } from "@/i18n/getDictionary";
-import { formatDate, formatCurrency } from "@/lib/utils";
-import { getUserOrdersAction, getUserPurchasedTemplatesAction } from "@/presentation/actions/order";
-import { OrderStatus } from "@/domain/entities/Order";
-import { StatusBadge } from "@/presentation/components/orders/StatusBadge";
+import { formatDate, formatCurrency } from "@/shared/utils";
+import { getUserOrdersAction, getUserPurchasedTemplatesAction } from "@/server/presentation/actions/order";
+import { OrderStatus } from "@/server/domain/entities/Order";
+import { StatusBadge } from "@/client/components/orders/StatusBadge";
 import { ProfileSidebar } from "../ProfileSidebar";
-import { UserOrdersRealtimeTracker } from "@/presentation/components/orders/UserOrdersRealtimeTracker";
-import { ImageWithFallback } from "@/presentation/components/common/ImageWithFallback";
-import { ROUTES } from "@/presentation/constants";
-import { cn } from "@/presentation/utils";
+import { UserOrdersRealtimeTracker } from "@/client/components/orders/UserOrdersRealtimeTracker";
+import { ImageWithFallback } from "@/client/components/common/ImageWithFallback";
+import { ROUTES } from "@/shared/constants";
+import { cn } from "@/shared/utils";
 
 export const metadata: Metadata = {
   title: "Đơn hàng & Mã nguồn | KhoUI",

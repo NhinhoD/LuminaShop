@@ -1,8 +1,8 @@
-"use client";
+﻿"use client";
 
 import { useState, useTransition } from "react";
 import Link from "next/link";
-import { login } from "@/presentation/actions/auth";
+import { login } from "@/server/presentation/actions/auth";
 import { Mail, Lock, Eye, EyeOff, ArrowRight, Loader2 } from "lucide-react";
 
 interface LoginFormClientProps {

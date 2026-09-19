@@ -1,8 +1,8 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import Image from "next/image";
-import { ROUTES } from "@/presentation/constants";
+import { ROUTES } from "@/shared/constants";
 import { getLocale } from "@/i18n/getDictionary";
-import { getAppDictionary } from "@/di/container";
+import { getAppDictionary } from "@/server/di/container";
 import { ForgotPasswordClient } from "./ForgotPasswordClient";
 
 export default async function ForgotPasswordPage() {

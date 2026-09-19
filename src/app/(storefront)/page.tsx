@@ -1,9 +1,9 @@
-import React from "react";
+﻿import React from "react";
 import { redirect } from "next/navigation";
-import { makeGetProductsUseCase, makeGetCategoriesUseCase, getAppDictionary } from "@/di/container";
-import HomePageClient from "@/presentation/components/home/HomePageClient";
-import { sanitizeProductsForPublic } from "@/domain/entities/Product";
-import { productSchema } from "@/lib/validations/product";
+import { makeGetProductsUseCase, makeGetCategoriesUseCase, getAppDictionary } from "@/server/di/container";
+import HomePageClient from "@/client/components/home/HomePageClient";
+import { sanitizeProductsForPublic } from "@/server/domain/entities/Product";
+import { productSchema } from "@/shared/validations/product";
 import { getLocale } from "@/i18n/getDictionary";
 import type { vi } from "@/i18n/dictionaries/vi";
 import { z } from "zod";

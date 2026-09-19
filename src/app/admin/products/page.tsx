@@ -1,12 +1,12 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import Image from "next/image";
 import { redirect } from "next/navigation";
-import { makeGetProductsUseCase, makeGetCategoriesUseCase, getAppDictionary } from "@/di/container";
-import { formatCurrency } from "@/lib/utils";
+import { makeGetProductsUseCase, makeGetCategoriesUseCase, getAppDictionary } from "@/server/di/container";
+import { formatCurrency } from "@/shared/utils";
 import { ProductDeleteButton } from "@/app/admin/products/ProductDeleteButton";
-import { PaginationControls } from "@/presentation/components/common/PaginationControls";
+import { PaginationControls } from "@/client/components/common/PaginationControls";
 import { getLocale } from "@/i18n/getDictionary";
-import { getLocalizedText } from "@/presentation/utils/locale";
+import { getLocalizedText } from "@/shared/utils/locale";
 import { Plus, Search, Edit3, Package, Image as ImageIcon } from "lucide-react";
 
 /**

@@ -1,8 +1,8 @@
-"use client";
+﻿"use client";
 
 import { useState, useTransition } from "react";
-import { updateProfileAction } from "@/presentation/actions/auth";
-import { toast } from "@/presentation/hooks/useToastStore";
+import { updateProfileAction } from "@/server/presentation/actions/auth";
+import { toast } from "@/client/hooks/useToastStore";
 import { CheckCircle2, Loader2, Phone, Mail, User } from "lucide-react";
 
 interface ProfileFormClientProps {
