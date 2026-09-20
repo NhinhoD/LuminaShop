@@ -1,10 +1,22 @@
 import type { Metadata } from "next";
 import "./globals.css";
 
+function getSafeMetadataBase(): URL {
+  const raw = process.env.SITE_URL || process.env.NEXT_PUBLIC_SITE_URL || process.env.APP_URL || 'https://khoui.io.vn';
+  try {
+    return new URL(raw);
+  } catch {
+    return new URL('https://khoui.io.vn');
+  }
+}
+
 export const metadata: Metadata = {
+  metadataBase: getSafeMetadataBase(),
   title: "KhoUI - Premium UI Templates & Themes",
   description: "Discover exclusive, high-quality website templates and themes. Built with Next.js, Tailwind CSS, and GSAP for modern web development.",
 };
+
+
 
 import { BreadcrumbProvider } from "@/client/components/common/BreadcrumbContext";
 import { I18nProvider, Locale } from "@/client/components/common/I18nContext";

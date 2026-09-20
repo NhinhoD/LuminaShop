@@ -1,6 +1,8 @@
-﻿import { createClient } from '@/server/infrastructure/supabase/server';
+import { createClient } from '@/server/infrastructure/supabase/server';
 import { NextResponse, type NextRequest } from 'next/server';
 import type { EmailOtpType } from '@supabase/supabase-js';
+import { resolveBaseUrl } from '@/shared/utils/url';
+
 
 function getSafeRelativePath(path: string | null): string {
   if (!path) return '/';
@@ -26,11 +28,9 @@ export async function GET(request: NextRequest) {
   const type = requestUrl.searchParams.get('type') as EmailOtpType | null;
   const next = getSafeRelativePath(requestUrl.searchParams.get('next'));
 
-  const forwardedHost = request.headers.get('x-forwarded-host');
-  const isLocalEnv = process.env.NODE_ENV !== 'production';
-  const targetBase = isLocalEnv 
-    ? requestUrl.origin 
-    : (forwardedHost ? `https://${forwardedHost}` : requestUrl.origin);
+  const forwardedHost = request.headers.get('x-forwarded-host') || request.headers.get('host');
+  const targetBase = resolveBaseUrl(forwardedHost);
+
 
   const supabase = await createClient();
 

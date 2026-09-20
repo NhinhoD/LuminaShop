@@ -1,4 +1,4 @@
-﻿import { OrderConfirmationEmailDTO } from '@/server/domain/services/IEmailService';
+import { OrderConfirmationEmailDTO } from '@/server/domain/services/IEmailService';
 
 function formatVND(amount: number): string {
   return new Intl.NumberFormat('vi-VN', {
@@ -135,7 +135,8 @@ export function generateOrderConfirmationEmail(data: OrderConfirmationEmailDTO):
                 ${isVi
                   ? 'Nếu cần hỗ trợ kỹ thuật hoặc có bất kỳ câu hỏi nào, vui lòng phản hồi trực tiếp email này hoặc liên hệ qua'
                   : 'For technical inquiries or custom licensing, please reply directly to this email or reach us at'}
-                <a href="mailto:contact@khoui.com" style="color:#0051d5;text-decoration:underline;">contact@khoui.com</a>.
+                <a href="mailto:contact@khoui.io.vn" style="color:#0051d5;text-decoration:underline;">contact@khoui.io.vn</a>.
+
               </p>
             </td>
           </tr>
@@ -190,8 +191,9 @@ ${data.items
   )
   .join('\n')}
 
-${supportLabel}: contact@khoui.com
+${supportLabel}: contact@khoui.io.vn
 © 2026 KhoUI Marketplace.
+
   `.trim();
 
   return { subject, html, text };

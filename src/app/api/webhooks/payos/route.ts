@@ -1,9 +1,26 @@
-﻿import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { makeHandlePayOSWebhookUseCase, makePayOSGateway } from '@/server/di/container';
+
+/**
+ * Health check endpoint for PayOS webhook.
+ * Allows quick confirmation that the webhook route is live and accessible.
+ */
+export async function GET() {
+  return NextResponse.json({
+    status: 'ok',
+    message: 'PayOS webhook endpoint is active and listening.',
+    timestamp: new Date().toISOString(),
+  });
+}
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
+
+    // Check if it's a test ping or confirmation payload from PayOS dashboard
+    if (body && (body.test === true || body.ping === true || body.action === 'ping')) {
+      return NextResponse.json({ success: true, message: 'Ping acknowledged' });
+    }
 
     const payosGateway = await makePayOSGateway();
     try {
@@ -14,10 +31,14 @@ export async function POST(req: NextRequest) {
       const result = await useCase.execute(webhookData);
 
       if (!result.success) {
-        return NextResponse.json({ success: false, message: result.message }, { status: 400 });
+        return NextResponse.json(
+          { success: false, message: 'Webhook processing failed' },
+          { status: 500 }
+        );
       }
 
-      return NextResponse.json({ success: true, message: 'Webhook processed' });
+      return NextResponse.json({ success: true, message: result.message });
+
     } catch (e: unknown) {
       console.error('PayOS webhook verification failed:', e instanceof Error ? e.message : 'Unknown error');
       return NextResponse.json({ success: false, message: 'Invalid signature' }, { status: 400 });
