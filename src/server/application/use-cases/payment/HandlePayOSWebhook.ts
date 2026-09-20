@@ -1,6 +1,7 @@
 import { IOrderRepository } from '@/server/domain/repositories/IOrderRepository';
 import { IPaymentRepository } from '@/server/domain/repositories/IPaymentRepository';
 import { SendOrderConfirmationEmailUseCase } from '@/server/application/use-cases/orders/SendOrderConfirmationEmail';
+import { OrderStatus } from '@/server/domain/entities/Order';
 
 /**
  * Payload data received from PayOS webhook notifications.
@@ -45,15 +46,29 @@ export class HandlePayOSWebhookUseCase {
           return { success: true, message: 'Webhook verified (sample test or unassociated orderCode)' };
         }
 
+        const order = await this.orderRepo.findById(payment.orderId);
+        if (!order) {
+          console.error(`[HandlePayOSWebhook] Associated order ${payment.orderId} not found for payment ${payment.id}`);
+          return { success: false, message: `Associated order ${payment.orderId} not found` };
+        }
 
-        // Idempotency guard: If payment is already marked paid, return early to prevent duplicate fulfillment
-        if (payment.status === 'paid') {
+        const isPaymentPaid = payment.status === 'paid';
+        const isOrderPaid = order.paymentStatus === 'paid' && order.status === OrderStatus.COMPLETED;
+
+        // Idempotency guard: Both payment and order are already confirmed paid and completed
+        if (isPaymentPaid && isOrderPaid) {
           return { success: true, message: 'Payment was already processed and marked paid' };
         }
 
-        await this.paymentRepo.updatePaymentStatus(payment.id, 'paid');
-        // updatePaymentStatus('paid') atomically sets status: 'completed' in one operation
-        await this.orderRepo.updatePaymentStatus(payment.orderId, 'paid');
+        // Reconcile payment status if not yet marked paid
+        if (!isPaymentPaid) {
+          await this.paymentRepo.updatePaymentStatus(payment.id, 'paid');
+        }
+
+        // Reconcile order status if not yet marked paid and completed
+        if (!isOrderPaid) {
+          await this.orderRepo.updatePaymentStatus(payment.orderId, 'paid');
+        }
         
         // Trigger automated license key & digital fulfillment delivery email
         if (this.sendOrderEmailUseCase) {
