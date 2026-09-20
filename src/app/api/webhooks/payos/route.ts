@@ -30,8 +30,15 @@ export async function POST(req: NextRequest) {
       const useCase = await makeHandlePayOSWebhookUseCase();
       const result = await useCase.execute(webhookData);
 
-      // Return 200 OK for validly verified PayOS webhooks (including sample test events)
+      if (!result.success) {
+        return NextResponse.json(
+          { success: false, message: 'Webhook processing failed' },
+          { status: 500 }
+        );
+      }
+
       return NextResponse.json({ success: true, message: result.message });
+
     } catch (e: unknown) {
       console.error('PayOS webhook verification failed:', e instanceof Error ? e.message : 'Unknown error');
       return NextResponse.json({ success: false, message: 'Invalid signature' }, { status: 400 });

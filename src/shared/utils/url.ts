@@ -23,9 +23,9 @@ export function resolveBaseUrl(rawHost?: string | null): string {
     // 2. Validate against trusted hosts whitelist & Vercel deployment domains
     const isTrusted =
       (TRUSTED_HOSTS as readonly string[]).includes(hostWithoutPort) ||
-      hostWithoutPort.endsWith('.vercel.app') ||
-      hostWithoutPort === process.env.VERCEL_PROJECT_PRODUCTION_URL ||
-      hostWithoutPort === process.env.VERCEL_URL;
+      Boolean(process.env.VERCEL_PROJECT_PRODUCTION_URL && hostWithoutPort === process.env.VERCEL_PROJECT_PRODUCTION_URL) ||
+      Boolean(process.env.VERCEL_URL && hostWithoutPort === process.env.VERCEL_URL);
+
 
     if (isTrusted) {
       return `https://${hostWithoutPort}`;
