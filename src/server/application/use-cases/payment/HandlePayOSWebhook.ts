@@ -1,4 +1,4 @@
-﻿import { IOrderRepository } from '@/server/domain/repositories/IOrderRepository';
+import { IOrderRepository } from '@/server/domain/repositories/IOrderRepository';
 import { IPaymentRepository } from '@/server/domain/repositories/IPaymentRepository';
 import { SendOrderConfirmationEmailUseCase } from '@/server/application/use-cases/orders/SendOrderConfirmationEmail';
 
@@ -41,8 +41,10 @@ export class HandlePayOSWebhookUseCase {
         const payment = await this.paymentRepo.findByTransactionId(String(data.orderCode));
 
         if (!payment) {
-          throw new Error(`Payment record not found for webhook orderCode ${data.orderCode}`);
+          console.warn(`[HandlePayOSWebhook] Payment record not found for webhook orderCode ${data.orderCode}. (Likely a sample test webhook from PayOS)`);
+          return { success: true, message: 'Webhook verified (sample test or unassociated orderCode)' };
         }
+
 
         // Idempotency guard: If payment is already marked paid, return early to prevent duplicate fulfillment
         if (payment.status === 'paid') {

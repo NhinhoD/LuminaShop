@@ -3,6 +3,7 @@ import { twMerge } from "tailwind-merge";
 
 export * from "./utils";
 export * from "./locale";
+export * from "./url";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));

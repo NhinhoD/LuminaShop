@@ -60,9 +60,19 @@ export const UI_LABELS = {
   ADDRESSES: "Addresses",
 } as const;
 
+export const SITE_DOMAIN = "khoui.io.vn";
+export const SITE_URL = "https://khoui.io.vn";
+export const TRUSTED_HOSTS = [
+  "khoui.io.vn",
+  "www.khoui.io.vn",
+  "lumina-shop.vercel.app",
+  "lumina-shop-alpha.vercel.app",
+] as const;
+
 export const PLACEHOLDERS = {
   FIRST_NAME: "Minh",
   LAST_NAME: "Tuan",
-  EMAIL: "contact@khoui.com",
+  EMAIL: "contact@khoui.io.vn",
   PASSWORD: "••••••••",
 } as const;
+
