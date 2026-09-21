@@ -1,27 +1,10 @@
-import { redirect } from "next/navigation";
-import type { Metadata } from "next";
+﻿import { redirect } from "next/navigation";
 import { makeGetProductsUseCase, makeGetCategoriesUseCase, getAppDictionary } from "@/server/di/container";
 import ShopProductGrid from "@/client/components/product/ShopProductGrid";
 import { PaginationControls } from "@/client/components/common/PaginationControls";
 import { getLocale } from "@/i18n/getDictionary";
 import { Sparkles, Zap } from "lucide-react";
 import { sanitizeProductsForPublic } from "@/server/domain/entities/Product";
-import { SITE_URL } from "@/shared/constants";
-
-export const metadata: Metadata = {
-  title: "Kho Mẫu Giao Diện Website & Source Code Cao Cấp",
-  description: "Khám phá và tải xuống các mẫu website template chuẩn Clean Architecture, Next.js 16, Tailwind CSS 4, GSAP. Đầy đủ mã nguồn và bản quyền thương mại.",
-  openGraph: {
-    title: "Kho Mẫu Giao Diện Website & Source Code Cao Cấp",
-    description: "Khám phá và tải xuống các mẫu website template chuẩn Clean Architecture, Next.js 16, Tailwind CSS 4, GSAP. Đầy đủ mã nguồn và bản quyền thương mại.",
-    url: `${SITE_URL}/shop`,
-    siteName: "KhoUI",
-    type: "website",
-  },
-  alternates: {
-    canonical: `${SITE_URL}/shop`,
-  },
-};
 
 interface ShopPageProps {
   searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;

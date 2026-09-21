@@ -1,5 +1,4 @@
-import { getOrderAction } from "@/server/presentation/actions/order";
-import type { Metadata } from "next";
+﻿import { getOrderAction } from "@/server/presentation/actions/order";
 import { verifyOrderPaymentAction } from "@/server/presentation/actions/payment";
 import { OrderItem } from "@/server/domain/entities/Order";
 import { formatCurrency } from "@/shared/utils";
@@ -9,14 +8,6 @@ import { CheckCircle2, Download, AlertTriangle, RefreshCw } from "lucide-react";
 import { getLocale } from "@/i18n/getDictionary";
 import { getLocalizedText } from "@/shared/utils/locale";
 import { makeGetProductByIdUseCase, getAppDictionary } from "@/server/di/container";
-
-export const metadata: Metadata = {
-  title: "Xác nhận đơn hàng thành công",
-  robots: {
-    index: false,
-    follow: false,
-  },
-};
 
 /**
  * Order success confirmation page displayed after successful payment.
