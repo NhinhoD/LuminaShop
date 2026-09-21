@@ -12,8 +12,66 @@ function getSafeMetadataBase(): URL {
 
 export const metadata: Metadata = {
   metadataBase: getSafeMetadataBase(),
-  title: "KhoUI - Premium UI Templates & Themes",
-  description: "Discover exclusive, high-quality website templates and themes. Built with Next.js, Tailwind CSS, and GSAP for modern web development.",
+  title: {
+    default: "KhoUI — Sàn Giao Dịch Website Template & Source Code Cao Cấp",
+    template: "%s | KhoUI",
+  },
+  description: "Nền tảng cung cấp website template & source code chất lượng cao hàng đầu Việt Nam. Chuẩn Clean Architecture, Next.js 16, Tailwind CSS 4, GSAP. Bản quyền thương mại và thanh toán tự động.",
+  keywords: [
+    "KhoUI",
+    "website templates",
+    "mẫu website",
+    "source code",
+    "Next.js template",
+    "Tailwind CSS",
+    "GSAP animation",
+    "React template",
+    "mua mã nguồn",
+    "giao diện website",
+    "clean architecture",
+  ],
+  authors: [{ name: "KhoUI Team", url: "https://khoui.io.vn" }],
+  creator: "KhoUI",
+  publisher: "KhoUI",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  openGraph: {
+    title: "KhoUI — Sàn Giao Dịch Website Template & Source Code Cao Cấp",
+    description: "Khám phá và sở hữu các mẫu website template chuẩn Clean Architecture, Next.js 16, Tailwind CSS 4, GSAP. Tích hợp thanh toán PayOS VietQR tự động.",
+    url: "https://khoui.io.vn",
+    siteName: "KhoUI",
+    locale: "vi_VN",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "KhoUI — Sàn Giao Dịch Website Template & Source Code Cao Cấp",
+    description: "Khám phá và sở hữu các mẫu website template chuẩn Clean Architecture, Next.js 16, Tailwind CSS 4, GSAP.",
+  },
+  alternates: {
+    canonical: "/",
+  },
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/icon.png", type: "image/png", sizes: "32x32" },
+      { url: "/icon-192.png", type: "image/png", sizes: "192x192" },
+      { url: "/icon-512.png", type: "image/png", sizes: "512x512" },
+    ],
+    apple: [
+      { url: "/apple-icon.png", sizes: "180x180", type: "image/png" },
+    ],
+    shortcut: "/favicon.ico",
+  },
 };
 
 

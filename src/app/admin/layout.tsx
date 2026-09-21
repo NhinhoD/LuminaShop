@@ -1,10 +1,18 @@
-﻿import { notFound, redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
+import type { Metadata } from "next";
 import { makeGetCurrentUserUseCase, makeGetProfileUseCase, getAppDictionary } from "@/server/di/container";
 import { getLocale } from "@/i18n/getDictionary";
 import { ROLES, ROUTES } from "@/shared/constants";
 import { AdminShell } from "@/client/components/admin/layout/AdminShell";
 
 export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 /**
  * Admin layout component that enforces role-based access control.
