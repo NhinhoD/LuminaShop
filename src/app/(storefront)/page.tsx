@@ -1,4 +1,5 @@
-﻿import React from "react";
+import React from "react";
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { makeGetProductsUseCase, makeGetCategoriesUseCase, getAppDictionary } from "@/server/di/container";
 import HomePageClient from "@/client/components/home/HomePageClient";
@@ -7,6 +8,22 @@ import { productSchema } from "@/shared/validations/product";
 import { getLocale } from "@/i18n/getDictionary";
 import type { vi } from "@/i18n/dictionaries/vi";
 import { z } from "zod";
+import { SITE_URL } from "@/shared/constants";
+
+export const metadata: Metadata = {
+  title: "KhoUI — Sàn Giao Dịch Website Template & Source Code Cao Cấp",
+  description: "Nền tảng website templates & source code chuẩn Clean Architecture hàng đầu Việt Nam. Tích hợp thanh toán PayOS VietQR tự động, bàn giao bản quyền tức thì.",
+  openGraph: {
+    title: "KhoUI — Sàn Giao Dịch Website Template & Source Code Cao Cấp",
+    description: "Nền tảng website templates & source code chuẩn Clean Architecture hàng đầu Việt Nam. Tích hợp thanh toán PayOS VietQR tự động, bàn giao bản quyền tức thì.",
+    url: SITE_URL,
+    siteName: "KhoUI",
+    type: "website",
+  },
+  alternates: {
+    canonical: SITE_URL,
+  },
+};
 
 interface HomePageProps {
   searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -88,8 +105,44 @@ export default async function HomePage({ searchParams }: HomePageProps): Promise
     redirect(qs ? `/?${qs}#showcase` : "/#showcase");
   }
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "@id": `${SITE_URL}/#website`,
+        "url": SITE_URL,
+        "name": "KhoUI",
+        "description": "Vietnam's Premium Website Template & Source Code Marketplace",
+        "inLanguage": locale === "vi" ? "vi-VN" : "en-US",
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": {
+            "@type": "EntryPoint",
+            "urlTemplate": `${SITE_URL}/shop?q={search_term_string}`
+          },
+          "query-input": "required name=search_term_string"
+        }
+      },
+      {
+        "@type": "Organization",
+        "@id": `${SITE_URL}/#organization`,
+        "name": "KhoUI",
+        "url": SITE_URL,
+        "description": "Nền tảng cung cấp website templates & source code chuẩn Clean Architecture hàng đầu Việt Nam.",
+        "sameAs": [
+          "https://github.com/NhinhoD/LuminaShop"
+        ]
+      }
+    ]
+  };
+
   return (
     <main className="flex flex-col min-h-screen">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <HomePageClient 
         featuredProducts={sanitizeProductsForPublic(featuredProducts)} 
         totalProducts={totalProducts}

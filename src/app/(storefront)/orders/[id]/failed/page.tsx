@@ -1,12 +1,19 @@
-﻿import { getOrderAction, cancelOrderAction } from "@/server/presentation/actions/order";
+import { getOrderAction, cancelOrderAction } from "@/server/presentation/actions/order";
+import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { XCircle } from "lucide-react";
 import { getLocale } from "@/i18n/getDictionary";
 import { getAppDictionary } from "@/server/di/container";
 import { StatusBadge } from "@/client/components/orders/StatusBadge";
-
 import { OrderStatus } from "@/server/domain/entities/Order";
+
+export const metadata: Metadata = {
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 /**
  * Order failure/cancelled page displayed when payment is cancelled or failed.
