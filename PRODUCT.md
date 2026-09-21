@@ -1,6 +1,10 @@
 # KhoUI — Product Truth & Context
 
-## 1. Product Overview
+> **Related Specifications:**
+> - Architecture, Coding & Harness Rules: [`AGENTS.md`](AGENTS.md)
+> - Design System, Brand Tokens & Anti-Slop Rules: [`DESIGN.md`](DESIGN.md)
+
+---
 - **Name:** KhoUI (LuminaShop)
 - **Tagline:** Vietnam's Premium Website Template & Source Code Marketplace
 - **Purpose:** Provide software engineers, agencies, and businesses with production-ready, beautifully crafted full-stack templates (Next.js 16, Tailwind CSS 4, GSAP, Framer Motion, Supabase).

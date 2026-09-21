@@ -14,21 +14,23 @@ Heed all deprecation notices.
 
 When starting ANY new session, always do this first — no exceptions:
 
-1. Read @AGENTS.md (this file) — current status and all rules
-2. Read @README.md — project overview
-3. Read @src/server/domain — understand all entities and interfaces
-4. Read @src/server/application — understand all use cases
-5. Read @src/server/infrastructure/supabase — understand DB layer
-6. Read @src/client & @src/server/presentation/actions — understand UI and server actions layer
-7. Read @public/stitch_e_commerce_ux_ui_design — UI design references
-8. Read @.agents/skills/supabase/ — Supabase & Postgres best practices
-9. Read @.agents/skills/stitch/ — Stitch UX/UI design patterns & stitch-skill
-10. Read @.agents/skills/gsap/ — GSAP core, timeline, and performance core competencies
-11. Read @.agents/skills/design/ — Design taste, brandkit, layout morphing & prompt enhancements
-12. Read @.agents/skills/taste/ — Anti-slop frontend taste, motion dials (8/6/4), minimalism, brutalism, soft UI
-13. Read @.agents/skills/impeccable/ — Impeccable design harness, critique, distill, polish, harden
-14. Read @.agents/skills/imagegen/ — AI UI & mockup image generation (web & mobile)
-15. Read @.agents/skills/react-components — React & Tailwind 4 execution rules
+1. Read @AGENTS.md (this file) — current status, architecture, and harness rules
+2. Read @PRODUCT.md — product truth, target audience, and key surfaces
+3. Read @DESIGN.md — design system, color tokens, typography, and anti-slop rules
+4. Read @README.md — project overview & setup
+5. Read @src/server/domain — understand all entities and interfaces
+6. Read @src/server/application — understand all use cases
+7. Read @src/server/infrastructure/supabase — understand DB layer
+8. Read @src/client & @src/server/presentation/actions — understand UI and server actions layer
+9. Read @public/stitch_e_commerce_ux_ui_design — UI design references
+10. Read @.agents/skills/supabase/ — Supabase & Postgres best practices
+11. Read @.agents/skills/stitch/ — Stitch UX/UI design patterns & stitch-skill
+12. Read @.agents/skills/gsap/ — GSAP core, timeline, and performance core competencies
+13. Read @.agents/skills/design/ — Design taste, brandkit, layout morphing & prompt enhancements
+14. Read @.agents/skills/taste/ — Anti-slop frontend taste, motion dials (8/6/4), minimalism, brutalism, soft UI
+15. Read @.agents/skills/impeccable/ — Impeccable design harness, critique, distill, polish, harden
+16. Read @.agents/skills/imagegen/ — AI UI & mockup image generation (web & mobile)
+17. Read @.agents/skills/react-components — React & Tailwind 4 execution rules
 
 After reading, report to user:
 - ✅ What is DONE
@@ -43,6 +45,8 @@ After reading, report to user:
 ## ─── PROJECT CONTEXT ───
 
 **Project:** KhoUI — Modern E-Commerce Platform
+**Product Truth:** See [@PRODUCT.md](PRODUCT.md) for market positioning, target audience, and key surfaces.
+**Design System:** See [@DESIGN.md](DESIGN.md) for brand tokens, typography scale, and anti-slop rules.
 **Purpose:** Learning project — exploring modern web technologies
 **Repository:** https://github.com/NhinhoD/LuminaShop
 

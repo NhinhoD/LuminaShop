@@ -1,6 +1,10 @@
 # KhoUI — Design System Specification
 
-## 1. Brand Identity & Vision
+> **Related Specifications:**
+> - Architecture, Coding & Harness Rules: [`AGENTS.md`](AGENTS.md)
+> - Product Truth & Key Routes: [`PRODUCT.md`](PRODUCT.md)
+
+---
 **KhoUI** is Vietnam's premier curated marketplace for high-fidelity, production-grade website templates, components, and full-stack codebases.
 - **Design Persona:** Editorial Tech, Crisp, High-Contrast, Developer-Centric, Sophisticated.
 - **Inspirations:** Linear, Vercel, Stripe, Raycast, Apple Developer.
