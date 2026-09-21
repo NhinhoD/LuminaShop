@@ -29,6 +29,13 @@ interface HomePageProps {
   searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
+/**
+ * Storefront Homepage server component.
+ * Renders hero section, category filters, featured products showcase, and JSON-LD structured data.
+ *
+ * @param {HomePageProps} props - Page properties with async searchParams.
+ * @returns {Promise<React.ReactElement>} Next.js page element.
+ */
 export default async function HomePage({ searchParams }: HomePageProps): Promise<React.ReactElement> {
   const params = await searchParams;
   const rawPage = typeof params?.page === "string" ? parseInt(params.page, 10) : 1;

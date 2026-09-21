@@ -1,4 +1,4 @@
-import { getOrderAction, cancelOrderAction } from "@/server/presentation/actions/order";
+import { getOrderAction } from "@/server/presentation/actions/order";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -18,8 +18,8 @@ export const metadata: Metadata = {
 
 /**
  * Order failure/cancelled page displayed when payment is cancelled or failed.
- * Protects against accidental cancellations on GET, redirects paid orders to success,
- * and branches copy appropriately based on actual order status.
+ * Purely read-only display that protects against accidental state mutations on GET requests,
+ * redirects completed/paid orders to success, and presents clear status guidance.
  *
  * @param props - Component props containing the async params promise with order ID.
  * @returns JSX Element for the order failed/cancelled page.
@@ -28,7 +28,7 @@ export default async function OrderFailedPage(props: { params: Promise<{ id: str
   const params = await props.params;
 
   const result = await getOrderAction(params.id);
-  let order = result.data;
+  const order = result.data;
 
   if (!order) {
     redirect("/");
@@ -37,14 +37,6 @@ export default async function OrderFailedPage(props: { params: Promise<{ id: str
   // If order is already paid or completed, redirect to success certificate
   if (order.status === OrderStatus.COMPLETED || order.paymentStatus === 'paid') {
     redirect(`/orders/${order.id}/success`);
-  }
-
-  // Only auto-cancel pending unpaid orders when returning from payment gateway cancellation
-  if (order.status === OrderStatus.PENDING) {
-    const cancelRes = await cancelOrderAction(params.id, false);
-    if (cancelRes.success && cancelRes.data) {
-      order = cancelRes.data;
-    }
   }
 
   const locale = await getLocale();

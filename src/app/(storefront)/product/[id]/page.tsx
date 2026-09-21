@@ -92,6 +92,13 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
   };
 }
 
+/**
+ * Product detail page server component.
+ * Displays interactive product media, tech stack, pricing, license accordion, and JSON-LD structured data.
+ *
+ * @param {ProductPageProps} props - Page properties with async params.
+ * @returns {Promise<React.ReactElement>} Next.js page element.
+ */
 export default async function ProductDetailPage({ params }: ProductPageProps) {
   const { id } = await params;
 
