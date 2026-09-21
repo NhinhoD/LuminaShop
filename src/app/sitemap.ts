@@ -4,6 +4,12 @@ import { makeGetProductsUseCase, makeGetCategoriesUseCase } from '@/server/di/co
 
 export const dynamic = 'force-dynamic';
 
+/**
+ * Generates the dynamic XML sitemap for KhoUI.
+ * Includes static discoverable routes, active categories, and all active products with pagination support.
+ *
+ * @returns {Promise<MetadataRoute.Sitemap>} Array of sitemap URL entries.
+ */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticRoutes: MetadataRoute.Sitemap = [
     {
@@ -17,12 +23,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: new Date(),
       changeFrequency: 'daily',
       priority: 0.9,
-    },
-    {
-      url: `${SITE_URL}/cart`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.4,
     },
     {
       url: `${SITE_URL}/login`,
@@ -44,10 +44,34 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       makeGetCategoriesUseCase(),
     ]);
 
-    const [productsResult, categoriesResult] = await Promise.all([
-      getProductsUseCase.execute({ limit: 1000, isActive: true }),
-      getCategoriesUseCase.execute(),
-    ]);
+    // Paginate through all active products to guarantee complete catalog coverage
+    const allProducts = [];
+    const batchSize = 1000;
+    let offset = 0;
+    let total = Infinity;
+
+    while (offset < total) {
+      const pageResult = await getProductsUseCase.execute({
+        limit: batchSize,
+        offset,
+        isActive: true,
+      });
+
+      if (!pageResult.success) {
+        throw new Error(typeof pageResult.error === 'string' ? pageResult.error : 'Failed to fetch products for sitemap');
+      }
+
+      const products = pageResult.data?.products || [];
+      allProducts.push(...products);
+      total = pageResult.data.total ?? 0;
+      offset += batchSize;
+
+      if (products.length === 0) {
+        break;
+      }
+    }
+
+    const categoriesResult = await getCategoriesUseCase.execute();
 
     const categoryRoutes: MetadataRoute.Sitemap = (
       categoriesResult.success && categoriesResult.data?.categories ? categoriesResult.data.categories : []
@@ -58,9 +82,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.85,
     }));
 
-    const productRoutes: MetadataRoute.Sitemap = (
-      productsResult.success && productsResult.data?.products ? productsResult.data.products : []
-    ).map((product) => ({
+    const productRoutes: MetadataRoute.Sitemap = allProducts.map((product) => ({
       url: `${SITE_URL}/product/${product.id}`,
       lastModified: product.updatedAt ? new Date(product.updatedAt) : product.createdAt ? new Date(product.createdAt) : new Date(),
       changeFrequency: 'weekly',

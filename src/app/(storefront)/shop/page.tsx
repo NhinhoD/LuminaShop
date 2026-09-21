@@ -9,10 +9,10 @@ import { sanitizeProductsForPublic } from "@/server/domain/entities/Product";
 import { SITE_URL } from "@/shared/constants";
 
 export const metadata: Metadata = {
-  title: "Kho Mẫu Giao Diện Website & Source Code Cao Cấp | KhoUI",
+  title: "Kho Mẫu Giao Diện Website & Source Code Cao Cấp",
   description: "Khám phá và tải xuống các mẫu website template chuẩn Clean Architecture, Next.js 16, Tailwind CSS 4, GSAP. Đầy đủ mã nguồn và bản quyền thương mại.",
   openGraph: {
-    title: "Kho Mẫu Giao Diện Website & Source Code Cao Cấp | KhoUI",
+    title: "Kho Mẫu Giao Diện Website & Source Code Cao Cấp",
     description: "Khám phá và tải xuống các mẫu website template chuẩn Clean Architecture, Next.js 16, Tailwind CSS 4, GSAP. Đầy đủ mã nguồn và bản quyền thương mại.",
     url: `${SITE_URL}/shop`,
     siteName: "KhoUI",

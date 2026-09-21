@@ -19,6 +19,13 @@ interface ProductPageProps {
   params: Promise<{ id: string }>;
 }
 
+/**
+ * Generates dynamic SEO metadata for the product detail page.
+ * Localizes title and description, configures canonical URL, keywords, and OpenGraph/Twitter cards.
+ *
+ * @param {ProductPageProps} props - Page properties with async params.
+ * @returns {Promise<Metadata>} Next.js page metadata object.
+ */
 export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
   const { id } = await params;
   const [locale, getProductUseCase] = await Promise.all([
@@ -29,7 +36,7 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
   const productResult = await getProductUseCase.execute(id);
   if (!productResult.success || !productResult.data) {
     return {
-      title: "Mẫu giao diện không tồn tại | KhoUI",
+      title: "Mẫu giao diện không tồn tại",
       description: "Không tìm thấy mẫu giao diện theo yêu cầu trên KhoUI.",
     };
   }
@@ -37,7 +44,8 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
   const product = productResult.data;
   const rawTitle = getLocalizedText(product.title as unknown as Record<string, string>, locale);
   const rawDesc = getLocalizedText(product.description as unknown as Record<string, string>, locale);
-  const title = `${rawTitle} | KhoUI — Premium Website Template`;
+  const title = rawTitle;
+  const ogTitle = `${rawTitle} — Mẫu Giao Diện Website Cao Cấp`;
   const description = rawDesc.length > 160 ? `${rawDesc.slice(0, 157)}...` : rawDesc || "Mẫu giao diện website cao cấp, chuẩn SEO và tối ưu hiệu năng tại KhoUI.";
   const productUrl = `${SITE_URL}/product/${id}`;
 
@@ -55,7 +63,7 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
       "KhoUI",
     ],
     openGraph: {
-      title,
+      title: ogTitle,
       description,
       url: productUrl,
       siteName: "KhoUI",
@@ -74,7 +82,7 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
     },
     twitter: {
       card: "summary_large_image",
-      title,
+      title: ogTitle,
       description,
       images: product.imageUrl ? [product.imageUrl] : [],
     },
@@ -240,7 +248,9 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
     <main className="flex-grow bg-white py-10 font-sans">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c"),
+        }}
       />
       <BreadcrumbSetter
         currentLabel={localizedTitle}

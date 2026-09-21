@@ -5,7 +5,7 @@ import CheckoutClient, { CustomerCheckoutInfo } from "./CheckoutClient";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Thanh toán đơn hàng | KhoUI",
+  title: "Thanh toán đơn hàng",
   robots: {
     index: false,
     follow: false,

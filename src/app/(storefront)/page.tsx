@@ -141,7 +141,9 @@ export default async function HomePage({ searchParams }: HomePageProps): Promise
     <main className="flex flex-col min-h-screen">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c"),
+        }}
       />
       <HomePageClient 
         featuredProducts={sanitizeProductsForPublic(featuredProducts)} 

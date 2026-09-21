@@ -9,6 +9,7 @@ import { StatusBadge } from "@/client/components/orders/StatusBadge";
 import { OrderStatus } from "@/server/domain/entities/Order";
 
 export const metadata: Metadata = {
+  title: "Thanh toán thất bại",
   robots: {
     index: false,
     follow: false,

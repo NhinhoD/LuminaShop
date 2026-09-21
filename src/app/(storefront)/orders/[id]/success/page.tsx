@@ -11,7 +11,7 @@ import { getLocalizedText } from "@/shared/utils/locale";
 import { makeGetProductByIdUseCase, getAppDictionary } from "@/server/di/container";
 
 export const metadata: Metadata = {
-  title: "Xác nhận đơn hàng thành công | KhoUI",
+  title: "Xác nhận đơn hàng thành công",
   robots: {
     index: false,
     follow: false,
