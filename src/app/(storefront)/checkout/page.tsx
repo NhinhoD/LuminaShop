@@ -1,16 +1,7 @@
-import type { Metadata } from "next";
-import { makeGetCustomerCheckoutInfoUseCase } from "@/server/di/container";
+﻿import { makeGetCustomerCheckoutInfoUseCase } from "@/server/di/container";
 import CheckoutClient, { CustomerCheckoutInfo } from "./CheckoutClient";
 
 export const dynamic = "force-dynamic";
-
-export const metadata: Metadata = {
-  title: "Thanh toán đơn hàng",
-  robots: {
-    index: false,
-    follow: false,
-  },
-};
 
 /**
  * Server component for the Storefront Checkout process.
