@@ -55,12 +55,13 @@ After reading, report to user:
 - **MCP Tools:** MCP Supabase, MCP Stitch, MCP GitHub
 
 ### Database Tables:
-- `profiles` — user profiles
-- `categories` — product categories
-- `products` — products (stock: int4)
+- `profiles` — user profiles & roles
+- `categories` — product & template categories
+- `products` — digital products & templates (license tiers, preview URLs)
 - `orders` — customer orders
-- `order_items` — order items
-- `payments` — payment records
+- `order_items` — order line items & digital licenses
+- `payments` — payment records (PayOS transactions)
+- `site_translations` — dynamic i18n key-value dictionary storage
 
 ---
 
@@ -156,6 +157,8 @@ src/
 - **NEVER use `any` TypeScript type** — use proper interfaces or `unknown` with type guards
 - **NEVER leave `console.log`** in `src/` — remove before committing
 - **NEVER hardcode test data** — no test names, phone numbers, or IDs in `src/`
+- **NEVER hardcode UI text strings** — all storefront and admin texts must use `useI18n()` and exist in both central dictionaries: `src/i18n/dictionaries/vi.ts` and `src/i18n/dictionaries/en.ts`
+- **ALWAYS export metadata for new pages** — every page in `src/app/` must export static `metadata` or dynamic `generateMetadata` with title, description, and canonical/openGraph tags
 - **ALWAYS handle errors** — use try/catch in use cases and server actions
 - **ALWAYS validate input** — use Zod schemas for all form and external data
 - **ALWAYS type function return values** explicitly
@@ -172,6 +175,60 @@ src/
 ### 🌪️ GSAP & Framer Motion Animation Rules
 - **Performance First**: Always read `@.agents/skills/gsap/gsap-performance` before writing scroll-driven animations. Use `will-change` CSS properties judicially and kill/cleanup active timelines in React `useEffect` unmount hooks to prevent memory leaks.
 - **Micro-interactions**: Utilize GSAP QuickTo for mouse-follow effects and Framer Motion layoutId for seamless fluid layout morphing between listing and detail frames.
+
+---
+
+## ─── 🚫 ANTI-SCOPE CREEP & PRODUCT BOUNDARIES ───
+
+Agent must strictly operate within the defined task scope and never self-expand the product:
+- **No Unrequested Packages**: NEVER run `npm install` or add dependencies without explicit user confirmation.
+- **No Unrequested Features**: Do not add extra pages, modals, payment gateways, or integrations simply because they "seem useful".
+- **No Unilateral Schema Changes**: Do not alter Supabase tables, migrations, or database columns without prior approval.
+- **No Unilateral Business Logic Changes**: Do not alter pricing formulas, order status flows, or licensing structures without explicit instruction.
+- **Rule for Suggestions**: If you identify a missing capability, bug risk, or potential improvement:
+  * Mark it in code if necessary: `// TODO: Requires user confirmation before implementation`
+  * Propose it clearly in your response to the user.
+  * **DO NOT** implement it unilaterally.
+
+---
+
+## ─── 🛡️ SECURITY & DATA INTEGRITY GUARDRAILS ───
+
+### 1. Secret & Credential Protection:
+- **NEVER log raw secrets or tokens**: PayOS API/Checksum keys, Resend API keys, Supabase Service Role keys, session cookies, JWTs, or passwords must never appear in `console.log`, server logs, or error responses.
+- **NEVER log or expose raw customer PII**: Passwords, OTP codes, and raw payment credentials must be redacted or sanitized.
+- **Strict Environment Variable Separation**: Distinguish strictly between `NEXT_PUBLIC_*` (exposed to the browser) and server-only variables (`SITE_URL`, `PAYOS_*`, `RESEND_*`, `SUPABASE_SERVICE_ROLE_KEY`). NEVER prefix secrets or server-side configurations with `NEXT_PUBLIC_`.
+- **CWE-209 Defense in Server Actions**: All Server Actions (`src/server/presentation/actions/`) must sanitize internal error messages before returning to the UI. Never expose raw SQL errors, Supabase internal error codes, or stack traces to the client.
+
+### 2. Mock vs Production Data Integrity (Anti-Fake Success):
+- **Strictly No Fake Success**: NEVER return a fake success response in `ProcessPaymentUseCase`, `HandlePayOSWebhook`, `ResendEmailService`, or order fulfillment if the real external provider or database transaction failed.
+- **No Production Backdoors**: Simulation backdoors, test bypasses, or mock data paths must NEVER be merged into production or bypass payment verification.
+- **Mock Data Isolation**: Any mock data used for unit testing or UI prototyping must remain strictly isolated in test files or demo frames and clearly tagged `[MOCK_DATA]`.
+
+---
+
+## ─── 🤖 AI & LLM PIPELINE RULES ───
+
+For the Autonomous AI Template Pipeline or any LLM-driven features in KhoUI:
+- **Clean Architecture Compliance**: LLM SDK calls must NEVER be made directly inside UI components or application use cases. All AI interactions must implement a pure domain interface (e.g., `IAIService`, `ITemplateGenerator`) located in `src/server/domain/` with concrete implementations wired in `src/server/infrastructure/ai/`.
+- **No Hardcoded Models**: Never hardcode model IDs (e.g. `'gemini-2.5-pro'`, `'gpt-4o'`) in business logic. Always use environment variables or centralized configuration aliases.
+- **Prompt Sanitization**: Ensure no raw credentials, private customer data, or internal system secrets are injected into LLM prompts.
+- **Resilience & Timeouts**: Every AI call must have a timeout, error handling, retry limits, and safe fallback handling without crashing the main application.
+
+---
+
+## ─── ❓ DISAMBIGUATION PROTOCOL (WHEN UNSURE) ───
+
+If a requirement is ambiguous, has conflicting interpretations, or involves major architectural/business trade-offs, **STOP and ask the user** instead of guessing.
+
+Always structure the question using this standardized 3-part format:
+```text
+Cần xác nhận: [Vấn đề kỹ thuật / nghiệp vụ cần quyết định]
+Các lựa chọn:
+  - Lựa chọn A: [Mô tả + Ưu điểm / Nhược điểm]
+  - Lựa chọn B: [Mô tả + Ưu điểm / Nhược điểm]
+Khuyến nghị: [Phương án đề xuất và lý do cụ thể]
+```
 
 ---
 
@@ -253,15 +310,19 @@ Report results in this table:
 | Check | Status | Notes |
 |-------|--------|-------|
 | npx tsc --noEmit | ✅/❌ | 0 TypeScript errors |
-| npm test | ✅/❌ | 62/62 tests passing |
+| npm test | ✅/❌ | All tests passing |
 | npm run lint | ✅/❌ | 0 errors, 0 warnings |
-| npm run build | ✅/❌ | 32 routes compiled |
+| npm run build | ✅/❌ | All routes compiled successfully |
 | No console.logs | ✅/⚠️ | 0 results in src/ |
 | No "any" types | ✅/❌ | 0 results in src/ |
-| Clean architecture | ✅/❌ | 3 modules: server, client, shared |
+| Clean architecture | ✅/❌ | 3 physical boundaries (server, client, shared) |
+| Scope compliance | ✅/❌ | No unrequested packages or features added |
+| Anti-fake success | ✅/❌ | No mocked successes in payment, webhook, or email |
+| Secret protection | ✅/❌ | No raw secrets, keys, or PII in logs/prompts |
+| i18n dictionaries | ✅/❌ | vi.ts & en.ts synchronized if new text added |
 | No hardcoded data | ✅/❌ | |
-| AGENTS.md updated | ✅/❌ | |
-| README.md updated | ✅/❌ | |
+| AGENTS.md updated | ✅/❌ | Status and task list updated |
+| README.md updated | ✅/❌ | Updated if architecture/docs changed |
 
 Step 5 — Create PR (ONLY after all checks pass):
 - Use MCP GitHub to create Pull Request
@@ -337,7 +398,7 @@ chore: install supabase agent skills
   - Localized 100% of storefront and transaction flows: Navbar, Topbar, Footer, Homepage (Hero, Advantages, Categories, Showcase, Journey, Newsletter), Shop Catalog (filters, search, sorts), Product Detail (reviews, instant download badges, accordions, licensing tiers), Cart page & CartDrawer, 3-Step Checkout with localized Zod validation messages, Auth (Login, Registration, OTP), Order Outcomes (Success, Failed), Demo Fullscreen Preview, 404 Page, and User Profile / Purchased Template Downloads.
   - Added full locale support to currency and date formatters (`formatCurrency`, `formatDate`).
 - **Security Remediation & OWASP Hardening**:
-  - Engineered centralized [`authGuards.ts`](file:///D:/E-Commerce_Full_Stack/LuminaShop/src/server/presentation/actions/authGuards.ts) with `assertAdmin()` and `assertAuthenticated()`, securing all admin mutation actions.
+  - Engineered centralized [`authGuards.ts`](src/server/presentation/actions/authGuards.ts) with `assertAdmin()` and `assertAuthenticated()`, securing all admin mutation actions.
   - Eliminated simulation backdoors in order flow and enforced strict input verification.
   - Hardened `/api/preview` SSRF vector with protocol, hostname, and path whitelisting.
   - Configured HTTP security headers (`nosniff`, `X-Frame-Options`, `Referrer-Policy`, `Permissions-Policy`) in `next.config.ts`.
@@ -349,10 +410,10 @@ chore: install supabase agent skills
 - **Interactive Demo Frame Polish**:
   - Built high-fidelity responsive preview frame (`DemoPreviewFrame.tsx`) with device mode toggles (desktop, tablet, mobile).
 - **Automated Digital License & Order Email Fulfillment Engine**:
-  - Engineered pure domain service interface [`IEmailService.ts`](file:///D:/E-Commerce_Full_Stack/LuminaShop/src/server/domain/services/IEmailService.ts).
-  - Built production infrastructure [`ResendEmailService.ts`](file:///D:/E-Commerce_Full_Stack/LuminaShop/src/server/infrastructure/email/ResendEmailService.ts) using Resend SDK with safe development fallbacks.
-  - Designed branded responsive HTML/plaintext email template [`orderConfirmationTemplate.ts`](file:///D:/E-Commerce_Full_Stack/LuminaShop/src/server/infrastructure/email/templates/orderConfirmationTemplate.ts) delivering order invoice, unique license keys, and direct source code download links.
-  - Implemented application use case [`SendOrderConfirmationEmailUseCase.ts`](file:///D:/E-Commerce_Full_Stack/LuminaShop/src/server/application/use-cases/orders/SendOrderConfirmationEmail.ts).
+  - Engineered pure domain service interface [`IEmailService.ts`](src/server/domain/services/IEmailService.ts).
+  - Built production infrastructure [`ResendEmailService.ts`](src/server/infrastructure/email/ResendEmailService.ts) using Resend SDK with safe development fallbacks.
+  - Designed branded responsive HTML/plaintext email template [`orderConfirmationTemplate.ts`](src/server/infrastructure/email/templates/orderConfirmationTemplate.ts) delivering order invoice, unique license keys, and direct source code download links.
+  - Implemented application use case [`SendOrderConfirmationEmailUseCase.ts`](src/server/application/use-cases/orders/SendOrderConfirmationEmail.ts).
   - Wired automated fulfillment triggering upon PayOS webhook confirmation, client payment verification, and admin manual payment approval, plus added on-demand resend action `resendOrderEmailAction`.
 - **Clean Architecture Physical Separation (Option A)**:
   - Reorganized codebase into 3 strict physical boundaries: `src/server` (Backend: domain, application, infrastructure, presentation/actions, di), `src/client` (Frontend UI: components, hooks, stores), and `src/shared` (Contracts: constants, validations, utils, types).
@@ -387,6 +448,8 @@ and send me the URL.
 - **Automated Validation**: Always run `npm run lint` and `npm run build` automatically after any code modifications to ensure visual and structural integrity.
 - **Self-Healing Loop**: If compiler or linter errors arise, analyze the terminal logs directly and refactor files iteratively until 0 errors are achieved. Do not stop to prompt the user mid-loop.
 - **Strict Architecture Boundaries**: Strictly respect the 4-layer boundaries (Clean Architecture). Do not employ runtime workarounds (such as dynamic `require` or runtime import bypasses) to bypass import restrictions from the Presentation/Application layers into the Infrastructure layer.
+- **Anti-Scope Creep in Autonomous Loops**: Never install new npm dependencies, create unrequested pages, or alter database schemas during autonomous runs. If an enhancement is identified, record it with `// TODO:` and report it in the response summary.
+- **Truthful Execution & Anti-Fake Success**: Never mock or falsify production results, webhook outcomes, or quality gates. Every test, lint, build, and payment check must be genuine.
 - **Idempotent Order Logic**: Ensure order creation processes are safely wrapped in `try/catch/finally` blocks. Release any loading states and clear active carts immediately upon receiving a successful Order ID to prevent duplicate submissions.
 - **Enterprise Static Gate**: Before opening a Pull Request, the agent MUST programmatically verify that NO `console.log` or explicit `: any` types exist in the `src/` directory. If found, they must be stripped or refactored into descriptive TypeScript interfaces automatically.
 - **Strict No-Auto-Commit**: The agent MUST NEVER execute `git commit` or `git push` autonomously. Commits and pushes may only be performed upon direct and explicit instruction from the user.
