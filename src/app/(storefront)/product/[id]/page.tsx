@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 import { 
   makeGetProductByIdUseCase, 
   makeCheckProductPurchasedUseCase, 
@@ -6,7 +7,7 @@ import {
   getAppDictionary 
 } from "@/server/di/container";
 import { BreadcrumbSetter } from "@/client/components/common/BreadcrumbSetter";
-import { ROUTES } from "@/shared/constants";
+import { ROUTES, SITE_URL } from "@/shared/constants";
 import ProductSelection from "@/client/components/product/ProductSelection";
 import ProductMediaGallery from "@/client/components/product/ProductMediaGallery";
 import { getLocale } from "@/i18n/getDictionary";
@@ -18,6 +19,86 @@ interface ProductPageProps {
   params: Promise<{ id: string }>;
 }
 
+/**
+ * Generates dynamic SEO metadata for the product detail page.
+ * Localizes title and description, configures canonical URL, keywords, and OpenGraph/Twitter cards.
+ *
+ * @param {ProductPageProps} props - Page properties with async params.
+ * @returns {Promise<Metadata>} Next.js page metadata object.
+ */
+export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
+  const { id } = await params;
+  const [locale, getProductUseCase] = await Promise.all([
+    getLocale(),
+    makeGetProductByIdUseCase(),
+  ]);
+
+  const productResult = await getProductUseCase.execute(id);
+  if (!productResult.success || !productResult.data) {
+    return {
+      title: "Mẫu giao diện không tồn tại",
+      description: "Không tìm thấy mẫu giao diện theo yêu cầu trên KhoUI.",
+    };
+  }
+
+  const product = productResult.data;
+  const rawTitle = getLocalizedText(product.title as unknown as Record<string, string>, locale);
+  const rawDesc = getLocalizedText(product.description as unknown as Record<string, string>, locale);
+  const title = rawTitle;
+  const ogTitle = `${rawTitle} — Mẫu Giao Diện Website Cao Cấp`;
+  const description = rawDesc.length > 160 ? `${rawDesc.slice(0, 157)}...` : rawDesc || "Mẫu giao diện website cao cấp, chuẩn SEO và tối ưu hiệu năng tại KhoUI.";
+  const productUrl = `${SITE_URL}/product/${id}`;
+
+  return {
+    title,
+    description,
+    keywords: [
+      rawTitle,
+      ...(product.techStack || []),
+      "website template",
+      "source code",
+      "kho giao diện",
+      "Next.js template",
+      "Tailwind CSS",
+      "KhoUI",
+    ],
+    openGraph: {
+      title: ogTitle,
+      description,
+      url: productUrl,
+      siteName: "KhoUI",
+      type: "website",
+      locale: locale === "vi" ? "vi_VN" : "en_US",
+      images: product.imageUrl
+        ? [
+            {
+              url: product.imageUrl,
+              width: 1200,
+              height: 630,
+              alt: rawTitle,
+            },
+          ]
+        : [],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: ogTitle,
+      description,
+      images: product.imageUrl ? [product.imageUrl] : [],
+    },
+    alternates: {
+      canonical: productUrl,
+    },
+  };
+}
+
+/**
+ * Product detail page server component.
+ * Displays interactive product media, tech stack, pricing, license accordion, and JSON-LD structured data.
+ *
+ * @param {ProductPageProps} props - Page properties with async params.
+ * @returns {Promise<React.ReactElement>} Next.js page element.
+ */
 export default async function ProductDetailPage({ params }: ProductPageProps) {
   const { id } = await params;
 
@@ -98,10 +179,88 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
     },
   ];
 
+  const localizedTitle = getLocalizedText(product.title as unknown as Record<string, string>, locale);
+  const localizedDesc = getLocalizedText(product.description as unknown as Record<string, string>, locale);
+  const productUrl = `${SITE_URL}/product/${id}`;
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Product",
+        "@id": `${productUrl}#product`,
+        "name": localizedTitle,
+        "description": localizedDesc,
+        "image": product.imageUrl ? [product.imageUrl] : [],
+        "category": "Software > Web Development > Website Templates",
+        "brand": {
+          "@type": "Brand",
+          "name": "KhoUI"
+        },
+        "offers": {
+          "@type": "Offer",
+          "url": productUrl,
+          "priceCurrency": "VND",
+          "price": product.price,
+          "priceValidUntil": "2027-12-31",
+          "availability": "https://schema.org/InStock",
+          "itemCondition": "https://schema.org/NewCondition",
+          "seller": {
+            "@type": "Organization",
+            "name": "KhoUI",
+            "url": SITE_URL
+          }
+        }
+      },
+      {
+        "@type": "SoftwareApplication",
+        "@id": `${productUrl}#software`,
+        "name": localizedTitle,
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "Web, Next.js, Node.js",
+        "softwareRequirements": (product.techStack || []).join(", "),
+        "offers": {
+          "@type": "Offer",
+          "price": product.price,
+          "priceCurrency": "VND"
+        }
+      },
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": locale === "vi" ? "Trang chủ" : "Home",
+            "item": SITE_URL
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": locale === "vi" ? "Kho giao diện" : "Templates",
+            "item": `${SITE_URL}/shop`
+          },
+          {
+            "@type": "ListItem",
+            "position": 3,
+            "name": localizedTitle,
+            "item": productUrl
+          }
+        ]
+      }
+    ]
+  };
+
   return (
     <main className="flex-grow bg-white py-10 font-sans">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c"),
+        }}
+      />
       <BreadcrumbSetter
-        currentLabel={getLocalizedText(product.title as unknown as Record<string, string>, locale)}
+        currentLabel={localizedTitle}
         parentLabels={{ [ROUTES.SHOP]: locale === "vi" ? "Kho giao diện" : "Templates" }}
       />
 

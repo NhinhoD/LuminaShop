@@ -1,10 +1,27 @@
-﻿import { redirect } from "next/navigation";
+import { redirect } from "next/navigation";
+import type { Metadata } from "next";
 import { makeGetProductsUseCase, makeGetCategoriesUseCase, getAppDictionary } from "@/server/di/container";
 import ShopProductGrid from "@/client/components/product/ShopProductGrid";
 import { PaginationControls } from "@/client/components/common/PaginationControls";
 import { getLocale } from "@/i18n/getDictionary";
 import { Sparkles, Zap } from "lucide-react";
 import { sanitizeProductsForPublic } from "@/server/domain/entities/Product";
+import { SITE_URL } from "@/shared/constants";
+
+export const metadata: Metadata = {
+  title: "Kho Mẫu Giao Diện Website & Source Code Cao Cấp",
+  description: "Khám phá và tải xuống các mẫu website template chuẩn Clean Architecture, Next.js 16, Tailwind CSS 4, GSAP. Đầy đủ mã nguồn và bản quyền thương mại.",
+  openGraph: {
+    title: "Kho Mẫu Giao Diện Website & Source Code Cao Cấp",
+    description: "Khám phá và tải xuống các mẫu website template chuẩn Clean Architecture, Next.js 16, Tailwind CSS 4, GSAP. Đầy đủ mã nguồn và bản quyền thương mại.",
+    url: `${SITE_URL}/shop`,
+    siteName: "KhoUI",
+    type: "website",
+  },
+  alternates: {
+    canonical: `${SITE_URL}/shop`,
+  },
+};
 
 interface ShopPageProps {
   searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -19,6 +36,13 @@ const CATEGORY_SLUG_MAP: Record<string, string> = {
   food: "food-hospitality",
 };
 
+/**
+ * Catalog storefront shop page.
+ * Supports filtering by category, search query, and server-side pagination.
+ *
+ * @param {ShopPageProps} props - Component properties containing async searchParams.
+ * @returns {Promise<React.ReactElement>} Next.js page element.
+ */
 export default async function ShopPage({ searchParams }: ShopPageProps) {
   const params = await searchParams;
   const rawPage = typeof params?.page === "string" ? parseInt(params.page, 10) : 1;
