@@ -19,6 +19,14 @@ export const metadata: Metadata = {
     url: SITE_URL,
     siteName: "KhoUI",
     type: "website",
+    images: [
+      {
+        url: `${SITE_URL}/LogoKhoUI.png`,
+        width: 1200,
+        height: 630,
+        alt: "KhoUI Logo",
+      },
+    ],
   },
   alternates: {
     canonical: SITE_URL,
@@ -136,6 +144,7 @@ export default async function HomePage({ searchParams }: HomePageProps): Promise
         "@id": `${SITE_URL}/#organization`,
         "name": "KhoUI",
         "url": SITE_URL,
+        "logo": `${SITE_URL}/LogoKhoUI.png`,
         "description": "Nền tảng cung cấp website templates & source code chuẩn Clean Architecture hàng đầu Việt Nam.",
         "sameAs": [
           "https://github.com/NhinhoD/LuminaShop"
