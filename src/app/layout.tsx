@@ -51,11 +51,20 @@ export const metadata: Metadata = {
     siteName: "KhoUI",
     locale: "vi_VN",
     type: "website",
+    images: [
+      {
+        url: "/LogoKhoUI.png",
+        width: 1200,
+        height: 630,
+        alt: "KhoUI — Nền tảng Website Template & Source Code",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "KhoUI — Sàn Giao Dịch Website Template & Source Code Cao Cấp",
     description: "Khám phá và sở hữu các mẫu website template chuẩn Clean Architecture, Next.js 16, Tailwind CSS 4, GSAP.",
+    images: ["/LogoKhoUI.png"],
   },
   alternates: {
     canonical: "/",

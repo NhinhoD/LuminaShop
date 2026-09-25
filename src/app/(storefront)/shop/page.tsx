@@ -36,6 +36,13 @@ const CATEGORY_SLUG_MAP: Record<string, string> = {
   food: "food-hospitality",
 };
 
+/**
+ * Catalog storefront shop page.
+ * Supports filtering by category, search query, and server-side pagination.
+ *
+ * @param {ShopPageProps} props - Component properties containing async searchParams.
+ * @returns {Promise<React.ReactElement>} Next.js page element.
+ */
 export default async function ShopPage({ searchParams }: ShopPageProps) {
   const params = await searchParams;
   const rawPage = typeof params?.page === "string" ? parseInt(params.page, 10) : 1;

@@ -19,6 +19,14 @@ export const metadata: Metadata = {
     url: SITE_URL,
     siteName: "KhoUI",
     type: "website",
+    images: [
+      {
+        url: `${SITE_URL}/LogoKhoUI.png`,
+        width: 1200,
+        height: 630,
+        alt: "KhoUI Logo",
+      },
+    ],
   },
   alternates: {
     canonical: SITE_URL,
@@ -29,6 +37,13 @@ interface HomePageProps {
   searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
+/**
+ * Storefront Homepage server component.
+ * Renders hero section, category filters, featured products showcase, and JSON-LD structured data.
+ *
+ * @param {HomePageProps} props - Page properties with async searchParams.
+ * @returns {Promise<React.ReactElement>} Next.js page element.
+ */
 export default async function HomePage({ searchParams }: HomePageProps): Promise<React.ReactElement> {
   const params = await searchParams;
   const rawPage = typeof params?.page === "string" ? parseInt(params.page, 10) : 1;
@@ -129,6 +144,7 @@ export default async function HomePage({ searchParams }: HomePageProps): Promise
         "@id": `${SITE_URL}/#organization`,
         "name": "KhoUI",
         "url": SITE_URL,
+        "logo": `${SITE_URL}/LogoKhoUI.png`,
         "description": "Nền tảng cung cấp website templates & source code chuẩn Clean Architecture hàng đầu Việt Nam.",
         "sameAs": [
           "https://github.com/NhinhoD/LuminaShop"
