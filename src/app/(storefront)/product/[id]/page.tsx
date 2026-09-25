@@ -208,7 +208,8 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
           "seller": {
             "@type": "Organization",
             "name": "KhoUI",
-            "url": SITE_URL
+            "url": SITE_URL,
+            "logo": `${SITE_URL}/LogoKhoUI.png`
           }
         }
       },

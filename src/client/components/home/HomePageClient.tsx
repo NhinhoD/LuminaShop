@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import Link from "next/link";
 import Image from "next/image";
@@ -25,25 +25,12 @@ import {
   Monitor,
   Layout,
   ExternalLink,
-  CheckCircle2,
   Activity,
   Star,
   Box,
   Copy,
   Check,
-  Smartphone,
-  Tablet,
-  GitBranch,
   FolderGit2,
-  Flame,
-  Layers,
-  Gauge,
-  Sparkles,
-  RotateCw,
-  Terminal,
-  ChevronDown,
-  CheckCheck,
-  Loader2,
 } from "lucide-react";
 import { toast } from "@/client/hooks/useToastStore";
 import type { vi } from "@/i18n/dictionaries/vi";
@@ -255,13 +242,7 @@ export default function HomePageClient({
   }
 
   const ITEMS_PER_PAGE = 6;
-  const [activeLabTab, setActiveLabTab] = useState<"preview" | "architecture" | "telemetry">("preview");
-  const [viewportMode, setViewportMode] = useState<"desktop" | "tablet" | "mobile">("desktop");
   const [copiedCli, setCopiedCli] = useState(false);
-  const [isReloadingPreview, setIsReloadingPreview] = useState(false);
-  const [copiedCode, setCopiedCode] = useState(false);
-  const [isRunningDiagnostic, setIsRunningDiagnostic] = useState(false);
-  const [hoveredArchLayer, setHoveredArchLayer] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const { locale } = useI18n();
 
@@ -297,12 +278,7 @@ export default function HomePageClient({
       return raw.replace(/\s+([^\s]+)$/, "\u00A0$1");
     }
     if (locale === "vi") {
-      return (
-        <>
-          <span className="inline-block">Sở Hữu Website</span>{" "}
-          <span className="inline-block">Template Đỉnh&nbsp;Cao,</span>
-        </>
-      );
+      return "Sở Hữu Website Template Đỉnh Cao,";
     }
     return (
       <>
@@ -323,12 +299,7 @@ export default function HomePageClient({
       return raw.replace(/\s+([^\s]+)$/, "\u00A0$1");
     }
     if (locale === "vi") {
-      return (
-        <>
-          <span className="inline-block">Sẵn Sàng Triển Khai</span>{" "}
-          <span className="inline-block">Dự Án Đột&nbsp;Phá</span>
-        </>
-      );
+      return "Sẵn Sàng Triển Khai Dự Án Đột Phá";
     }
     return (
       <>
@@ -348,39 +319,6 @@ export default function HomePageClient({
     setTimeout(() => setCopiedCli(false), 2500);
   };
 
-  const handleReloadPreview = () => {
-    setIsReloadingPreview(true);
-    setTimeout(() => {
-      setIsReloadingPreview(false);
-      toast.success(
-        locale === "vi" ? "Đã làm mới bản dựng trực tiếp" : "Live Blueprint Reloaded",
-        locale === "vi" ? "60 FPS GSAP & Next.js 16 runtime sẵn sàng" : "60 FPS GSAP & Next.js 16 runtime ready"
-      );
-    }, 600);
-  };
-
-  const handleCopyCode = () => {
-    const codeSnippet = `import { makeProductRepository } from "@/infrastructure";\nimport { CreateOrderUseCase } from "@/application";\n\nexport default async function Page() {\n  // 100% Clean Architecture & zero leak\n  const repo = await makeProductRepository();\n  return <KhoUIStorefront repo={repo} />;\n}`;
-    navigator.clipboard.writeText(codeSnippet);
-    setCopiedCode(true);
-    toast.success(
-      locale === "vi" ? "Đã sao chép mã nguồn Clean Code" : "Clean Code Snippet Copied",
-      "src/presentation/components/Hero.tsx"
-    );
-    setTimeout(() => setCopiedCode(false), 2500);
-  };
-
-  const handleRunDiagnostic = () => {
-    if (isRunningDiagnostic) return;
-    setIsRunningDiagnostic(true);
-    setTimeout(() => {
-      setIsRunningDiagnostic(false);
-      toast.success(
-        locale === "vi" ? "Kiểm tra hệ thống: 100% ĐẠT" : "Benchmark Diagnostics: 100% PASS",
-        locale === "vi" ? "0 circular imports • 0 runtime leaks • 98/100 Core Web Vitals" : "0 circular imports • 0 runtime leaks • 98/100 Core Web Vitals"
-      );
-    }, 1200);
-  };
 
   const shouldShowSamples = activeCategory === "all" && totalProducts === 0 && featuredProducts.length === 0;
   const displayShowcaseProducts = (totalProducts > 0 || featuredProducts.length > 0)
@@ -560,26 +498,10 @@ export default function HomePageClient({
         });
       });
 
-      // 4. Organic Floating Animation on Micro-Badges (Multi-Phase Harmonic Wave)
-      gsap.to(".float-card-1", { y: -10, rotateZ: 1, duration: 3.2, repeat: -1, yoyo: true, ease: "sine.inOut" });
-      gsap.to(".float-card-2", { y: -12, rotateZ: -1.2, duration: 3.6, repeat: -1, yoyo: true, ease: "sine.inOut", delay: 0.4 });
-      gsap.to(".float-card-3", { y: -8, rotateZ: 0.8, duration: 4.0, repeat: -1, yoyo: true, ease: "sine.inOut", delay: 0.8 });
 
-      // 5. Parallax Background Ambient Orbs
-      gsap.to(".hero-orb-1", {
-        yPercent: 30,
-        ease: "none",
-        scrollTrigger: {
-          trigger: containerRef.current,
-          start: "top top",
-          end: "bottom top",
-          scrub: 1.2,
-        },
-      });
-
-      // 6. Parallax Scrub on Right-Column IDE Mockup
-      gsap.to(".hero-ide-window", {
-        yPercent: -12,
+      // 6. Parallax Scrub on Right-Column 3D Mockup Container (Both devices and floor shadow move in unison with page scroll)
+      gsap.to(".hero-mockup-container", {
+        yPercent: -6,
         ease: "none",
         scrollTrigger: {
           trigger: containerRef.current,
@@ -589,26 +511,26 @@ export default function HomePageClient({
         },
       });
 
-      // 7. Kinetic Hero Entry Timeline with 3D Perspective Rotation
-      const heroTl = gsap.timeline({ defaults: { ease: "power4.out" } });
+      // 7. Kinetic Hero Entry Timeline with 3D Perspective Rotation (Snappy, Premium Entrance)
+      const heroTl = gsap.timeline({ defaults: { ease: "power3.out" } });
       heroTl
-        .fromTo(".hero-badge", { opacity: 0, y: 16, scale: 0.92 }, { opacity: 1, y: 0, scale: 1, duration: 0.6 })
+        .fromTo(".hero-badge", { opacity: 0, y: 12, scale: 0.96 }, { opacity: 1, y: 0, scale: 1, duration: 0.3 })
         .fromTo(
           ".hero-title-1", 
-          { opacity: 0, y: 28, rotateX: 18, transformOrigin: "bottom center" }, 
-          { opacity: 1, y: 0, rotateX: 0, duration: 0.75 }, 
-          "-=0.35"
+          { opacity: 0, y: 16, rotateX: 10, transformOrigin: "bottom center" }, 
+          { opacity: 1, y: 0, rotateX: 0, duration: 0.35 }, 
+          "-=0.2"
         )
         .fromTo(
           ".hero-title-2", 
-          { opacity: 0, y: 24, rotateX: 15, transformOrigin: "bottom center" }, 
-          { opacity: 1, y: 0, rotateX: 0, duration: 0.7 }, 
-          "-=0.5"
+          { opacity: 0, y: 14, rotateX: 10, transformOrigin: "bottom center" }, 
+          { opacity: 1, y: 0, rotateX: 0, duration: 0.35 }, 
+          "-=0.25"
         )
-        .fromTo(".hero-desc", { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.65 }, "-=0.45")
-        .fromTo(".hero-cta", { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.6 }, "-=0.45")
-        .fromTo(".hero-social-proof", { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.5 }, "-=0.35")
-        .fromTo(".hero-stats-item", { opacity: 0, y: 18, scale: 0.94 }, { opacity: 1, y: 0, scale: 1, duration: 0.5, stagger: 0.08 }, "-=0.35");
+        .fromTo(".hero-desc", { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.3 }, "-=0.2")
+        .fromTo(".hero-cta", { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.3 }, "-=0.2")
+        .fromTo(".hero-social-proof", { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.25 }, "-=0.2")
+        .fromTo(".hero-stats-item", { opacity: 0, y: 10, scale: 0.98 }, { opacity: 1, y: 0, scale: 1, duration: 0.25, stagger: 0.04 }, "-=0.2");
 
       // 8. ScrollTrigger for Categories Grid
       if (categoriesRef.current) {
@@ -742,19 +664,12 @@ export default function HomePageClient({
       />
 
       {/* ══════════ HERO SECTION ══════════ */}
-      <section className="relative min-h-[85vh] flex items-center pt-12 pb-20 overflow-hidden bg-gradient-to-b from-slate-50/50 via-white to-white border-b border-slate-100/60">
-        
-        {/* Subtle Background Pattern */}
-        <div className="absolute inset-0 bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] [background-size:2rem_2rem] opacity-40 pointer-events-none" />
-
-        {/* Ambient Glow with Parallax */}
-        <div className="hero-orb-1 absolute top-0 right-1/4 w-[500px] h-[500px] rounded-full bg-primary/[0.04] blur-[100px] pointer-events-none" />
-
+      <section className="relative min-h-[85vh] flex items-center pt-12 pb-20 overflow-hidden bg-white border-b border-slate-100/60">
         <div className="max-w-[1360px] mx-auto px-6 sm:px-8 w-full relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8 xl:gap-12 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 xl:gap-12 items-center">
 
-            {/* Left Column: Headline & Content */}
-            <div className="lg:col-span-7 space-y-5">
+            {/* Left Column: Headline & Content (Subtly elevated for optimal visual alignment with 3D device mockup) */}
+            <div className="lg:col-span-6 xl:col-span-6 space-y-5 pr-0 xl:pr-4 lg:-translate-y-8 xl:-translate-y-12 2xl:-translate-y-14">
               
               {/* Subtle Status Pill */}
               <div className="hero-badge inline-flex items-center gap-2 bg-slate-50 border border-slate-200/70 text-slate-700 rounded-full px-3 py-1 text-xs font-medium shadow-2xs">
@@ -766,11 +681,11 @@ export default function HomePageClient({
               </div>
 
               {/* Refined, Balanced Headline with 3D Kinetic Split */}
-              <h1 className="hero-title text-2xl sm:text-4xl lg:text-[2.35rem] xl:text-[2.75rem] 2xl:text-[2.95rem] font-extrabold leading-[1.2] lg:leading-[1.16] text-slate-900 tracking-[-0.03em] perspective-[1000px] text-balance">
-                <span className="hero-title-1 block lg:whitespace-nowrap">
+              <h1 className="hero-title text-2xl sm:text-4xl lg:text-[1.85rem] xl:text-[2.1rem] 2xl:text-[2.35rem] font-extrabold leading-[1.2] lg:leading-[1.18] text-slate-900 tracking-[-0.03em] perspective-[1000px] text-balance">
+                <span className="hero-title-1 block xl:whitespace-nowrap">
                   {renderHeroTitle1()}
                 </span>
-                <span className="hero-title-2 block mt-1.5 lg:mt-2 text-primary lg:whitespace-nowrap">
+                <span className="hero-title-2 block mt-1.5 lg:mt-2 text-primary xl:whitespace-nowrap">
                   {renderHeroTitle2()}
                 </span>
               </h1>
@@ -858,520 +773,298 @@ export default function HomePageClient({
               </div>
             </div>
 
-            {/* Right Column: VS Code / IDE Interactive Engineering Lab */}
+            {/* Right Column: 3D Isometric Device Ecosystem & Animated Floating Badges (IMG_1 & IMG_4 Compliance) */}
             <div 
-              className="lg:col-span-5 relative hidden lg:block perspective-[1200px]"
+              className="lg:col-span-6 xl:col-span-6 relative hidden lg:block perspective-[1400px]"
               onMouseMove={handleHeroMouseMove}
               onMouseLeave={handleHeroMouseLeave}
             >
-              <div className="relative w-full h-[580px] flex items-center justify-center">
+              {/* ─── Luminous Ambient Backlight (Seamless, zero box borders) ─── */}
+              <div className="absolute -inset-10 bg-[radial-gradient(ellipse_at_55%_45%,rgba(56,189,248,0.08)_0%,transparent_65%)] blur-3xl pointer-events-none" />
+              
+              {/* Subtle Tech Diamond Sparkles (IMG_1 Accent) */}
+              <div className="absolute -top-4 right-10 w-6 h-6 text-sky-400/40 pointer-events-none select-none">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 0L14 9L23 12L14 15L12 24L10 15L1 12L10 9Z" />
+                </svg>
+              </div>
+              <div className="absolute bottom-6 right-2 w-8 h-8 text-sky-400/35 pointer-events-none select-none animate-pulse">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 0L14 9L23 12L14 15L12 24L10 15L1 12L10 9Z" />
+                </svg>
+              </div>
+              <div className="absolute top-1/3 -left-4 w-5 h-5 text-blue-400/30 pointer-events-none select-none">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 0L14 9L23 12L14 15L12 24L10 15L1 12L10 9Z" />
+                </svg>
+              </div>
 
-                {/* Dynamic Multi-Hued Ambient Backlight */}
+              {/* ─── Mockup Container with Independent Floor Shadow Layer & 3D Tilting Devices ─── */}
+              <div className="hero-mockup-container relative w-full aspect-[1500/1720] max-w-[620px] xl:max-w-[660px] ml-auto select-none">
+
+                {/* ─── LAYER 0: Authentic Ground Shadow (Fixed on floor plane, underneath devices) ─── */}
                 <div 
-                  className={`absolute inset-0 rounded-3xl transition-all duration-700 blur-[85px] pointer-events-none opacity-60 ${
-                    activeLabTab === "preview" 
-                      ? "bg-gradient-to-tr from-primary/35 via-cyan-500/20 to-indigo-600/30"
-                      : activeLabTab === "architecture"
-                      ? "bg-gradient-to-tr from-emerald-500/35 via-teal-500/20 to-cyan-600/30"
-                      : "bg-gradient-to-tr from-purple-600/35 via-pink-500/20 to-amber-500/30"
-                  }`} 
-                />
+                  className="hero-ground-shadow-layer absolute inset-0 w-full h-full pointer-events-none z-0"
+                  aria-hidden="true"
+                >
+                  <Image
+                    src="/hero/hero-ground-shadow.png"
+                    alt=""
+                    fill
+                    priority
+                    unoptimized
+                    sizes="(max-width: 1024px) 100vw, (max-width: 1280px) 580px, 660px"
+                    className="object-contain"
+                  />
+                </div>
 
-                {/* Main IDE Window with GSAP Parallax Scrub */}
+                {/* ─── LAYER 1: 3D Tilting Device Mockup (Hovers & tilts in 3D above the floor shadow) ─── */}
                 <motion.div 
                   style={{
                     rotateX: heroRotateX,
                     rotateY: heroRotateY,
                     transformStyle: "preserve-3d",
                   }}
-                  className="hero-ide-window relative w-full max-w-[420px] xl:max-w-[470px] h-[520px] bg-[#090d16]/95 backdrop-blur-2xl text-white rounded-2xl overflow-hidden shadow-[0_30px_70px_-15px_rgba(0,0,0,0.8),0_0_35px_rgba(0,81,213,0.12)] border border-slate-800/90 ring-1 ring-white/10 flex flex-col justify-between select-none z-10"
+                  className="hero-mockup-wrapper relative z-10 w-full h-full"
                 >
-                  
-                  {/* IDE Top Bar (macOS Style + File Breadcrumbs + Interactive Segmented Tab) */}
-                  <div className="h-[46px] bg-slate-900/95 px-4 py-2 border-b border-slate-800/90 flex items-center justify-between font-mono text-[11px] flex-shrink-0">
-                    <div className="flex items-center gap-2">
-                      <span className="w-2.5 h-2.5 rounded-full bg-[#ff5f56] inline-block shadow-[0_0_6px_rgba(255,95,86,0.6)] cursor-pointer hover:scale-125 transition-transform" />
-                      <span className="w-2.5 h-2.5 rounded-full bg-[#ffbd2e] inline-block shadow-[0_0_6px_rgba(255,189,46,0.6)] cursor-pointer hover:scale-125 transition-transform" />
-                      <span className="w-2.5 h-2.5 rounded-full bg-[#27c93f] inline-block shadow-[0_0_6px_rgba(39,201,63,0.6)] cursor-pointer hover:scale-125 transition-transform" />
-                      <span className="text-slate-400 text-[10px] ml-2 flex items-center gap-1.5 font-sans">
-                        <GitBranch size={11} className="text-primary" />
-                        <span className="font-mono text-slate-300">main</span>
-                        <span className="text-slate-600">•</span>
-                        <span className="font-mono text-[9px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700/60">v2.4</span>
-                      </span>
-                    </div>
-
-                    {/* Viewport or Tab Switcher with Framer Motion Sliding Pill */}
-                    <div className="flex items-center gap-1 bg-slate-950/80 p-0.5 rounded-lg border border-slate-800 relative">
-                      <button
-                        onClick={() => startTransition(() => setActiveLabTab("preview"))}
-                        className={`relative z-10 px-2.5 py-1 rounded-md text-[10px] font-bold transition-colors cursor-pointer flex items-center gap-1.5 ${
-                          activeLabTab === "preview" ? "text-white" : "text-slate-400 hover:text-slate-200"
-                        }`}
-                      >
-                        {activeLabTab === "preview" && (
-                          <motion.div
-                            layoutId="activeHeroLabTabIndicator"
-                            className="absolute inset-0 bg-primary rounded-md shadow-[0_0_12px_rgba(0,81,213,0.5)] z-[-1]"
-                            transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                          />
-                        )}
-                        <Monitor size={11} />
-                        <span>Preview</span>
-                      </button>
-
-                      <button
-                        onClick={() => startTransition(() => setActiveLabTab("architecture"))}
-                        className={`relative z-10 px-2.5 py-1 rounded-md text-[10px] font-bold transition-colors cursor-pointer flex items-center gap-1.5 ${
-                          activeLabTab === "architecture" ? "text-white" : "text-slate-400 hover:text-slate-200"
-                        }`}
-                      >
-                        {activeLabTab === "architecture" && (
-                          <motion.div
-                            layoutId="activeHeroLabTabIndicator"
-                            className="absolute inset-0 bg-emerald-600 rounded-md shadow-[0_0_12px_rgba(16,185,129,0.5)] z-[-1]"
-                            transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                          />
-                        )}
-                        <Layers size={11} />
-                        <span>Arch</span>
-                      </button>
-
-                      <button
-                        onClick={() => startTransition(() => setActiveLabTab("telemetry"))}
-                        className={`relative z-10 px-2.5 py-1 rounded-md text-[10px] font-bold transition-colors cursor-pointer flex items-center gap-1.5 ${
-                          activeLabTab === "telemetry" ? "text-white" : "text-slate-400 hover:text-slate-200"
-                        }`}
-                      >
-                        {activeLabTab === "telemetry" && (
-                          <motion.div
-                            layoutId="activeHeroLabTabIndicator"
-                            className="absolute inset-0 bg-purple-600 rounded-md shadow-[0_0_12px_rgba(147,51,234,0.5)] z-[-1]"
-                            transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                          />
-                        )}
-                        <Activity size={11} />
-                        <span>Stats</span>
-                      </button>
-                    </div>
+                  {/* 3D Master Mockup with 100% Transparent Background */}
+                  <div className="hero-mockup-base-img absolute inset-0 w-full h-full">
+                    <Image
+                      src="/hero/hero-devices-clean.png"
+                      alt="KhoUI 3D Device Ecosystem Mockup"
+                      fill
+                      priority
+                      unoptimized
+                      sizes="(max-width: 1024px) 100vw, (max-width: 1280px) 580px, 660px"
+                      className="object-contain"
+                    />
                   </div>
 
-                  {/* IDE Body (Constant Unified Height - Never Collapses or Shrinks) */}
-                  <div className="flex-1 p-4 flex flex-col justify-between overflow-hidden relative h-[474px]">
-                    <AnimatePresence mode="wait">
-                      
-                      {/* Tab 1: Live Interactive Component Preview with Viewport Toggle */}
-                      {activeLabTab === "preview" && (
-                        <motion.div
-                          key="preview"
-                          initial={{ opacity: 0, scale: 0.98, y: 6 }}
-                          animate={{ opacity: 1, scale: 1, y: 0 }}
-                          exit={{ opacity: 0, scale: 0.98, y: -6 }}
-                          transition={{ duration: 0.22 }}
-                          className="h-[442px] flex flex-col justify-between"
-                        >
-                          {/* Viewport Switcher & Actions Toolbar */}
-                          <div className="flex items-center justify-between pb-2 border-b border-slate-800/80 text-[11px] text-slate-400 flex-shrink-0">
-                            <span className="font-mono text-[10px] text-slate-400 flex items-center gap-1">
-                              <Code2 size={11} className="text-primary" />
-                              <span>src/presentation/components/Hero.tsx</span>
-                            </span>
-                            <div className="flex items-center gap-2">
-                              {/* Viewport Modes */}
-                              <div className="flex items-center gap-1 bg-slate-950 p-0.5 rounded border border-slate-800">
-                                <button 
-                                  onClick={() => setViewportMode("desktop")}
-                                  className={`p-1 rounded transition-colors cursor-pointer ${viewportMode === "desktop" ? "text-primary bg-primary/15" : "hover:text-white"}`}
-                                  title="Desktop View"
-                                >
-                                  <Monitor size={12} />
-                                </button>
-                                <button 
-                                  onClick={() => setViewportMode("tablet")}
-                                  className={`p-1 rounded transition-colors cursor-pointer ${viewportMode === "tablet" ? "text-primary bg-primary/15" : "hover:text-white"}`}
-                                  title="Tablet View"
-                                >
-                                  <Tablet size={12} />
-                                </button>
-                                <button 
-                                  onClick={() => setViewportMode("mobile")}
-                                  className={`p-1 rounded transition-colors cursor-pointer ${viewportMode === "mobile" ? "text-primary bg-primary/15" : "hover:text-white"}`}
-                                  title="Mobile View"
-                                >
-                                  <Smartphone size={12} />
-                                </button>
-                              </div>
+                  {/* ─── 3D Dynamic Orbital Particle System 1: Left Orbit (Circling the Tablet) ─── */}
+                  <div 
+                    className="absolute left-[17.0%] top-[23.1%] pointer-events-none z-20"
+                    style={{ transformStyle: "preserve-3d" }}
+                  >
+                    {/* Ethereal Ambient Aura along 3D Light Streak */}
+                    <div className="absolute -inset-8 bg-blue-500/10 rounded-full blur-xl pointer-events-none" />
 
-                              {/* Interactive Live Reload Action */}
-                              <button
-                                onClick={handleReloadPreview}
-                                className="p-1 text-slate-400 hover:text-white hover:bg-slate-800 rounded transition-colors cursor-pointer"
-                                title="Reload Blueprint"
-                              >
-                                <RotateCw size={12} className={isReloadingPreview ? "animate-spin text-primary" : ""} />
-                              </button>
+                    {/* 3D Animated Primary Orbiting Blue Sphere 1 */}
+                    <motion.div
+                      animate={{
+                        x: [-10, 16, 36, 16, -10],
+                        y: [14, -12, -34, -8, 14],
+                        scale: [0.95, 1.25, 0.95, 0.8, 0.95],
+                        opacity: [0.92, 1, 0.88, 0.72, 0.92],
+                        z: [20, 48, 12, -14, 20],
+                      }}
+                      transition={{
+                        duration: 5.5,
+                        repeat: Infinity,
+                        ease: "easeInOut",
+                      }}
+                      className="relative flex items-center justify-center pointer-events-auto cursor-pointer"
+                      style={{ transformStyle: "preserve-3d" }}
+                    >
+                      {/* Pulsing Outer Energy Aura */}
+                      <div className="absolute -inset-2 rounded-full bg-cyan-400/30 blur-sm animate-ping pointer-events-none" />
+                      {/* 3D Photorealistic Blue Core Orb */}
+                      <div className="relative w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-[radial-gradient(circle_at_30%_30%,#ffffff_0%,#93c5fd_25%,#2563eb_60%,#0f172a_100%)] shadow-[0_0_20px_#2563eb,0_0_40px_rgba(56,189,248,0.7),inset_-2px_-2px_5px_#091124,inset_2px_2px_4px_rgba(255,255,255,0.95)] ring-1.5 ring-cyan-200/90">
+                        <div className="absolute top-1 left-1.5 w-1.5 h-1.5 rounded-full bg-white blur-[0.2px] opacity-100" />
+                      </div>
+                    </motion.div>
 
-                              {/* Interactive Copy Snippet Action */}
-                              <button
-                                onClick={handleCopyCode}
-                                className="p-1 text-slate-400 hover:text-white hover:bg-slate-800 rounded transition-colors cursor-pointer"
-                                title="Copy Code Snippet"
-                              >
-                                {copiedCode ? <CheckCheck size={12} className="text-emerald-400" /> : <Copy size={12} />}
-                              </button>
-                            </div>
-                          </div>
-
-                          {/* Live Component Canvas with Scanline */}
-                          <div className={`mx-auto transition-all duration-300 relative h-[175px] bg-slate-950 rounded-xl overflow-hidden border border-slate-800 group shadow-inner flex-shrink-0 ${
-                            viewportMode === "mobile" ? "w-[65%]" : viewportMode === "tablet" ? "w-[85%]" : "w-full"
-                          }`}>
-                            <Image
-                              src={displayShowcaseProducts[0]?.imageUrl || "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1200&auto=format&fit=crop&q=80"}
-                              alt="KhoUI Live Blueprint"
-                              fill
-                              sizes="420px"
-                              className="object-cover group-hover:scale-105 transition-transform duration-500"
-                              priority
-                            />
-                            
-                            {/* Futuristic Animated Scanline Beam */}
-                            <div className="absolute inset-x-0 h-0.5 bg-gradient-to-r from-transparent via-cyan-400 to-transparent shadow-[0_0_12px_cyan] animate-scanline pointer-events-none z-10" />
-
-                            {/* Canvas Overlay Gradient & Status */}
-                            <div className="absolute inset-0 bg-gradient-to-t from-dark/95 via-dark/40 to-transparent flex flex-col justify-end p-3">
-                              <div className="flex items-center justify-between">
-                                <span className="text-[9px] font-mono font-bold text-cyan-400 uppercase tracking-wider flex items-center gap-1.5">
-                                  <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
-                                  [PRODUCTION BLUEPRINT]
-                                </span>
-                                <span className="text-[9px] font-mono bg-black/60 backdrop-blur px-2 py-0.5 rounded text-emerald-400 font-bold border border-emerald-500/30">
-                                  60 FPS
-                                </span>
-                              </div>
-                              <h3 className="text-xs font-bold text-white truncate mt-0.5">
-                                {displayShowcaseProducts[0]?.title ? getLocalizedText(displayShowcaseProducts[0].title as unknown as Record<string, string>, locale) : "Zenith AI - High Performance Storefront"}
-                              </h3>
-                            </div>
-                          </div>
-
-                          {/* Real Syntax Highlighted Code Snippet */}
-                          <div className="bg-black/90 rounded-xl p-3 border border-slate-800 font-mono text-[10.5px] leading-relaxed text-slate-300 flex-1 flex flex-col justify-between shadow-inner mt-2">
-                            <div className="space-y-0.5">
-                              <div className="flex gap-2.5">
-                                <span className="text-slate-600 select-none w-3 text-right">1</span>
-                                <div><span className="text-pink-400 font-semibold">import</span> &#123; <span className="text-blue-300">makeProductRepository</span> &#125; <span className="text-pink-400 font-semibold">from</span> <span className="text-emerald-300">&quot;@/infrastructure&quot;</span>;</div>
-                              </div>
-                              <div className="flex gap-2.5">
-                                <span className="text-slate-600 select-none w-3 text-right">2</span>
-                                <div><span className="text-pink-400 font-semibold">import</span> &#123; <span className="text-blue-300">CreateOrderUseCase</span> &#125; <span className="text-pink-400 font-semibold">from</span> <span className="text-emerald-300">&quot;@/application&quot;</span>;</div>
-                              </div>
-                              <div className="flex gap-2.5">
-                                <span className="text-slate-600 select-none w-3 text-right">3</span>
-                                <div><span className="text-pink-400 font-semibold">export default async function</span> <span className="text-blue-400 font-semibold">Page</span>() &#123;</div>
-                              </div>
-                              <div className="flex gap-2.5">
-                                <span className="text-slate-600 select-none w-3 text-right">4</span>
-                                <div className="pl-2 text-slate-500 italic">&#47;&#47; 100% Clean Architecture & zero leak</div>
-                              </div>
-                              <div className="flex gap-2.5">
-                                <span className="text-slate-600 select-none w-3 text-right">5</span>
-                                <div className="pl-2"><span className="text-pink-400 font-semibold">const</span> repo = <span className="text-pink-400 font-semibold">await</span> <span className="text-blue-300">makeProductRepository</span>();</div>
-                              </div>
-                              <div className="flex gap-2.5">
-                                <span className="text-slate-600 select-none w-3 text-right">6</span>
-                                <div className="pl-2"><span className="text-pink-400 font-semibold">return</span> &lt;<span className="text-emerald-400 font-semibold">KhoUIStorefront</span> repo=&#123;repo&#125; /&gt;;</div>
-                              </div>
-                              <div className="flex gap-2.5">
-                                <span className="text-slate-600 select-none w-3 text-right">7</span>
-                                <div>&#125;</div>
-                              </div>
-                            </div>
-
-                            {/* Mini Compiler Status Line */}
-                            <div className="pt-2 mt-1 border-t border-slate-800/80 flex items-center justify-between text-[9.5px] text-slate-500">
-                              <span className="text-emerald-400 flex items-center gap-1 font-semibold">
-                                <CheckCircle2 size={10} /> Strict TypeScript 5.8 Mode
-                              </span>
-                              <span className="text-slate-400 font-mono">0 Errors</span>
-                            </div>
-                          </div>
-                        </motion.div>
-                      )}
-
-                      {/* Tab 2: Clean Architecture 4-Layer Dependency Flow */}
-                      {activeLabTab === "architecture" && (
-                        <motion.div
-                          key="architecture"
-                          initial={{ opacity: 0, scale: 0.98, y: 6 }}
-                          animate={{ opacity: 1, scale: 1, y: 0 }}
-                          exit={{ opacity: 0, scale: 0.98, y: -6 }}
-                          transition={{ duration: 0.22 }}
-                          className="h-[442px] flex flex-col justify-between space-y-1.5"
-                        >
-                          <div className="flex justify-between items-center pb-2 border-b border-slate-800/80 text-[11px] font-mono text-slate-400 flex-shrink-0">
-                            <span className="flex items-center gap-1.5 text-slate-300 font-bold">
-                              <Layers size={13} className="text-emerald-400" />
-                              <span>Unidirectional Flow</span>
-                            </span>
-                            <span className="text-emerald-400 font-bold flex items-center gap-1 text-[10px] bg-emerald-950/40 border border-emerald-500/30 px-2 py-0.5 rounded">
-                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
-                              Strict Verified
-                            </span>
-                          </div>
-
-                          {/* 4 Clean Architecture Layers Stack */}
-                          <div className="space-y-1.5 flex-1 flex flex-col justify-between">
-                            {[
-                              { 
-                                id: "presentation",
-                                name: "Presentation Layer", 
-                                path: "src/presentation", 
-                                role: "UI Components, Server Actions & Zustand", 
-                                badge: "Zero Direct DB",
-                                border: "border-blue-500/40 hover:border-blue-400",
-                                bg: "bg-blue-950/30 hover:bg-blue-950/50",
-                                text: "text-blue-300"
-                              },
-                              { 
-                                id: "application",
-                                name: "Application Layer", 
-                                path: "src/application", 
-                                role: "Pure Business Use Cases & Orchestration", 
-                                badge: "Domain-Only Imports",
-                                border: "border-indigo-500/40 hover:border-indigo-400",
-                                bg: "bg-indigo-950/30 hover:bg-indigo-950/50",
-                                text: "text-indigo-300"
-                              },
-                              { 
-                                id: "infrastructure",
-                                name: "Infrastructure Layer", 
-                                path: "src/infrastructure", 
-                                role: "Supabase DB, PayOS Gateways & Storage", 
-                                badge: "Implements Interfaces",
-                                border: "border-amber-500/40 hover:border-amber-400",
-                                bg: "bg-amber-950/30 hover:bg-amber-950/50",
-                                text: "text-amber-300"
-                              },
-                              { 
-                                id: "domain",
-                                name: "Domain Layer (Core)", 
-                                path: "src/domain", 
-                                role: "Pure TypeScript Entities & Model Interfaces", 
-                                badge: "0 External Deps",
-                                border: "border-emerald-500/40 hover:border-emerald-400",
-                                bg: "bg-emerald-950/30 hover:bg-emerald-950/50",
-                                text: "text-emerald-300"
-                              },
-                            ].map((layer, index) => (
-                              <div key={layer.id} className="group/item">
-                                <motion.div 
-                                  whileHover={{ scale: 1.01 }}
-                                  onHoverStart={() => setHoveredArchLayer(layer.id)}
-                                  onHoverEnd={() => setHoveredArchLayer(null)}
-                                  className={`p-2.5 rounded-xl border ${layer.border} ${layer.bg} transition-all duration-200 cursor-default shadow-sm`}
-                                >
-                                  <div className="flex items-center justify-between">
-                                    <div className="flex items-center gap-2">
-                                      <span className="w-4 h-4 rounded-full bg-black/50 text-[10px] font-mono flex items-center justify-center text-slate-400">
-                                        {index + 1}
-                                      </span>
-                                      <span className={`text-xs font-bold font-mono ${layer.text}`}>{layer.name}</span>
-                                    </div>
-                                    <span className="text-[9px] font-mono bg-black/60 px-2 py-0.5 rounded text-slate-400 border border-slate-800">
-                                      {layer.path}
-                                    </span>
-                                  </div>
-                                  <div className="flex items-center justify-between mt-1 text-[10px] opacity-80 pl-6">
-                                    <span className="text-slate-300 truncate max-w-[240px]">{layer.role}</span>
-                                    <span className="text-[9px] font-bold text-emerald-400 font-mono">{layer.badge}</span>
-                                  </div>
-                                </motion.div>
-
-                                {index < 3 && (
-                                  <div className="flex justify-center text-slate-600 my-0.5">
-                                    <ChevronDown size={11} className="text-primary/60" />
-                                  </div>
-                                )}
-                              </div>
-                            ))}
-                          </div>
-
-                          {/* Terminal Dependency Check Output */}
-                          <div className="bg-black/90 p-2.5 rounded-xl border border-slate-800 font-mono text-[10px] text-slate-400 flex-shrink-0 mt-1">
-                            <div className="flex items-center gap-1.5 text-slate-500">
-                              <Terminal size={11} className="text-emerald-400" />
-                              <span>$ npx dependency-cruiser --validate</span>
-                            </div>
-                            <div className="text-emerald-400 font-semibold mt-1 flex items-center gap-1">
-                              <Check size={11} />
-                              {hoveredArchLayer
-                                ? `Inspecting [${hoveredArchLayer}]: 100% boundary isolation verified.`
-                                : "4/4 layers isolated. Strict unidirectional boundaries verified."}
-                            </div>
-                          </div>
-                        </motion.div>
-                      )}
-
-                      {/* Tab 3: Performance Telemetry Cockpit */}
-                      {activeLabTab === "telemetry" && (
-                        <motion.div
-                          key="telemetry"
-                          initial={{ opacity: 0, scale: 0.98, y: 6 }}
-                          animate={{ opacity: 1, scale: 1, y: 0 }}
-                          exit={{ opacity: 0, scale: 0.98, y: -6 }}
-                          transition={{ duration: 0.22 }}
-                          className="h-[442px] flex flex-col justify-between space-y-3"
-                        >
-                          <div className="flex justify-between items-center pb-2 border-b border-slate-800/80 text-[11px] font-mono text-slate-400 flex-shrink-0">
-                            <span className="flex items-center gap-1.5 text-slate-300 font-bold">
-                              <Gauge size={13} className="text-cyan-400" />
-                              <span>Core Web Vitals Telemetry</span>
-                            </span>
-                            <span className="text-cyan-400 font-bold flex items-center gap-1 text-[10px] bg-cyan-950/40 border border-cyan-500/30 px-2 py-0.5 rounded">
-                              <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
-                              Real-Time Engine
-                            </span>
-                          </div>
-
-                          {/* 2 Top KPIs */}
-                          <div className="grid grid-cols-2 gap-3">
-                            <div className="p-3 rounded-xl bg-slate-950/90 border border-slate-800/90 text-center font-mono relative overflow-hidden group">
-                              <div className="absolute inset-0 bg-emerald-500/5 group-hover:bg-emerald-500/10 transition-colors" />
-                              <span className="text-3xl font-extrabold text-emerald-400 block tracking-tight">98/100</span>
-                              <span className="text-[10px] text-slate-400 uppercase font-bold tracking-wider mt-1 block">Lighthouse Score</span>
-                              <span className="text-[9px] text-emerald-400 font-bold block mt-0.5">● Perfect Green</span>
-                            </div>
-                            <div className="p-3 rounded-xl bg-slate-950/90 border border-slate-800/90 text-center font-mono relative overflow-hidden group">
-                              <div className="absolute inset-0 bg-blue-500/5 group-hover:bg-blue-500/10 transition-colors" />
-                              <span className="text-3xl font-extrabold text-cyan-400 block tracking-tight">0.0 ms</span>
-                              <span className="text-[10px] text-slate-400 uppercase font-bold tracking-wider mt-1 block">Layout Shift (CLS)</span>
-                              <span className="text-[9px] text-cyan-400 font-bold block mt-0.5">● Zero Jitter</span>
-                            </div>
-                          </div>
-
-                          {/* Live Equalizer Performance Frequency Bars */}
-                          <div className="p-3 bg-black/90 rounded-xl border border-slate-800 space-y-2">
-                            <div className="flex justify-between items-center text-[10px] font-mono text-slate-400">
-                              <span className="font-bold text-slate-300 flex items-center gap-1.5">
-                                <Activity size={11} className="text-primary" /> Live Frequency Monitor
-                              </span>
-                              <span className="text-emerald-400 font-bold">60.0 FPS Stable</span>
-                            </div>
-                            
-                            <div className="grid grid-cols-4 gap-2 pt-1 font-mono text-[9px] text-center">
-                              <div className="bg-slate-950 p-2 rounded-lg border border-slate-800/80">
-                                <div className="text-slate-500">FPS</div>
-                                <div className="text-emerald-400 font-bold text-xs mt-0.5">60 FPS</div>
-                              </div>
-                              <div className="bg-slate-950 p-2 rounded-lg border border-slate-800/80">
-                                <div className="text-slate-500">FCP</div>
-                                <div className="text-cyan-400 font-bold text-xs mt-0.5">0.4s</div>
-                              </div>
-                              <div className="bg-slate-950 p-2 rounded-lg border border-slate-800/80">
-                                <div className="text-slate-500">Bundle</div>
-                                <div className="text-purple-400 font-bold text-xs mt-0.5">42.4 kB</div>
-                              </div>
-                              <div className="bg-slate-950 p-2 rounded-lg border border-slate-800/80">
-                                <div className="text-slate-500">Memory</div>
-                                <div className="text-amber-400 font-bold text-xs mt-0.5">18.2 MB</div>
-                              </div>
-                            </div>
-                          </div>
-
-                          {/* Diagnostics Spec Table */}
-                          <div className="p-3 bg-slate-950 rounded-xl border border-slate-800 text-xs font-mono space-y-2">
-                            <div className="flex justify-between text-slate-400 text-[10.5px]">
-                              <span>TypeScript Compiler</span>
-                              <span className="text-emerald-400 font-bold">0 Errors (Strict 100%)</span>
-                            </div>
-                            <div className="flex justify-between text-slate-400 text-[10.5px]">
-                              <span>Turbopack Engine</span>
-                              <span className="text-cyan-400 font-bold">Hot Reload: 48ms</span>
-                            </div>
-                            <div className="flex justify-between text-slate-400 text-[10.5px]">
-                              <span>Supabase DB Security</span>
-                              <span className="text-purple-400 font-bold">RLS 100% Policy Protected</span>
-                            </div>
-                          </div>
-
-                          {/* Interactive Benchmark Button */}
-                          <button
-                            onClick={handleRunDiagnostic}
-                            disabled={isRunningDiagnostic}
-                            className="w-full py-2 bg-gradient-to-r from-primary to-indigo-600 hover:from-primary-dark hover:to-indigo-700 text-white rounded-xl font-mono text-xs font-medium flex items-center justify-center gap-2 transition-all cursor-pointer shadow-xs disabled:opacity-50"
-                          >
-                            {isRunningDiagnostic ? (
-                              <>
-                                <Loader2 size={13} className="animate-spin" />
-                                <span>Running 42 Diagnostic Tests...</span>
-                              </>
-                            ) : (
-                              <>
-                                <Sparkles size={13} />
-                                <span>Run Live Benchmark Test</span>
-                              </>
-                            )}
-                          </button>
-                        </motion.div>
-                      )}
-
-                    </AnimatePresence>
+                    {/* Trailing Amber Satellite Spark */}
+                    <motion.div
+                      animate={{
+                        x: [-4, 20, 40, 20, -4],
+                        y: [20, -6, -28, -2, 20],
+                        scale: [0.85, 1.15, 0.8, 0.7, 0.85],
+                        opacity: [0.75, 1, 0.65, 0.5, 0.75],
+                      }}
+                      transition={{
+                        duration: 5.5,
+                        repeat: Infinity,
+                        ease: "easeInOut",
+                        delay: 0.3,
+                      }}
+                      className="absolute -top-3 -left-3 pointer-events-none"
+                    >
+                      <div className="w-3 h-3 sm:w-3.5 sm:h-3.5 rounded-full bg-gradient-to-tr from-amber-500 to-amber-300 shadow-[0_0_16px_#f59e0b,0_0_32px_rgba(245,158,11,0.8)] ring-1 ring-amber-200" />
+                    </motion.div>
                   </div>
+
+                  {/* ─── 3D Dynamic Orbital Particle System 2: Right Orbit (Circling the Pedestal Loop) ─── */}
+                  <div 
+                    className="absolute left-[75.7%] top-[69.3%] pointer-events-none z-20"
+                    style={{ transformStyle: "preserve-3d" }}
+                  >
+                    {/* Ethereal Glow along 3D Pedestal Ring */}
+                    <div className="absolute -inset-10 bg-cyan-500/10 rounded-full blur-2xl pointer-events-none" />
+
+                    {/* 3D Animated Primary Orbiting Sphere 2 (Cycling in Depth around Pedestal) */}
+                    <motion.div
+                      animate={{
+                        x: [0, 44, 76, 36, -42, -26, 0],
+                        y: [0, 12, -8, -30, -20, 6, 0],
+                        scale: [1.1, 1.3, 1.08, 0.75, 0.7, 0.95, 1.1],
+                        opacity: [0.95, 1, 0.92, 0.65, 0.6, 0.9, 0.95],
+                        z: [30, 50, 22, -26, -30, 16, 30],
+                      }}
+                      transition={{
+                        duration: 7,
+                        repeat: Infinity,
+                        ease: "easeInOut",
+                      }}
+                      className="relative flex items-center justify-center pointer-events-auto cursor-pointer"
+                      style={{ transformStyle: "preserve-3d" }}
+                    >
+                      {/* Pulsing Cyan Energy Wave */}
+                      <div className="absolute -inset-2.5 rounded-full bg-cyan-400/30 blur-sm animate-ping pointer-events-none" />
+                      {/* 3D Glass Planet Sphere */}
+                      <div className="relative w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-[radial-gradient(circle_at_28%_28%,#ffffff_0%,#bfdbfe_20%,#3b82f6_55%,#1d4ed8_80%,#091124_100%)] shadow-[0_0_24px_rgba(0,81,213,0.95),0_0_48px_rgba(56,189,248,0.7),inset_-3px_-3px_8px_#050b14,inset_3px_3px_6px_#ffffff] ring-1.5 ring-cyan-200">
+                        <div className="absolute top-1 left-1.5 w-2 h-2 rounded-full bg-white blur-[0.3px] opacity-100" />
+                      </div>
+                    </motion.div>
+
+                    {/* Trailing White Satellite Sparkle */}
+                    <motion.div
+                      animate={{
+                        x: [-6, 38, 70, 30, -46, -32, -6],
+                        y: [-4, 8, -12, -34, -24, 2, -4],
+                        scale: [1.05, 1.18, 0.95, 0.68, 0.62, 0.88, 1.05],
+                        opacity: [0.9, 1, 0.85, 0.55, 0.5, 0.85, 0.9],
+                      }}
+                      transition={{
+                        duration: 7,
+                        repeat: Infinity,
+                        ease: "easeInOut",
+                        delay: 0.35,
+                      }}
+                      className="absolute -top-2 -left-2 pointer-events-none"
+                    >
+                      <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-white shadow-[0_0_14px_#ffffff,0_0_28px_#38bdf8] ring-1 ring-cyan-100" />
+                    </motion.div>
+
+                    {/* Ambient Amber Spark Accent */}
+                    <motion.div
+                      animate={{
+                        x: [12, -32, -48, 8, 52, 22, 12],
+                        y: [6, -16, 6, 20, -6, 6, 6],
+                        scale: [0.9, 0.7, 1.1, 1.2, 0.85, 0.9, 0.9],
+                        opacity: [0.8, 0.5, 0.9, 1, 0.7, 0.8, 0.8],
+                      }}
+                      transition={{
+                        duration: 8.5,
+                        repeat: Infinity,
+                        ease: "easeInOut",
+                      }}
+                      className="absolute top-2 left-4 pointer-events-none"
+                    >
+                      <div className="w-3 h-3 sm:w-3.5 sm:h-3.5 rounded-full bg-gradient-to-tr from-amber-500 to-amber-300 shadow-[0_0_16px_#f59e0b,0_0_32px_rgba(245,158,11,0.8)] ring-1 ring-amber-200" />
+                    </motion.div>
+                  </div>
+
+                  {/* ─── 5 Dynamic Floating Precision Glass Badges (IMG_1 Compliance) ─── */}
+                  {/* Badge 1: Clean Architecture (Top-Left - Over First Dashboard Card) */}
+                  <motion.div 
+                    animate={{ y: [-5, 5, -5] }}
+                    transition={{ duration: 4.0, repeat: Infinity, ease: "easeInOut" }}
+                    whileHover={{ scale: 1.07, y: -6 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="hero-badge-float-1 absolute top-[5%] left-[13%] w-[27%] cursor-pointer z-30 filter drop-shadow-[0_12px_24px_rgba(15,23,42,0.08)] drop-shadow-[0_4px_8px_rgba(15,23,42,0.04)] hover:drop-shadow-[0_20px_32px_rgba(0,81,213,0.22)] transition-shadow duration-300"
+                    style={{ transformStyle: "preserve-3d", transform: "translateZ(45px)" }}
+                  >
+                    <Image
+                      src="/hero/badge-clean-architecture.png"
+                      alt="Clean Architecture"
+                      width={776}
+                      height={212}
+                      unoptimized
+                      className="w-full h-auto select-none pointer-events-none"
+                      priority
+                    />
+                  </motion.div>
+
+                  {/* Badge 2: High Performance (Top-Right - Over Top-Right Dashboard Card) */}
+                  <motion.div 
+                    animate={{ y: [6, -6, 6] }}
+                    transition={{ duration: 4.4, repeat: Infinity, ease: "easeInOut", delay: 0.3 }}
+                    whileHover={{ scale: 1.07, y: -6 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="hero-badge-float-2 absolute top-[8%] left-[60%] w-[26%] cursor-pointer z-30 filter drop-shadow-[0_12px_24px_rgba(15,23,42,0.08)] drop-shadow-[0_4px_8px_rgba(15,23,42,0.04)] hover:drop-shadow-[0_20px_32px_rgba(16,185,129,0.22)] transition-shadow duration-300"
+                    style={{ transformStyle: "preserve-3d", transform: "translateZ(35px)" }}
+                  >
+                    <Image
+                      src="/hero/badge-high-performance.png"
+                      alt="High Performance 99/100"
+                      width={776}
+                      height={243}
+                      unoptimized
+                      className="w-full h-auto select-none pointer-events-none"
+                      priority
+                    />
+                  </motion.div>
+
+                  {/* Badge 3: GSAP 60 FPS (Middle-Right - Next to Laptop Screen) */}
+                  <motion.div 
+                    animate={{ y: [-7, 7, -7] }}
+                    transition={{ duration: 3.8, repeat: Infinity, ease: "easeInOut", delay: 0.6 }}
+                    whileHover={{ scale: 1.07, y: -6 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="hero-badge-float-3 absolute top-[44%] left-[72%] w-[24%] cursor-pointer z-30 filter drop-shadow-[0_12px_24px_rgba(15,23,42,0.08)] drop-shadow-[0_4px_8px_rgba(15,23,42,0.04)] hover:drop-shadow-[0_20px_32px_rgba(249,115,22,0.22)] transition-shadow duration-300"
+                    style={{ transformStyle: "preserve-3d", transform: "translateZ(50px)" }}
+                  >
+                    <Image
+                      src="/hero/badge-gsap.png"
+                      alt="GSAP 60 FPS"
+                      width={618}
+                      height={212}
+                      unoptimized
+                      className="w-full h-auto select-none pointer-events-none"
+                      priority
+                    />
+                  </motion.div>
+
+                  {/* Badge 4: Tailwind CSS & Next.js (Bottom-Left - Over Lower Pedestal/Tablet) */}
+                  <motion.div 
+                    animate={{ y: [5, -5, 5] }}
+                    transition={{ duration: 4.2, repeat: Infinity, ease: "easeInOut", delay: 0.9 }}
+                    whileHover={{ scale: 1.07, y: -6 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="hero-badge-float-4 absolute top-[68%] left-[16%] w-[28%] cursor-pointer z-30 filter drop-shadow-[0_12px_24px_rgba(15,23,42,0.08)] drop-shadow-[0_4px_8px_rgba(15,23,42,0.04)] hover:drop-shadow-[0_20px_32px_rgba(6,182,212,0.22)] transition-shadow duration-300"
+                    style={{ transformStyle: "preserve-3d", transform: "translateZ(55px)" }}
+                  >
+                    <Image
+                      src="/hero/badge-tailwind-nextjs.png"
+                      alt="Tailwind CSS & Next.js"
+                      width={823}
+                      height={229}
+                      unoptimized
+                      className="w-full h-auto select-none pointer-events-none"
+                      priority
+                    />
+                  </motion.div>
+
+                  {/* Badge 5: VietQR Instant Pay (Bottom-Right - Over Lower Right Pedestal Floor) */}
+                  <motion.div 
+                    animate={{ y: [-6, 6, -6] }}
+                    transition={{ duration: 4.6, repeat: Infinity, ease: "easeInOut", delay: 1.2 }}
+                    whileHover={{ scale: 1.07, y: -6 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="hero-badge-float-5 absolute top-[74%] left-[65%] w-[27%] cursor-pointer z-30 filter drop-shadow-[0_12px_24px_rgba(15,23,42,0.08)] drop-shadow-[0_4px_8px_rgba(15,23,42,0.04)] hover:drop-shadow-[0_20px_32px_rgba(239,68,68,0.22)] transition-shadow duration-300"
+                    style={{ transformStyle: "preserve-3d", transform: "translateZ(40px)" }}
+                  >
+                    <Image
+                      src="/hero/badge-vietqr.png"
+                      alt="VietQR Instant Pay"
+                      width={749}
+                      height={211}
+                      unoptimized
+                      className="w-full h-auto select-none pointer-events-none"
+                      priority
+                    />
+                  </motion.div>
                 </motion.div>
-
-                {/* Floating Precision Glass Badges */}
-                <motion.div 
-                  whileHover={{ scale: 1.05, y: -4 }}
-                  className="float-card-1 absolute -top-4 -left-6 bg-white/95 backdrop-blur-xl rounded-2xl px-4 py-2.5 shadow-[0_15px_30px_-5px_rgba(0,0,0,0.12)] border border-slate-200/90 flex items-center gap-3 z-30 cursor-pointer"
-                >
-                  <div className="w-8 h-8 rounded-xl bg-primary/10 text-primary flex items-center justify-center flex-shrink-0 shadow-inner">
-                    <CheckCircle2 size={17} />
-                  </div>
-                  <div>
-                    <span className="block font-bold text-xs text-slate-900 leading-none">
-                      Clean Architecture
-                    </span>
-                    <span className="text-[9px] text-slate-500 font-mono uppercase tracking-wider mt-0.5 block font-semibold">
-                      Strict 4-Layers
-                    </span>
-                  </div>
-                </motion.div>
-
-                <motion.div 
-                  whileHover={{ scale: 1.05, y: -4 }}
-                  className="float-card-2 absolute -bottom-4 -right-4 bg-white/95 backdrop-blur-xl rounded-2xl px-4 py-2.5 shadow-[0_15px_30px_-5px_rgba(0,0,0,0.12)] border border-slate-200/90 flex items-center gap-3 z-30 cursor-pointer"
-                >
-                  <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center flex-shrink-0 shadow-inner">
-                    <Zap size={17} />
-                  </div>
-                  <div>
-                    <span className="block font-bold text-xs text-slate-900 leading-none">
-                      VietQR Instant Pay
-                    </span>
-                    <span className="text-[9px] text-slate-500 font-mono uppercase tracking-wider mt-0.5 block font-semibold">
-                      Auto Webhook (3s)
-                    </span>
-                  </div>
-                </motion.div>
-
-                <motion.div 
-                  whileHover={{ scale: 1.05, y: -4 }}
-                  className="float-card-3 absolute top-1/2 -right-8 bg-white/95 backdrop-blur-xl rounded-2xl px-4 py-2.5 shadow-[0_15px_30px_-5px_rgba(0,0,0,0.12)] border border-slate-200/90 flex items-center gap-3 z-30 cursor-pointer"
-                >
-                  <div className="w-8 h-8 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center flex-shrink-0 shadow-inner">
-                    <Flame size={17} />
-                  </div>
-                  <div>
-                    <span className="block font-bold text-xs text-slate-900 leading-none">
-                      GSAP 60 FPS
-                    </span>
-                    <span className="text-[9px] text-slate-500 font-mono uppercase tracking-wider mt-0.5 block font-semibold">
-                      Tailwind CSS 4
-                    </span>
-                  </div>
-                </motion.div>
-
               </div>
             </div>
 

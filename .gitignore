@@ -43,6 +43,8 @@ next-env.d.ts
 # legacy and backups
 _legacy/
 _vite_backup/
+/public/downloads/
+/public/generated-templates/
 
 # agent specific
 # AGENTS.md and CLAUDE.md are tracked
