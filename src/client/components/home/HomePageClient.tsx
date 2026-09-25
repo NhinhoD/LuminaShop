@@ -811,8 +811,6 @@ export default function HomePageClient({
                     src="/hero/hero-ground-shadow.png"
                     alt=""
                     fill
-                    priority
-                    unoptimized
                     sizes="(max-width: 1024px) 100vw, (max-width: 1280px) 580px, 660px"
                     className="object-contain"
                   />
@@ -834,7 +832,6 @@ export default function HomePageClient({
                       alt="KhoUI 3D Device Ecosystem Mockup"
                       fill
                       priority
-                      unoptimized
                       sizes="(max-width: 1024px) 100vw, (max-width: 1280px) 580px, 660px"
                       className="object-contain"
                     />
@@ -972,16 +969,14 @@ export default function HomePageClient({
                     whileHover={{ scale: 1.07, y: -6 }}
                     whileTap={{ scale: 0.98 }}
                     className="hero-badge-float-1 absolute top-[5%] left-[13%] w-[27%] cursor-pointer z-30 filter drop-shadow-[0_12px_24px_rgba(15,23,42,0.08)] drop-shadow-[0_4px_8px_rgba(15,23,42,0.04)] hover:drop-shadow-[0_20px_32px_rgba(0,81,213,0.22)] transition-shadow duration-300"
-                    style={{ transformStyle: "preserve-3d", transform: "translateZ(45px)" }}
+                    style={{ transformStyle: "preserve-3d", z: 45 }}
                   >
                     <Image
                       src="/hero/badge-clean-architecture.png"
                       alt="Clean Architecture"
                       width={776}
                       height={212}
-                      unoptimized
                       className="w-full h-auto select-none pointer-events-none"
-                      priority
                     />
                   </motion.div>
 
@@ -992,16 +987,14 @@ export default function HomePageClient({
                     whileHover={{ scale: 1.07, y: -6 }}
                     whileTap={{ scale: 0.98 }}
                     className="hero-badge-float-2 absolute top-[8%] left-[60%] w-[26%] cursor-pointer z-30 filter drop-shadow-[0_12px_24px_rgba(15,23,42,0.08)] drop-shadow-[0_4px_8px_rgba(15,23,42,0.04)] hover:drop-shadow-[0_20px_32px_rgba(16,185,129,0.22)] transition-shadow duration-300"
-                    style={{ transformStyle: "preserve-3d", transform: "translateZ(35px)" }}
+                    style={{ transformStyle: "preserve-3d", z: 35 }}
                   >
                     <Image
                       src="/hero/badge-high-performance.png"
                       alt="High Performance 99/100"
                       width={776}
                       height={243}
-                      unoptimized
                       className="w-full h-auto select-none pointer-events-none"
-                      priority
                     />
                   </motion.div>
 
@@ -1012,16 +1005,14 @@ export default function HomePageClient({
                     whileHover={{ scale: 1.07, y: -6 }}
                     whileTap={{ scale: 0.98 }}
                     className="hero-badge-float-3 absolute top-[44%] left-[72%] w-[24%] cursor-pointer z-30 filter drop-shadow-[0_12px_24px_rgba(15,23,42,0.08)] drop-shadow-[0_4px_8px_rgba(15,23,42,0.04)] hover:drop-shadow-[0_20px_32px_rgba(249,115,22,0.22)] transition-shadow duration-300"
-                    style={{ transformStyle: "preserve-3d", transform: "translateZ(50px)" }}
+                    style={{ transformStyle: "preserve-3d", z: 50 }}
                   >
                     <Image
                       src="/hero/badge-gsap.png"
                       alt="GSAP 60 FPS"
                       width={618}
                       height={212}
-                      unoptimized
                       className="w-full h-auto select-none pointer-events-none"
-                      priority
                     />
                   </motion.div>
 
@@ -1032,16 +1023,14 @@ export default function HomePageClient({
                     whileHover={{ scale: 1.07, y: -6 }}
                     whileTap={{ scale: 0.98 }}
                     className="hero-badge-float-4 absolute top-[68%] left-[16%] w-[28%] cursor-pointer z-30 filter drop-shadow-[0_12px_24px_rgba(15,23,42,0.08)] drop-shadow-[0_4px_8px_rgba(15,23,42,0.04)] hover:drop-shadow-[0_20px_32px_rgba(6,182,212,0.22)] transition-shadow duration-300"
-                    style={{ transformStyle: "preserve-3d", transform: "translateZ(55px)" }}
+                    style={{ transformStyle: "preserve-3d", z: 55 }}
                   >
                     <Image
                       src="/hero/badge-tailwind-nextjs.png"
                       alt="Tailwind CSS & Next.js"
                       width={823}
                       height={229}
-                      unoptimized
                       className="w-full h-auto select-none pointer-events-none"
-                      priority
                     />
                   </motion.div>
 
@@ -1052,16 +1041,14 @@ export default function HomePageClient({
                     whileHover={{ scale: 1.07, y: -6 }}
                     whileTap={{ scale: 0.98 }}
                     className="hero-badge-float-5 absolute top-[74%] left-[65%] w-[27%] cursor-pointer z-30 filter drop-shadow-[0_12px_24px_rgba(15,23,42,0.08)] drop-shadow-[0_4px_8px_rgba(15,23,42,0.04)] hover:drop-shadow-[0_20px_32px_rgba(239,68,68,0.22)] transition-shadow duration-300"
-                    style={{ transformStyle: "preserve-3d", transform: "translateZ(40px)" }}
+                    style={{ transformStyle: "preserve-3d", z: 40 }}
                   >
                     <Image
                       src="/hero/badge-vietqr.png"
                       alt="VietQR Instant Pay"
                       width={749}
                       height={211}
-                      unoptimized
                       className="w-full h-auto select-none pointer-events-none"
-                      priority
                     />
                   </motion.div>
                 </motion.div>
