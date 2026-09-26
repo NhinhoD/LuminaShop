@@ -277,7 +277,6 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
           "price": product.price,
           "priceCurrency": "VND",
           "validFrom": validFromIso,
-          "priceValidUntil": "2027-12-31T23:59:59.000Z",
           "availability": product.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock"
         }
       },
