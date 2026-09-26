@@ -32,7 +32,7 @@ export const en = {
     logout: "Sign Out",
     instantDelivery: "🚀 Instant Automated Source Code Delivery!",
     contactPhone: "+84 987 654 321",
-    contactEmail: "contact@khoui.com",
+    contactEmail: "khoui.gmail@gmail.com",
     contactLocation: "Ho Chi Minh City, Vietnam",
     searchTitle: "Search templates...",
   },

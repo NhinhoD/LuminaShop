@@ -32,7 +32,7 @@ export const vi = {
     logout: "Đăng xuất",
     instantDelivery: "🚀 Bàn giao mã nguồn tự động tức thì!",
     contactPhone: "0987 654 321",
-    contactEmail: "contact@khoui.com",
+    contactEmail: "khoui.gmail@gmail.com",
     contactLocation: "TP. Hồ Chí Minh, Việt Nam",
     searchTitle: "Tìm kiếm template...",
   },

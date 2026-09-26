@@ -49,6 +49,13 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
   const description = rawDesc.length > 160 ? `${rawDesc.slice(0, 157)}...` : rawDesc || "Mẫu giao diện website cao cấp, chuẩn SEO và tối ưu hiệu năng tại KhoUI.";
   const productUrl = `${SITE_URL}/product/${id}`;
 
+  const rawImageUrl = product.imageUrl?.trim();
+  const productImageUrl = rawImageUrl
+    ? rawImageUrl.startsWith("http://") || rawImageUrl.startsWith("https://")
+      ? rawImageUrl
+      : `${SITE_URL}${rawImageUrl.startsWith("/") ? "" : "/"}${rawImageUrl}`
+    : `${SITE_URL}/LogoKhoUI.png`;
+
   return {
     title,
     description,
@@ -67,24 +74,22 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
       description,
       url: productUrl,
       siteName: "KhoUI",
-      type: "website",
       locale: locale === "vi" ? "vi_VN" : "en_US",
-      images: product.imageUrl
-        ? [
-            {
-              url: product.imageUrl,
-              width: 1200,
-              height: 630,
-              alt: rawTitle,
-            },
-          ]
-        : [],
+      type: "website",
+      images: [
+        {
+          url: productImageUrl,
+          width: 1200,
+          height: 630,
+          alt: rawTitle,
+        },
+      ],
     },
     twitter: {
       card: "summary_large_image",
       title: ogTitle,
       description,
-      images: product.imageUrl ? [product.imageUrl] : [],
+      images: [productImageUrl],
     },
     alternates: {
       canonical: productUrl,
@@ -183,6 +188,17 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
   const localizedDesc = getLocalizedText(product.description as unknown as Record<string, string>, locale);
   const productUrl = `${SITE_URL}/product/${id}`;
 
+  const rawImageUrl = product.imageUrl?.trim();
+  const productImageUrl = rawImageUrl
+    ? rawImageUrl.startsWith("http://") || rawImageUrl.startsWith("https://")
+      ? rawImageUrl
+      : `${SITE_URL}${rawImageUrl.startsWith("/") ? "" : "/"}${rawImageUrl}`
+    : `${SITE_URL}/LogoKhoUI.png`;
+
+  const validFromIso = product.createdAt
+    ? new Date(product.createdAt).toISOString()
+    : "2026-01-01T00:00:00.000Z";
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
@@ -191,7 +207,9 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
         "@id": `${productUrl}#product`,
         "name": localizedTitle,
         "description": localizedDesc,
-        "image": product.imageUrl ? [product.imageUrl] : [],
+        "image": [productImageUrl],
+        "sku": product.id,
+        "mpn": product.id,
         "category": "Software > Web Development > Website Templates",
         "brand": {
           "@type": "Brand",
@@ -202,14 +220,48 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
           "url": productUrl,
           "priceCurrency": "VND",
           "price": product.price,
-          "priceValidUntil": "2027-12-31",
-          "availability": "https://schema.org/InStock",
+          "validFrom": validFromIso,
+          "priceValidUntil": "2027-12-31T23:59:59.000Z",
+          "availability": product.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
           "itemCondition": "https://schema.org/NewCondition",
           "seller": {
             "@type": "Organization",
             "name": "KhoUI",
             "url": SITE_URL,
             "logo": `${SITE_URL}/LogoKhoUI.png`
+          },
+          "shippingDetails": {
+            "@type": "OfferShippingDetails",
+            "shippingRate": {
+              "@type": "MonetaryAmount",
+              "value": "0",
+              "currency": "VND"
+            },
+            "shippingDestination": {
+              "@type": "DefinedRegion",
+              "addressCountry": "VN"
+            },
+            "deliveryTime": {
+              "@type": "ShippingDeliveryTime",
+              "handlingTime": {
+                "@type": "QuantitativeValue",
+                "minValue": 0,
+                "maxValue": 0,
+                "unitCode": "DAY"
+              },
+              "transitTime": {
+                "@type": "QuantitativeValue",
+                "minValue": 0,
+                "maxValue": 0,
+                "unitCode": "DAY"
+              }
+            }
+          },
+          "hasMerchantReturnPolicy": {
+            "@type": "MerchantReturnPolicy",
+            "applicableCountry": "VN",
+            "returnPolicyCategory": "https://schema.org/MerchantReturnNotPermitted",
+            "merchantReturnDays": 0
           }
         }
       },
@@ -223,7 +275,9 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
         "offers": {
           "@type": "Offer",
           "price": product.price,
-          "priceCurrency": "VND"
+          "priceCurrency": "VND",
+          "validFrom": validFromIso,
+          "availability": product.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock"
         }
       },
       {

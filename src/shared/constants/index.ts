@@ -72,7 +72,7 @@ export const TRUSTED_HOSTS = [
 export const PLACEHOLDERS = {
   FIRST_NAME: "Minh",
   LAST_NAME: "Tuan",
-  EMAIL: "contact@khoui.io.vn",
+  EMAIL: "khoui.gmail@gmail.com",
   PASSWORD: "••••••••",
 } as const;
 

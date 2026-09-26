@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import Link from "next/link";
 import Image from "next/image";
@@ -27,7 +27,7 @@ export function Footer() {
     { label: dict?.footer?.home || (locale === "vi" ? "Trang chủ" : "Home"), href: ROUTES.HOME },
     { label: dict?.footer?.templates || (locale === "vi" ? "Kho Template" : "Templates"), href: ROUTES.SHOP },
     { label: dict?.footer?.aboutUs || (locale === "vi" ? "Về KhoUI" : "About KhoUI"), href: "#advantages" },
-    { label: dict?.footer?.contact || (locale === "vi" ? "Liên hệ hỗ trợ" : "Technical Support"), href: "mailto:contact@khoui.com" },
+    { label: dict?.footer?.contact || (locale === "vi" ? "Liên hệ hỗ trợ" : "Technical Support"), href: "mailto:khoui.gmail@gmail.com" },
   ];
 
   const menuLinks = [
@@ -41,7 +41,7 @@ export function Footer() {
   const contactInfo = [
     { icon: MapPin, label: dict?.footer?.addressLabel || (locale === "vi" ? "Địa chỉ" : "Address"), value: dict?.footer?.addressValue || "TP. Hồ Chí Minh, Việt Nam" },
     { icon: Phone, label: dict?.footer?.phoneLabel || (locale === "vi" ? "Hotline" : "Hotline"), value: dict?.nav?.contactPhone || "0987 654 321" },
-    { icon: Mail, label: dict?.footer?.emailLabel || (locale === "vi" ? "Email" : "Email"), value: dict?.nav?.contactEmail || "contact@khoui.com" },
+    { icon: Mail, label: dict?.footer?.emailLabel || (locale === "vi" ? "Email" : "Email"), value: dict?.nav?.contactEmail || "khoui.gmail@gmail.com" },
     { icon: Clock, label: dict?.footer?.supportLabel || (locale === "vi" ? "Hỗ trợ" : "Fulfillment"), value: dict?.footer?.supportValue || "Tự động bàn giao 24/7" },
   ];
 
