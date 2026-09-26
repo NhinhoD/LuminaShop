@@ -1,4 +1,4 @@
-﻿import { makeGetCurrentUserUseCase, getAppDictionary } from "@/server/di/container";
+import { makeGetCurrentUserUseCase, getAppDictionary } from "@/server/di/container";
 import { ROUTES, BRAND_NAME } from "@/shared/constants";
 import NavbarClient from "./NavbarClient";
 
@@ -17,7 +17,7 @@ export async function Navbar() {
     { label: navDict.home || "Trang chủ", href: ROUTES.HOME },
     { label: navDict.templates || "Kho Template", href: ROUTES.SHOP },
     { label: navDict.portfolio || "Bộ sưu tập", href: "/shop?category=portfolio-agency" },
-    { label: navDict.contact || "Hỗ trợ kỹ thuật", href: "mailto:contact@khoui.com" },
+    { label: navDict.contact || "Hỗ trợ kỹ thuật", href: "mailto:khoui.gmail@gmail.com" },
   ] as const;
 
   return (

@@ -135,7 +135,7 @@ export function generateOrderConfirmationEmail(data: OrderConfirmationEmailDTO):
                 ${isVi
                   ? 'Nếu cần hỗ trợ kỹ thuật hoặc có bất kỳ câu hỏi nào, vui lòng phản hồi trực tiếp email này hoặc liên hệ qua'
                   : 'For technical inquiries or custom licensing, please reply directly to this email or reach us at'}
-                <a href="mailto:contact@khoui.io.vn" style="color:#0051d5;text-decoration:underline;">contact@khoui.io.vn</a>.
+                <a href="mailto:khoui.gmail@gmail.com" style="color:#0051d5;text-decoration:underline;">khoui.gmail@gmail.com</a>.
 
               </p>
             </td>
@@ -191,7 +191,7 @@ ${data.items
   )
   .join('\n')}
 
-${supportLabel}: contact@khoui.io.vn
+${supportLabel}: khoui.gmail@gmail.com
 © 2026 KhoUI Marketplace.
 
   `.trim();
