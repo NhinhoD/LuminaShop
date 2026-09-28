@@ -45,8 +45,8 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
   const rawTitle = getLocalizedText(product.title as unknown as Record<string, string>, locale);
   const rawDesc = getLocalizedText(product.description as unknown as Record<string, string>, locale);
   const title = rawTitle;
-  const ogTitle = `${rawTitle} — Mẫu Giao Diện Website Cao Cấp`;
-  const description = rawDesc.length > 160 ? `${rawDesc.slice(0, 157)}...` : rawDesc || "Mẫu giao diện website cao cấp, chuẩn SEO và tối ưu hiệu năng tại KhoUI.";
+  const ogTitle = `${rawTitle} — Mẫu Template Website Tĩnh Cao Cấp`;
+  const description = rawDesc.length > 160 ? `${rawDesc.slice(0, 157)}...` : rawDesc || "Mẫu template website tĩnh HTML5, CSS3, JavaScript hoặc Bootstrap 5 chất lượng cao tại KhoUI.";
   const productUrl = `${SITE_URL}/product/${id}`;
 
   const rawImageUrl = product.imageUrl?.trim();
@@ -62,11 +62,11 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
     keywords: [
       rawTitle,
       ...(product.techStack || []),
-      "website template",
-      "source code",
-      "kho giao diện",
-      "Next.js template",
-      "Tailwind CSS",
+      "template website tĩnh",
+      "mẫu html css",
+      "template bootstrap 5",
+      "giao diện web tĩnh",
+      "html5 template",
       "KhoUI",
     ],
     openGraph: {
@@ -168,18 +168,18 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
 
   const accordionItems = [
     { 
-      title: prodDict.tabArchitecture || (locale === "vi" ? "Kiến trúc & Công nghệ" : "Architecture & Tech Stack"), 
-      desc: prodDict.tabArchitectureDesc || (locale === "vi" ? "Next.js 16, Tailwind CSS v4, GSAP 3.15 và Clean Architecture 4 lớp chuẩn mực." : "Next.js 16, Tailwind CSS v4, GSAP 3.15, and strict 4-layer Clean Architecture."),
+      title: prodDict.tabArchitecture || (locale === "vi" ? "Định dạng file & Công nghệ" : "File Format & Tech Stack"), 
+      desc: prodDict.tabArchitectureDesc || (locale === "vi" ? "HTML5 Semantic, CSS3, JavaScript thuần hoặc Bootstrap 5. Cấu trúc file tĩnh chuẩn mực, mở trực tiếp trên trình duyệt." : "HTML5 Semantic, CSS3, Vanilla JS or Bootstrap 5. Clean static files, ready to open in any browser."),
       Icon: Layers 
     },
     { 
       title: prodDict.tabLicense || (locale === "vi" ? "Quyền sở hữu & Giấy phép" : "License & Commercial Usage"), 
-      desc: prodDict.tabLicenseDesc || (locale === "vi" ? "Bản quyền thương mại vĩnh viễn cho dự án doanh nghiệp, miễn phí cập nhật trọn đời." : "Permitted for commercial client projects, lifetime free template updates included."),
+      desc: prodDict.tabLicenseDesc || (locale === "vi" ? "Cấp phép sử dụng cho mục đích cá nhân và thương mại của dự án bạn xây dựng, tải lại không giới hạn." : "Permitted for commercial and client projects, lifetime unlimited re-downloads."),
       Icon: ShieldCheck 
     },
     { 
-      title: prodDict.tabSupport || (locale === "vi" ? "Hỗ trợ kỹ thuật & Triển khai" : "Support & Setup Guide"), 
-      desc: prodDict.tabSupportDesc || (locale === "vi" ? "Tài liệu chi tiết kèm mã nguồn, hỗ trợ deploy lên Vercel/Netlify miễn phí." : "Comprehensive documentation included with free deployment guidance for Vercel/Netlify."),
+      title: prodDict.tabSupport || (locale === "vi" ? "Hướng dẫn sử dụng & Tùy biến" : "Usage Guide & Customization"), 
+      desc: prodDict.tabSupportDesc || (locale === "vi" ? "Tài liệu cấu trúc thư mục, hướng dẫn thay đổi nội dung, màu sắc, hình ảnh và cách nhúng vào các dự án web." : "Comprehensive documentation included with guides for customizing content, images, and static hosting."),
       Icon: HelpCircle 
     },
   ];
@@ -269,9 +269,9 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
         "@type": "SoftwareApplication",
         "@id": `${productUrl}#software`,
         "name": localizedTitle,
-        "applicationCategory": "DeveloperApplication",
-        "operatingSystem": "Web, Next.js, Node.js",
-        "softwareRequirements": (product.techStack || []).join(", "),
+        "applicationCategory": "DesignApplication",
+        "operatingSystem": "Web Browser, HTML5, CSS3, Bootstrap 5",
+        "softwareRequirements": (product.techStack || []).join(", ") || "HTML5, CSS3, JavaScript, Bootstrap 5",
         "offers": {
           "@type": "Offer",
           "price": product.price,
@@ -292,7 +292,7 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
           {
             "@type": "ListItem",
             "position": 2,
-            "name": locale === "vi" ? "Kho giao diện" : "Templates",
+            "name": locale === "vi" ? "Kho giao diện tĩnh" : "Static Templates",
             "item": `${SITE_URL}/shop`
           },
           {
@@ -316,7 +316,7 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
       />
       <BreadcrumbSetter
         currentLabel={localizedTitle}
-        parentLabels={{ [ROUTES.SHOP]: locale === "vi" ? "Kho giao diện" : "Templates" }}
+        parentLabels={{ [ROUTES.SHOP]: locale === "vi" ? "Kho giao diện tĩnh" : "Static Templates" }}
       />
 
       <div className="max-w-[1360px] mx-auto px-6 sm:px-8">
@@ -340,7 +340,7 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
               <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-slate-50 border border-slate-200/70 mb-3 text-xs text-slate-700 font-medium">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                 <span>
-                  {prodDict.badge || (locale === "vi" ? "Mã Nguồn Đã Kiểm Thử" : "Verified Codebase")}
+                  {prodDict.badge || (locale === "vi" ? "Template Tĩnh Đã Kiểm Thử" : "Verified Static Template")}
                 </span>
               </div>
 
@@ -373,8 +373,8 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
               <p className="text-slate-600 leading-relaxed text-xs sm:text-sm font-normal">
                 {getLocalizedText(product.description as unknown as Record<string, string>, locale) ||
                   (locale === "vi" 
-                    ? "Mẫu website chuyên nghiệp được lập trình chuẩn Clean Architecture, đầy đủ hiệu ứng GSAP và Tailwind CSS v4." 
-                    : "Professional website template built with clean architecture, modern GSAP animations, and Tailwind CSS v4.")}
+                    ? "Mẫu template website tĩnh chuẩn HTML5, CSS3, JavaScript hoặc Bootstrap 5, giao diện hiện đại và tối ưu hiển thị trên mọi thiết bị." 
+                    : "Professional static website template crafted with HTML5, CSS3, JavaScript or Bootstrap 5, responsive and ready to customize.")}
               </p>
             </div>
 

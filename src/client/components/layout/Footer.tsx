@@ -53,10 +53,10 @@ export function Footer() {
   ];
 
   const techBadges = [
-    { icon: Code2, title: "Next.js 16 App Router", desc: "Turbopack Ready" },
-    { icon: Layers, title: "Clean Architecture", desc: "Strict 4-Layers" },
-    { icon: Zap, title: "VietQR Instant Pay", desc: "Automated Webhook" },
-    { icon: ShieldCheck, title: "Commercial License", desc: "Client Ready" },
+    { icon: Code2, title: locale === "vi" ? "HTML5 & CSS3 Chuẩn W3C" : "W3C Valid HTML5 & CSS3", desc: locale === "vi" ? "Cấu trúc sạch, chuẩn semantic" : "Semantic & Clean Code" },
+    { icon: Layers, title: locale === "vi" ? "Bootstrap 5 & Responsive" : "Bootstrap 5 & Responsive", desc: locale === "vi" ? "Tương thích 100% mọi màn hình" : "100% Mobile & Desktop Ready" },
+    { icon: Zap, title: locale === "vi" ? "Thanh Toán VietQR Tự Động" : "Instant VietQR Automated Pay", desc: locale === "vi" ? "Tải file .zip tức thì sau 3 giây" : "Automated .ZIP Delivery" },
+    { icon: ShieldCheck, title: locale === "vi" ? "Dễ Dàng Tùy Biến" : "Easy to Customize", desc: locale === "vi" ? "Tương thích mọi Backend & CMS" : "Ready for WordPress, Laravel..." },
   ];
 
   return (
@@ -94,7 +94,7 @@ export function Footer() {
               <Image src="/LogoKhoUI.png" alt="KhoUI Logo" width={120} height={40} className="h-9 w-auto object-contain mb-1.5" />
             </Link>
             <p className="text-slate-400 text-xs leading-relaxed max-w-sm font-normal">
-              {dict?.footer?.brandDesc || "Nền tảng cung cấp mã nguồn website template cao cấp xây dựng bằng Next.js 16, Tailwind CSS v4 và GSAP 3.15. Tải về tức thì sau thanh toán."}
+              {dict?.footer?.brandDesc || (locale === "vi" ? "Kho mẫu template website tĩnh (HTML5, CSS3, JavaScript, Bootstrap) chất lượng cao. Sở hữu và tải về trọn bộ file giao diện (.zip) ngay lập tức." : "High-quality static website templates (HTML5, CSS3, JavaScript, Bootstrap). Download full template .zip packages instantly upon payment.")}
             </p>
             <div className="flex gap-2 pt-1">
               {socialLinks.map(({ key, Icon, href }) => (

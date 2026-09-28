@@ -1,4 +1,4 @@
-﻿import { notFound } from "next/navigation";
+import { notFound } from "next/navigation";
 import { makeGetProductByIdUseCase } from "@/server/di/container";
 import { cookies } from "next/headers";
 import { getStaticDictionary } from "@/i18n/getDictionary";
@@ -40,7 +40,12 @@ export default async function DemoPage({ params }: DemoPageProps) {
 
   const product = productResult.data;
 
-  if (!product || !product.demoUrl) {
+  const isUrlValid = Boolean(
+    product?.demoUrl && 
+    (product.demoUrl.startsWith("http://") || product.demoUrl.startsWith("https://") || product.demoUrl.startsWith("/api/"))
+  );
+
+  if (!product || !product.demoUrl || !isUrlValid) {
     notFound();
   }
 
@@ -66,7 +71,7 @@ export default async function DemoPage({ params }: DemoPageProps) {
       }}
       resolvedIframeSrc={resolvedIframeSrc}
       locale={locale}
-      buyNowText={demoDict.buyNow || (locale === "vi" ? "Mua Bản Quyền Ngay" : "Buy License Now")}
+      buyNowText={demoDict.buyNow || (locale === "vi" ? "Mở khóa template ngay" : "Unlock Template Now")}
       backText={demoDict.back || (locale === "vi" ? "Chi tiết" : "Back to Details")}
     />
   );

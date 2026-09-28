@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { deleteProductAction } from "@/server/presentation/actions/product";
 import { useState } from "react";
@@ -12,13 +12,17 @@ export function ProductDeleteButton({ id }: { id: string }) {
     if (!confirm("Bạn có chắc chắn muốn xóa sản phẩm này?")) return;
     
     setIsDeleting(true);
-    const result = await deleteProductAction(id);
-    setIsDeleting(false);
-
-    if (result.success) {
-      toast.success("Đã xóa sản phẩm thành công!");
-    } else {
-      toast.error("Không thể xóa sản phẩm", result.error || "Vui lòng thử lại sau.");
+    try {
+      const result = await deleteProductAction(id);
+      if (result.success) {
+        toast.success("Đã xóa sản phẩm thành công!");
+      } else {
+        toast.error("Không thể xóa sản phẩm", result.error || "Vui lòng thử lại sau.");
+      }
+    } catch {
+      toast.error("Đã xảy ra lỗi khi xóa sản phẩm", "Vui lòng thử lại sau.");
+    } finally {
+      setIsDeleting(false);
     }
   };
 

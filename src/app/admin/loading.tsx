@@ -1,0 +1,19 @@
+"use client";
+
+import React from "react";
+import { LoadingSpinner } from "@/client/components/common/LoadingSpinner";
+import { useI18n } from "@/client/components/common/I18nContext";
+
+export default function AdminLoading() {
+  const { dict, locale } = useI18n();
+  const text = dict?.common?.loadingAdmin || (locale === "vi" ? "Đang tải trang quản trị..." : "Loading admin portal...");
+
+  return (
+    <div className="min-h-[50vh] flex flex-col items-center justify-center gap-3 p-8 font-sans">
+      <LoadingSpinner size="lg" />
+      <p className="text-xs font-medium text-slate-400 animate-pulse tracking-wide">
+        {text}
+      </p>
+    </div>
+  );
+}

@@ -13,22 +13,21 @@ function getSafeMetadataBase(): URL {
 export const metadata: Metadata = {
   metadataBase: getSafeMetadataBase(),
   title: {
-    default: "KhoUI — Sàn Giao Dịch Website Template & Source Code Cao Cấp",
+    default: "KhoUI — Kho Giao Diện Website Template Tĩnh Chuẩn HTML5, CSS3 & Bootstrap",
     template: "%s | KhoUI",
   },
-  description: "Nền tảng cung cấp website template & source code chất lượng cao hàng đầu Việt Nam. Chuẩn Clean Architecture, Next.js 16, Tailwind CSS 4, GSAP. Bản quyền thương mại và thanh toán tự động.",
+  description: "Nền tảng cung cấp template website tĩnh HTML5, CSS3, JavaScript và Bootstrap 5 chất lượng cao. Tải trọn bộ file tĩnh (.zip), mở trực tiếp trên trình duyệt, dễ dàng tùy biến.",
   keywords: [
     "KhoUI",
-    "website templates",
-    "mẫu website",
-    "source code",
-    "Next.js template",
-    "Tailwind CSS",
-    "GSAP animation",
-    "React template",
-    "mua mã nguồn",
-    "giao diện website",
-    "clean architecture",
+    "website template tĩnh",
+    "template website",
+    "mẫu giao diện html css",
+    "template bootstrap 5",
+    "html5 template",
+    "giao diện web tĩnh",
+    "mua template website",
+    "file html css có sẵn",
+    "landing page template",
   ],
   authors: [{ name: "KhoUI Team", url: "https://khoui.io.vn" }],
   creator: "KhoUI",
@@ -45,8 +44,8 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    title: "KhoUI — Sàn Giao Dịch Website Template & Source Code Cao Cấp",
-    description: "Khám phá và sở hữu các mẫu website template chuẩn Clean Architecture, Next.js 16, Tailwind CSS 4, GSAP. Tích hợp thanh toán PayOS VietQR tự động.",
+    title: "KhoUI — Kho Giao Diện Website Template Tĩnh Chuẩn HTML5, CSS3 & Bootstrap",
+    description: "Khám phá và sở hữu các mẫu template website tĩnh chuẩn W3C (HTML5, CSS3, JS, Bootstrap 5). Tải về file tĩnh (.zip) tức thì qua thanh toán VietQR tự động.",
     url: "https://khoui.io.vn",
     siteName: "KhoUI",
     locale: "vi_VN",
@@ -56,14 +55,14 @@ export const metadata: Metadata = {
         url: "/LogoKhoUI.png",
         width: 1200,
         height: 630,
-        alt: "KhoUI — Nền tảng Website Template & Source Code",
+        alt: "KhoUI — Nền tảng Template Website Tĩnh HTML5 & Bootstrap",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "KhoUI — Sàn Giao Dịch Website Template & Source Code Cao Cấp",
-    description: "Khám phá và sở hữu các mẫu website template chuẩn Clean Architecture, Next.js 16, Tailwind CSS 4, GSAP.",
+    title: "KhoUI — Kho Giao Diện Website Template Tĩnh Chuẩn HTML5, CSS3 & Bootstrap",
+    description: "Khám phá và sở hữu các mẫu template website tĩnh chuẩn W3C (HTML5, CSS3, JS, Bootstrap 5). Tải trọn bộ file tĩnh (.zip) tức thì.",
     images: ["/LogoKhoUI.png"],
   },
   alternates: {
@@ -85,10 +84,12 @@ export const metadata: Metadata = {
 
 
 
+import { Suspense } from "react";
 import { BreadcrumbProvider } from "@/client/components/common/BreadcrumbContext";
 import { I18nProvider, Locale } from "@/client/components/common/I18nContext";
 import { getAppDictionary } from "@/server/di/container";
 import { ToastContainer } from "@/client/components/common/ToastContainer";
+import { GlobalLoadingIndicator } from "@/client/components/common/GlobalLoadingIndicator";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
 import { Plus_Jakarta_Sans } from "next/font/google";
@@ -117,6 +118,9 @@ export default async function RootLayout({
       <body className="bg-background text-on-background font-sans antialiased selection:bg-primary/10 selection:text-primary">
         <I18nProvider locale={locale} customDict={dict as unknown as Record<string, unknown>}>
           <BreadcrumbProvider>
+            <Suspense fallback={null}>
+              <GlobalLoadingIndicator />
+            </Suspense>
             {children}
             <ToastContainer />
             <SpeedInsights />

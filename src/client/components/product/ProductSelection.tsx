@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useState, useMemo } from "react";
 import { Product, ProductVariant } from "@/server/domain/entities/Product";
@@ -148,7 +148,6 @@ export default function ProductSelection({ product, hasPurchased, purchaseLookup
               router.push("/checkout");
             } catch (err) {
               setErrorMsg(err instanceof Error ? err.message : (locale === "vi" ? "Đã xảy ra lỗi hệ thống." : "A system error occurred."));
-            } finally {
               setIsProcessing(false);
             }
           }}
@@ -162,9 +161,9 @@ export default function ProductSelection({ product, hasPurchased, purchaseLookup
           ) : isFree ? (
             <><Download size={16} /> {dict?.product?.freeDownload || (locale === "vi" ? "Tải xuống miễn phí" : "Free Download")}</>
           ) : hasPurchased ? (
-            <><Download size={16} /> {dict?.product?.downloadZip || (locale === "vi" ? "Tải file source code (.zip)" : "Download Source Code (.zip)")}</>
+            <><Download size={16} /> {dict?.product?.downloadZip || (locale === "vi" ? "Tải trọn bộ file tĩnh (.zip)" : "Download Static Files (.zip)")}</>
           ) : (
-            <><CreditCard size={16} /> {dict?.product?.payToPurchase || (locale === "vi" ? "Mua bản quyền ngay" : "Purchase License Now")}</>
+            <><CreditCard size={16} /> {dict?.product?.payToPurchase || (locale === "vi" ? "Mở khóa template ngay" : "Unlock Template Now")}</>
           )}
         </button>
 

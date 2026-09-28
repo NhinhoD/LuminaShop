@@ -1,15 +1,16 @@
-﻿"use client";
+"use client";
 
 import React, { useEffect, useState } from "react";
 import { Order, OrderItem } from "@/server/domain/entities/Order";
 import { getOrderAction, approveManualPaymentAction } from "@/server/presentation/actions/order";
 import { StatusBadge } from "@/client/components/orders/StatusBadge";
 import { formatPrice, formatDate, cn } from "@/shared/utils";
-import { X, Package, CreditCard, CheckCircle, FileText } from "lucide-react";
+import { X, Package, CreditCard, CheckCircle, FileText, Loader2 } from "lucide-react";
 import { toast } from "@/client/hooks/useToastStore";
 import { ImageWithFallback } from "@/client/components/common/ImageWithFallback";
 import { motion, AnimatePresence } from "framer-motion";
 import { getLocalizedText } from "@/shared/utils/locale";
+import { useI18n } from "@/client/components/common/I18nContext";
 
 interface OrderDetailModalProps {
   orderId: string;
@@ -17,6 +18,7 @@ interface OrderDetailModalProps {
 }
 
 export function OrderDetailModal({ orderId, onClose }: OrderDetailModalProps): React.ReactElement | null {
+  const { dict, locale } = useI18n();
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
@@ -118,10 +120,19 @@ export function OrderDetailModal({ orderId, onClose }: OrderDetailModalProps): R
                         onClick={handleApprovePayment}
                         disabled={updating}
                         type="button"
-                        className="w-full bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white font-medium py-2 rounded-xl transition-all shadow-xs text-xs flex items-center justify-center gap-1.5 cursor-pointer active:scale-98"
+                        className="w-full bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium py-2 rounded-xl transition-all shadow-xs text-xs flex items-center justify-center gap-1.5 cursor-pointer active:scale-98"
                       >
-                        <CheckCircle className="w-4 h-4" />
-                        Phê duyệt Chuyển khoản (Kích hoạt tải code)
+                        {updating ? (
+                          <>
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                            <span>{dict?.common?.approving || (locale === "vi" ? "Đang phê duyệt..." : "Approving...")}</span>
+                          </>
+                        ) : (
+                          <>
+                            <CheckCircle className="w-4 h-4" />
+                            <span>Phê duyệt Chuyển khoản (Kích hoạt tải code)</span>
+                          </>
+                        )}
                       </button>
                     )}
                   </div>

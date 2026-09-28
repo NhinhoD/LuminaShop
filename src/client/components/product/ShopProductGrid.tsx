@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
@@ -294,7 +294,7 @@ export default function ShopProductGrid({
               <div className="bg-white border border-slate-100 rounded-2xl p-16 text-center shadow-sm">
                 <Search size={40} className="text-slate-300 mx-auto mb-3" />
                 <h3 className="text-base font-extrabold text-slate-900 mb-1 tracking-tight">
-                  {dict?.shop?.emptyTitle || (locale === "vi" ? "Không tìm thấy mã nguồn phù hợp" : "No matching source code found")}
+                  {dict?.shop?.emptyTitle || (locale === "vi" ? "Không tìm thấy template phù hợp" : "No matching template found")}
                 </h3>
                 <p className="text-slate-500 text-xs">
                   {dict?.shop?.emptyDesc || (locale === "vi" ? "Hãy thử thay đổi bộ lọc hoặc mở rộng khoảng giá của bạn." : "Try adjusting your search query or expanding your price filter range.")}
@@ -428,7 +428,7 @@ export default function ShopProductGrid({
                             ) : (
                               <div className="h-9 rounded-xl text-xs font-medium bg-slate-50/60 text-slate-400 border border-slate-100 flex items-center justify-center gap-1.5 cursor-default select-none">
                                 <Code2 size={13} className="text-slate-300" />
-                                <span>{locale === "vi" ? "Mã nguồn" : "Source Code"}</span>
+                                <span>{locale === "vi" ? "File tĩnh" : "Static File"}</span>
                               </div>
                             )}
 

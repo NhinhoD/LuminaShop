@@ -183,3 +183,21 @@
   background-image: radial-gradient(rgba(0, 81, 213, 0.15) 1px, transparent 1px);
   background-size: 20px 20px;
 }
+
+/* ─── Top Loading Progress Animation ─── */
+@keyframes indeterminate {
+  0% {
+    transform: translateX(-100%);
+  }
+  50% {
+    transform: translateX(20%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.animate-indeterminate {
+  animation: indeterminate 1.4s cubic-bezier(0.65, 0.815, 0.735, 0.395) infinite;
+}
+

@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useCart } from "@/client/hooks/useCart";
 import { createOrderAction, getCustomerCheckoutInfoAction } from "@/server/presentation/actions/order";
@@ -541,7 +541,7 @@ export default function CheckoutClient({ initialCustomerInfo }: CheckoutClientPr
                     {dict?.checkout?.reviewOrderTitle || (locale === "vi" ? "Kiểm tra lại thông tin đơn hàng" : "Review Order & Complete Payment")}
                   </h2>
                   <p className="text-slate-400 text-xs mt-1 font-normal">
-                    {locale === "vi" ? "Vui lòng chọn cổng thanh toán và xác nhận mua bản quyền mã nguồn." : "Please select payment method and confirm source code purchase."}
+                    {locale === "vi" ? "Vui lòng chọn phương thức thanh toán và xác nhận mở khóa template." : "Please select payment method and confirm unlocking your template."}
                   </p>
                 </div>
 
@@ -674,7 +674,7 @@ export default function CheckoutClient({ initialCustomerInfo }: CheckoutClientPr
                       <>
                         <span>
                           {subtotal === 0 
-                            ? (locale === "vi" ? "Nhận mã nguồn miễn phí ngay (0đ)" : "Claim Free Source Code (0đ)")
+                            ? (locale === "vi" ? "Nhận template miễn phí ngay (0đ)" : "Claim Free Template (0đ)")
                             : (locale === "vi" ? `Thanh toán ${formatCurrency(subtotal, locale)}` : `Pay ${formatCurrency(subtotal, locale)}`)}
                         </span>
                         <ArrowRight className="w-4 h-4" />

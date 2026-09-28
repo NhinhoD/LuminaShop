@@ -1,4 +1,4 @@
-﻿import { IProductRepository } from '@/server/domain/repositories/IProductRepository';
+import { IProductRepository } from '@/server/domain/repositories/IProductRepository';
 import { Product, CreateProductDTO, UpdateProductDTO, ProductVariant } from '@/server/domain/entities/Product';
 import { ProductRow } from '../types';
 import { SupabaseClient } from '@supabase/supabase-js';
@@ -23,6 +23,11 @@ export class SupabaseProductRepository implements IProductRepository {
   constructor(private supabase: SupabaseClient) {}
 
   async findById(id: string): Promise<Product | null> {
+    const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+    if (!isUUID) {
+      return this.findBySlug(id);
+    }
+
     const supabase = this.supabase;
     const { data, error } = await supabase
       .from('products')

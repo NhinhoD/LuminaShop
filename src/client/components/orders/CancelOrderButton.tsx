@@ -1,10 +1,11 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import { cancelOrderAction } from "@/server/presentation/actions/order";
 import { toast } from "@/client/hooks/useToastStore";
 import { useRouter } from "next/navigation";
 import { useI18n } from "@/client/components/common/I18nContext";
+import { Loader2 } from "lucide-react";
 
 interface CancelOrderButtonProps {
   orderId: string;
@@ -44,11 +45,16 @@ export function CancelOrderButton({ orderId }: CancelOrderButtonProps) {
       onClick={handleCancel}
       disabled={loading}
       type="button"
-      className="px-4 py-2 border border-red-200 text-red-600 rounded-xl hover:bg-red-50 transition-colors text-xs font-bold uppercase tracking-wider disabled:opacity-50 cursor-pointer"
+      className="inline-flex items-center gap-1.5 px-4 py-2 border border-red-200 text-red-600 rounded-xl hover:bg-red-50 transition-colors text-xs font-bold uppercase tracking-wider disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
     >
-      {loading 
-        ? (dict?.common?.loading || "Processing...") 
-        : (dict?.orders?.cancelOrder || "Cancel Order")}
+      {loading ? (
+        <>
+          <Loader2 className="w-3.5 h-3.5 animate-spin text-red-600" />
+          <span>{dict?.common?.loading || "Processing..."}</span>
+        </>
+      ) : (
+        <span>{dict?.orders?.cancelOrder || "Cancel Order"}</span>
+      )}
     </button>
   );
 }

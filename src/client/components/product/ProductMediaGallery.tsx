@@ -14,6 +14,12 @@ interface ProductMediaGalleryProps {
   demoUrl?: string;
 }
 
+function isValidPreviewUrl(url?: string): boolean {
+  if (!url) return false;
+  const trimmed = url.trim();
+  return trimmed.startsWith("http://") || trimmed.startsWith("https://") || trimmed.startsWith("/api/");
+}
+
 /**
  * Wraps Supabase Storage URLs through the local /api/preview proxy
  * to bypass Supabase's forced text/plain Content-Type on HTML files.
@@ -27,10 +33,11 @@ function getProxiedPreviewUrl(url: string): string {
 }
 
 export default function ProductMediaGallery({ productId, title, imageUrl, demoUrl }: ProductMediaGalleryProps) {
+  const hasValidDemo = isValidPreviewUrl(demoUrl);
   // Optimize LCP & Core Web Vitals: Default to static mockup image so the browser paints instantly.
   // The interactive iframe is lazy-mounted only when the user explicitly chooses the "live" tab.
   const [activeTab, setActiveTab] = useState<"image" | "live">(
-    imageUrl ? "image" : demoUrl ? "live" : "image"
+    imageUrl ? "image" : hasValidDemo ? "live" : "image"
   );
   const [iframeLoading, setIframeLoading] = useState(true);
   const [prevDemoUrl, setPrevDemoUrl] = useState(demoUrl);
@@ -41,12 +48,12 @@ export default function ProductMediaGallery({ productId, title, imageUrl, demoUr
     setIframeLoading(true);
   }
 
-  const resolvedIframeSrc = demoUrl ? getProxiedPreviewUrl(demoUrl) : "";
+  const resolvedIframeSrc = hasValidDemo && demoUrl ? getProxiedPreviewUrl(demoUrl) : "";
 
   return (
     <div className="space-y-4 font-sans">
       {/* Tab Selectors */}
-      {demoUrl && (
+      {hasValidDemo && (
         <div className="flex items-center justify-between border-b border-slate-100 pb-1.5">
           <div className="flex gap-4">
             <button
@@ -102,11 +109,11 @@ export default function ProductMediaGallery({ productId, title, imageUrl, demoUr
 
       {/* Media Window Container */}
       <div className={`rounded-xl overflow-hidden shadow-xs border border-slate-200/70 relative transition-all duration-300 ${
-        activeTab === "live" && demoUrl
+        activeTab === "live" && hasValidDemo
           ? "w-full h-[65vh] min-h-[460px]"
           : "aspect-[4/3] sm:aspect-[16/10] bg-slate-900"
       }`}>
-        {activeTab === "live" && demoUrl ? (
+        {activeTab === "live" && hasValidDemo ? (
           <div className="w-full h-full relative bg-slate-950">
             {/* Top Browser Bar Mock */}
             <div className="h-8 bg-slate-900 border-b border-slate-800/60 flex items-center px-3.5 gap-2 select-none">
@@ -160,8 +167,10 @@ export default function ProductMediaGallery({ productId, title, imageUrl, demoUr
                 sizes="(max-width: 1024px) 100vw, 50vw"
               />
             ) : (
-              <div className="w-full h-full flex items-center justify-center text-slate-500 text-sm">
-                Live Blueprint
+              <div className="w-full h-full flex flex-col items-center justify-center bg-slate-950 text-slate-400 gap-2.5 p-6 text-center select-none">
+                <ImageIcon size={32} className="text-slate-600" />
+                <span className="text-xs text-slate-400 font-medium">{title}</span>
+                <span className="text-[11px] text-slate-500 font-mono">Template tĩnh (.zip) • HTML5 & CSS3</span>
               </div>
             )}
           </div>
@@ -169,7 +178,7 @@ export default function ProductMediaGallery({ productId, title, imageUrl, demoUr
       </div>
 
       {/* Extra helper notice for live frame */}
-      {activeTab === "live" && demoUrl && (
+      {activeTab === "live" && hasValidDemo && (
         <p className="text-[11px] text-slate-400 font-normal text-center">
           {dict?.media?.interactiveHint || (locale === "vi" ? "Bạn có thể tương tác trực tiếp bên trong khung xem trước." : "You can interact directly inside the preview window.")}
         </p>

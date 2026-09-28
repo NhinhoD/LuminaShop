@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { Category } from "@/server/domain/entities/Category";
 import { useLocale } from "@/client/hooks/useLocale";
@@ -12,7 +12,8 @@ import {
   Palette, 
   Edit3, 
   Trash2, 
-  Plus 
+  Plus,
+  Loader2 
 } from "lucide-react";
 import React from "react";
 
@@ -21,9 +22,10 @@ interface CategoryCardProps {
   productCount?: number;
   onEdit: (category: Category) => void;
   onDelete: (id: string) => void;
+  isDeleting?: boolean;
 }
 
-export function CategoryCard({ category, productCount = 0, onEdit, onDelete }: CategoryCardProps) {
+export function CategoryCard({ category, productCount = 0, onEdit, onDelete, isDeleting = false }: CategoryCardProps) {
   const locale = useLocale();
 
   const renderIcon = (name: string) => {
@@ -53,11 +55,16 @@ export function CategoryCard({ category, productCount = 0, onEdit, onDelete }: C
           </button>
           <button
             onClick={() => onDelete(category.id)}
-            className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all cursor-pointer"
+            disabled={isDeleting}
+            className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             title={locale === "vi" ? "Xóa" : "Delete"}
             type="button"
           >
-            <Trash2 size={15} />
+            {isDeleting ? (
+              <Loader2 size={15} className="animate-spin text-red-500" />
+            ) : (
+              <Trash2 size={15} />
+            )}
           </button>
         </div>
       </div>
