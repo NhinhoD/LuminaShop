@@ -143,7 +143,7 @@ The system architecture, database design, and business rules were designed and d
 
 ### Prerequisites
 
-- **Node.js**: `v20.9.0` or higher
+- **Node.js**: `v22.0.0` or higher (LTS recommended)
 - **Package Manager**: `npm`
 - A **Supabase** project
 - A **PayOS** merchant account (for VietQR processing)
