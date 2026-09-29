@@ -31,7 +31,7 @@ export function CategoryList({ initialCategories, search }: CategoryListProps) {
   const [showForm, setShowForm] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Category | undefined>(undefined);
   const [searchTerm, setSearchTerm] = useState(search || "");
-  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [deletingIds, setDeletingIds] = useState<Set<string>>(new Set());
 
   const handleSearch = useDebouncedCallback((term: string) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -46,7 +46,7 @@ export function CategoryList({ initialCategories, search }: CategoryListProps) {
 
   const handleDelete = async (id: string) => {
     if (confirm(adminDict.deleteCategoryConfirm || (locale === "vi" ? "Bạn có chắc chắn muốn xóa danh mục này?" : "Are you sure you want to delete this category?"))) {
-      setDeletingId(id);
+      setDeletingIds((prev) => new Set(prev).add(id));
       try {
         const result = await deleteCategoryAction(id);
         if (result.success) {
@@ -55,7 +55,11 @@ export function CategoryList({ initialCategories, search }: CategoryListProps) {
           toast.error(adminDict.categoryDeleteError || (locale === "vi" ? "Không thể xóa danh mục" : "Cannot delete category"), result.error || (locale === "vi" ? "Vui lòng thử lại sau." : "Please try again."));
         }
       } finally {
-        setDeletingId(null);
+        setDeletingIds((prev) => {
+          const next = new Set(prev);
+          next.delete(id);
+          return next;
+        });
       }
     }
   };
@@ -127,7 +131,7 @@ export function CategoryList({ initialCategories, search }: CategoryListProps) {
               setShowForm(true);
             }}
             onDelete={handleDelete}
-            isDeleting={deletingId === category.id}
+            isDeleting={deletingIds.has(category.id)}
           />
         ))}
         

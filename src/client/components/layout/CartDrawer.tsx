@@ -6,6 +6,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
 import { ROUTES } from "@/shared/constants";
+import { usePathname } from "next/navigation";
 import { useI18n } from "@/client/components/common/I18nContext";
 import { useEffect, useRef, useState } from "react";
 import { formatCurrency } from "@/shared/utils";
@@ -18,6 +19,7 @@ export default function CartDrawer() {
   const { items, subtotal, removeItem, updateQuantity, isLoading, error } = useCart();
   const { isOpen, closeDrawer } = useCartDrawerStore();
   const drawerRef = useRef<HTMLDivElement>(null);
+  const pathname = usePathname();
   const [prevIsOpen, setPrevIsOpen] = useState(isOpen);
   const [isNavigatingToCheckout, setIsNavigatingToCheckout] = useState(false);
 
@@ -27,6 +29,18 @@ export default function CartDrawer() {
       setIsNavigatingToCheckout(false);
     }
   }
+
+  const prevPathname = useRef(pathname);
+
+  // Close drawer when route changes (e.g. navigation to checkout completes)
+  useEffect(() => {
+    if (prevPathname.current !== pathname) {
+      prevPathname.current = pathname;
+      if (isOpen) {
+        closeDrawer();
+      }
+    }
+  }, [pathname, isOpen, closeDrawer]);
 
   // Close on ESC keypress
   useEffect(() => {
@@ -244,7 +258,6 @@ export default function CartDrawer() {
                     href={ROUTES.CHECKOUT}
                     onClick={() => {
                       setIsNavigatingToCheckout(true);
-                      closeDrawer();
                     }}
                     className={`w-full bg-primary text-white text-xs py-3.5 hover:bg-primary-dark transition-all flex items-center justify-center gap-2 uppercase tracking-wider font-extrabold rounded-xl shadow-md active:scale-95 ${
                       isNavigatingToCheckout ? "opacity-75 pointer-events-none cursor-not-allowed" : ""

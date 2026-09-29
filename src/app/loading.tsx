@@ -11,7 +11,7 @@ export default function RootLoading() {
   return (
     <div className="min-h-[60vh] flex flex-col items-center justify-center gap-3 p-8">
       <LoadingSpinner size="lg" />
-      <p className="text-xs font-medium text-slate-400 animate-pulse tracking-wide font-sans">
+      <p className="text-xs font-medium text-slate-400 animate-pulse motion-reduce:animate-none tracking-wide font-sans">
         {text}
       </p>
     </div>

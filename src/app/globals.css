@@ -201,3 +201,11 @@
   animation: indeterminate 1.4s cubic-bezier(0.65, 0.815, 0.735, 0.395) infinite;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .animate-indeterminate {
+    animation: none;
+    transform: none;
+    width: 100%;
+  }
+}
+

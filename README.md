@@ -187,9 +187,10 @@ The system architecture, database design, and business rules were designed and d
 
 4. **Supabase Setup:**
    - **Database Tables & RPCs**: Execute SQL scripts located in `supabase/migrations/` using the Supabase SQL Editor.
-   - **Storage Buckets**: In the Supabase Dashboard under Storage, create two public buckets:
-     - `template-previews`: Stores unzipped static HTML/CSS files for the live demo iframe viewer.
-     - `template-assets`: Stores template thumbnail images and full `.zip` source files.
+   - **Storage Buckets**: In the Supabase Dashboard under Storage, configure:
+     - `template-previews` (Public): Stores unzipped static HTML/CSS files for the live demo iframe viewer.
+     - `template-assets` (Public): Stores public template thumbnails and showcase preview images.
+     - `template-archives` (Private): Stores full paid `.zip` source archives, accessible only via authenticated signed URLs issued upon confirmed purchase.
    - **Seed Dictionary**: Navigate to `/admin/translations` and click **"Đồng bộ từ điển"** (Sync Dictionary) to populate initial localization keys from `vi.ts` into the `site_translations` table.
 
 5. **PayOS Webhook Configuration (Local Testing):**

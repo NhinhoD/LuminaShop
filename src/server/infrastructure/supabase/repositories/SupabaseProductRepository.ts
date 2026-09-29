@@ -181,7 +181,7 @@ export class SupabaseProductRepository implements IProductRepository {
     const { error } = await supabase
       .from('products')
       .update(dbData as unknown as Record<string, string>)
-      .eq('id', id);
+      .eq('id', existingProduct.id);
 
     if (error) throw new Error(`Database error: ${error.message}`);
 
@@ -189,21 +189,29 @@ export class SupabaseProductRepository implements IProductRepository {
     await supabase
       .from('inventory_items')
       .update({ quantity: 999999 })
-      .eq('product_id', id)
+      .eq('product_id', existingProduct.id)
       .is('variant_id', null);
     
-    return this.findById(id) as Promise<Product>;
+    return this.findById(existingProduct.id) as Promise<Product>;
   }
 
   async delete(id: string): Promise<void> {
     const supabase = this.supabase;
+    const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+    let targetId = id;
+    if (!isUUID) {
+      const existingProduct = await this.findBySlug(id);
+      if (!existingProduct) return;
+      targetId = existingProduct.id;
+    }
+
     const { error } = await supabase
       .from('products')
       .update({ 
         deleted_at: new Date().toISOString(),
         is_active: false 
       })
-      .eq('id', id);
+      .eq('id', targetId);
 
     if (error) throw new Error(`Database error: ${error.message}`);
   }

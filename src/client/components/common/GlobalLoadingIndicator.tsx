@@ -27,6 +27,15 @@ export function GlobalLoadingIndicator() {
     setIsNavigating(false);
   }
 
+  // Safety timeout: automatically clear pending navigation if transition stalls or fails
+  useEffect(() => {
+    if (!isNavigating) return;
+    const timer = setTimeout(() => {
+      setIsNavigating(false);
+    }, 8000);
+    return () => clearTimeout(timer);
+  }, [isNavigating]);
+
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
       // Find closest anchor tag
@@ -64,6 +73,13 @@ export function GlobalLoadingIndicator() {
             startTransition(() => {
               setIsNavigating(true);
             });
+
+            // Verify if subsequent event handlers prevented the navigation
+            setTimeout(() => {
+              if (e.defaultPrevented) {
+                setIsNavigating(false);
+              }
+            }, 0);
           }
         }
       } catch {
@@ -88,12 +104,12 @@ export function GlobalLoadingIndicator() {
     >
       {/* Top Animated Progress Bar */}
       <div className="h-1 w-full bg-slate-100 overflow-hidden shadow-xs">
-        <div className="h-full bg-gradient-to-r from-primary via-indigo-500 to-primary w-full animate-indeterminate rounded-r-full" />
+        <div className="h-full bg-gradient-to-r from-primary via-indigo-500 to-primary w-full animate-indeterminate rounded-r-full motion-reduce:animate-none" />
       </div>
 
       {/* Floating Spinner Badge at top-right */}
-      <div className="absolute top-3 right-4 sm:right-6 bg-white/95 backdrop-blur-md px-3.5 py-1.5 rounded-full shadow-lg border border-slate-200/80 flex items-center gap-2 text-slate-800 text-xs font-medium animate-in fade-in slide-in-from-top-2 duration-200">
-        <Loader2 className="w-3.5 h-3.5 animate-spin text-primary" />
+      <div className="absolute top-3 right-4 sm:right-6 bg-white/95 backdrop-blur-md px-3.5 py-1.5 rounded-full shadow-lg border border-slate-200/80 flex items-center gap-2 text-slate-800 text-xs font-medium animate-in fade-in slide-in-from-top-2 duration-200 motion-reduce:animate-none">
+        <Loader2 className="w-3.5 h-3.5 animate-spin motion-reduce:animate-none text-primary" />
         <span className="font-sans">{dict?.common?.loading || (locale === "vi" ? "Đang tải..." : "Loading...")}</span>
       </div>
     </div>

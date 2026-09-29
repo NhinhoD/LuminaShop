@@ -39,13 +39,14 @@ export default async function DemoPage({ params }: DemoPageProps) {
   }
 
   const product = productResult.data;
+  const normalizedDemoUrl = product?.demoUrl?.trim() || "";
 
   const isUrlValid = Boolean(
-    product?.demoUrl && 
-    (product.demoUrl.startsWith("http://") || product.demoUrl.startsWith("https://") || product.demoUrl.startsWith("/api/"))
+    normalizedDemoUrl && 
+    (normalizedDemoUrl.startsWith("http://") || normalizedDemoUrl.startsWith("https://") || normalizedDemoUrl.startsWith("/api/"))
   );
 
-  if (!product || !product.demoUrl || !isUrlValid) {
+  if (!product || !normalizedDemoUrl || !isUrlValid) {
     notFound();
   }
 
@@ -59,7 +60,7 @@ export default async function DemoPage({ params }: DemoPageProps) {
     return url;
   }
   
-  const resolvedIframeSrc = getProxiedPreviewUrl(product.demoUrl);
+  const resolvedIframeSrc = getProxiedPreviewUrl(normalizedDemoUrl);
 
   return (
     <DemoViewerClient
@@ -67,7 +68,7 @@ export default async function DemoPage({ params }: DemoPageProps) {
         id: product.id,
         title: product.title as Record<string, string>,
         price: Number(product.price),
-        demoUrl: product.demoUrl,
+        demoUrl: normalizedDemoUrl,
       }}
       resolvedIframeSrc={resolvedIframeSrc}
       locale={locale}

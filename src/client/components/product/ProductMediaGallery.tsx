@@ -14,10 +14,13 @@ interface ProductMediaGalleryProps {
   demoUrl?: string;
 }
 
-function isValidPreviewUrl(url?: string): boolean {
+function normalizeUrl(url?: string): string {
+  return url ? url.trim() : "";
+}
+
+function isValidPreviewUrl(url: string): boolean {
   if (!url) return false;
-  const trimmed = url.trim();
-  return trimmed.startsWith("http://") || trimmed.startsWith("https://") || trimmed.startsWith("/api/");
+  return url.startsWith("http://") || url.startsWith("https://") || url.startsWith("/api/");
 }
 
 /**
@@ -33,22 +36,23 @@ function getProxiedPreviewUrl(url: string): string {
 }
 
 export default function ProductMediaGallery({ productId, title, imageUrl, demoUrl }: ProductMediaGalleryProps) {
-  const hasValidDemo = isValidPreviewUrl(demoUrl);
+  const normalizedDemoUrl = normalizeUrl(demoUrl);
+  const hasValidDemo = isValidPreviewUrl(normalizedDemoUrl);
   // Optimize LCP & Core Web Vitals: Default to static mockup image so the browser paints instantly.
   // The interactive iframe is lazy-mounted only when the user explicitly chooses the "live" tab.
   const [activeTab, setActiveTab] = useState<"image" | "live">(
     imageUrl ? "image" : hasValidDemo ? "live" : "image"
   );
   const [iframeLoading, setIframeLoading] = useState(true);
-  const [prevDemoUrl, setPrevDemoUrl] = useState(demoUrl);
+  const [prevDemoUrl, setPrevDemoUrl] = useState(normalizedDemoUrl);
   const { dict, locale } = useI18n();
 
-  if (demoUrl !== prevDemoUrl) {
-    setPrevDemoUrl(demoUrl);
+  if (normalizedDemoUrl !== prevDemoUrl) {
+    setPrevDemoUrl(normalizedDemoUrl);
     setIframeLoading(true);
   }
 
-  const resolvedIframeSrc = hasValidDemo && demoUrl ? getProxiedPreviewUrl(demoUrl) : "";
+  const resolvedIframeSrc = hasValidDemo ? getProxiedPreviewUrl(normalizedDemoUrl) : "";
 
   return (
     <div className="space-y-4 font-sans">
@@ -123,7 +127,7 @@ export default function ProductMediaGallery({ productId, title, imageUrl, demoUr
                 <span className="w-2.5 h-2.5 rounded-full bg-emerald-500/70" />
               </div>
               <div className="flex-grow mx-8 bg-slate-950 h-5 rounded flex items-center px-2.5 text-[10px] text-slate-400 font-mono overflow-hidden whitespace-nowrap text-ellipsis border border-slate-800/40">
-                {demoUrl}
+                {normalizedDemoUrl}
               </div>
             </div>
 

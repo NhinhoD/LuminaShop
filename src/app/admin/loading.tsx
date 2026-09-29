@@ -11,7 +11,7 @@ export default function AdminLoading() {
   return (
     <div className="min-h-[50vh] flex flex-col items-center justify-center gap-3 p-8 font-sans">
       <LoadingSpinner size="lg" />
-      <p className="text-xs font-medium text-slate-400 animate-pulse tracking-wide">
+      <p className="text-xs font-medium text-slate-400 animate-pulse motion-reduce:animate-none tracking-wide">
         {text}
       </p>
     </div>
