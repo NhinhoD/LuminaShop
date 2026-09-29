@@ -30,6 +30,15 @@ export default function CartDrawer() {
     }
   }
 
+  // Safety timeout: reset checkout loading state if navigation stalls or is aborted
+  useEffect(() => {
+    if (!isNavigatingToCheckout) return;
+    const timer = setTimeout(() => {
+      setIsNavigatingToCheckout(false);
+    }, 8000);
+    return () => clearTimeout(timer);
+  }, [isNavigatingToCheckout]);
+
   const prevPathname = useRef(pathname);
 
   // Close drawer when route changes (e.g. navigation to checkout completes)
@@ -256,7 +265,11 @@ export default function CartDrawer() {
                 <div className="grid grid-cols-1 gap-2 pt-1">
                   <Link 
                     href={ROUTES.CHECKOUT}
-                    onClick={() => {
+                    onClick={(e) => {
+                      // Do not trigger pending state if opened in a new tab/window via modifier keys or non-primary click
+                      if (e.ctrlKey || e.metaKey || e.shiftKey || e.altKey || e.button !== 0) {
+                        return;
+                      }
                       setIsNavigatingToCheckout(true);
                     }}
                     className={`w-full bg-primary text-white text-xs py-3.5 hover:bg-primary-dark transition-all flex items-center justify-center gap-2 uppercase tracking-wider font-extrabold rounded-xl shadow-md active:scale-95 ${
