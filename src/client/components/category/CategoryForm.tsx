@@ -1,9 +1,11 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import { Category } from "@/server/domain/entities/Category";
 import { createCategoryAction, updateCategoryAction } from "@/server/presentation/actions/category";
 import { generateSlug } from "@/shared/utils";
+import { Loader2 } from "lucide-react";
+import { useI18n } from "@/client/components/common/I18nContext";
 
 interface CategoryFormProps {
   category?: Category;
@@ -12,6 +14,7 @@ interface CategoryFormProps {
 }
 
 export function CategoryForm({ category, onSuccess, onCancel }: CategoryFormProps) {
+  const { dict, locale } = useI18n();
   const [currentLang, setCurrentLang] = useState<'vi' | 'en'>('vi');
   const [name, setName] = useState<Record<string, string>>(category?.name || { vi: '', en: '' });
   const [description, setDescription] = useState<Record<string, string>>(category?.description || { vi: '', en: '' });
@@ -116,9 +119,16 @@ export function CategoryForm({ category, onSuccess, onCancel }: CategoryFormProp
         <button
           type="submit"
           disabled={loading}
-          className="flex-1 bg-primary text-white py-2.5 rounded-xl font-medium text-sm hover:bg-primary-dark transition-colors disabled:opacity-50 shadow-xs cursor-pointer active:scale-95"
+          className="flex-1 bg-primary text-white py-2.5 rounded-xl font-medium text-sm hover:bg-primary-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-xs cursor-pointer active:scale-95 flex items-center justify-center gap-2"
         >
-          {loading ? "Đang xử lý..." : category ? "Cập nhật" : "Tạo mới"}
+          {loading ? (
+            <>
+              <Loader2 className="w-4 h-4 animate-spin" />
+              <span>{dict?.common?.processing || (locale === "vi" ? "Đang xử lý..." : "Processing...")}</span>
+            </>
+          ) : (
+            <span>{category ? (dict?.common?.edit || "Cập nhật") : (dict?.common?.create || "Tạo mới")}</span>
+          )}
         </button>
         <button
           type="button"

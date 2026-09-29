@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useCart } from "@/client/hooks/useCart";
 import { useCartDrawerStore } from "@/client/hooks/useCartDrawerStore";
@@ -6,18 +6,50 @@ import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
 import { ROUTES } from "@/shared/constants";
+import { usePathname } from "next/navigation";
 import { useI18n } from "@/client/components/common/I18nContext";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { formatCurrency } from "@/shared/utils";
 import { getLocalizedText } from "@/shared/utils/locale";
 import { toast } from "@/client/hooks/useToastStore";
-import { ShoppingBag, X, ArrowRight, Image as ImageIcon } from "lucide-react";
+import { ShoppingBag, X, ArrowRight, Image as ImageIcon, Loader2 } from "lucide-react";
 
 export default function CartDrawer() {
   const { dict, locale } = useI18n();
   const { items, subtotal, removeItem, updateQuantity, isLoading, error } = useCart();
   const { isOpen, closeDrawer } = useCartDrawerStore();
   const drawerRef = useRef<HTMLDivElement>(null);
+  const pathname = usePathname();
+  const [prevIsOpen, setPrevIsOpen] = useState(isOpen);
+  const [isNavigatingToCheckout, setIsNavigatingToCheckout] = useState(false);
+
+  if (prevIsOpen !== isOpen) {
+    setPrevIsOpen(isOpen);
+    if (!isOpen) {
+      setIsNavigatingToCheckout(false);
+    }
+  }
+
+  // Safety timeout: reset checkout loading state if navigation stalls or is aborted
+  useEffect(() => {
+    if (!isNavigatingToCheckout) return;
+    const timer = setTimeout(() => {
+      setIsNavigatingToCheckout(false);
+    }, 8000);
+    return () => clearTimeout(timer);
+  }, [isNavigatingToCheckout]);
+
+  const prevPathname = useRef(pathname);
+
+  // Close drawer when route changes (e.g. navigation to checkout completes)
+  useEffect(() => {
+    if (prevPathname.current !== pathname) {
+      prevPathname.current = pathname;
+      if (isOpen) {
+        closeDrawer();
+      }
+    }
+  }, [pathname, isOpen, closeDrawer]);
 
   // Close on ESC keypress
   useEffect(() => {
@@ -228,16 +260,33 @@ export default function CartDrawer() {
                   </span>
                 </div>
                 <p className="text-[11px] text-slate-400 leading-relaxed">
-                  {dict?.drawer?.deliveryNote || (locale === "vi" ? "Mã nguồn và giấy phép được cấp quyền tải về tự động ngay sau khi thanh toán." : "Source code archive and license keys will be instantly available for download upon payment completion.")}
+                  {dict?.drawer?.deliveryNote || (locale === "vi" ? "File template (.zip) và giấy phép được cấp quyền tải về tự động ngay sau khi thanh toán." : "Template archive (.zip) and license will be instantly available for download upon payment completion.")}
                 </p>
                 <div className="grid grid-cols-1 gap-2 pt-1">
                   <Link 
                     href={ROUTES.CHECKOUT}
-                    onClick={closeDrawer}
-                    className="w-full bg-primary text-white text-xs py-3.5 hover:bg-primary-dark transition-all flex items-center justify-center gap-2 uppercase tracking-wider font-extrabold rounded-xl shadow-md active:scale-95"
+                    onClick={(e) => {
+                      // Do not trigger pending state if opened in a new tab/window via modifier keys or non-primary click
+                      if (e.ctrlKey || e.metaKey || e.shiftKey || e.altKey || e.button !== 0) {
+                        return;
+                      }
+                      setIsNavigatingToCheckout(true);
+                    }}
+                    className={`w-full bg-primary text-white text-xs py-3.5 hover:bg-primary-dark transition-all flex items-center justify-center gap-2 uppercase tracking-wider font-extrabold rounded-xl shadow-md active:scale-95 ${
+                      isNavigatingToCheckout ? "opacity-75 pointer-events-none cursor-not-allowed" : ""
+                    }`}
                   >
-                    <span>{dict?.drawer?.checkoutCTA || (locale === "vi" ? "Tiến hành thanh toán" : "Proceed to Checkout")}</span>
-                    <ArrowRight size={14} />
+                    {isNavigatingToCheckout ? (
+                      <>
+                        <Loader2 size={14} className="animate-spin" />
+                        <span>{dict?.common?.redirecting || (locale === "vi" ? "Đang chuyển trang..." : "Redirecting...")}</span>
+                      </>
+                    ) : (
+                      <>
+                        <span>{dict?.drawer?.checkoutCTA || (locale === "vi" ? "Tiến hành thanh toán" : "Proceed to Checkout")}</span>
+                        <ArrowRight size={14} />
+                      </>
+                    )}
                   </Link>
                   <button 
                     onClick={closeDrawer}

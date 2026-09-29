@@ -9,11 +9,11 @@ import { sanitizeProductsForPublic } from "@/server/domain/entities/Product";
 import { SITE_URL } from "@/shared/constants";
 
 export const metadata: Metadata = {
-  title: "Kho Mẫu Giao Diện Website & Source Code Cao Cấp",
-  description: "Khám phá và tải xuống các mẫu website template chuẩn Clean Architecture, Next.js 16, Tailwind CSS 4, GSAP. Đầy đủ mã nguồn và bản quyền thương mại.",
+  title: "Kho Mẫu Giao Diện Website Tĩnh (HTML, CSS, JS, Bootstrap) Cao Cấp",
+  description: "Khám phá và tải xuống các mẫu website template tĩnh chuẩn HTML5, CSS3, JavaScript, Bootstrap 5. Trọn bộ file .zip sẵn sàng tùy biến và sử dụng.",
   openGraph: {
-    title: "Kho Mẫu Giao Diện Website & Source Code Cao Cấp",
-    description: "Khám phá và tải xuống các mẫu website template chuẩn Clean Architecture, Next.js 16, Tailwind CSS 4, GSAP. Đầy đủ mã nguồn và bản quyền thương mại.",
+    title: "Kho Mẫu Giao Diện Website Tĩnh (HTML, CSS, JS, Bootstrap) Cao Cấp",
+    description: "Khám phá và tải xuống các mẫu website template tĩnh chuẩn HTML5, CSS3, JavaScript, Bootstrap 5. Trọn bộ file .zip sẵn sàng tùy biến và sử dụng.",
     url: `${SITE_URL}/shop`,
     siteName: "KhoUI",
     type: "website",
@@ -164,28 +164,28 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/8 border border-primary/15 mb-3.5 backdrop-blur-xs">
               <span className="flex h-2 w-2 rounded-full bg-primary animate-pulse" />
               <span className="text-xs font-semibold text-primary tracking-wide">
-                {shopDict.breadcrumbsShop || (locale === "vi" ? "Kho Giao Diện Chọn Lọc" : "Curated Template Store")}
+                {shopDict.breadcrumbsShop || (locale === "vi" ? "Kho Template Tĩnh Chọn Lọc" : "Curated Template Store")}
               </span>
               <span className="text-primary/30">•</span>
-              <span className="text-xs font-medium text-slate-500">Next.js 16 & Clean Architecture</span>
+              <span className="text-xs font-medium text-slate-500">HTML5, CSS3, JS &amp; Bootstrap 5</span>
             </div>
 
             {/* Headline */}
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 mb-3 tracking-tight">
               {locale === "vi" ? (
                 <>
-                  Bộ sưu tập <span className="bg-gradient-to-r from-primary via-indigo-600 to-violet-600 bg-clip-text text-transparent">Giao diện & Mã nguồn</span> cao cấp
+                  Bộ sưu tập <span className="bg-gradient-to-r from-primary via-indigo-600 to-violet-600 bg-clip-text text-transparent">Giao diện Website Tĩnh</span> chọn lọc
                 </>
               ) : (
                 <>
-                  Curated <span className="bg-gradient-to-r from-primary via-indigo-600 to-violet-600 bg-clip-text text-transparent">Templates & Codebases</span>
+                  Curated <span className="bg-gradient-to-r from-primary via-indigo-600 to-violet-600 bg-clip-text text-transparent">Static Templates</span> Collection
                 </>
               )}
             </h1>
 
             {/* Subtitle */}
             <p className="text-slate-600 text-sm sm:text-base leading-relaxed font-normal">
-              {shopDict.subtitle || (locale === "vi" ? "Khám phá các mẫu website chất lượng cao được thiết kế tỉ mỉ, tối ưu trải nghiệm và sẵn sàng triển khai ngay vào dự án của bạn." : "Production-ready web templates engineered with clean architecture, modern aesthetics, and instant source code delivery.")}
+              {shopDict.subtitle || (locale === "vi" ? "Khám phá các mẫu template HTML5, CSS3, JavaScript, Bootstrap chất lượng cao, tối ưu hiển thị và sẵn sàng tùy biến cho dự án của bạn." : "Production-ready static website templates engineered with modern HTML5, CSS3, Bootstrap 5 aesthetics, and instant zip delivery.")}
             </p>
           </div>
 
@@ -207,7 +207,7 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
               </div>
               <div>
                 <div className="text-xs font-bold text-slate-900">{locale === "vi" ? "Tải về tức thì" : "Instant Access"}</div>
-                <div className="text-[11px] text-slate-500 font-normal">{locale === "vi" ? "Kèm mã nguồn .zip" : "Full Source Code"}</div>
+                <div className="text-[11px] text-slate-500 font-normal">{locale === "vi" ? "Trọn bộ file tĩnh .zip" : "Full .ZIP Archive"}</div>
               </div>
             </div>
           </div>

@@ -11,11 +11,11 @@ import { z } from "zod";
 import { SITE_URL } from "@/shared/constants";
 
 export const metadata: Metadata = {
-  title: "KhoUI — Sàn Giao Dịch Website Template & Source Code Cao Cấp",
-  description: "Nền tảng website templates & source code chuẩn Clean Architecture hàng đầu Việt Nam. Tích hợp thanh toán PayOS VietQR tự động, bàn giao bản quyền tức thì.",
+  title: "KhoUI — Kho Giao Diện Website Template Tĩnh Chuẩn HTML5, CSS3 & Bootstrap",
+  description: "Nền tảng cung cấp template website tĩnh HTML5, CSS3, JavaScript và Bootstrap 5 chất lượng cao. Tải trọn bộ file tĩnh (.zip), mở trực tiếp trên trình duyệt, thanh toán VietQR tự động.",
   openGraph: {
-    title: "KhoUI — Sàn Giao Dịch Website Template & Source Code Cao Cấp",
-    description: "Nền tảng website templates & source code chuẩn Clean Architecture hàng đầu Việt Nam. Tích hợp thanh toán PayOS VietQR tự động, bàn giao bản quyền tức thì.",
+    title: "KhoUI — Kho Giao Diện Website Template Tĩnh Chuẩn HTML5, CSS3 & Bootstrap",
+    description: "Nền tảng cung cấp template website tĩnh HTML5, CSS3, JavaScript và Bootstrap 5 chất lượng cao. Tải trọn bộ file tĩnh (.zip), mở trực tiếp trên trình duyệt, thanh toán VietQR tự động.",
     url: SITE_URL,
     siteName: "KhoUI",
     type: "website",
@@ -128,7 +128,7 @@ export default async function HomePage({ searchParams }: HomePageProps): Promise
         "@id": `${SITE_URL}/#website`,
         "url": SITE_URL,
         "name": "KhoUI",
-        "description": "Vietnam's Premium Website Template & Source Code Marketplace",
+        "description": "Vietnam's Premium Static Website Template Marketplace (HTML5, CSS3, Bootstrap 5)",
         "inLanguage": locale === "vi" ? "vi-VN" : "en-US",
         "potentialAction": {
           "@type": "SearchAction",
@@ -145,7 +145,7 @@ export default async function HomePage({ searchParams }: HomePageProps): Promise
         "name": "KhoUI",
         "url": SITE_URL,
         "logo": `${SITE_URL}/LogoKhoUI.png`,
-        "description": "Nền tảng cung cấp website templates & source code chuẩn Clean Architecture hàng đầu Việt Nam.",
+        "description": "Nền tảng cung cấp template website tĩnh HTML5, CSS3, JS và Bootstrap 5 chất lượng cao hàng đầu Việt Nam.",
         "sameAs": [
           "https://github.com/NhinhoD/LuminaShop"
         ]

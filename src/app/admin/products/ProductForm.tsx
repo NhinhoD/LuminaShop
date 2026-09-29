@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
@@ -8,6 +8,7 @@ import { CreateProductDTO, UpdateProductDTO, Product } from "@/server/domain/ent
 import { createClient } from "@/server/infrastructure/supabase/client";
 import { UploadCloud, CheckCircle, FileArchive, ImageIcon, Loader2 } from "lucide-react";
 import { toast } from "@/client/hooks/useToastStore";
+import { useI18n } from "@/client/components/common/I18nContext";
 
 interface ProductFormProps {
   categories: Category[];
@@ -277,6 +278,7 @@ const uploadPreviewFilesAsync = async (
  * Handles cover image, source code ZIP, and live preview folder uploads to Supabase Storage.
  */
 export function ProductForm({ categories, initialData }: ProductFormProps) {
+  const { dict, locale } = useI18n();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -876,9 +878,16 @@ export function ProductForm({ categories, initialData }: ProductFormProps) {
         <button
           type="submit"
           disabled={loading}
-          className="px-6 py-2.5 bg-primary hover:bg-primary-dark text-white rounded-xl transition-all shadow-xs text-sm font-medium active:scale-95 cursor-pointer disabled:opacity-50"
+          className="px-6 py-2.5 bg-primary hover:bg-primary-dark text-white rounded-xl transition-all shadow-xs text-sm font-medium active:scale-95 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
         >
-          {loading ? "Đang lưu..." : "Lưu Template số"}
+          {loading ? (
+            <>
+              <Loader2 className="w-4 h-4 animate-spin" />
+              <span>{dict?.common?.saving || (locale === "vi" ? "Đang lưu..." : "Saving...")}</span>
+            </>
+          ) : (
+            <span>{locale === "vi" ? "Lưu Template số" : "Save Digital Template"}</span>
+          )}
         </button>
       </div>
     </form>

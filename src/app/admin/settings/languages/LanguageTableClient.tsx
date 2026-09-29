@@ -1,9 +1,9 @@
-﻿"use client";
+"use client";
 
 import { useState, useTransition } from "react";
 import { updateTranslationAction } from "@/server/presentation/actions/i18n";
 import { TranslationEntry } from "@/server/domain/repositories/ITranslationRepository";
-import { Edit3 } from "lucide-react";
+import { Edit3, Loader2 } from "lucide-react";
 import { toast } from "@/client/hooks/useToastStore";
 
 export default function LanguageTableClient({ 
@@ -104,11 +104,16 @@ export default function LanguageTableClient({
                         onClick={() => handleSave(entry.key)}
                         disabled={isPending}
                         type="button"
-                        className="bg-primary text-white font-medium px-4 py-1.5 rounded-lg hover:bg-primary-dark cursor-pointer text-xs shadow-xs"
+                        className="bg-primary text-white font-medium px-4 py-1.5 rounded-lg hover:bg-primary-dark cursor-pointer text-xs shadow-xs disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1.5"
                       >
-                        {isPending 
-                          ? (locale === "vi" ? "Đang lưu..." : "Saving...") 
-                          : (locale === "vi" ? "Lưu" : "Save")}
+                        {isPending ? (
+                          <>
+                            <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                            <span>{locale === "vi" ? "Đang lưu..." : "Saving..."}</span>
+                          </>
+                        ) : (
+                          <span>{locale === "vi" ? "Lưu" : "Save"}</span>
+                        )}
                       </button>
                     </div>
                   ) : (

@@ -1,4 +1,4 @@
-﻿import { notFound } from "next/navigation";
+import { notFound } from "next/navigation";
 import { makeGetProductByIdUseCase } from "@/server/di/container";
 import { cookies } from "next/headers";
 import { getStaticDictionary } from "@/i18n/getDictionary";
@@ -39,8 +39,14 @@ export default async function DemoPage({ params }: DemoPageProps) {
   }
 
   const product = productResult.data;
+  const normalizedDemoUrl = product?.demoUrl?.trim() || "";
 
-  if (!product || !product.demoUrl) {
+  const isUrlValid = Boolean(
+    normalizedDemoUrl && 
+    (normalizedDemoUrl.startsWith("http://") || normalizedDemoUrl.startsWith("https://") || normalizedDemoUrl.startsWith("/api/"))
+  );
+
+  if (!product || !normalizedDemoUrl || !isUrlValid) {
     notFound();
   }
 
@@ -54,7 +60,7 @@ export default async function DemoPage({ params }: DemoPageProps) {
     return url;
   }
   
-  const resolvedIframeSrc = getProxiedPreviewUrl(product.demoUrl);
+  const resolvedIframeSrc = getProxiedPreviewUrl(normalizedDemoUrl);
 
   return (
     <DemoViewerClient
@@ -62,11 +68,11 @@ export default async function DemoPage({ params }: DemoPageProps) {
         id: product.id,
         title: product.title as Record<string, string>,
         price: Number(product.price),
-        demoUrl: product.demoUrl,
+        demoUrl: normalizedDemoUrl,
       }}
       resolvedIframeSrc={resolvedIframeSrc}
       locale={locale}
-      buyNowText={demoDict.buyNow || (locale === "vi" ? "Mua Bản Quyền Ngay" : "Buy License Now")}
+      buyNowText={demoDict.buyNow || (locale === "vi" ? "Mở khóa template ngay" : "Unlock Template Now")}
       backText={demoDict.back || (locale === "vi" ? "Chi tiết" : "Back to Details")}
     />
   );

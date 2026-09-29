@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import Link from "next/link";
 import Image from "next/image";
@@ -38,31 +38,31 @@ interface NavbarClientProps {
 const TEMPLATE_MEGA_ITEMS = [
   {
     icon: Layout,
-    title: "E-Commerce Pro",
-    desc: "Next.js 16, Realtime Cart, PayOS VietQR & Supabase",
+    title: "E-Commerce Storefront",
+    desc: "HTML5, CSS3, Bootstrap 5 Product Catalog & Cart Layouts",
     href: `${ROUTES.SHOP}?category=e-commerce`,
     tag: "Hot",
   },
   {
     icon: Cpu,
     title: "Admin Dashboard",
-    desc: "RBAC Permissions, Realtime Charts & Analytics",
+    desc: "Responsive Tables, Metric Cards, Charts & Sidebar UI Kit",
     href: `${ROUTES.SHOP}?category=saas-tech`,
     tag: "Pro",
   },
   {
     icon: Code2,
-    title: "Developer Portfolio",
-    desc: "Kinetic Typography, MDX Blog & Case Studies",
+    title: "Portfolio & Resume",
+    desc: "Clean Personal Showcase, Project Gallery & Contact Form",
     href: `${ROUTES.SHOP}?category=portfolio-agency`,
     tag: "Free",
   },
   {
     icon: CreditCard,
-    title: "Fintech & SaaS Hub",
-    desc: "Multi-tier Pricing & Clean Architecture",
+    title: "Business & Landing",
+    desc: "Modern Corporate Landing Page with Clean Typography & CSS",
     href: `${ROUTES.SHOP}?category=fintech-corporate`,
-    tag: "Enterprise",
+    tag: "Trending",
   },
 ];
 
@@ -153,7 +153,7 @@ export default function NavbarClient({ user, authError, navLinks }: NavbarClient
             <div className="flex items-center gap-2">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
               <span className="text-slate-300 font-medium">
-                Next.js 16.2 • Clean Architecture
+                HTML5, CSS3, JS &amp; Bootstrap 5
               </span>
             </div>
             <span className="text-slate-700">•</span>
@@ -307,7 +307,7 @@ export default function NavbarClient({ user, authError, navLinks }: NavbarClient
                           <div className="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-xs px-1">
                             <div className="flex items-center gap-1.5 text-slate-600">
                               <Flame size={13} className="text-amber-500" />
-                              <span>{locale === "vi" ? "Mã nguồn miễn phí cho cộng đồng" : "Free open-source codebases"}</span>
+                              <span>{locale === "vi" ? "Template miễn phí cho cộng đồng" : "Free static templates"}</span>
                             </div>
                             <Link 
                               href={`${ROUTES.SHOP}?price=free`}
@@ -469,7 +469,7 @@ export default function NavbarClient({ user, authError, navLinks }: NavbarClient
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder={locale === "vi" ? "Tìm mã nguồn, template (Next.js, Tailwind, GSAP)..." : "Search templates, architectures..."}
+                  placeholder={locale === "vi" ? "Tìm template tĩnh (HTML5, Bootstrap, CSS, JS)..." : "Search static templates (HTML5, Bootstrap, CSS, JS)..."}
                   className="w-full bg-transparent outline-none text-xs text-slate-800 placeholder:text-slate-400 font-medium"
                 />
                 <button
@@ -486,7 +486,7 @@ export default function NavbarClient({ user, authError, navLinks }: NavbarClient
                   {locale === "vi" ? "Từ khóa gợi ý" : "Suggested keywords"}
                 </span>
                 <div className="flex flex-wrap gap-1.5">
-                  {["Next.js 16", "Clean Architecture", "VietQR", "Admin Dashboard", "E-Commerce", "Portfolio"].map((tag) => (
+                  {["HTML5", "Bootstrap 5", "CSS3", "JavaScript", "Landing Page", "Admin Dashboard", "Portfolio"].map((tag) => (
                     <button
                       key={tag}
                       type="button"

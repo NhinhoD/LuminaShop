@@ -20,7 +20,7 @@ export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
   return (
     <div className={`flex justify-center items-center ${className}`}>
       <div
-        className={`${sizeClasses[size]} border-t-transparent border-primary border-solid rounded-full animate-spin`}
+        className={`${sizeClasses[size]} border-t-transparent border-primary border-solid rounded-full animate-spin motion-reduce:animate-none`}
         role="status"
         aria-label="loading"
       >

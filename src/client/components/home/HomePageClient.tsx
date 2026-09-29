@@ -28,8 +28,6 @@ import {
   Activity,
   Star,
   Box,
-  Copy,
-  Check,
   FolderGit2,
 } from "lucide-react";
 import { toast } from "@/client/hooks/useToastStore";
@@ -50,100 +48,100 @@ interface HomePageClientProps {
 }
 
 const MARQUEE_ITEMS = [
-  "Next.js 16.2 App Router",
-  "Tailwind CSS v4.0",
-  "GSAP 3.15 Animations",
-  "Strict Clean Architecture",
-  "Supabase SSR",
-  "100% Core Web Vitals",
-  "VietQR Webhook 24/7",
-  "TypeScript Strict",
+  "HTML5 & CSS3 Chuẩn W3C",
+  "Bootstrap 5.3 Responsive",
+  "JavaScript ES6+ Tối Ưu",
+  "100% Tương Thích Di Động",
+  "Cấu Trúc Tệp Gọn Gàng",
+  "Không Cần Cài Đặt Môi Trường",
+  "Thanh Toán VietQR Tự Động",
+  "Tải Về File .ZIP Tức Thì",
 ];
 
 const DEV_AVATARS = [
-  { name: "Minh Tuấn", role: "Tech Lead", company: "VNG Corp", src: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" },
-  { name: "Hải Nam", role: "Staff Engineer", company: "Amanotes", src: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80" },
-  { name: "Thanh Hằng", role: "Principal Designer", company: "Tiki", src: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80" },
-  { name: "Quốc Bảo", role: "Founder", company: "Sendo Labs", src: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&auto=format&fit=crop&q=80" },
+  { name: "Minh Tuấn", role: "Web Designer", company: "Tuấn Studio", src: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" },
+  { name: "Hải Nam", role: "Frontend Dev", company: "Freelancer", src: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80" },
+  { name: "Thanh Hằng", role: "UI Designer", company: "Creative Hub", src: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80" },
+  { name: "Quốc Bảo", role: "Agency Founder", company: "Bảo Media", src: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&auto=format&fit=crop&q=80" },
 ];
 
 const CURATED_SAMPLE_TEMPLATES = [
   {
     id: "sample-1",
-    title: { vi: "E-Commerce Enterprise Pro", en: "E-Commerce Enterprise Pro" },
+    title: { vi: "E-Commerce Storefront Template", en: "E-Commerce Storefront Template" },
     description: { 
-      vi: "Template thương mại điện tử Next.js 16 chuẩn Clean Architecture, giỏ hàng realtime, tích hợp VietQR và Supabase SSR.", 
-      en: "Enterprise Next.js 16 e-commerce codebase with Clean Architecture, realtime cart, VietQR pay, and Supabase SSR." 
+      vi: "Mẫu giao diện bán hàng tĩnh HTML5, CSS3, Bootstrap 5 với bố cục giỏ hàng, lưới sản phẩm và trang thanh toán chuẩn responsive.", 
+      en: "Static e-commerce storefront template built with HTML5, CSS3, and Bootstrap 5 with clean product grids." 
     },
     imageUrl: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1200&auto=format&fit=crop&q=80",
     price: 499000,
-    techStack: ["Next.js 16", "Tailwind 4", "Supabase", "VietQR"],
+    techStack: ["HTML5", "CSS3", "Bootstrap 5", "JavaScript"],
     demoUrl: "https://demo.khoui.com/ecommerce",
     isFree: false
   },
   {
     id: "sample-2",
-    title: { vi: "SaaS Analytics & Admin Dashboard", en: "SaaS Analytics & Admin Dashboard" },
+    title: { vi: "Admin Dashboard UI Kit", en: "Admin Dashboard UI Kit" },
     description: { 
-      vi: "Giao diện quản trị với hệ thống biểu đồ thời gian thực, quản lý phân quyền RBAC và tối ưu 60 FPS GSAP.", 
-      en: "Admin dashboard with real-time analytics charts, RBAC permissions, and 60 FPS GSAP motion." 
+      vi: "Bộ giao diện quản trị tĩnh với bảng biểu, thẻ thống kê card, biểu đồ chart JS và menu sidebar co giãn mượt mà.", 
+      en: "Static admin dashboard UI kit with responsive tables, analytics widgets, chart layouts, and collapsible sidebar." 
     },
     imageUrl: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200&auto=format&fit=crop&q=80",
     price: 389000,
-    techStack: ["React 19", "GSAP 3.15", "Recharts", "Tailwind 4"],
+    techStack: ["HTML5", "Bootstrap 5", "Chart.js", "CSS3"],
     demoUrl: "https://demo.khoui.com/dashboard",
     isFree: false
   },
   {
     id: "sample-3",
-    title: { vi: "Senior Developer Portfolio", en: "Senior Developer Portfolio" },
+    title: { vi: "Developer & Designer Portfolio", en: "Developer & Designer Portfolio" },
     description: { 
-      vi: "Mẫu portfolio chuyên nghiệp cho lập trình viên với hiệu ứng kinetic typography, dự án case-study và blog MDX.", 
-      en: "High-end portfolio for software engineers with kinetic typography, project case-studies, and MDX blog." 
+      vi: "Mẫu portfolio cá nhân tĩnh với hiệu ứng cuộn mượt, giới thiệu kỹ năng, dự án tiêu biểu và form liên hệ tĩnh.", 
+      en: "Static portfolio template for designers and developers with smooth scrolling, skills showcase, and contact layout." 
     },
     imageUrl: "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=1200&auto=format&fit=crop&q=80",
     price: 0,
-    techStack: ["Next.js 16", "MDX", "Framer Motion", "Tailwind 4"],
+    techStack: ["HTML5", "CSS3", "JavaScript", "Responsive"],
     demoUrl: "https://demo.khoui.com/portfolio",
     isFree: true
   },
   {
     id: "sample-4",
-    title: { vi: "Fintech Core Banking Interface", en: "Fintech Core Banking Interface" },
+    title: { vi: "Corporate Business Landing", en: "Corporate Business Landing" },
     description: { 
-      vi: "Giao diện ngân hàng số và cổng thanh toán bảo mật đa tầng, chuẩn tuân thủ bảo mật tài chính.", 
-      en: "Digital banking interface and multi-layer payment gateway designed for high-security fintech platforms." 
+      vi: "Mẫu trang web giới thiệu công ty, doanh nghiệp chuẩn Bootstrap 5 với phần giới thiệu dịch vụ, bảng giá và đánh giá.", 
+      en: "Corporate business landing page template built with Bootstrap 5 featuring services, pricing, and testimonials." 
     },
     imageUrl: "https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=1200&auto=format&fit=crop&q=80",
     price: 550000,
-    techStack: ["Next.js 16", "Clean Arch", "PayOS", "PostgreSQL"],
-    demoUrl: "https://demo.khoui.com/fintech",
+    techStack: ["HTML5", "CSS3", "Bootstrap 5", "FontAwesome"],
+    demoUrl: "https://demo.khoui.com/corporate",
     isFree: false
   },
   {
     id: "sample-5",
     title: { vi: "Creative Digital Studio Agency", en: "Creative Digital Studio Agency" },
     description: { 
-      vi: "Landing page thời thượng cho Creative Agency với hiệu ứng cuộn tương tác ScrollTrigger mượt mà không độ trễ.", 
-      en: "Cutting-edge creative agency landing page with zero-lag GSAP ScrollTrigger timeline choreography." 
+      vi: "Template giới thiệu dịch vụ sáng tạo, agency quảng cáo với phong cách hiện đại, hiệu ứng hover và typography đẹp mắt.", 
+      en: "Modern agency website template with sleek typography, interactive hover animations, and clean CSS layout." 
     },
     imageUrl: "https://images.unsplash.com/photo-1522542550221-31fd19575a2d?w=1200&auto=format&fit=crop&q=80",
     price: 299000,
-    techStack: ["GSAP 3.15", "Tailwind 4", "Turbopack", "SEO Ready"],
+    techStack: ["HTML5", "CSS3", "JavaScript", "W3C Valid"],
     demoUrl: "https://demo.khoui.com/agency",
     isFree: false
   },
   {
     id: "sample-6",
-    title: { vi: "AI Agent & SaaS Landing Hub", en: "AI Agent & SaaS Landing Hub" },
+    title: { vi: "Product & SaaS Landing Page", en: "Product & SaaS Landing Page" },
     description: { 
-      vi: "Trang giới thiệu sản phẩm AI với thiết kế hiện đại, bảng giá động và demo tương tác trực tiếp.", 
-      en: "AI product landing page featuring dynamic tier pricing and interactive chat sandbox." 
+      vi: "Trang đích giới thiệu sản phẩm phần mềm với cấu trúc tính năng, bảng so sánh giá và khối kêu gọi hành động CTA rõ ràng.", 
+      en: "Software and product landing page template featuring feature grids, pricing comparison, and clear CTAs." 
     },
     imageUrl: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=1200&auto=format&fit=crop&q=80",
     price: 320000,
-    techStack: ["Next.js 16", "Tailwind 4", "Vercel AI SDK", "Lucide"],
-    demoUrl: "https://demo.khoui.com/ai-hub",
+    techStack: ["HTML5", "Bootstrap 5", "CSS3", "SEO Ready"],
+    demoUrl: "https://demo.khoui.com/landing",
     isFree: false
   }
 ];
@@ -242,7 +240,6 @@ export default function HomePageClient({
   }
 
   const ITEMS_PER_PAGE = 6;
-  const [copiedCli, setCopiedCli] = useState(false);
   const [isPending, startTransition] = useTransition();
   const { locale } = useI18n();
 
@@ -309,17 +306,6 @@ export default function HomePageClient({
     );
   };
 
-  const handleCopyCli = () => {
-    navigator.clipboard.writeText("npx create-khoui-app@latest my-project");
-    setCopiedCli(true);
-    toast.success(
-      locale === "vi" ? "Đã sao chép lệnh cài đặt" : "CLI command copied",
-      "npx create-khoui-app@latest my-project"
-    );
-    setTimeout(() => setCopiedCli(false), 2500);
-  };
-
-
   const shouldShowSamples = activeCategory === "all" && totalProducts === 0 && featuredProducts.length === 0;
   const displayShowcaseProducts = (totalProducts > 0 || featuredProducts.length > 0)
     ? featuredProducts 
@@ -368,54 +354,54 @@ export default function HomePageClient({
   const testimonials = [
     {
       author: "Nguyễn Minh Tuấn",
-      role: "Tech Lead",
-      company: "VNG Corporation",
+      role: "Freelance Web Developer",
+      company: "Tuấn Studio",
       avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
       content: locale === "vi" 
-        ? "Cấu trúc 4 tầng Clean Architecture chuẩn mực. Team chúng tôi đã tách độc lập được Domain và Infrastructure để kết nối với hệ thống Core Banking nội bộ mà không cần đụng vào UI layer."
-        : "Strict 4-layer Clean Architecture. Our team easily decoupled Domain and Infrastructure to plug in our internal Core Banking APIs without touching presentation code.",
+        ? "Mẫu template HTML5/CSS3 tổ chức cực kỳ khoa học. Mình chỉ cần tải file .zip về, thay ảnh và text là hoàn thiện website giới thiệu dịch vụ cho khách hàng ngay trong ngày."
+        : "The HTML5/CSS3 template is exceptionally well-structured. Downloaded the .zip, changed text and images, and delivered a client site within a single day.",
       rating: 5,
-      tech: "Next.js 16 + Clean Arch"
+      tech: "HTML5 + Bootstrap 5"
     },
     {
       author: "Lê Hoàng Hải",
-      role: "Staff Frontend Engineer",
+      role: "Frontend Designer",
       avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80",
-      company: "Amanotes Studio",
+      company: "DesignVN Agency",
       content: locale === "vi"
-        ? "GSAP 3.15 ScrollTrigger kết hợp Tailwind v4 mang lại 60 FPS thực tế trên cả thiết bị di động tầm trung. Zero memory leaks nhờ cơ chế gsap.context() dọn dẹp sạch sẽ."
-        : "GSAP 3.15 ScrollTrigger and Tailwind v4 provide real 60 FPS even on mid-tier mobile devices. Zero memory leaks with proper gsap.context() cleanups.",
+        ? "Giao diện Bootstrap 5 responsive rất mượt, các class CSS rõ ràng và không bị thừa thãi code rác. Đem ghép vào theme WordPress hay Laravel cực kỳ nhàn."
+        : "Bootstrap 5 responsiveness is flawless. CSS classes are concise with zero bloat. Converting into WordPress or Laravel themes was effortless.",
       rating: 5,
-      tech: "GSAP 3.15 + Tailwind 4"
+      tech: "CSS3 + JavaScript"
     },
     {
       author: "Trần Mai Anh",
-      role: "Product Lead",
+      role: "Agency Founder",
       avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120&auto=format&fit=crop&q=80",
-      company: "Tiki Engineering",
+      company: "Nova Media",
       content: locale === "vi"
-        ? "Thanh toán VietQR webhook tự động cấp quyền tải mã nguồn sau 3 giây. Source code sạch sẽ, không có bất kỳ thư viện rác hay mã độc nào, deploy Vercel 1-click."
-        : "VietQR webhook automated fulfillment unlocks source code in 3 seconds. Clean code, 0 bloat, deployed straight to Vercel in 1 click.",
+        ? "Thanh toán VietQR xong là tải được ngay file .zip trong 3 giây. Mở file index.html lên là chạy trực tiếp trên trình duyệt, không cần cài đặt node_modules hay server phức tạp."
+        : "VietQR payment unlocked the .zip download in 3 seconds. Double-clicked index.html and it worked immediately without npm or server setup.",
       rating: 5,
-      tech: "PayOS Webhook + Vercel"
+      tech: "Instant .ZIP Delivery"
     }
   ];
 
   const journeySteps = [
     {
       step: "01",
-      title: dict?.home?.journey?.step1Title || (locale === "vi" ? "Lựa chọn Template" : "Select Codebase"),
-      desc: dict?.home?.journey?.step1Desc || (locale === "vi" ? "Xem Live Demo và kiểm tra kiến trúc mã nguồn từ Landing Page, E-Commerce đến Admin Dashboard." : "Inspect live demos and technical specs across landing pages, e-commerce, and admin dashboards."),
+      title: dict?.home?.journey?.step1Title || (locale === "vi" ? "Lựa chọn Template" : "Select Template"),
+      desc: dict?.home?.journey?.step1Desc || (locale === "vi" ? "Xem Live Demo trực quan mẫu giao diện từ Landing Page, Giới thiệu công ty đến Portfolio." : "Preview live demos across landing pages, corporate templates, and portfolios."),
     },
     {
       step: "02",
       title: dict?.home?.journey?.step2Title || (locale === "vi" ? "Thanh toán VietQR tức thì" : "Instant VietQR Checkout"),
-      desc: dict?.home?.journey?.step2Desc || (locale === "vi" ? "Quét mã VietQR hoặc thẻ ngân hàng. Hệ thống Webhook tự động xác thực giao dịch trong 3 giây." : "Scan VietQR or credit card. Webhook validates and approves order in 3 seconds."),
+      desc: dict?.home?.journey?.step2Desc || (locale === "vi" ? "Quét mã VietQR tiện lợi. Hệ thống tự động xác nhận đơn hàng trong vài giây." : "Scan VietQR effortlessly. Automated webhook validates orders in seconds."),
     },
     {
       step: "03",
-      title: dict?.home?.journey?.step3Title || (locale === "vi" ? "Tải Mã Nguồn & Deploy" : "Download & Deploy"),
-      desc: dict?.home?.journey?.step3Desc || (locale === "vi" ? "Nhận trọn bộ mã nguồn .zip không mã hóa, tài liệu kỹ thuật và sẵn sàng deploy lên Vercel/Netlify." : "Get full unencrypted .zip source code, setup docs, and 1-click deploy to Vercel or AWS."),
+      title: dict?.home?.journey?.step3Title || (locale === "vi" ? "Tải File Tĩnh & Sử Dụng" : "Download & Customize"),
+      desc: dict?.home?.journey?.step3Desc || (locale === "vi" ? "Nhận trọn bộ file .zip gồm HTML, CSS, JavaScript, hình ảnh demo và mở trực tiếp trên trình duyệt." : "Receive full unencrypted .zip containing HTML, CSS, JS, and assets ready to open in any browser."),
     },
   ];
 
@@ -675,7 +661,7 @@ export default function HomePageClient({
               <div className="hero-badge inline-flex items-center gap-2 bg-slate-50 border border-slate-200/70 text-slate-700 rounded-full px-3 py-1 text-xs font-medium shadow-2xs">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                 <span>
-                  {locale === "vi" ? "Kho Mã Nguồn Chuẩn Doanh Nghiệp" : "Enterprise-Grade Codebase Marketplace"}
+                  {locale === "vi" ? "Kho Mẫu Template Website Tĩnh" : "Curated Static Web Template Marketplace"}
                 </span>
                 <span className="text-slate-400 text-[11px] pl-1.5 border-l border-slate-200">v2.4</span>
               </div>
@@ -691,7 +677,7 @@ export default function HomePageClient({
               </h1>
 
               <p className="hero-desc text-sm sm:text-[15px] text-slate-600 font-normal leading-relaxed max-w-xl">
-                {dict?.home?.hero?.desc || (locale === "vi" ? "Sở hữu trọn bộ mã nguồn (Next.js 16, Tailwind v4, GSAP) chuẩn Clean Architecture được lập trình tối ưu bởi các Senior Engineers. Bàn giao nhanh chóng, an toàn, hỗ trợ deploy lên Vercel/Netlify miễn phí." : "Get full source code packages (Next.js 16, Tailwind v4, GSAP) following Clean Architecture, engineered by senior developers. Fast delivery, secure licensing, and free deployment support.")}
+                {dict?.home?.hero?.desc || (locale === "vi" ? "Bộ sưu tập mẫu website tĩnh (HTML5, CSS3, JS, Bootstrap) thiết kế hiện đại, cấu trúc code sạch sẽ, chuẩn Responsive 100%. Dễ dàng chỉnh sửa và sẵn sàng ghép vào mọi nền tảng web của bạn." : "Curated collection of static website templates (HTML5, CSS3, JavaScript, Bootstrap) with modern aesthetics, clean code structure, and 100% responsive layouts. Ready to customize and integrate into any project.")}
               </p>
 
               {/* Action Buttons with Magnetic GSAP Physics */}
@@ -712,7 +698,7 @@ export default function HomePageClient({
                     className="magnetic-btn inline-flex items-center gap-1.5 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200/80 px-5 py-3 rounded-lg font-medium transition-colors text-xs"
                   >
                     <Code2 size={14} className="text-slate-500" />
-                    <span>{locale === "vi" ? "Kiến trúc Clean Code" : "Clean Architecture"}</span>
+                    <span>{locale === "vi" ? "Cấu trúc File tĩnh" : "File Structure"}</span>
                   </a>
                 </motion.div>
               </div>
@@ -746,7 +732,7 @@ export default function HomePageClient({
                     <span className="ml-1">4.9/5</span>
                   </div>
                   <span className="text-slate-500 font-normal text-[11.5px]">
-                    {locale === "vi" ? "1,240+ lập trình viên & tech teams tin dùng" : "Trusted by 1,240+ developers & tech teams"}
+                    {locale === "vi" ? "1,240+ lập trình viên & web designers tin dùng" : "Trusted by 1,240+ developers & web designers"}
                   </span>
                 </div>
               </div>
@@ -754,10 +740,10 @@ export default function HomePageClient({
               {/* Metrics Bar with Animated Counters */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-5 border-t border-slate-100">
                 {[
-                  { target: 50, prefix: "", suffix: "+ mẫu", label: locale === "vi" ? "Mẫu giao diện" : "Exclusive Designs" },
-                  { target: 98, prefix: "", suffix: "/100", label: locale === "vi" ? "Core Web Vitals" : "Lighthouse Score" },
-                  { target: 1240, prefix: "", suffix: "+", label: locale === "vi" ? "Kỹ sư tin dùng" : "Trusted Developers" },
-                  { target: 100, prefix: "", suffix: "%", label: locale === "vi" ? "Mã nguồn mở" : "Full Ownership" },
+                  { target: 50, prefix: "", suffix: "+ mẫu", label: locale === "vi" ? "Mẫu giao diện" : "Curated Templates" },
+                  { target: 99, prefix: "", suffix: "/100", label: locale === "vi" ? "Tốc độ tải trang" : "Lighthouse Speed" },
+                  { target: 1240, prefix: "", suffix: "+", label: locale === "vi" ? "Khách hàng tin cậy" : "Trusted Clients" },
+                  { target: 100, prefix: "", suffix: "%", label: locale === "vi" ? "File tĩnh trọn bộ" : "Full .ZIP Archive" },
                 ].map((stat) => (
                   <div key={stat.label} className="hero-stats-item">
                     <span className="text-xl font-bold text-slate-900 block tracking-tight font-mono">
@@ -973,7 +959,7 @@ export default function HomePageClient({
                   >
                     <Image
                       src="/hero/badge-clean-architecture.png"
-                      alt="Clean Architecture"
+                      alt="Cấu trúc File Chuẩn"
                       width={776}
                       height={212}
                       className="w-full h-auto select-none pointer-events-none"
@@ -1077,44 +1063,44 @@ export default function HomePageClient({
 
           <div className="text-center max-w-2xl mx-auto mb-14 space-y-2">
             <span className="text-xs font-semibold text-primary uppercase tracking-wider block">
-              {locale === "vi" ? "Kiến trúc & Tiêu chuẩn Kỹ thuật" : "Engineering Specifications"}
+              {locale === "vi" ? "Cấu trúc & Tiêu chuẩn Template" : "Template Structure & Standards"}
             </span>
             <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
-              {locale === "vi" ? "Mã nguồn tiêu chuẩn cho Tech Teams & Senior Devs" : "Engineered for Tech Teams & Senior Developers"}
+              {locale === "vi" ? "Template Tối Ưu Cho Web Designer & Lập Trình Viên" : "Engineered for Web Designers & Frontend Developers"}
             </h2>
             <p className="text-slate-500 text-sm leading-relaxed max-w-lg mx-auto font-normal">
               {locale === "vi" 
-                ? "Loại bỏ hoàn toàn code rác và phụ thuộc thừa. Cấu trúc mô-đun hóa độc lập, sẵn sàng mở rộng và tích hợp hệ thống backend." 
-                : "Eliminate bloat and fragile dependencies. Highly modularized, ready to scale and integrate with enterprise backends."}
+                ? "Loại bỏ hoàn toàn cài đặt rườm rà. Bạn nhận trọn bộ file tĩnh HTML, CSS, JavaScript sạch sẽ, dễ dàng nhúng vào bất kỳ dự án hay CMS nào." 
+                : "Zero setup overhead. Receive clean HTML, CSS, and JavaScript files ready to embed into any web project or CMS."}
             </p>
           </div>
 
           {/* Asymmetric Bento Box */}
           <div className="grid grid-cols-1 md:grid-cols-12 gap-5 items-stretch">
             
-            {/* Card 1: Large Bento (Clean Architecture) */}
+            {/* Card 1: Large Bento (Directory Structure) */}
             <KineticTiltCard className="bento-card md:col-span-8 bg-slate-900 text-white rounded-2xl p-7 sm:p-9 border border-slate-800/60 overflow-hidden shadow-lg">
               <div className="space-y-3">
                 <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded bg-primary/20 text-primary text-xs font-medium">
                   <Code2 size={13} />
-                  <span>Architecture Pattern</span>
+                  <span>File Structure</span>
                 </div>
                 <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-white">
-                  {locale === "vi" ? "Chuẩn Clean Architecture 4 Lớp Độc Lập" : "Strict 4-Layer Clean Architecture"}
+                  {locale === "vi" ? "Cấu Trúc Tệp Tĩnh Khoa Học & Dễ Tùy Biến" : "Clean & Modular Static File Architecture"}
                 </h3>
                 <p className="text-slate-400 text-xs sm:text-sm leading-relaxed max-w-xl font-normal">
                   {locale === "vi" 
-                    ? "Tách biệt hoàn toàn giữa Domain Entities, Application Use Cases, Infrastructure Gateways và Presentation UI. Bạn có thể thay đổi database từ Supabase sang Postgres/MySQL mà không cần sửa một dòng code UI nào." 
-                    : "Complete isolation between Domain Entities, Use Cases, Infrastructure, and UI. Swap databases or payment gateways without refactoring presentation code."}
+                    ? "Tách biệt rõ ràng giữa file HTML semantic, bảng định dạng CSS/Bootstrap, hiệu ứng JavaScript và thư mục hình ảnh assets. Dễ dàng đổi logo, màu sắc, chữ và ghép nối vào bất kỳ hệ thống CMS nào." 
+                    : "Clear separation between semantic HTML, modular CSS/Bootstrap, interactive JavaScript, and assets. Easily modify colors, text, and images or integrate into any CMS."}
                 </p>
               </div>
 
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-5 mt-5 border-t border-slate-800/60">
                 {[
-                  { layer: "Domain", tech: "Pure Entities", path: "src/domain" },
-                  { layer: "Application", tech: "Use Cases", path: "src/application" },
-                  { layer: "Infrastructure", tech: "Supabase SSR", path: "src/infrastructure" },
-                  { layer: "Presentation", tech: "Next 16 + GSAP", path: "src/presentation" },
+                  { layer: "index.html", tech: "HTML5 Semantic", path: "Chuẩn SEO On-page" },
+                  { layer: "assets/css/", tech: "CSS3 & Bootstrap", path: "100% Responsive" },
+                  { layer: "assets/js/", tech: "JavaScript ES6+", path: "Tương tác mượt mà" },
+                  { layer: "assets/images/", tech: "Media & Icons", path: "Nén tối ưu dung lượng" },
                 ].map((item) => (
                   <div key={item.layer} className="bg-slate-950/60 p-2.5 rounded-lg border border-slate-800/40">
                     <span className="text-xs font-semibold text-white block">{item.layer}</span>
@@ -1132,12 +1118,12 @@ export default function HomePageClient({
                   <Zap size={18} />
                 </div>
                 <h3 className="font-bold text-slate-900 text-base mb-1.5">
-                  {locale === "vi" ? "Thanh Toán & Cấp Quyền Tức Thì" : "Instant VietQR Automated Delivery"}
+                  {locale === "vi" ? "Thanh Toán & Tải Về Tức Thì" : "Instant VietQR Automated Delivery"}
                 </h3>
                 <p className="text-xs text-slate-600 leading-relaxed font-normal">
                   {locale === "vi"
-                    ? "Tích hợp PayOS Webhook tự động. Sau khi quét mã VietQR, hệ thống cấp quyền tải file .zip và key bản quyền tức thì."
-                    : "Automated PayOS Webhook integration. Instantly unlocks source code .zip download upon QR scan."}
+                    ? "Tích hợp PayOS Webhook tự động. Sau khi quét mã VietQR, hệ thống cấp quyền tải file .zip trọn bộ tức thì."
+                    : "Automated PayOS Webhook integration. Instantly unlocks template .zip download upon QR scan."}
                 </p>
               </div>
 
@@ -1155,52 +1141,49 @@ export default function HomePageClient({
                     <Activity size={18} />
                   </div>
                   <h3 className="font-bold text-slate-900 text-base mb-1.5">
-                    {locale === "vi" ? "Core Web Vitals Tối Ưu Tối Đa" : "Maximized Core Web Vitals"}
+                    {locale === "vi" ? "Tốc Độ Tải Siêu Nhanh & Nhẹ Nhàng" : "Instant Loading & Ultra Lightweight"}
                   </h3>
                   <p className="text-xs text-slate-600 leading-relaxed max-w-sm font-normal">
                     {locale === "vi"
-                      ? "Next.js 16 Server Components kết hợp Turbopack giúp thời gian phản hồi trang dưới 0.4s và triệt tiêu layout shift."
-                      : "Next.js 16 Server Components and Turbopack yield sub-0.4s initial response and 0.00 CLS."}
+                      ? "File tĩnh thuần túy không cần server runtime phức tạp, mở lên tức thì dưới 0.1s và đạt điểm tối đa trên mọi công cụ đo kiểm."
+                      : "Pure static files with zero runtime overhead, rendering in under 0.1s with top performance scores."}
                   </p>
                 </div>
                 <div className="w-12 h-12 rounded-lg bg-slate-900 text-white flex flex-col items-center justify-center font-bold">
-                  <span className="text-sm text-emerald-400 font-mono">98</span>
+                  <span className="text-sm text-emerald-400 font-mono">99</span>
                   <span className="text-[10px] tracking-wide text-slate-400 font-normal">Score</span>
                 </div>
               </div>
 
               <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500 mt-5">
                 <span>Chỉ số đo lường</span>
-                <span className="font-medium text-slate-800">CLS: 0.00 • LCP: 0.5s • FCP: 0.4s</span>
+                <span className="font-medium text-slate-800">CLS: 0.00 • LCP: 0.3s • FCP: 0.2s</span>
               </div>
             </KineticTiltCard>
 
-            {/* Card 4: CLI & Full Source Code Ownership */}
+            {/* Card 4: Full Unencrypted .ZIP Package */}
             <KineticTiltCard className="bento-card md:col-span-6 bg-slate-50/60 border border-slate-100 rounded-2xl p-7 hover:bg-white hover:border-slate-200 transition-all">
               <div>
                 <div className="w-9 h-9 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center mb-4">
                   <FolderGit2 size={18} />
                 </div>
                 <h3 className="font-bold text-slate-900 text-base mb-1.5">
-                  {locale === "vi" ? "Mã Nguồn Đầy Đủ Không Khóa Mã" : "100% Unencrypted Source Code"}
+                  {locale === "vi" ? "Trọn Bộ File Tĩnh Không Mã Hóa" : "100% Unencrypted Static Archive"}
                 </h3>
                 <p className="text-xs text-slate-600 leading-relaxed max-w-sm font-normal">
                   {locale === "vi"
-                    ? "Tự do chỉnh sửa, tích hợp và triển khai trên hạ tầng riêng của doanh nghiệp. Đầy đủ quyền thương mại hóa."
-                    : "Complete freedom to customize and deploy on your own infrastructure. Commercial rights included."}
+                    ? "Tải về trọn bộ file .zip gồm mã nguồn HTML, CSS, JavaScript và tài liệu hướng dẫn. Tự do chỉnh sửa và sử dụng cho dự án của bạn."
+                    : "Download complete .zip containing HTML, CSS, JavaScript and documentation. Total freedom to customize and reuse."}
                 </p>
               </div>
 
-              {/* CLI Copy Bar */}
-              <div className="mt-4 bg-slate-900 rounded-lg p-2 flex items-center justify-between font-mono text-xs text-slate-300">
-                <span className="text-emerald-400 text-[11px] truncate mr-2">npx create-khoui-app@latest my-project</span>
-                <button
-                  onClick={handleCopyCli}
-                  className="p-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors cursor-pointer flex-shrink-0"
-                  title="Copy command"
-                >
-                  {copiedCli ? <Check size={12} className="text-emerald-400" /> : <Copy size={12} />}
-                </button>
+              {/* Static File Tree Preview */}
+              <div className="mt-4 bg-slate-900 rounded-lg p-2.5 font-mono text-[11px] text-slate-300 leading-relaxed border border-slate-800 select-none">
+                <div className="text-emerald-400 font-semibold mb-1">📦 template-package.zip</div>
+                <div className="text-slate-400 pl-2">├── 📄 index.html &amp; other pages...</div>
+                <div className="text-slate-400 pl-2">├── 📁 assets/css/ (style.css, bootstrap.min.css)</div>
+                <div className="text-slate-400 pl-2">├── 📁 assets/js/ (main.js, plugins.js)</div>
+                <div className="text-slate-400 pl-2">└── 📁 assets/images/ (optimized demo assets)</div>
               </div>
             </KineticTiltCard>
 
@@ -1262,10 +1245,10 @@ export default function HomePageClient({
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 border-b border-slate-100 pb-5">
             <div className="space-y-1">
               <span className="text-xs font-semibold text-primary uppercase tracking-wider block">
-                {locale === "vi" ? "Mã nguồn nổi bật" : "Featured Codebases"}
+                {locale === "vi" ? "Mẫu template nổi bật" : "Featured Templates"}
               </span>
               <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
-                {dict?.home?.showcase?.title || (locale === "vi" ? "Mã nguồn sẵn sàng kích hoạt" : "Ready-to-Deploy Codebases")}
+                {dict?.home?.showcase?.title || (locale === "vi" ? "Giao diện sẵn sàng kích hoạt" : "Ready-to-Deploy Templates")}
               </h2>
             </div>
             <Link 
@@ -1542,12 +1525,12 @@ export default function HomePageClient({
               {locale === "vi" ? "Bản tin công nghệ" : "Technical Newsletter"}
             </span>
             <h2 className="text-white text-2xl sm:text-3xl font-bold tracking-tight">
-              {locale === "vi" ? "Nhận thông báo khi có Template & Mã nguồn mới" : "Get notified on new codebase releases"}
+              {locale === "vi" ? "Nhận thông báo khi có Template mới" : "Get notified on new template releases"}
             </h2>
             <p className="text-slate-400 text-xs sm:text-sm max-w-md mx-auto leading-relaxed font-normal">
               {locale === "vi" 
-                ? "Cập nhật các mẫu giao diện mới nhất, các bài viết chia sẻ kiến trúc Next.js 16 và Clean Architecture từ KhoUI Engineering." 
-                : "Subscribe to receive engineering updates, new template releases, and architectural patterns."}
+                ? "Cập nhật các mẫu giao diện website tĩnh mới nhất, bộ icon và tài nguyên thiết kế hữu ích từ KhoUI." 
+                : "Subscribe to receive updates on new static template releases, icon packs, and design resources from KhoUI."}
             </p>
 
             <form
