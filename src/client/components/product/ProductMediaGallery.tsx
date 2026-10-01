@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
-import { Monitor, Image as ImageIcon, ExternalLink } from "lucide-react";
+import { Monitor, Image as ImageIcon, ExternalLink, Lock } from "lucide-react";
 import Link from "next/link";
 import { useI18n } from "@/client/components/common/I18nContext";
 
@@ -21,6 +21,50 @@ function normalizeUrl(url?: string): string {
 function isValidPreviewUrl(url: string): boolean {
   if (!url) return false;
   return url.startsWith("http://") || url.startsWith("https://") || url.startsWith("/api/");
+}
+
+/**
+ * Formats a clean, branded white-label URL for the browser mockup bar,
+ * concealing internal Supabase backend endpoints for aesthetics and privacy.
+ */
+function getDisplayMockUrl(url: string, fallbackTitle: string): { domain: string; path: string } {
+  // If preview directory is stored under /previews/<slug>-<timestamp>/...
+  const previewMatch = url.match(/\/previews\/([^/]+)/);
+  if (previewMatch && previewMatch[1]) {
+    const cleanSlug = previewMatch[1].replace(/-\d{10,}$/, "");
+    return {
+      domain: "demo.khoui.io.vn",
+      path: `/${cleanSlug}`,
+    };
+  }
+
+  // If already an external custom domain (not Supabase)
+  try {
+    const parsed = new URL(url);
+    if (!parsed.hostname.includes("supabase.co")) {
+      return {
+        domain: parsed.hostname,
+        path: parsed.pathname.length > 1 ? parsed.pathname : "",
+      };
+    }
+  } catch {
+    // Ignore invalid URL parsing
+  }
+
+  // Fallback slug from product title
+  const slug = fallbackTitle
+    ? fallbackTitle
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/(^-|-$)/g, "")
+    : "preview";
+
+  return {
+    domain: "demo.khoui.io.vn",
+    path: `/${slug}`,
+  };
 }
 
 /**
@@ -53,6 +97,7 @@ export default function ProductMediaGallery({ productId, title, imageUrl, demoUr
   }
 
   const resolvedIframeSrc = hasValidDemo ? getProxiedPreviewUrl(normalizedDemoUrl) : "";
+  const mockUrl = getDisplayMockUrl(normalizedDemoUrl, title);
 
   return (
     <div className="space-y-4 font-sans">
@@ -121,13 +166,19 @@ export default function ProductMediaGallery({ productId, title, imageUrl, demoUr
           <div className="w-full h-full relative bg-slate-950">
             {/* Top Browser Bar Mock */}
             <div className="h-8 bg-slate-900 border-b border-slate-800/60 flex items-center px-3.5 gap-2 select-none">
-              <div className="flex gap-1.5">
+              <div className="flex gap-1.5 shrink-0">
                 <span className="w-2.5 h-2.5 rounded-full bg-red-500/70" />
                 <span className="w-2.5 h-2.5 rounded-full bg-amber-500/70" />
                 <span className="w-2.5 h-2.5 rounded-full bg-emerald-500/70" />
               </div>
-              <div className="flex-grow mx-8 bg-slate-950 h-5 rounded flex items-center px-2.5 text-[10px] text-slate-400 font-mono overflow-hidden whitespace-nowrap text-ellipsis border border-slate-800/40">
-                {normalizedDemoUrl}
+              <div className="flex-grow mx-3 sm:mx-8 bg-slate-950 h-5.5 rounded flex items-center px-2.5 text-[11px] font-mono overflow-hidden whitespace-nowrap text-ellipsis border border-slate-800/60 shadow-inner">
+                <Lock size={10} className="text-emerald-400 mr-1.5 shrink-0" />
+                <span className="text-emerald-400 font-semibold select-none">https://</span>
+                <span className="text-slate-200 font-medium">{mockUrl.domain}</span>
+                <span className="text-slate-400">{mockUrl.path}</span>
+                <span className="ml-auto text-[9px] text-emerald-400/90 font-sans font-semibold uppercase tracking-wider bg-emerald-950/70 border border-emerald-800/40 px-1.5 py-0.5 rounded hidden md:inline-flex items-center gap-1 select-none">
+                  Verified
+                </span>
               </div>
             </div>
 

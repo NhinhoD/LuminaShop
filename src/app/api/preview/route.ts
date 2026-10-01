@@ -109,10 +109,14 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       return NextResponse.json({ error: "URL is not from the allowed Supabase origin" }, { status: 403 });
     }
 
-    // Path validation: only allow public preview and storage assets
+    // Path validation: strictly enforce access only to public template-previews and template-assets buckets
     const lowerPath = parsedTarget.pathname.toLowerCase();
-    if (!lowerPath.startsWith("/storage/v1/object/public/")) {
-      return NextResponse.json({ error: "URL path is restricted" }, { status: 403 });
+    const isAllowedBucket =
+      lowerPath.startsWith("/storage/v1/object/public/template-previews/") ||
+      lowerPath.startsWith("/storage/v1/object/public/template-assets/");
+
+    if (!isAllowedBucket) {
+      return NextResponse.json({ error: "Access denied: restricted storage bucket" }, { status: 403 });
     }
   } catch {
     return NextResponse.json({ error: "Malformed URL parameter" }, { status: 400 });
