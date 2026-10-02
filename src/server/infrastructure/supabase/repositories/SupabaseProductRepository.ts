@@ -23,7 +23,7 @@ export class SupabaseProductRepository implements IProductRepository {
   constructor(private supabase: SupabaseClient) {}
 
   async findById(id: string): Promise<Product | null> {
-    const cleanId = decodeURIComponent(id).trim().replace(/^["']|["']$/g, '').replace(/\/+$/, '');
+    const cleanId = id.trim().replace(/^["']|["']$/g, '').replace(/\/+$/, '');
     const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(cleanId);
     
     const supabase = this.supabase;
@@ -44,7 +44,7 @@ export class SupabaseProductRepository implements IProductRepository {
   }
 
   async findBySlug(slug: string): Promise<Product | null> {
-    const cleanSlug = decodeURIComponent(slug).trim().replace(/^["']|["']$/g, '').replace(/\/+$/, '');
+    const cleanSlug = slug.trim().replace(/^["']|["']$/g, '').replace(/\/+$/, '');
     const supabase = this.supabase;
     const { data, error } = await supabase
       .from('products')

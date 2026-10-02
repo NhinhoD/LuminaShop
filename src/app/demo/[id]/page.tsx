@@ -16,7 +16,7 @@ export default async function DemoPage({ params }: DemoPageProps) {
   const locale = (cookieStore.get('NEXT_LOCALE')?.value as 'vi' | 'en') || 'vi';
 
   const { id: rawId } = await params;
-  const id = decodeURIComponent(rawId).trim().replace(/^["']|["']$/g, '').replace(/\/+$/, '');
+  const id = rawId.trim().replace(/^["']|["']$/g, '').replace(/\/+$/, '');
   const getProductByIdUseCase = await makeGetProductByIdUseCase();
   const productResult = await getProductByIdUseCase.execute(id);
 

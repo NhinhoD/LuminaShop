@@ -28,7 +28,7 @@ interface ProductPageProps {
  */
 export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
   const { id: rawId } = await params;
-  const id = decodeURIComponent(rawId).trim().replace(/^["']|["']$/g, '').replace(/\/+$/, '');
+  const id = rawId.trim().replace(/^["']|["']$/g, '').replace(/\/+$/, '');
   const [locale, getProductUseCase] = await Promise.all([
     getLocale(),
     makeGetProductByIdUseCase(),
@@ -107,7 +107,7 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
  */
 export default async function ProductDetailPage({ params }: ProductPageProps) {
   const { id: rawId } = await params;
-  const id = decodeURIComponent(rawId).trim().replace(/^["']|["']$/g, '').replace(/\/+$/, '');
+  const id = rawId.trim().replace(/^["']|["']$/g, '').replace(/\/+$/, '');
 
   // Parallelize initial independent tasks: locale, dictionary, and DI factory creation
   const [locale, dict, getProductUseCase, getCurrentUserUseCase] = await Promise.all([

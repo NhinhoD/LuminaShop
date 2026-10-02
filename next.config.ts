@@ -50,7 +50,7 @@ const nextConfig: NextConfig = {
     return [
       {
         // Apply global security headers to all application routes EXCEPT preview sandbox
-        source: '/((?!api/preview).*)',
+        source: '/((?!api/preview(?:/|$)).*)',
         headers: [
           {
             key: 'X-Content-Type-Options',
