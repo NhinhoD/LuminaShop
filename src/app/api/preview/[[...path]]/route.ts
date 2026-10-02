@@ -6,8 +6,8 @@ import { NextRequest, NextResponse } from "next/server";
  *
  * Security & Resource Protections:
  * 1. Sandboxed Unique Origin (CSP sandbox without allow-same-origin) to isolate cookies/storage.
- * 2. Memory byte budget caps (MAX_CACHE_ITEM_SIZE_BYTES) to prevent memory amplification.
- * 3. Request coalescing (fetchCoalesced) to eliminate duplicate upstream fetches.
+ * 2. Strict read limits (readBoundedBuffer / readBoundedText) to prevent unbounded memory allocation.
+ * 3. Direct response streaming for oversized non-HTML assets to bypass RAM buffering completely.
  * 4. Bounded warm-up concurrency for discovered template stylesheets and scripts.
  */
 
@@ -35,15 +35,7 @@ interface CacheEntry {
   timestamp: number;
 }
 
-interface UpstreamFetchResult {
-  status: number;
-  contentType: string;
-  data: ArrayBuffer;
-  ok: boolean;
-}
-
 const previewCache = new Map<string, CacheEntry>();
-const inFlightRequests = new Map<string, Promise<UpstreamFetchResult>>();
 
 /**
  * Resolves standard MIME Content-Type based on file extension.
@@ -100,41 +92,71 @@ function setCache(key: string, entry: CacheEntry): void {
 }
 
 /**
- * Fetches an upstream resource with in-flight deduplication (request coalescing)
- * to prevent duplicate concurrent network calls against Supabase Storage.
+ * Reads a response stream into an ArrayBuffer while strictly enforcing a maximum byte limit.
+ * If the body exceeds maxBytes, reading is aborted and null is returned to prevent memory exhaustion.
  *
- * @param targetUrl - Upstream storage URL to fetch.
- * @returns Upstream response status, content type, body buffer, and success flag.
+ * @param res - Fetch response stream.
+ * @param maxBytes - Maximum permitted byte size.
+ * @returns ArrayBuffer if within size limit, null if oversized or error.
  */
-async function fetchCoalesced(targetUrl: string): Promise<UpstreamFetchResult> {
-  const existing = inFlightRequests.get(targetUrl);
-  if (existing) {
-    return existing;
+async function readBoundedBuffer(res: Response, maxBytes: number): Promise<ArrayBuffer | null> {
+  const contentLength = Number(res.headers.get("content-length") ?? 0);
+  if (contentLength > maxBytes) {
+    return null;
   }
 
-  const fetchPromise = (async () => {
-    try {
-      const res = await fetch(targetUrl, { headers: { "Accept-Encoding": "identity" } });
-      if (!res.ok) {
-        return { status: res.status, contentType: "", data: new ArrayBuffer(0), ok: false };
-      }
-      const data = await res.arrayBuffer();
-      const resolvedType = resolveContentType(targetUrl);
-      return { status: res.status, contentType: resolvedType, data, ok: true };
-    } catch {
-      return { status: 502, contentType: "", data: new ArrayBuffer(0), ok: false };
-    } finally {
-      inFlightRequests.delete(targetUrl);
-    }
-  })();
+  if (!res.body) {
+    return new ArrayBuffer(0);
+  }
 
-  inFlightRequests.set(targetUrl, fetchPromise);
-  return fetchPromise;
+  const reader = res.body.getReader();
+  const chunks: Uint8Array[] = [];
+  let totalBytes = 0;
+
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      if (value) {
+        totalBytes += value.byteLength;
+        if (totalBytes > maxBytes) {
+          await reader.cancel("Size limit exceeded");
+          return null;
+        }
+        chunks.push(value);
+      }
+    }
+  } catch {
+    return null;
+  }
+
+  const result = new Uint8Array(totalBytes);
+  let offset = 0;
+  for (const chunk of chunks) {
+    result.set(chunk, offset);
+    offset += chunk.byteLength;
+  }
+  return result.buffer;
+}
+
+/**
+ * Reads a response stream into a UTF-8 string while strictly enforcing a maximum byte limit.
+ * If the body exceeds maxBytes, reading is aborted and null is returned to prevent memory exhaustion.
+ *
+ * @param res - Fetch response stream.
+ * @param maxBytes - Maximum permitted byte size.
+ * @returns Decoded UTF-8 string if within size limit, null if oversized.
+ */
+async function readBoundedText(res: Response, maxBytes: number): Promise<string | null> {
+  const buffer = await readBoundedBuffer(res, maxBytes);
+  if (!buffer) return null;
+  const decoder = new TextDecoder("utf-8");
+  return decoder.decode(buffer);
 }
 
 /**
  * Speculatively warms up the in-memory cache for key text-based template files (CSS, JS, HTML).
- * Limits total warmed files and concurrent network requests to prevent CPU/memory amplification.
+ * Limits total warmed files, enforces byte read bounds, and uses concurrency controls.
  *
  * @param baseInternalUrl - Upstream base folder URL.
  * @param discoveredFiles - Array of relative file paths discovered in the template HTML.
@@ -159,16 +181,24 @@ async function warmUpTemplateCache(baseInternalUrl: string, discoveredFiles: str
       batch.map(async (relPath) => {
         const targetUrl = `${baseInternalUrl}${relPath}`;
         if (previewCache.has(targetUrl)) return;
-        const res = await fetchCoalesced(targetUrl);
-        if (res.ok && res.data.byteLength <= MAX_CACHE_ITEM_SIZE_BYTES) {
-          const isHtml = isHtmlType(res.contentType);
-          if (isHtml) {
-            const decoder = new TextDecoder("utf-8");
-            const text = decoder.decode(res.data);
-            setCache(targetUrl, { body: text, contentType: res.contentType, isHtml: true, timestamp: Date.now() });
+        try {
+          const res = await fetch(targetUrl, { headers: { "Accept-Encoding": "identity" } });
+          if (!res.ok) return;
+
+          const resolvedType = resolveContentType(targetUrl);
+          if (isHtmlType(resolvedType)) {
+            const text = await readBoundedText(res, MAX_CACHE_ITEM_SIZE_BYTES);
+            if (text) {
+              setCache(targetUrl, { body: text, contentType: resolvedType, isHtml: true, timestamp: Date.now() });
+            }
           } else {
-            setCache(targetUrl, { body: res.data, contentType: res.contentType, isHtml: false, timestamp: Date.now() });
+            const buffer = await readBoundedBuffer(res, MAX_CACHE_ITEM_SIZE_BYTES);
+            if (buffer) {
+              setCache(targetUrl, { body: buffer, contentType: resolvedType, isHtml: false, timestamp: Date.now() });
+            }
           }
+        } catch {
+          // Warmup failures are ignored gracefully
         }
       })
     ).catch(() => {});
@@ -248,6 +278,9 @@ function processPreviewHtml(
  * Standard HTTP response headers for isolated HTML preview delivery.
  * Enforces CSP sandbox without 'allow-same-origin' to prevent template scripts from
  * reaching host origin credentials, cookies, localStorage, or authenticated application endpoints.
+ *
+ * @param contentType - Response content type.
+ * @returns Header dictionary.
  */
 function getPreviewHtmlHeaders(contentType: string): HeadersInit {
   return {
@@ -272,7 +305,7 @@ function getPreviewHtmlHeaders(contentType: string): HeadersInit {
 /**
  * Preview Proxy Route Handler.
  * Supports both clean path routing (/api/preview/previews/...) and query parameter routing.
- * Provides origin sandbox isolation, memory budget enforcement, and request coalescing.
+ * Provides origin sandbox isolation, memory budget enforcement, bounded streaming, and warmup controls.
  *
  * @param request - Next.js HTTP request object.
  * @param context - Route context containing async path parameters.
@@ -350,21 +383,30 @@ export async function GET(
       });
     }
 
-    // 2. Upstream fetch with request coalescing to eliminate duplicate in-flight network calls
-    const fetchResult = await fetchCoalesced(internalTargetUrl);
+    // 2. Upstream fetch from Supabase Storage
+    const upstreamResponse = await fetch(internalTargetUrl, {
+      headers: { "Accept-Encoding": "identity" },
+    });
 
-    if (!fetchResult.ok) {
+    if (!upstreamResponse.ok) {
       return NextResponse.json(
         { error: "Preview file not found" },
-        { status: fetchResult.status === 404 ? 404 : 502 }
+        { status: upstreamResponse.status === 404 ? 404 : 502 }
       );
     }
 
     const resolvedType = resolveContentType(targetStoragePath);
 
+    // Case A: HTML documents (enforce strict read limit before buffering into RAM for URL rewriting)
     if (isHtmlType(resolvedType)) {
-      const decoder = new TextDecoder("utf-8");
-      const rawHtml = decoder.decode(fetchResult.data);
+      const rawHtml = await readBoundedText(upstreamResponse, MAX_CACHE_ITEM_SIZE_BYTES);
+
+      if (rawHtml === null) {
+        return NextResponse.json(
+          { error: "Preview HTML file exceeds maximum allowed size" },
+          { status: 413 }
+        );
+      }
 
       setCache(internalTargetUrl, { body: rawHtml, contentType: resolvedType, isHtml: true, timestamp: Date.now() });
 
@@ -383,10 +425,28 @@ export async function GET(
       });
     }
 
-    // For non-HTML binary/assets, cache only if within memory budget
-    setCache(internalTargetUrl, { body: fetchResult.data, contentType: resolvedType, isHtml: false, timestamp: Date.now() });
+    // Case B: Non-HTML assets (CSS, JS, images, fonts, binaries)
+    const contentLength = Number(upstreamResponse.headers.get("content-length") ?? 0);
+    const canCache = contentLength > 0 && contentLength <= MAX_CACHE_ITEM_SIZE_BYTES;
 
-    return new NextResponse(fetchResult.data, {
+    if (canCache) {
+      const buffer = await readBoundedBuffer(upstreamResponse, MAX_CACHE_ITEM_SIZE_BYTES);
+      if (buffer) {
+        setCache(internalTargetUrl, { body: buffer, contentType: resolvedType, isHtml: false, timestamp: Date.now() });
+        return new NextResponse(buffer, {
+          status: 200,
+          headers: {
+            "Content-Type": resolvedType,
+            "Cache-Control": "public, max-age=86400, s-maxage=86400",
+            "X-Content-Type-Options": "nosniff",
+            "Access-Control-Allow-Origin": "*",
+          },
+        });
+      }
+    }
+
+    // Stream directly for oversized or unknown-length assets without loading into RAM
+    return new NextResponse(upstreamResponse.body, {
       status: 200,
       headers: {
         "Content-Type": resolvedType,
