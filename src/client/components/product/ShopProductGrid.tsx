@@ -24,6 +24,13 @@ interface ShopProductGridProps {
   dbCategories?: readonly Category[];
 }
 
+/**
+ * Filterable, paginated product catalog grid supporting instant search, category navigation,
+ * price filtering, and dynamic responsive preview links.
+ *
+ * @param props - Shop product grid properties with products, search, sort, and categories.
+ * @returns Rendered JSX element for the shop product catalog.
+ */
 export default function ShopProductGrid({ 
   initialProducts, 
   currentSearch, 

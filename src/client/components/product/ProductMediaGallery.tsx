@@ -7,6 +7,8 @@ import { Monitor, Image as ImageIcon, ExternalLink, Lock } from "lucide-react";
 import Link from "next/link";
 import { useI18n } from "@/client/components/common/I18nContext";
 
+import { resolveCleanPreviewUrl } from "@/shared/utils";
+
 interface ProductMediaGalleryProps {
   productId: string;
   title: string;
@@ -14,10 +16,22 @@ interface ProductMediaGalleryProps {
   demoUrl?: string;
 }
 
+/**
+ * Safely trims an optional URL string.
+ *
+ * @param url - URL string or undefined.
+ * @returns Trimmed URL string or empty string.
+ */
 function normalizeUrl(url?: string): string {
   return url ? url.trim() : "";
 }
 
+/**
+ * Validates whether a preview URL has an acceptable web protocol or proxy path.
+ *
+ * @param url - Preview URL string.
+ * @returns True if valid HTTP/HTTPS or local API path, false otherwise.
+ */
 function isValidPreviewUrl(url: string): boolean {
   if (!url) return false;
   return url.startsWith("http://") || url.startsWith("https://") || url.startsWith("/api/");
@@ -26,6 +40,10 @@ function isValidPreviewUrl(url: string): boolean {
 /**
  * Formats a clean, branded white-label URL for the browser mockup bar,
  * concealing internal Supabase backend endpoints for aesthetics and privacy.
+ *
+ * @param url - Raw preview URL.
+ * @param fallbackTitle - Fallback product title for slug generation.
+ * @returns Object containing display domain and path.
  */
 function getDisplayMockUrl(url: string, fallbackTitle: string): { domain: string; path: string } {
   // If preview directory is stored under /previews/<slug>-<timestamp>/...
@@ -67,16 +85,23 @@ function getDisplayMockUrl(url: string, fallbackTitle: string): { domain: string
   };
 }
 
-import { resolveCleanPreviewUrl } from "@/shared/utils";
-
 /**
  * Wraps Supabase Storage URLs through the local clean /api/preview proxy.
  * Completely conceals Supabase project identifiers and public storage URLs.
+ *
+ * @param url - Raw preview storage URL.
+ * @returns Clean proxy relative path.
  */
 function getProxiedPreviewUrl(url: string): string {
   return resolveCleanPreviewUrl(url);
 }
 
+/**
+ * Product media gallery component supporting responsive mockup previews and interactive iframe live demos.
+ *
+ * @param props - Gallery props containing product title, image, and live demo URL.
+ * @returns Rendered JSX element.
+ */
 export default function ProductMediaGallery({ productId: _productId, title, imageUrl, demoUrl }: ProductMediaGalleryProps) {
   const normalizedDemoUrl = normalizeUrl(demoUrl);
   const hasValidDemo = isValidPreviewUrl(normalizedDemoUrl);

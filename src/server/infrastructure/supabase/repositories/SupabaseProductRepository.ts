@@ -22,6 +22,12 @@ interface ProductDTO {
 export class SupabaseProductRepository implements IProductRepository {
   constructor(private supabase: SupabaseClient) {}
 
+  /**
+   * Retrieves a product by its UUID or fallback slug identifier.
+   *
+   * @param id - Product UUID or slug string.
+   * @returns Product entity if found, null otherwise.
+   */
   async findById(id: string): Promise<Product | null> {
     const cleanId = id.trim().replace(/^["']|["']$/g, '').replace(/\/+$/, '');
     const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(cleanId);
@@ -43,6 +49,12 @@ export class SupabaseProductRepository implements IProductRepository {
     return this.findBySlug(cleanId);
   }
 
+  /**
+   * Retrieves a product by its unique URL slug.
+   *
+   * @param slug - Product slug string.
+   * @returns Product entity if found, null otherwise.
+   */
   async findBySlug(slug: string): Promise<Product | null> {
     const cleanSlug = slug.trim().replace(/^["']|["']$/g, '').replace(/\/+$/, '');
     const supabase = this.supabase;
@@ -218,11 +230,24 @@ export class SupabaseProductRepository implements IProductRepository {
     if (error) throw new Error(`Database error: ${error.message}`);
   }
 
+  /**
+   * Stub method for variant insertion to satisfy the domain repository contract.
+   *
+   * @param _productId - ID of product.
+   * @param _variant - Product variant payload.
+   * @returns Promise resolving when complete.
+   */
   async addVariant(_productId: string, _variant: Omit<ProductVariant, 'id' | 'productId' | 'createdAt' | 'updatedAt'>): Promise<void> {
     // No-op for digital marketplace, but keep interface compatibility
     return;
   }
 
+  /**
+   * Maps raw database row data into the clean domain Product entity.
+   *
+   * @param row - Database product record with relations.
+   * @returns Domain Product entity.
+   */
   private mapToEntity(row: ProductRow): Product {
     return {
       id: row.id,

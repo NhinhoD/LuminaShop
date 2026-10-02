@@ -62,6 +62,9 @@ export function resolveBaseUrl(rawHost?: string | null): string {
  * Example:
  * In:  https://xyz.supabase.co/storage/v1/object/public/template-previews/previews/sample/index.html
  * Out: /api/preview/previews/sample/index.html
+ *
+ * @param url - Raw Supabase public preview URL.
+ * @returns Clean, white-labeled relative proxy path or original string.
  */
 export function resolveCleanPreviewUrl(url?: string | null): string {
   if (!url) return '';

@@ -44,8 +44,13 @@ const nextConfig: NextConfig = {
         port: '',
         pathname: '/**',
       },
-    ]
+    ],
   },
+  /**
+   * Configures custom HTTP security headers for storefront pages and the preview proxy route.
+   *
+   * @returns Array of route header configuration rules.
+   */
   async headers() {
     return [
       {

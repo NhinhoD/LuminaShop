@@ -10,6 +10,9 @@ interface DemoPageProps {
 /**
  * Demo preview redirect route.
  * Directly redirects to the full clean preview URL (/api/preview/previews/...).
+ *
+ * @param props - Component props containing the async params object with product ID.
+ * @returns Resolves with a Next.js redirect or error fallback UI.
  */
 export default async function DemoPage({ params }: DemoPageProps) {
   const cookieStore = await cookies();
