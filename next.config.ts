@@ -49,7 +49,8 @@ const nextConfig: NextConfig = {
   async headers() {
     return [
       {
-        source: '/:path*',
+        // Apply global security headers to all application routes EXCEPT preview sandbox
+        source: '/((?!api/preview).*)',
         headers: [
           {
             key: 'X-Content-Type-Options',
@@ -74,6 +75,20 @@ const nextConfig: NextConfig = {
           {
             key: 'Permissions-Policy',
             value: 'camera=(), microphone=(), geolocation=()',
+          },
+        ],
+      },
+      {
+        // Dedicated security headers for preview sandbox (allows embedding while keeping framing restricted)
+        source: '/api/preview/:path*',
+        headers: [
+          {
+            key: 'X-Content-Type-Options',
+            value: 'nosniff',
+          },
+          {
+            key: 'X-Frame-Options',
+            value: 'SAMEORIGIN',
           },
         ],
       },

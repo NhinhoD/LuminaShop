@@ -8,7 +8,7 @@ import QuickAddButton from "./QuickAddButton";
 import { Product } from "@/server/domain/entities/Product";
 import { Category } from "@/server/domain/entities/Category";
 import { ROUTES } from "@/shared/constants";
-import { formatCurrency } from "@/shared/utils";
+import { formatCurrency, resolveCleanPreviewUrl } from "@/shared/utils";
 import gsap from "gsap";
 import { Search, SlidersHorizontal, Monitor, Eye, ArrowRight, Code2 } from "lucide-react";
 import { useDebouncedCallback } from "use-debounce";
@@ -417,7 +417,7 @@ export default function ShopProductGrid({
                             {product.demoUrl ? (
                               /* Routes to in-app responsive sandbox viewer at /demo/[id] which proxies demoUrl and adds viewport controls */
                               <Link 
-                                href={`/demo/${product.id}`} 
+                                href={resolveCleanPreviewUrl(product.demoUrl)} 
                                 target="_blank" 
                                 rel="noopener noreferrer"
                                 className="h-9 rounded-xl text-xs font-medium bg-slate-50 hover:bg-slate-100 text-slate-700 hover:text-slate-900 border border-slate-200/80 hover:border-slate-300 transition-all flex items-center justify-center gap-1.5 shadow-2xs active:scale-[0.98]"

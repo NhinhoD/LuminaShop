@@ -53,3 +53,33 @@ export function resolveBaseUrl(rawHost?: string | null): string {
 
   return 'http://localhost:3000';
 }
+
+/**
+ * Transforms a Supabase Storage public preview URL into a clean, white-labeled proxy URL.
+ * Completely strips the Supabase project domain and storage path from client-facing URLs,
+ * preventing SSRF probes, project ref disclosure, and unauthenticated scraping.
+ *
+ * Example:
+ * In:  https://xyz.supabase.co/storage/v1/object/public/template-previews/previews/sample/index.html
+ * Out: /api/preview/previews/sample/index.html
+ */
+export function resolveCleanPreviewUrl(url?: string | null): string {
+  if (!url) return '';
+  const trimmed = url.trim();
+
+  const previewMarker = '/storage/v1/object/public/template-previews/';
+  const previewIdx = trimmed.indexOf(previewMarker);
+  if (previewIdx !== -1) {
+    const relativePath = trimmed.substring(previewIdx + previewMarker.length);
+    return `/api/preview/${relativePath}`;
+  }
+
+  const assetsMarker = '/storage/v1/object/public/template-assets/';
+  const assetsIdx = trimmed.indexOf(assetsMarker);
+  if (assetsIdx !== -1) {
+    const relativePath = trimmed.substring(assetsIdx + assetsMarker.length);
+    return `/api/preview/assets/${relativePath}`;
+  }
+
+  return trimmed;
+}

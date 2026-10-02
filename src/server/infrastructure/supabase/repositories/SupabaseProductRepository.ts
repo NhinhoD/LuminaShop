@@ -23,31 +23,33 @@ export class SupabaseProductRepository implements IProductRepository {
   constructor(private supabase: SupabaseClient) {}
 
   async findById(id: string): Promise<Product | null> {
-    const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
-    if (!isUUID) {
-      return this.findBySlug(id);
+    const cleanId = decodeURIComponent(id).trim().replace(/^["']|["']$/g, '').replace(/\/+$/, '');
+    const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(cleanId);
+    
+    const supabase = this.supabase;
+    if (isUUID) {
+      const { data, error } = await supabase
+        .from('products')
+        .select('*, variants:product_variants(*)')
+        .eq('id', cleanId)
+        .maybeSingle();
+      
+      if (error) {
+        throw new Error(`Failed to fetch product by id: ${error.message}`);
+      }
+      if (data) return this.mapToEntity(data);
     }
 
-    const supabase = this.supabase;
-    const { data, error } = await supabase
-      .from('products')
-      .select('*, variants:product_variants(*)')
-      .eq('id', id)
-      .maybeSingle();
-    
-    if (error) {
-      throw new Error(`Failed to fetch product by id: ${error.message}`);
-    }
-    if (!data) return null;
-    return this.mapToEntity(data);
+    return this.findBySlug(cleanId);
   }
 
   async findBySlug(slug: string): Promise<Product | null> {
+    const cleanSlug = decodeURIComponent(slug).trim().replace(/^["']|["']$/g, '').replace(/\/+$/, '');
     const supabase = this.supabase;
     const { data, error } = await supabase
       .from('products')
       .select('*, variants:product_variants(*)')
-      .eq('slug', slug)
+      .eq('slug', cleanSlug)
       .maybeSingle();
     
     if (error) {

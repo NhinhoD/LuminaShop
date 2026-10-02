@@ -67,19 +67,17 @@ function getDisplayMockUrl(url: string, fallbackTitle: string): { domain: string
   };
 }
 
+import { resolveCleanPreviewUrl } from "@/shared/utils";
+
 /**
- * Wraps Supabase Storage URLs through the local /api/preview proxy
- * to bypass Supabase's forced text/plain Content-Type on HTML files.
- * Non-Supabase URLs pass through unchanged.
+ * Wraps Supabase Storage URLs through the local clean /api/preview proxy.
+ * Completely conceals Supabase project identifiers and public storage URLs.
  */
 function getProxiedPreviewUrl(url: string): string {
-  if (url.includes("supabase.co/storage/")) {
-    return "/api/preview?url=" + encodeURIComponent(url);
-  }
-  return url;
+  return resolveCleanPreviewUrl(url);
 }
 
-export default function ProductMediaGallery({ productId, title, imageUrl, demoUrl }: ProductMediaGalleryProps) {
+export default function ProductMediaGallery({ productId: _productId, title, imageUrl, demoUrl }: ProductMediaGalleryProps) {
   const normalizedDemoUrl = normalizeUrl(demoUrl);
   const hasValidDemo = isValidPreviewUrl(normalizedDemoUrl);
   // Optimize LCP & Core Web Vitals: Default to static mockup image so the browser paints instantly.
@@ -145,7 +143,7 @@ export default function ProductMediaGallery({ productId, title, imageUrl, demoUr
           </div>
 
           <Link
-            href={`/demo/${productId}`}
+            href={resolvedIframeSrc}
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-1.5 bg-slate-900 hover:bg-slate-800 text-white px-3 py-1.5 rounded-lg text-xs font-medium transition-colors shadow-2xs -mt-1.5"

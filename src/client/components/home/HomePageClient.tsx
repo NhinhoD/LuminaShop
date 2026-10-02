@@ -7,7 +7,7 @@ import { useEffect, useRef, useState, useTransition } from "react";
 import { AnimatePresence, motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 
 import { ROUTES } from "@/shared/constants";
-import { formatCurrency } from "@/shared/utils";
+import { formatCurrency, resolveCleanPreviewUrl } from "@/shared/utils";
 import { useI18n } from "@/client/components/common/I18nContext";
 import { getLocalizedText } from "@/shared/utils/locale";
 import gsap from "gsap";
@@ -1374,7 +1374,7 @@ export default function HomePageClient({
                         <div className="grid grid-cols-2 gap-2">
                           {product.demoUrl ? (
                             <a
-                              href={product.demoUrl}
+                              href={resolveCleanPreviewUrl(product.demoUrl)}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="h-8.5 rounded-xl text-xs font-medium bg-slate-50 hover:bg-slate-100 text-slate-700 hover:text-slate-900 border border-slate-200/80 transition-all flex items-center justify-center gap-1 shadow-2xs active:scale-[0.98]"
