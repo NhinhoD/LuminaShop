@@ -1,14 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 
 /**
- * 100% White-Label, Secure Preview Proxy with Origin Sandboxing & Resource Throttling.
+ * 100% White-Label, Secure Preview Proxy with Origin Sandboxing & Resource Protection.
  * Conceals Supabase project identifiers and backend storage paths completely.
  *
  * Security & Resource Protections:
- * 1. Sandboxed Unique Origin (CSP sandbox without allow-same-origin) to isolate cookies/storage.
- * 2. Strict read limits (readBoundedBuffer / readBoundedText) to prevent unbounded memory allocation.
- * 3. Direct response streaming for oversized non-HTML assets to bypass RAM buffering completely.
- * 4. Bounded warm-up concurrency for discovered template stylesheets and scripts.
+ * 1. Sandboxed Unique Origin (CSP sandbox without allow-same-origin) on HTML to isolate cookies/storage.
+ * 2. Active asset sandbox (CSP sandbox on SVG images) to prevent malicious script execution on direct navigation.
+ * 3. Strict read limits (readBoundedBuffer / readBoundedText) to prevent unbounded memory allocation.
+ * 4. Direct response streaming for oversized non-HTML assets to bypass RAM buffering completely.
+ * 5. On-demand 1:1 asset fetching without background amplification or speculative prefetching.
  */
 
 const ALLOWED_ORIGIN = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
@@ -21,12 +22,6 @@ const MAX_CACHE_ITEM_SIZE_BYTES = 2 * 1024 * 1024;
 
 /** In-memory cache time-to-live (30 minutes) */
 const CACHE_TTL_MS = 1000 * 60 * 30;
-
-/** Maximum number of auxiliary files warmed per HTML document */
-const MAX_WARMUP_FILES = 8;
-
-/** Maximum concurrent background fetches during template warmup */
-const WARMUP_CONCURRENCY = 3;
 
 interface CacheEntry {
   body: string | ArrayBuffer;
@@ -155,83 +150,25 @@ async function readBoundedText(res: Response, maxBytes: number): Promise<string 
 }
 
 /**
- * Speculatively warms up the in-memory cache for key text-based template files (CSS, JS, HTML).
- * Limits total warmed files, enforces byte read bounds, and uses concurrency controls.
- *
- * @param baseInternalUrl - Upstream base folder URL.
- * @param discoveredFiles - Array of relative file paths discovered in the template HTML.
- */
-async function warmUpTemplateCache(baseInternalUrl: string, discoveredFiles: string[]): Promise<void> {
-  const candidateFiles = Array.from(new Set(discoveredFiles))
-    .filter((file) => {
-      const lower = file.split("?")[0].toLowerCase();
-      return (
-        lower.endsWith(".css") ||
-        lower.endsWith(".js") ||
-        lower.endsWith(".html") ||
-        lower.endsWith(".htm") ||
-        lower.endsWith(".json")
-      );
-    })
-    .slice(0, MAX_WARMUP_FILES);
-
-  for (let i = 0; i < candidateFiles.length; i += WARMUP_CONCURRENCY) {
-    const batch = candidateFiles.slice(i, i + WARMUP_CONCURRENCY);
-    await Promise.all(
-      batch.map(async (relPath) => {
-        const targetUrl = `${baseInternalUrl}${relPath}`;
-        if (previewCache.has(targetUrl)) return;
-        try {
-          const res = await fetch(targetUrl, { headers: { "Accept-Encoding": "identity" } });
-          if (!res.ok) return;
-
-          const resolvedType = resolveContentType(targetUrl);
-          if (isHtmlType(resolvedType)) {
-            const text = await readBoundedText(res, MAX_CACHE_ITEM_SIZE_BYTES);
-            if (text) {
-              setCache(targetUrl, { body: text, contentType: resolvedType, isHtml: true, timestamp: Date.now() });
-            }
-          } else {
-            const buffer = await readBoundedBuffer(res, MAX_CACHE_ITEM_SIZE_BYTES);
-            if (buffer) {
-              setCache(targetUrl, { body: buffer, contentType: resolvedType, isHtml: false, timestamp: Date.now() });
-            }
-          }
-        } catch {
-          // Warmup failures are ignored gracefully
-        }
-      })
-    ).catch(() => {});
-  }
-}
-
-/**
  * Rewrites relative HTML resource links and page navigations to use the clean preview proxy.
- * Injects speculative link prefetch tags for discovered sub-pages.
  *
  * @param html - Raw HTML text content.
  * @param clientFolderPrefix - Target proxy path prefix for client URLs.
- * @param _internalFolderPrefix - Optional internal backend prefix.
- * @returns Transformed HTML string and list of discovered relative asset paths.
+ * @returns Transformed HTML string.
  */
 function processPreviewHtml(
   html: string,
-  clientFolderPrefix: string,
-  _internalFolderPrefix?: string
-): { processed: string; discoveredFiles: string[] } {
+  clientFolderPrefix: string
+): string {
   let processed = html.replace(
     /<script\b[^>]*>(?:(?!<\/script>)[\s\S])*?Mock link disabled[\s\S]*?<\/script>/gi,
     ""
   );
 
-  const discoveredPages = new Set<string>();
-  const discoveredAssets = new Set<string>();
-
   // 1. Rewrite internal page links to clean proxy route (e.g. href="about.html" -> href="/api/preview/previews/.../about.html")
   processed = processed.replace(
     /href=["'](\.\/)?([^"':#?]+\.html?)((?:#[^"']*)?)["']/gi,
     (_match, _dotSlash, page, hash) => {
-      discoveredPages.add(page);
       return `href="${clientFolderPrefix}${page}${hash || ""}"`;
     }
   );
@@ -240,7 +177,6 @@ function processPreviewHtml(
   processed = processed.replace(
     /(href|src)=["']\.\/([^"']+\.(?:css|js|png|jpg|jpeg|webp|svg|gif|ico|woff2?|ttf|otf))["']/gi,
     (_match, attr, path) => {
-      discoveredAssets.add(path);
       return `${attr}="${clientFolderPrefix}${path}"`;
     }
   );
@@ -249,29 +185,13 @@ function processPreviewHtml(
     /(href|src)=["'](css|js|assets|images|fonts)\/([^"']+)["']/gi,
     (_match, attr, folder, rest) => {
       const path = `${folder}/${rest}`;
-      discoveredAssets.add(path);
       return `${attr}="${clientFolderPrefix}${path}"`;
     }
   );
 
   processed = processed.replace(/<base[^>]*>/gi, "");
 
-  // 3. Inject speculative prefetch for discovered pages
-  const prefetchTags = Array.from(discoveredPages)
-    .map((p) => `<link rel="prefetch" href="${clientFolderPrefix}${p}" as="document">`)
-    .join("\n  ");
-
-  if (prefetchTags) {
-    const headEnd = processed.indexOf("</head>");
-    if (headEnd !== -1) {
-      processed = processed.substring(0, headEnd) + `  ${prefetchTags}\n` + processed.substring(headEnd);
-    }
-  }
-
-  return {
-    processed,
-    discoveredFiles: Array.from(new Set([...discoveredPages, ...discoveredAssets])),
-  };
+  return processed;
 }
 
 /**
@@ -303,9 +223,33 @@ function getPreviewHtmlHeaders(contentType: string): HeadersInit {
 }
 
 /**
+ * Helper to build response headers for non-HTML assets.
+ * Adds Content-Security-Policy sandbox to SVG images to prevent embedded scripts from executing.
+ *
+ * @param contentType - MIME content type of the asset.
+ * @returns Headers dictionary for non-HTML assets.
+ */
+function getAssetHeaders(contentType: string): HeadersInit {
+  const headers: Record<string, string> = {
+    "Content-Type": contentType,
+    "Cache-Control": "public, max-age=86400, s-maxage=86400",
+    "X-Content-Type-Options": "nosniff",
+    "X-Frame-Options": "SAMEORIGIN",
+    "Access-Control-Allow-Origin": "*",
+  };
+
+  // If asset is SVG, enforce sandbox CSP to prevent script execution on direct navigation
+  if (contentType === "image/svg+xml") {
+    headers["Content-Security-Policy"] = "sandbox; default-src 'none'; style-src 'unsafe-inline'; img-src data:; object-src 'none';";
+  }
+
+  return headers;
+}
+
+/**
  * Preview Proxy Route Handler.
  * Supports both clean path routing (/api/preview/previews/...) and query parameter routing.
- * Provides origin sandbox isolation, memory budget enforcement, bounded streaming, and warmup controls.
+ * Provides origin sandbox isolation, memory budget enforcement, bounded streaming, and SVG script protection.
  *
  * @param request - Next.js HTTP request object.
  * @param context - Route context containing async path parameters.
@@ -363,9 +307,8 @@ export async function GET(
       if (cached.isHtml && typeof cached.body === "string") {
         const lastSlash = targetStoragePath.lastIndexOf("/");
         const clientFolderPrefix = lastSlash !== -1 ? `/api/preview/${targetStoragePath.substring(0, lastSlash + 1)}` : "/api/preview/";
-        const internalFolderPrefix = internalTargetUrl.substring(0, internalTargetUrl.lastIndexOf("/") + 1);
 
-        const { processed } = processPreviewHtml(cached.body, clientFolderPrefix, internalFolderPrefix);
+        const processed = processPreviewHtml(cached.body, clientFolderPrefix);
         return new NextResponse(processed, {
           status: 200,
           headers: getPreviewHtmlHeaders(cached.contentType),
@@ -374,12 +317,7 @@ export async function GET(
 
       return new NextResponse(cached.body, {
         status: 200,
-        headers: {
-          "Content-Type": cached.contentType,
-          "Cache-Control": "public, max-age=86400, s-maxage=86400",
-          "X-Content-Type-Options": "nosniff",
-          "Access-Control-Allow-Origin": "*",
-        },
+        headers: getAssetHeaders(cached.contentType),
       });
     }
 
@@ -412,12 +350,8 @@ export async function GET(
 
       const lastSlash = targetStoragePath.lastIndexOf("/");
       const clientFolderPrefix = lastSlash !== -1 ? `/api/preview/${targetStoragePath.substring(0, lastSlash + 1)}` : "/api/preview/";
-      const internalFolderPrefix = internalTargetUrl.substring(0, internalTargetUrl.lastIndexOf("/") + 1);
 
-      const { processed, discoveredFiles } = processPreviewHtml(rawHtml, clientFolderPrefix, internalFolderPrefix);
-
-      // Trigger bounded, background warmup without delaying HTML response delivery
-      void warmUpTemplateCache(internalFolderPrefix, discoveredFiles);
+      const processed = processPreviewHtml(rawHtml, clientFolderPrefix);
 
       return new NextResponse(processed, {
         status: 200,
@@ -435,12 +369,7 @@ export async function GET(
         setCache(internalTargetUrl, { body: buffer, contentType: resolvedType, isHtml: false, timestamp: Date.now() });
         return new NextResponse(buffer, {
           status: 200,
-          headers: {
-            "Content-Type": resolvedType,
-            "Cache-Control": "public, max-age=86400, s-maxage=86400",
-            "X-Content-Type-Options": "nosniff",
-            "Access-Control-Allow-Origin": "*",
-          },
+          headers: getAssetHeaders(resolvedType),
         });
       }
     }
@@ -448,12 +377,7 @@ export async function GET(
     // Stream directly for oversized or unknown-length assets without loading into RAM
     return new NextResponse(upstreamResponse.body, {
       status: 200,
-      headers: {
-        "Content-Type": resolvedType,
-        "Cache-Control": "public, max-age=86400, s-maxage=86400",
-        "X-Content-Type-Options": "nosniff",
-        "Access-Control-Allow-Origin": "*",
-      },
+      headers: getAssetHeaders(resolvedType),
     });
   } catch (err: unknown) {
     console.error("[PreviewProxy] Error processing preview request:", err);
