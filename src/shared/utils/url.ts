@@ -56,31 +56,40 @@ export function resolveBaseUrl(rawHost?: string | null): string {
 
 /**
  * Transforms a Supabase Storage public preview URL into a clean, white-labeled proxy URL.
- * Completely strips the Supabase project domain and storage path from client-facing URLs,
- * preventing SSRF probes, project ref disclosure, and unauthenticated scraping.
+ * Restricts rewriting strictly to URLs originating from the configured NEXT_PUBLIC_SUPABASE_URL,
+ * completely stripping the project identifier and storage path to prevent SSRF probes and storage disclosure.
  *
  * Example:
  * In:  https://xyz.supabase.co/storage/v1/object/public/template-previews/previews/sample/index.html
  * Out: /api/preview/previews/sample/index.html
  *
- * @param url - Raw Supabase public preview URL.
- * @returns Clean, white-labeled relative proxy path or original string.
+ * @param url - Raw candidate URL string.
+ * @returns Clean, white-labeled relative proxy path or original string if not matching storage origin.
  */
 export function resolveCleanPreviewUrl(url?: string | null): string {
   if (!url) return '';
   const trimmed = url.trim();
 
+  let parsedUrl: URL;
+  let storageUrl: URL;
+  try {
+    parsedUrl = new URL(trimmed);
+    storageUrl = new URL(process.env.NEXT_PUBLIC_SUPABASE_URL || '');
+  } catch {
+    return trimmed;
+  }
+
+  if (parsedUrl.origin !== storageUrl.origin) return trimmed;
+
   const previewMarker = '/storage/v1/object/public/template-previews/';
-  const previewIdx = trimmed.indexOf(previewMarker);
-  if (previewIdx !== -1) {
-    const relativePath = trimmed.substring(previewIdx + previewMarker.length);
+  if (parsedUrl.pathname.startsWith(previewMarker)) {
+    const relativePath = parsedUrl.pathname.substring(previewMarker.length) + parsedUrl.search + parsedUrl.hash;
     return `/api/preview/${relativePath}`;
   }
 
   const assetsMarker = '/storage/v1/object/public/template-assets/';
-  const assetsIdx = trimmed.indexOf(assetsMarker);
-  if (assetsIdx !== -1) {
-    const relativePath = trimmed.substring(assetsIdx + assetsMarker.length);
+  if (parsedUrl.pathname.startsWith(assetsMarker)) {
+    const relativePath = parsedUrl.pathname.substring(assetsMarker.length) + parsedUrl.search + parsedUrl.hash;
     return `/api/preview/assets/${relativePath}`;
   }
 

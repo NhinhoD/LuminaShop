@@ -224,7 +224,12 @@ function getPreviewHtmlHeaders(contentType: string): HeadersInit {
 
 /**
  * Helper to build response headers for non-HTML assets.
- * Adds Content-Security-Policy sandbox to SVG images to prevent embedded scripts from executing.
+ * Adds Content-Security-Policy sandbox to SVGs and active-content/non-image/non-font assets
+ * (JavaScript, CSS, JSON, etc.) to isolate execution under an opaque origin if navigated to
+ * directly in a top-level browser tab.
+ *
+ * Retains Access-Control-Allow-Origin: * intentionally for sandboxed preview contexts and
+ * cross-origin subresources (such as web fonts, canvas images, and stylesheets) loaded by previews.
  *
  * @param contentType - MIME content type of the asset.
  * @returns Headers dictionary for non-HTML assets.
@@ -235,12 +240,18 @@ function getAssetHeaders(contentType: string): HeadersInit {
     "Cache-Control": "public, max-age=86400, s-maxage=86400",
     "X-Content-Type-Options": "nosniff",
     "X-Frame-Options": "SAMEORIGIN",
+    // Intentionally retained for sandboxed preview contexts and cross-origin subresource loading
     "Access-Control-Allow-Origin": "*",
   };
 
-  // If asset is SVG, enforce sandbox CSP to prevent script execution on direct navigation
-  if (contentType === "image/svg+xml") {
-    headers["Content-Security-Policy"] = "sandbox; default-src 'none'; style-src 'unsafe-inline'; img-src data:; object-src 'none';";
+  const isStandardImage = contentType.startsWith("image/") && contentType !== "image/svg+xml";
+  const isFont = contentType.startsWith("font/");
+
+  // Enforce restrictive sandbox CSP on SVGs and non-image/non-font assets (JS, CSS, JSON, etc.)
+  // to isolate execution under an opaque origin if navigated to directly in top-level browser tab.
+  if (!isStandardImage && !isFont) {
+    headers["Content-Security-Policy"] =
+      "sandbox; default-src 'none'; style-src 'unsafe-inline'; img-src data:; object-src 'none';";
   }
 
   return headers;
@@ -273,11 +284,24 @@ export async function GET(
       targetStoragePath = queryPath.replace(/^\/+/, "");
     } else if (queryUrl) {
       const previewMarker = "/storage/v1/object/public/template-previews/";
-      const idx = queryUrl.indexOf(previewMarker);
-      if (idx !== -1) {
-        targetStoragePath = queryUrl.substring(idx + previewMarker.length);
-      } else {
-        return NextResponse.json({ error: "Invalid preview URL" }, { status: 400 });
+      try {
+        const parsedQueryUrl = new URL(queryUrl);
+        const storageOrigin = ALLOWED_ORIGIN ? new URL(ALLOWED_ORIGIN).origin : "";
+        if (storageOrigin && parsedQueryUrl.origin !== storageOrigin) {
+          return NextResponse.json({ error: "Preview URL origin is not permitted" }, { status: 400 });
+        }
+        if (parsedQueryUrl.pathname.startsWith(previewMarker)) {
+          targetStoragePath = parsedQueryUrl.pathname.substring(previewMarker.length);
+        } else {
+          return NextResponse.json({ error: "Invalid preview URL" }, { status: 400 });
+        }
+      } catch {
+        const idx = queryUrl.indexOf(previewMarker);
+        if (idx !== -1) {
+          targetStoragePath = queryUrl.substring(idx + previewMarker.length);
+        } else {
+          return NextResponse.json({ error: "Invalid preview URL" }, { status: 400 });
+        }
       }
     } else {
       return NextResponse.json({ error: "Missing preview path parameter" }, { status: 400 });
