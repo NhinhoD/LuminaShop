@@ -1,10 +1,10 @@
-﻿import { getOrderAction } from "@/server/presentation/actions/order";
+import { getOrderAction } from "@/server/presentation/actions/order";
 import { verifyOrderPaymentAction } from "@/server/presentation/actions/payment";
 import { OrderRealtimeTracker } from "@/client/components/orders/OrderRealtimeTracker";
 import { StatusBadge } from "@/client/components/orders/StatusBadge";
 import { CancelOrderButton } from "@/client/components/orders/CancelOrderButton";
 import { cn } from "@/shared/utils";
-import { formatCurrency, formatDate } from "@/shared/utils";
+import { formatCurrency, formatDate, resolveCleanPreviewUrl } from "@/shared/utils";
 import { BackButton } from "@/client/components/common/BackButton";
 import Link from "next/link";
 import { Package, MapPin, CreditCard, ShoppingBag, Download, ExternalLink, CheckCircle2, QrCode, AlertTriangle, RefreshCw } from "lucide-react";
@@ -270,7 +270,7 @@ export default async function OrderDetailPage({ params }: PageProps) {
                       
                       {item.demoUrl && (
                         <a
-                          href={item.demoUrl}
+                          href={resolveCleanPreviewUrl(item.demoUrl)}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="inline-flex items-center justify-center gap-2 bg-slate-50 hover:bg-slate-100 text-slate-700 px-5 py-2.5 rounded-xl font-medium border border-slate-200/80 transition-all text-xs"

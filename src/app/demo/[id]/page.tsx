@@ -1,24 +1,25 @@
-import { notFound } from "next/navigation";
-import { makeGetProductByIdUseCase } from "@/server/di/container";
+import { notFound, redirect } from "next/navigation";
 import { cookies } from "next/headers";
-import { getStaticDictionary } from "@/i18n/getDictionary";
-import DemoViewerClient from "@/client/components/demo/DemoViewerClient";
+import { makeGetProductByIdUseCase } from "@/server/di/container";
+import { resolveCleanPreviewUrl } from "@/shared/utils";
 
 interface DemoPageProps {
   params: Promise<{ id: string }>;
 }
 
 /**
- * Demo preview page for product templates.
- * Renders an interactive sandbox iframe viewer with device viewport controls and purchase CTA.
+ * Demo preview redirect route.
+ * Directly redirects to the full clean preview URL (/api/preview/previews/...).
+ *
+ * @param props - Component props containing the async params object with product ID.
+ * @returns Resolves with a Next.js redirect or error fallback UI.
  */
 export default async function DemoPage({ params }: DemoPageProps) {
   const cookieStore = await cookies();
   const locale = (cookieStore.get('NEXT_LOCALE')?.value as 'vi' | 'en') || 'vi';
-  const dict = getStaticDictionary(locale);
-  const demoDict = (dict?.demo as Record<string, string>) || {};
 
-  const { id } = await params;
+  const { id: rawId } = await params;
+  const id = rawId.trim().replace(/^["']|["']$/g, '').replace(/\/+$/, '');
   const getProductByIdUseCase = await makeGetProductByIdUseCase();
   const productResult = await getProductByIdUseCase.execute(id);
 
@@ -42,7 +43,7 @@ export default async function DemoPage({ params }: DemoPageProps) {
   const normalizedDemoUrl = product?.demoUrl?.trim() || "";
 
   const isUrlValid = Boolean(
-    normalizedDemoUrl && 
+    normalizedDemoUrl &&
     (normalizedDemoUrl.startsWith("http://") || normalizedDemoUrl.startsWith("https://") || normalizedDemoUrl.startsWith("/api/"))
   );
 
@@ -50,30 +51,6 @@ export default async function DemoPage({ params }: DemoPageProps) {
     notFound();
   }
 
-  /**
-   * Proxies Supabase Storage URLs through the Next.js API route to correct MIME types.
-   */
-  function getProxiedPreviewUrl(url: string): string {
-    if (url.includes("supabase.co/storage/")) {
-      return "/api/preview?url=" + encodeURIComponent(url);
-    }
-    return url;
-  }
-  
-  const resolvedIframeSrc = getProxiedPreviewUrl(normalizedDemoUrl);
-
-  return (
-    <DemoViewerClient
-      product={{
-        id: product.id,
-        title: product.title as Record<string, string>,
-        price: Number(product.price),
-        demoUrl: normalizedDemoUrl,
-      }}
-      resolvedIframeSrc={resolvedIframeSrc}
-      locale={locale}
-      buyNowText={demoDict.buyNow || (locale === "vi" ? "Mở khóa template ngay" : "Unlock Template Now")}
-      backText={demoDict.back || (locale === "vi" ? "Chi tiết" : "Back to Details")}
-    />
-  );
+  const resolvedIframeSrc = resolveCleanPreviewUrl(normalizedDemoUrl);
+  redirect(resolvedIframeSrc);
 }

@@ -53,3 +53,85 @@ export function resolveBaseUrl(rawHost?: string | null): string {
 
   return 'http://localhost:3000';
 }
+
+/**
+ * Supported query parameters for Supabase public storage URLs.
+ * Preserves storage download semantics in clean proxy URLs.
+ */
+const SUPPORTED_STORAGE_PARAMS = ['download'] as const;
+
+/**
+ * Extracts supported storage query parameters (e.g. ?download or ?download=name)
+ * from a URL search params object to preserve expected storage behaviors while
+ * filtering out extraneous or unsupported query parameters.
+ *
+ * @param searchParams - URLSearchParams object.
+ * @returns Query string with leading '?' or empty string if no supported parameters are present.
+ */
+function getSupportedStorageQuery(searchParams: URLSearchParams): string {
+  const supported = new URLSearchParams();
+  for (const key of SUPPORTED_STORAGE_PARAMS) {
+    if (searchParams.has(key)) {
+      const val = searchParams.get(key);
+      if (val) {
+        supported.set(key, val);
+      } else {
+        supported.append(key, '');
+      }
+    }
+  }
+
+  const queryStr = supported.toString();
+  if (!queryStr) return '';
+
+  return `?${queryStr.replace(/=(?=&|$)/g, '')}`;
+}
+
+/**
+ * Transforms a Supabase Storage public preview URL into a clean, white-labeled proxy URL.
+ * Restricts rewriting strictly to URLs originating from the configured NEXT_PUBLIC_SUPABASE_URL,
+ * completely stripping the project identifier and storage path to prevent SSRF probes and storage disclosure.
+ * Preserves supported storage query parameters (such as `download`) while omitting unsupported parameters.
+ *
+ * Examples:
+ * In:  https://xyz.supabase.co/storage/v1/object/public/template-previews/previews/sample/index.html
+ * Out: /api/preview/previews/sample/index.html
+ *
+ * In:  https://xyz.supabase.co/storage/v1/object/public/template-previews/previews/sample/file.pdf?download=sample.pdf
+ * Out: /api/preview/previews/sample/file.pdf?download=sample.pdf
+ *
+ * @param url - Raw candidate URL string.
+ * @returns Clean, white-labeled relative proxy path or original string if not matching storage origin.
+ */
+export function resolveCleanPreviewUrl(url?: string | null): string {
+  if (!url) return '';
+  const trimmed = url.trim();
+
+  let parsedUrl: URL;
+  let storageUrl: URL;
+  try {
+    parsedUrl = new URL(trimmed);
+    storageUrl = new URL(process.env.NEXT_PUBLIC_SUPABASE_URL || '');
+  } catch {
+    return trimmed;
+  }
+
+  if (parsedUrl.origin !== storageUrl.origin) return trimmed;
+
+  const storageQuery = getSupportedStorageQuery(parsedUrl.searchParams);
+  const hash = parsedUrl.hash;
+
+  const previewMarker = '/storage/v1/object/public/template-previews/';
+  if (parsedUrl.pathname.startsWith(previewMarker)) {
+    const relativePath = parsedUrl.pathname.substring(previewMarker.length);
+    return `/api/preview/${relativePath}${storageQuery}${hash}`;
+  }
+
+  const assetsMarker = '/storage/v1/object/public/template-assets/';
+  if (parsedUrl.pathname.startsWith(assetsMarker)) {
+    const relativePath = parsedUrl.pathname.substring(assetsMarker.length);
+    return `/api/preview/assets/${relativePath}${storageQuery}${hash}`;
+  }
+
+  return trimmed;
+}

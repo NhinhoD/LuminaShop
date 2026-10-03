@@ -7,7 +7,7 @@ import { useEffect, useRef, useState, useTransition } from "react";
 import { AnimatePresence, motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 
 import { ROUTES } from "@/shared/constants";
-import { formatCurrency } from "@/shared/utils";
+import { formatCurrency, resolveCleanPreviewUrl } from "@/shared/utils";
 import { useI18n } from "@/client/components/common/I18nContext";
 import { getLocalizedText } from "@/shared/utils/locale";
 import gsap from "gsap";
@@ -147,7 +147,10 @@ const CURATED_SAMPLE_TEMPLATES = [
 ];
 
 /**
- * High-End Subtle Kinetic 3D Tilt Card with Hairline Glass Borders
+ * High-End Subtle Kinetic 3D Tilt Card with Hairline Glass Borders and mouse spotlight effect.
+ *
+ * @param props - Component properties containing children and optional className.
+ * @returns Rendered JSX element with 3D spring tilt animations.
  */
 function KineticTiltCard({
   children,
@@ -209,6 +212,14 @@ function KineticTiltCard({
   );
 }
 
+/**
+ * Main Storefront Landing Page client component.
+ * Provides interactive hero preview sandbox, category switching, paginated featured templates,
+ * animated feature showcases, and customer testimonials.
+ *
+ * @param props - Landing page properties with featured products, categories, pagination, and translations.
+ * @returns Rendered JSX element for the landing page.
+ */
 export default function HomePageClient({ 
   featuredProducts, 
   totalProducts = featuredProducts.length,
@@ -251,18 +262,30 @@ export default function HomePageClient({
   const heroRotateX = useTransform(heroSpringY, [-0.5, 0.5], ["5deg", "-5deg"]);
   const heroRotateY = useTransform(heroSpringX, [-0.5, 0.5], ["-5deg", "5deg"]);
 
+  /**
+   * Tracks mouse movement over the hero preview window to compute tilt transformation.
+   *
+   * @param e - Mouse event on the container.
+   */
   const handleHeroMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
     heroX.set((e.clientX - rect.left) / rect.width - 0.5);
     heroY.set((e.clientY - rect.top) / rect.height - 0.5);
   };
 
+  /**
+   * Resets the 3D tilt spring rotation when the mouse leaves the hero area.
+   */
   const handleHeroMouseLeave = () => {
     heroX.set(0);
     heroY.set(0);
   };
 
-  // Render balanced, orphan-proof hero title rows conforming to enterprise typography standards
+  /**
+   * Renders the primary hero title row with non-breaking whitespace to prevent typographic orphans.
+   *
+   * @returns JSX element or formatted string for the first hero heading line.
+   */
   const renderHeroTitle1 = () => {
     const raw = dict?.home?.hero?.title1;
     if (
@@ -285,6 +308,11 @@ export default function HomePageClient({
     );
   };
 
+  /**
+   * Renders the secondary hero title row with localized and balanced word wrapping.
+   *
+   * @returns JSX element or formatted string for the second hero heading line.
+   */
   const renderHeroTitle2 = () => {
     const raw = dict?.home?.hero?.title2;
     if (
@@ -318,6 +346,11 @@ export default function HomePageClient({
   const safeCurrentPage = Math.min(currentPage, totalPages);
   const paginatedProducts = displayShowcaseProducts;
 
+  /**
+   * Navigates to a specific page index in the showcase grid.
+   *
+   * @param newPage - Target page index (1-based).
+   */
   const handlePageChange = (newPage: number) => {
     if (newPage < 1 || newPage > totalPages || newPage === safeCurrentPage) return;
     setCurrentPage(newPage);
@@ -337,6 +370,11 @@ export default function HomePageClient({
     }
   };
 
+  /**
+   * Selects an active category filter and resets showcase pagination to page 1.
+   *
+   * @param categoryFilter - Category slug identifier or 'all'.
+   */
   const handleCategorySelect = (categoryFilter: string) => {
     setActiveCategory(categoryFilter);
     setCurrentPage(1);
@@ -1374,7 +1412,7 @@ export default function HomePageClient({
                         <div className="grid grid-cols-2 gap-2">
                           {product.demoUrl ? (
                             <a
-                              href={product.demoUrl}
+                              href={resolveCleanPreviewUrl(product.demoUrl)}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="h-8.5 rounded-xl text-xs font-medium bg-slate-50 hover:bg-slate-100 text-slate-700 hover:text-slate-900 border border-slate-200/80 transition-all flex items-center justify-center gap-1 shadow-2xs active:scale-[0.98]"
