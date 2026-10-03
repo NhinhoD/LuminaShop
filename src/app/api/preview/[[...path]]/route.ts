@@ -258,13 +258,37 @@ function getAssetHeaders(contentType: string): HeadersInit {
 }
 
 /**
+ * Resolves the Content-Disposition header value for download requests.
+ * Uses custom filename if provided, otherwise extracts filename from storage path.
+ * Respects upstream Content-Disposition if already provided by Supabase Storage.
+ *
+ * @param objectPath - Supabase storage object path.
+ * @param customFilename - Optional custom filename requested via query parameter.
+ * @param upstreamDisposition - Optional Content-Disposition header from upstream response.
+ * @returns Formatted Content-Disposition header string.
+ */
+function resolveContentDisposition(
+  objectPath: string,
+  customFilename?: string,
+  upstreamDisposition?: string | null
+): string {
+  if (upstreamDisposition && upstreamDisposition.toLowerCase().includes("attachment")) {
+    return upstreamDisposition;
+  }
+  const fallbackFilename = objectPath.split("/").pop() || "download";
+  const chosenName = (customFilename?.trim() || fallbackFilename).replace(/["\r\n/\\]/g, "");
+  return `attachment; filename="${chosenName}"`;
+}
+
+/**
  * Preview Proxy Route Handler.
  * Supports both clean path routing (/api/preview/previews/...) and query parameter routing.
- * Provides origin sandbox isolation, memory budget enforcement, bounded streaming, and SVG script protection.
+ * Provides origin sandbox isolation, memory budget enforcement, bounded streaming, SVG script protection,
+ * and honors storage download semantics (?download parameter) by returning files as attachments.
  *
  * @param request - Next.js HTTP request object.
  * @param context - Route context containing async path parameters.
- * @returns HTTP response delivering the proxied preview resource.
+ * @returns HTTP response delivering the proxied preview resource or download.
  */
 export async function GET(
   request: NextRequest,
@@ -273,12 +297,12 @@ export async function GET(
   const { path: rawPathArray } = await context.params;
 
   let targetStoragePath = "";
+  const queryUrl = request.nextUrl.searchParams.get("url");
 
   if (rawPathArray && rawPathArray.length > 0) {
     targetStoragePath = rawPathArray.join("/");
   } else {
     const queryPath = request.nextUrl.searchParams.get("path");
-    const queryUrl = request.nextUrl.searchParams.get("url");
 
     if (queryPath) {
       targetStoragePath = queryPath.replace(/^\/+/, "");
@@ -313,6 +337,22 @@ export async function GET(
     return NextResponse.json({ error: "Invalid path traversal sequence" }, { status: 400 });
   }
 
+  // Check for download parameter in request query or inside queryUrl
+  let isDownload = request.nextUrl.searchParams.has("download");
+  let downloadFilename = request.nextUrl.searchParams.get("download") ?? "";
+
+  if (!isDownload && queryUrl) {
+    try {
+      const parsedQ = new URL(queryUrl);
+      if (parsedQ.searchParams.has("download")) {
+        isDownload = true;
+        downloadFilename = parsedQ.searchParams.get("download") ?? "";
+      }
+    } catch {
+      // Ignore URL parsing errors
+    }
+  }
+
   // Determine bucket and object path
   let bucket = "template-previews";
   let objectPath = targetStoragePath;
@@ -322,12 +362,24 @@ export async function GET(
     objectPath = targetStoragePath.substring("assets/".length);
   }
 
-  const internalTargetUrl = `${ALLOWED_ORIGIN}/storage/v1/object/public/${bucket}/${objectPath}`;
+  const upstreamQuery = isDownload
+    ? (downloadFilename ? `?download=${encodeURIComponent(downloadFilename)}` : "?download")
+    : "";
+  const internalTargetUrl = `${ALLOWED_ORIGIN}/storage/v1/object/public/${bucket}/${objectPath}${upstreamQuery}`;
 
   try {
     // 1. In-memory RAM cache check
     const cached = previewCache.get(internalTargetUrl);
     if (cached && Date.now() - cached.timestamp < CACHE_TTL_MS) {
+      if (isDownload) {
+        const headers = new Headers(getAssetHeaders(cached.contentType));
+        headers.set("Content-Disposition", resolveContentDisposition(objectPath, downloadFilename));
+        return new NextResponse(cached.body, {
+          status: 200,
+          headers,
+        });
+      }
+
       if (cached.isHtml && typeof cached.body === "string") {
         const lastSlash = targetStoragePath.lastIndexOf("/");
         const clientFolderPrefix = lastSlash !== -1 ? `/api/preview/${targetStoragePath.substring(0, lastSlash + 1)}` : "/api/preview/";
@@ -358,8 +410,39 @@ export async function GET(
     }
 
     const resolvedType = resolveContentType(targetStoragePath);
+    const upstreamDisposition = upstreamResponse.headers.get("content-disposition");
+    const dispositionHeader = isDownload
+      ? resolveContentDisposition(objectPath, downloadFilename, upstreamDisposition)
+      : null;
 
-    // Case A: HTML documents (enforce strict read limit before buffering into RAM for URL rewriting)
+    // Case A: Download request (?download parameter) - return as file attachment without HTML rewriting
+    if (isDownload) {
+      const contentLength = Number(upstreamResponse.headers.get("content-length") ?? 0);
+      const canCache = contentLength > 0 && contentLength <= MAX_CACHE_ITEM_SIZE_BYTES;
+
+      const headers = new Headers(getAssetHeaders(resolvedType));
+      if (dispositionHeader) {
+        headers.set("Content-Disposition", dispositionHeader);
+      }
+
+      if (canCache) {
+        const buffer = await readBoundedBuffer(upstreamResponse, MAX_CACHE_ITEM_SIZE_BYTES);
+        if (buffer) {
+          setCache(internalTargetUrl, { body: buffer, contentType: resolvedType, isHtml: false, timestamp: Date.now() });
+          return new NextResponse(buffer, {
+            status: 200,
+            headers,
+          });
+        }
+      }
+
+      return new NextResponse(upstreamResponse.body, {
+        status: 200,
+        headers,
+      });
+    }
+
+    // Case B: HTML documents for inline preview (enforce strict read limit before buffering into RAM for URL rewriting)
     if (isHtmlType(resolvedType)) {
       const rawHtml = await readBoundedText(upstreamResponse, MAX_CACHE_ITEM_SIZE_BYTES);
 
@@ -383,7 +466,7 @@ export async function GET(
       });
     }
 
-    // Case B: Non-HTML assets (CSS, JS, images, fonts, binaries)
+    // Case C: Non-HTML assets (CSS, JS, images, fonts, binaries)
     const contentLength = Number(upstreamResponse.headers.get("content-length") ?? 0);
     const canCache = contentLength > 0 && contentLength <= MAX_CACHE_ITEM_SIZE_BYTES;
 
