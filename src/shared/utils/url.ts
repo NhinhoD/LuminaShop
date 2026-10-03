@@ -84,7 +84,7 @@ function getSupportedStorageQuery(searchParams: URLSearchParams): string {
   const queryStr = supported.toString();
   if (!queryStr) return '';
 
-  return `?${queryStr.replace(/=(?:&|$)/g, '$1')}`;
+  return `?${queryStr.replace(/=(?=&|$)/g, '')}`;
 }
 
 /**
