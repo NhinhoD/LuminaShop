@@ -27,17 +27,16 @@ interface ProductFormData {
   techStack: string; // Comma separated for form input
 }
 
+import { generateSlug } from "@/shared/utils";
+
 /**
  * Sanitizes a product title into a URL-safe slug for storage paths.
+ *
+ * @param title - Raw product title string.
+ * @returns Clean URL-safe slug for storage paths.
  */
 function sanitizeName(title: string): string {
-  return title
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^a-z0-9]/g, "-")
-    .replace(/-+/g, "-")
-    .replace(/^-|-$/g, "");
+  return generateSlug(title);
 }
 
 interface FileToUpload {

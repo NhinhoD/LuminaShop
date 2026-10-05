@@ -5,8 +5,9 @@ export interface Category {
   description?: Record<string, string>;
   createdAt: Date;
   updatedAt: Date;
+  deletedAt?: Date | null;
   productCount?: number;
 }
 
-export type CreateCategoryDTO = Omit<Category, 'id' | 'createdAt' | 'updatedAt'>;
+export type CreateCategoryDTO = Omit<Category, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>;
 export type UpdateCategoryDTO = Partial<CreateCategoryDTO>;

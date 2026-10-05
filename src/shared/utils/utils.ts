@@ -26,11 +26,23 @@ export function formatDate(date: Date | string, locale: string = "vi") {
     year: "numeric",
   }).format(new Date(date));
 }
+
+/**
+ * Transforms an arbitrary text string into a URL-friendly slug,
+ * with comprehensive support for Vietnamese diacritics and character normalization.
+ *
+ * @param text - Input text string to slugify.
+ * @returns Clean, URL-safe slug string.
+ */
 export function generateSlug(text: string): string {
   return text
     .toLowerCase()
     .trim()
-    .replace(/[^\w\s-]/g, '')
+    .replace(/đ/g, 'd')
+    .replace(/Đ/g, 'd')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9\s-]/g, ' ')
     .replace(/[\s_-]+/g, '-')
     .replace(/^-+|-+$/g, '');
 }
