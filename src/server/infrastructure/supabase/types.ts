@@ -96,6 +96,7 @@ export interface CategoryRow {
   description: Record<string, string> | null;
   created_at: string;
   updated_at: string;
+  deleted_at?: string | null;
   products?: { count: number }[];
 }
 

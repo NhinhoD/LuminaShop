@@ -7,7 +7,7 @@ import { Monitor, Image as ImageIcon, ExternalLink, Lock } from "lucide-react";
 import Link from "next/link";
 import { useI18n } from "@/client/components/common/I18nContext";
 
-import { resolveCleanPreviewUrl } from "@/shared/utils";
+import { resolveCleanPreviewUrl, generateSlug } from "@/shared/utils";
 
 interface ProductMediaGalleryProps {
   productId: string;
@@ -70,14 +70,7 @@ function getDisplayMockUrl(url: string, fallbackTitle: string): { domain: string
   }
 
   // Fallback slug from product title
-  const slug = fallbackTitle
-    ? fallbackTitle
-        .toLowerCase()
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
-        .replace(/[^a-z0-9]+/g, "-")
-        .replace(/(^-|-$)/g, "")
-    : "preview";
+  const slug = fallbackTitle ? generateSlug(fallbackTitle) : "preview";
 
   return {
     domain: "demo.khoui.io.vn",

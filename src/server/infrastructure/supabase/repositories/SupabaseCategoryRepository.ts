@@ -1,4 +1,4 @@
-﻿import { ICategoryRepository } from '@/server/domain/repositories/ICategoryRepository';
+import { ICategoryRepository } from '@/server/domain/repositories/ICategoryRepository';
 import { Category, CreateCategoryDTO, UpdateCategoryDTO } from '@/server/domain/entities/Category';
 import { CategoryRow } from '../types';
 import { SupabaseClient } from '@supabase/supabase-js';
@@ -13,7 +13,9 @@ export class SupabaseCategoryRepository implements ICategoryRepository {
       .select(`
         *,
         products!products_category_id_fkey(count)
-      `, { count: 'exact' });
+      `, { count: 'exact' })
+      .is('deleted_at', null)
+      .is('products.deleted_at', null);
 
     if (filters?.search) {
       query = query.or(`name->>vi.ilike.%${filters.search}%,name->>en.ilike.%${filters.search}%`);
@@ -32,7 +34,8 @@ export class SupabaseCategoryRepository implements ICategoryRepository {
       if (error.code === 'PGRST103' || error.message?.includes('satisfiable')) {
         let countQuery = supabase
           .from('categories')
-          .select('id', { count: 'exact', head: true });
+          .select('id', { count: 'exact', head: true })
+          .is('deleted_at', null);
         if (filters?.search) {
           countQuery = countQuery.or(`name->>vi.ilike.%${filters.search}%,name->>en.ilike.%${filters.search}%`);
         }
@@ -59,7 +62,8 @@ export class SupabaseCategoryRepository implements ICategoryRepository {
       .from('categories')
       .select('*')
       .eq('id', id)
-      .single();
+      .is('deleted_at', null)
+      .maybeSingle();
 
     if (error || !data) return null;
     return this.mapToEntity(data);
@@ -71,7 +75,8 @@ export class SupabaseCategoryRepository implements ICategoryRepository {
       .from('categories')
       .select('*')
       .eq('slug', slug)
-      .single();
+      .is('deleted_at', null)
+      .maybeSingle();
 
     if (error || !data) return null;
     return this.mapToEntity(data);
@@ -113,9 +118,13 @@ export class SupabaseCategoryRepository implements ICategoryRepository {
 
   async delete(id: string): Promise<void> {
     const supabase = this.supabase;
+    const now = new Date().toISOString();
     const { error } = await supabase
       .from('categories')
-      .delete()
+      .update({
+        deleted_at: now,
+        updated_at: now,
+      })
       .eq('id', id);
 
     if (error) throw new Error(error.message);
@@ -129,6 +138,7 @@ export class SupabaseCategoryRepository implements ICategoryRepository {
       description: row.description || undefined,
       createdAt: new Date(row.created_at),
       updatedAt: new Date(row.updated_at),
+      deletedAt: row.deleted_at ? new Date(row.deleted_at) : null,
     };
   }
 }

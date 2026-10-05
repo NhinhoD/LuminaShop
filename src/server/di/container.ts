@@ -1,4 +1,4 @@
-﻿import { createClient as makeSupabaseClient } from '@/server/infrastructure/supabase/server';
+import { createClient as makeSupabaseClient } from '@/server/infrastructure/supabase/server';
 export { makeSupabaseClient };
 
 // Repositories & Services
@@ -175,8 +175,9 @@ export async function makeCreateCategoryUseCase() {
 }
 
 export async function makeDeleteCategoryUseCase() {
-  const repo = await makeCategoryRepository();
-  return new DeleteCategoryUseCase(repo);
+  const categoryRepo = await makeCategoryRepository();
+  const productRepo = await makeProductRepository();
+  return new DeleteCategoryUseCase(categoryRepo, productRepo);
 }
 
 export async function makeGetCategoriesUseCase() {
