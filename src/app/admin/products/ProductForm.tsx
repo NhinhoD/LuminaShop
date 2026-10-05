@@ -31,6 +31,9 @@ import { generateSlug } from "@/shared/utils";
 
 /**
  * Sanitizes a product title into a URL-safe slug for storage paths.
+ *
+ * @param title - Raw product title string.
+ * @returns Clean URL-safe slug for storage paths.
  */
 function sanitizeName(title: string): string {
   return generateSlug(title);

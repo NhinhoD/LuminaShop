@@ -7,6 +7,12 @@ import { Result, ok, fail } from '@/server/domain/shared/Result';
  * Prevents deletion if the category still contains active (non-deleted) products.
  */
 export class DeleteCategoryUseCase {
+  /**
+   * Initializes DeleteCategoryUseCase with required repository dependencies.
+   *
+   * @param categoryRepo - Repository for category data operations.
+   * @param productRepo - Repository for product data operations.
+   */
   constructor(
     private categoryRepo: ICategoryRepository,
     private productRepo: IProductRepository

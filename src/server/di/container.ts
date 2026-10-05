@@ -169,22 +169,42 @@ export async function makeRemoveCartItemUseCase() {
   return new RemoveCartItemUseCase(repo);
 }
 
+/**
+ * Factory creating CreateCategoryUseCase with repository injection.
+ *
+ * @returns Promise resolving to CreateCategoryUseCase.
+ */
 export async function makeCreateCategoryUseCase() {
   const repo = await makeCategoryRepository();
   return new CreateCategoryUseCase(repo);
 }
 
+/**
+ * Factory creating DeleteCategoryUseCase with injected category and product repositories.
+ *
+ * @returns Promise resolving to DeleteCategoryUseCase.
+ */
 export async function makeDeleteCategoryUseCase() {
   const categoryRepo = await makeCategoryRepository();
   const productRepo = await makeProductRepository();
   return new DeleteCategoryUseCase(categoryRepo, productRepo);
 }
 
+/**
+ * Factory creating GetCategoriesUseCase with repository injection.
+ *
+ * @returns Promise resolving to GetCategoriesUseCase.
+ */
 export async function makeGetCategoriesUseCase() {
   const repo = await makeCategoryRepository();
   return new GetCategoriesUseCase(repo);
 }
 
+/**
+ * Factory creating UpdateCategoryUseCase with repository injection.
+ *
+ * @returns Promise resolving to UpdateCategoryUseCase.
+ */
 export async function makeUpdateCategoryUseCase() {
   const repo = await makeCategoryRepository();
   return new UpdateCategoryUseCase(repo);

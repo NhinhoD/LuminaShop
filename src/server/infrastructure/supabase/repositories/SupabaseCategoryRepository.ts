@@ -6,6 +6,12 @@ import { SupabaseClient } from '@supabase/supabase-js';
 export class SupabaseCategoryRepository implements ICategoryRepository {
   constructor(private supabase: SupabaseClient) {}
 
+  /**
+   * Retrieves a paginated list of active categories along with active product counts.
+   *
+   * @param filters - Optional pagination parameters (limit, offset) and search keyword.
+   * @returns Object containing categories list and total active categories count.
+   */
   async findAll(filters?: { limit?: number; offset?: number; search?: string }): Promise<{ categories: Category[], total: number }> {
     const supabase = this.supabase;
     let query = supabase
@@ -56,6 +62,12 @@ export class SupabaseCategoryRepository implements ICategoryRepository {
     return { categories, total: count || 0 };
   }
 
+  /**
+   * Retrieves a single active category by its unique identifier.
+   *
+   * @param id - Category UUID string.
+   * @returns Pure Category entity if active and found, null otherwise.
+   */
   async findById(id: string): Promise<Category | null> {
     const supabase = this.supabase;
     const { data, error } = await supabase
@@ -69,6 +81,12 @@ export class SupabaseCategoryRepository implements ICategoryRepository {
     return this.mapToEntity(data);
   }
 
+  /**
+   * Retrieves an active category by its unique URL slug.
+   *
+   * @param slug - Category slug string.
+   * @returns Pure Category entity if active and found, null otherwise.
+   */
   async findBySlug(slug: string): Promise<Category | null> {
     const supabase = this.supabase;
     const { data, error } = await supabase
@@ -82,6 +100,12 @@ export class SupabaseCategoryRepository implements ICategoryRepository {
     return this.mapToEntity(data);
   }
 
+  /**
+   * Inserts a new category into the database.
+   *
+   * @param data - Category creation payload.
+   * @returns Newly created Category entity.
+   */
   async create(data: CreateCategoryDTO): Promise<Category> {
     const supabase = this.supabase;
     const { data: category, error } = await supabase
@@ -98,6 +122,13 @@ export class SupabaseCategoryRepository implements ICategoryRepository {
     return this.mapToEntity(category);
   }
 
+  /**
+   * Updates an existing category by its ID.
+   *
+   * @param id - UUID of category to update.
+   * @param data - Partial category update payload.
+   * @returns Updated Category entity.
+   */
   async update(id: string, data: UpdateCategoryDTO): Promise<Category> {
     const supabase = this.supabase;
     const { data: category, error } = await supabase
@@ -116,6 +147,12 @@ export class SupabaseCategoryRepository implements ICategoryRepository {
     return this.mapToEntity(category);
   }
 
+  /**
+   * Performs soft deletion of a category by setting its deleted_at timestamp.
+   *
+   * @param id - UUID of category to soft delete.
+   * @returns Promise resolving when soft deletion completes.
+   */
   async delete(id: string): Promise<void> {
     const supabase = this.supabase;
     const now = new Date().toISOString();
@@ -130,6 +167,12 @@ export class SupabaseCategoryRepository implements ICategoryRepository {
     if (error) throw new Error(error.message);
   }
 
+  /**
+   * Maps a Supabase database row to the pure domain Category entity.
+   *
+   * @param row - Raw CategoryRow from Supabase.
+   * @returns Mapped Category domain entity.
+   */
   private mapToEntity(row: CategoryRow): Category {
     return {
       id: row.id,
