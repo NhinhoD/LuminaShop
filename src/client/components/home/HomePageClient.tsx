@@ -33,6 +33,7 @@ import {
 import { toast } from "@/client/hooks/useToastStore";
 import type { vi } from "@/i18n/dictionaries/vi";
 import { PaginationControls } from "@/client/components/common/PaginationControls";
+import { InteractiveDotGrid } from "@/client/components/common/InteractiveDotGrid";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -69,9 +70,9 @@ const CURATED_SAMPLE_TEMPLATES = [
   {
     id: "sample-1",
     title: { vi: "E-Commerce Storefront Template", en: "E-Commerce Storefront Template" },
-    description: { 
-      vi: "Mẫu giao diện bán hàng tĩnh HTML5, CSS3, Bootstrap 5 với bố cục giỏ hàng, lưới sản phẩm và trang thanh toán chuẩn responsive.", 
-      en: "Static e-commerce storefront template built with HTML5, CSS3, and Bootstrap 5 with clean product grids." 
+    description: {
+      vi: "Mẫu giao diện bán hàng tĩnh HTML5, CSS3, Bootstrap 5 với bố cục giỏ hàng, lưới sản phẩm và trang thanh toán chuẩn responsive.",
+      en: "Static e-commerce storefront template built with HTML5, CSS3, and Bootstrap 5 with clean product grids."
     },
     imageUrl: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1200&auto=format&fit=crop&q=80",
     price: 499000,
@@ -82,9 +83,9 @@ const CURATED_SAMPLE_TEMPLATES = [
   {
     id: "sample-2",
     title: { vi: "Admin Dashboard UI Kit", en: "Admin Dashboard UI Kit" },
-    description: { 
-      vi: "Bộ giao diện quản trị tĩnh với bảng biểu, thẻ thống kê card, biểu đồ chart JS và menu sidebar co giãn mượt mà.", 
-      en: "Static admin dashboard UI kit with responsive tables, analytics widgets, chart layouts, and collapsible sidebar." 
+    description: {
+      vi: "Bộ giao diện quản trị tĩnh với bảng biểu, thẻ thống kê card, biểu đồ chart JS và menu sidebar co giãn mượt mà.",
+      en: "Static admin dashboard UI kit with responsive tables, analytics widgets, chart layouts, and collapsible sidebar."
     },
     imageUrl: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200&auto=format&fit=crop&q=80",
     price: 389000,
@@ -95,9 +96,9 @@ const CURATED_SAMPLE_TEMPLATES = [
   {
     id: "sample-3",
     title: { vi: "Developer & Designer Portfolio", en: "Developer & Designer Portfolio" },
-    description: { 
-      vi: "Mẫu portfolio cá nhân tĩnh với hiệu ứng cuộn mượt, giới thiệu kỹ năng, dự án tiêu biểu và form liên hệ tĩnh.", 
-      en: "Static portfolio template for designers and developers with smooth scrolling, skills showcase, and contact layout." 
+    description: {
+      vi: "Mẫu portfolio cá nhân tĩnh với hiệu ứng cuộn mượt, giới thiệu kỹ năng, dự án tiêu biểu và form liên hệ tĩnh.",
+      en: "Static portfolio template for designers and developers with smooth scrolling, skills showcase, and contact layout."
     },
     imageUrl: "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=1200&auto=format&fit=crop&q=80",
     price: 0,
@@ -108,9 +109,9 @@ const CURATED_SAMPLE_TEMPLATES = [
   {
     id: "sample-4",
     title: { vi: "Corporate Business Landing", en: "Corporate Business Landing" },
-    description: { 
-      vi: "Mẫu trang web giới thiệu công ty, doanh nghiệp chuẩn Bootstrap 5 với phần giới thiệu dịch vụ, bảng giá và đánh giá.", 
-      en: "Corporate business landing page template built with Bootstrap 5 featuring services, pricing, and testimonials." 
+    description: {
+      vi: "Mẫu trang web giới thiệu công ty, doanh nghiệp chuẩn Bootstrap 5 với phần giới thiệu dịch vụ, bảng giá và đánh giá.",
+      en: "Corporate business landing page template built with Bootstrap 5 featuring services, pricing, and testimonials."
     },
     imageUrl: "https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=1200&auto=format&fit=crop&q=80",
     price: 550000,
@@ -121,9 +122,9 @@ const CURATED_SAMPLE_TEMPLATES = [
   {
     id: "sample-5",
     title: { vi: "Creative Digital Studio Agency", en: "Creative Digital Studio Agency" },
-    description: { 
-      vi: "Template giới thiệu dịch vụ sáng tạo, agency quảng cáo với phong cách hiện đại, hiệu ứng hover và typography đẹp mắt.", 
-      en: "Modern agency website template with sleek typography, interactive hover animations, and clean CSS layout." 
+    description: {
+      vi: "Template giới thiệu dịch vụ sáng tạo, agency quảng cáo với phong cách hiện đại, hiệu ứng hover và typography đẹp mắt.",
+      en: "Modern agency website template with sleek typography, interactive hover animations, and clean CSS layout."
     },
     imageUrl: "https://images.unsplash.com/photo-1522542550221-31fd19575a2d?w=1200&auto=format&fit=crop&q=80",
     price: 299000,
@@ -134,9 +135,9 @@ const CURATED_SAMPLE_TEMPLATES = [
   {
     id: "sample-6",
     title: { vi: "Product & SaaS Landing Page", en: "Product & SaaS Landing Page" },
-    description: { 
-      vi: "Trang đích giới thiệu sản phẩm phần mềm với cấu trúc tính năng, bảng so sánh giá và khối kêu gọi hành động CTA rõ ràng.", 
-      en: "Software and product landing page template featuring feature grids, pricing comparison, and clear CTAs." 
+    description: {
+      vi: "Trang đích giới thiệu sản phẩm phần mềm với cấu trúc tính năng, bảng so sánh giá và khối kêu gọi hành động CTA rõ ràng.",
+      en: "Software and product landing page template featuring feature grids, pricing comparison, and clear CTAs."
     },
     imageUrl: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=1200&auto=format&fit=crop&q=80",
     price: 320000,
@@ -220,13 +221,13 @@ function KineticTiltCard({
  * @param props - Landing page properties with featured products, categories, pagination, and translations.
  * @returns Rendered JSX element for the landing page.
  */
-export default function HomePageClient({ 
-  featuredProducts, 
+export default function HomePageClient({
+  featuredProducts,
   totalProducts = featuredProducts.length,
   initialPage = 1,
   initialCategory = "all",
-  categories, 
-  dict 
+  categories,
+  dict
 }: HomePageClientProps) {
   const router = useRouter();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -336,7 +337,7 @@ export default function HomePageClient({
 
   const shouldShowSamples = activeCategory === "all" && totalProducts === 0 && featuredProducts.length === 0;
   const displayShowcaseProducts = (totalProducts > 0 || featuredProducts.length > 0)
-    ? featuredProducts 
+    ? featuredProducts
     : shouldShowSamples
       ? (CURATED_SAMPLE_TEMPLATES as unknown as Product[])
       : [];
@@ -395,7 +396,7 @@ export default function HomePageClient({
       role: "Freelance Web Developer",
       company: "Tuấn Studio",
       avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
-      content: locale === "vi" 
+      content: locale === "vi"
         ? "Mẫu template HTML5/CSS3 tổ chức cực kỳ khoa học. Mình chỉ cần tải file .zip về, thay ảnh và text là hoàn thiện website giới thiệu dịch vụ cho khách hàng ngay trong ngày."
         : "The HTML5/CSS3 template is exceptionally well-structured. Downloaded the .zip, changed text and images, and delivered a client site within a single day.",
       rating: 5,
@@ -444,11 +445,11 @@ export default function HomePageClient({
   ];
 
   const displayCategories = [
-    { 
-      name: dict?.home?.categories?.all || (locale === "vi" ? "Tất cả" : "All"), 
-      filter: "all", 
-      count: dict?.home?.categories?.premiumAndFree || (locale === "vi" ? "Kho giao diện" : "Full Catalog"), 
-      icon: Layout 
+    {
+      name: dict?.home?.categories?.all || (locale === "vi" ? "Tất cả" : "All"),
+      filter: "all",
+      count: dict?.home?.categories?.premiumAndFree || (locale === "vi" ? "Kho giao diện" : "Full Catalog"),
+      icon: Layout
     },
     ...categories.map(cat => {
       let icon = Monitor;
@@ -540,15 +541,15 @@ export default function HomePageClient({
       heroTl
         .fromTo(".hero-badge", { opacity: 0, y: 12, scale: 0.96 }, { opacity: 1, y: 0, scale: 1, duration: 0.3 })
         .fromTo(
-          ".hero-title-1", 
-          { opacity: 0, y: 16, rotateX: 10, transformOrigin: "bottom center" }, 
-          { opacity: 1, y: 0, rotateX: 0, duration: 0.35 }, 
+          ".hero-title-1",
+          { opacity: 0, y: 16, rotateX: 10, transformOrigin: "bottom center" },
+          { opacity: 1, y: 0, rotateX: 0, duration: 0.35 },
           "-=0.2"
         )
         .fromTo(
-          ".hero-title-2", 
-          { opacity: 0, y: 14, rotateX: 10, transformOrigin: "bottom center" }, 
-          { opacity: 1, y: 0, rotateX: 0, duration: 0.35 }, 
+          ".hero-title-2",
+          { opacity: 0, y: 14, rotateX: 10, transformOrigin: "bottom center" },
+          { opacity: 1, y: 0, rotateX: 0, duration: 0.35 },
           "-=0.25"
         )
         .fromTo(".hero-desc", { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.3 }, "-=0.2")
@@ -671,6 +672,43 @@ export default function HomePageClient({
         );
       }
 
+      // 13. Staggered reveal for all Section Headers
+      const sectionHeaders = containerRef.current?.querySelectorAll(".section-header");
+      sectionHeaders?.forEach((header) => {
+        gsap.fromTo(
+          header.children,
+          { opacity: 0, y: 20 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.6,
+            stagger: 0.1,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: header,
+              start: "top 85%",
+              toggleActions: "play none none none"
+            }
+          }
+        );
+      });
+
+      // 14. Hero exit parallax scrub (smoothly fades and pushes hero up on scroll)
+      const heroSection = containerRef.current?.querySelector(".hero-section");
+      if (heroSection) {
+        gsap.to(".hero-inner", {
+          yPercent: 15,
+          opacity: 0,
+          ease: "none",
+          scrollTrigger: {
+            trigger: heroSection,
+            start: "top top",
+            end: "bottom top",
+            scrub: true,
+          }
+        });
+      }
+
     }, containerRef);
 
     return () => {
@@ -679,22 +717,60 @@ export default function HomePageClient({
   }, []);
 
   return (
-    <div ref={containerRef} className="bg-white text-slate-900 font-sans selection:bg-primary/10 selection:text-primary relative">
+    <div ref={containerRef} className="isolate text-slate-900 font-sans selection:bg-primary/10 selection:text-primary relative">
 
       {/* ─── GSAP Global Scroll Progress Bar ─── */}
-      <div 
-        id="gsap-scroll-progress" 
-        className="fixed top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-primary via-cyan-400 to-indigo-600 origin-left z-50 pointer-events-none scale-x-0" 
+      <div
+        id="gsap-scroll-progress"
+        className="fixed top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-primary via-cyan-400 to-indigo-600 origin-left z-50 pointer-events-none scale-x-0"
       />
 
+      {/* ══════════ UNIFIED PAGE BACKGROUND ══════════ */}
+      {/* Fixed to viewport — consistent with the fixed canvas, no scroll conflict. */}
+      <div
+        aria-hidden="true"
+        className="fixed inset-0 pointer-events-none select-none overflow-hidden"
+        style={{ zIndex: 1 }}
+      >
+        {/* 1. Soft blue-to-white gradient wash */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#e8f2ff] via-white to-[#f0ebff]" />
+
+        {/* 2. Unified Texture Image (blended) */}
+        <div className="absolute inset-0 z-[1] pointer-events-none select-none">
+          <Image
+            src="/images/NewUI.webp"
+            alt=""
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover object-center opacity-30 mix-blend-multiply"
+          />
+        </div>
+
+        {/* 3. Dot grid – interactive canvas (dots scatter on mouse hover, rendering ON TOP of texture) */}
+        <InteractiveDotGrid />
+        {/* 3. Top-left aurora blob */}
+        <div className="absolute -top-40 -left-40 w-[640px] h-[640px] rounded-full bg-blue-300/20 blur-[90px]" />
+        {/* 4. Upper-right lavender accent */}
+        <div className="absolute -top-20 right-0 w-[480px] h-[480px] rounded-full bg-indigo-200/20 blur-[80px]" />
+        {/* 5. Mid-page sky bloom */}
+        <div className="absolute top-[45%] left-1/2 -translate-x-1/2 w-[900px] h-[340px] rounded-full bg-sky-100/40 blur-[80px]" />
+        {/* 6. Lower-left warm accent */}
+        <div className="absolute bottom-[20%] -left-20 w-[500px] h-[400px] rounded-full bg-blue-200/15 blur-[100px]" />
+        {/* 7. Bottom-right purple drift */}
+        <div className="absolute bottom-0 right-0 w-[560px] h-[400px] rounded-full bg-violet-200/20 blur-[90px]" />
+      </div>
+
       {/* ══════════ HERO SECTION ══════════ */}
-      <section className="relative min-h-[85vh] flex items-center pt-12 pb-20 overflow-hidden bg-white border-b border-slate-100/60">
-        <div className="max-w-[1360px] mx-auto px-6 sm:px-8 w-full relative z-10">
+      <section className="hero-section relative z-[10] min-h-[70vh] flex items-center pt-12 pb-12 overflow-hidden border-b border-slate-100/60">
+        {/* Hero content goes here */}
+
+        <div className="hero-inner max-w-[1360px] mx-auto px-6 sm:px-8 w-full relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 xl:gap-12 items-center">
 
             {/* Left Column: Headline & Content (Subtly elevated for optimal visual alignment with 3D device mockup) */}
             <div className="lg:col-span-6 xl:col-span-6 space-y-5 pr-0 xl:pr-4 lg:-translate-y-8 xl:-translate-y-12 2xl:-translate-y-14">
-              
+
               {/* Subtle Status Pill */}
               <div className="hero-badge inline-flex items-center gap-2 bg-slate-50 border border-slate-200/70 text-slate-700 rounded-full px-3 py-1 text-xs font-medium shadow-2xs">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
@@ -721,8 +797,8 @@ export default function HomePageClient({
               {/* Action Buttons with Magnetic GSAP Physics */}
               <div className="hero-cta flex flex-wrap gap-3 pt-1">
                 <motion.div whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }}>
-                  <Link 
-                    href={ROUTES.SHOP} 
+                  <Link
+                    href={ROUTES.SHOP}
                     className="magnetic-btn inline-flex items-center gap-2 bg-primary hover:bg-primary-dark text-white px-6 py-3 rounded-lg font-semibold transition-colors shadow-xs text-xs"
                   >
                     <span>{dict?.home?.hero?.cta1 || (locale === "vi" ? "Khám phá Template" : "Explore Templates")}</span>
@@ -731,8 +807,8 @@ export default function HomePageClient({
                 </motion.div>
 
                 <motion.div whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }}>
-                  <a 
-                    href="#advantages" 
+                  <a
+                    href="#advantages"
                     className="magnetic-btn inline-flex items-center gap-1.5 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200/80 px-5 py-3 rounded-lg font-medium transition-colors text-xs"
                   >
                     <Code2 size={14} className="text-slate-500" />
@@ -745,17 +821,17 @@ export default function HomePageClient({
               <div className="hero-social-proof flex items-center gap-3.5 pt-2">
                 <div className="flex -space-x-2 overflow-hidden">
                   {DEV_AVATARS.map((avatar, idx) => (
-                    <div 
-                      key={idx} 
+                    <div
+                      key={idx}
                       className="inline-block relative w-8 h-8 rounded-full ring-2 ring-white overflow-hidden shadow-2xs"
                       title={`${avatar.name} (${avatar.company})`}
                     >
-                      <Image 
-                        src={avatar.src} 
-                        alt={avatar.name} 
-                        fill 
+                      <Image
+                        src={avatar.src}
+                        alt={avatar.name}
+                        fill
                         sizes="32px"
-                        className="object-cover" 
+                        className="object-cover"
                       />
                     </div>
                   ))}
@@ -798,14 +874,14 @@ export default function HomePageClient({
             </div>
 
             {/* Right Column: 3D Isometric Device Ecosystem & Animated Floating Badges (IMG_1 & IMG_4 Compliance) */}
-            <div 
+            <div
               className="lg:col-span-6 xl:col-span-6 relative hidden lg:block perspective-[1400px]"
               onMouseMove={handleHeroMouseMove}
               onMouseLeave={handleHeroMouseLeave}
             >
               {/* ─── Luminous Ambient Backlight (Seamless, zero box borders) ─── */}
               <div className="absolute -inset-10 bg-[radial-gradient(ellipse_at_55%_45%,rgba(56,189,248,0.08)_0%,transparent_65%)] blur-3xl pointer-events-none" />
-              
+
               {/* Subtle Tech Diamond Sparkles (IMG_1 Accent) */}
               <div className="absolute -top-4 right-10 w-6 h-6 text-sky-400/40 pointer-events-none select-none">
                 <svg viewBox="0 0 24 24" fill="currentColor">
@@ -824,10 +900,10 @@ export default function HomePageClient({
               </div>
 
               {/* ─── Mockup Container with Independent Floor Shadow Layer & 3D Tilting Devices ─── */}
-              <div className="hero-mockup-container relative w-full aspect-[1500/1720] max-w-[620px] xl:max-w-[660px] ml-auto select-none">
+              <div className="hero-mockup-container relative w-full aspect-[1500/1720] max-w-[480px] xl:max-w-[510px] ml-auto select-none">
 
                 {/* ─── LAYER 0: Authentic Ground Shadow (Fixed on floor plane, underneath devices) ─── */}
-                <div 
+                <div
                   className="hero-ground-shadow-layer absolute inset-0 w-full h-full pointer-events-none z-0"
                   aria-hidden="true"
                 >
@@ -841,7 +917,7 @@ export default function HomePageClient({
                 </div>
 
                 {/* ─── LAYER 1: 3D Tilting Device Mockup (Hovers & tilts in 3D above the floor shadow) ─── */}
-                <motion.div 
+                <motion.div
                   style={{
                     rotateX: heroRotateX,
                     rotateY: heroRotateY,
@@ -862,7 +938,7 @@ export default function HomePageClient({
                   </div>
 
                   {/* ─── 3D Dynamic Orbital Particle System 1: Left Orbit (Circling the Tablet) ─── */}
-                  <div 
+                  <div
                     className="absolute left-[17.0%] top-[23.1%] pointer-events-none z-20"
                     style={{ transformStyle: "preserve-3d" }}
                   >
@@ -915,7 +991,7 @@ export default function HomePageClient({
                   </div>
 
                   {/* ─── 3D Dynamic Orbital Particle System 2: Right Orbit (Circling the Pedestal Loop) ─── */}
-                  <div 
+                  <div
                     className="absolute left-[75.7%] top-[69.3%] pointer-events-none z-20"
                     style={{ transformStyle: "preserve-3d" }}
                   >
@@ -987,7 +1063,7 @@ export default function HomePageClient({
 
                   {/* ─── 5 Dynamic Floating Precision Glass Badges (IMG_1 Compliance) ─── */}
                   {/* Badge 1: Clean Architecture (Top-Left - Over First Dashboard Card) */}
-                  <motion.div 
+                  <motion.div
                     animate={{ y: [-5, 5, -5] }}
                     transition={{ duration: 4.0, repeat: Infinity, ease: "easeInOut" }}
                     whileHover={{ scale: 1.07, y: -6 }}
@@ -1005,7 +1081,7 @@ export default function HomePageClient({
                   </motion.div>
 
                   {/* Badge 2: High Performance (Top-Right - Over Top-Right Dashboard Card) */}
-                  <motion.div 
+                  <motion.div
                     animate={{ y: [6, -6, 6] }}
                     transition={{ duration: 4.4, repeat: Infinity, ease: "easeInOut", delay: 0.3 }}
                     whileHover={{ scale: 1.07, y: -6 }}
@@ -1023,7 +1099,7 @@ export default function HomePageClient({
                   </motion.div>
 
                   {/* Badge 3: GSAP 60 FPS (Middle-Right - Next to Laptop Screen) */}
-                  <motion.div 
+                  <motion.div
                     animate={{ y: [-7, 7, -7] }}
                     transition={{ duration: 3.8, repeat: Infinity, ease: "easeInOut", delay: 0.6 }}
                     whileHover={{ scale: 1.07, y: -6 }}
@@ -1041,7 +1117,7 @@ export default function HomePageClient({
                   </motion.div>
 
                   {/* Badge 4: Tailwind CSS & Next.js (Bottom-Left - Over Lower Pedestal/Tablet) */}
-                  <motion.div 
+                  <motion.div
                     animate={{ y: [5, -5, 5] }}
                     transition={{ duration: 4.2, repeat: Infinity, ease: "easeInOut", delay: 0.9 }}
                     whileHover={{ scale: 1.07, y: -6 }}
@@ -1059,7 +1135,7 @@ export default function HomePageClient({
                   </motion.div>
 
                   {/* Badge 5: VietQR Instant Pay (Bottom-Right - Over Lower Right Pedestal Floor) */}
-                  <motion.div 
+                  <motion.div
                     animate={{ y: [-6, 6, -6] }}
                     transition={{ duration: 4.6, repeat: Infinity, ease: "easeInOut", delay: 1.2 }}
                     whileHover={{ scale: 1.07, y: -6 }}
@@ -1084,7 +1160,7 @@ export default function HomePageClient({
       </section>
 
       {/* ══════════ REFINED TICKER ══════════ */}
-      <div className="bg-slate-900 py-2.5 overflow-hidden border-y border-slate-800/40 text-[11.5px] font-sans">
+      <div className="relative z-[10] bg-slate-900 py-5 overflow-hidden border-y border-slate-800/40 text-[13px] font-sans">
         <div className="flex gap-8 whitespace-nowrap animate-[marquee-scroll_28s_linear_infinite]">
           {[...MARQUEE_ITEMS, ...MARQUEE_ITEMS, ...MARQUEE_ITEMS].map((item, i) => (
             <div key={`${item}-${i}`} className="inline-flex items-center gap-2.5 text-slate-400 font-medium select-none">
@@ -1096,10 +1172,10 @@ export default function HomePageClient({
       </div>
 
       {/* ══════════ BENTO GRID (ENGINEERING SPECS) ══════════ */}
-      <section id="advantages" ref={advantagesRef} className="py-20 bg-white">
+      <section id="advantages" ref={advantagesRef} className="py-20 relative z-[10]">
         <div className="max-w-[1360px] mx-auto px-6 sm:px-8">
 
-          <div className="text-center max-w-2xl mx-auto mb-14 space-y-2">
+          <div className="section-header text-center max-w-2xl mx-auto mb-14 space-y-2">
             <span className="text-xs font-semibold text-primary uppercase tracking-wider block">
               {locale === "vi" ? "Cấu trúc & Tiêu chuẩn Template" : "Template Structure & Standards"}
             </span>
@@ -1107,15 +1183,15 @@ export default function HomePageClient({
               {locale === "vi" ? "Template Tối Ưu Cho Web Designer & Lập Trình Viên" : "Engineered for Web Designers & Frontend Developers"}
             </h2>
             <p className="text-slate-500 text-sm leading-relaxed max-w-lg mx-auto font-normal">
-              {locale === "vi" 
-                ? "Loại bỏ hoàn toàn cài đặt rườm rà. Bạn nhận trọn bộ file tĩnh HTML, CSS, JavaScript sạch sẽ, dễ dàng nhúng vào bất kỳ dự án hay CMS nào." 
+              {locale === "vi"
+                ? "Loại bỏ hoàn toàn cài đặt rườm rà. Bạn nhận trọn bộ file tĩnh HTML, CSS, JavaScript sạch sẽ, dễ dàng nhúng vào bất kỳ dự án hay CMS nào."
                 : "Zero setup overhead. Receive clean HTML, CSS, and JavaScript files ready to embed into any web project or CMS."}
             </p>
           </div>
 
           {/* Asymmetric Bento Box */}
           <div className="grid grid-cols-1 md:grid-cols-12 gap-5 items-stretch">
-            
+
             {/* Card 1: Large Bento (Directory Structure) */}
             <KineticTiltCard className="bento-card md:col-span-8 bg-slate-900 text-white rounded-2xl p-7 sm:p-9 border border-slate-800/60 overflow-hidden shadow-lg">
               <div className="space-y-3">
@@ -1127,8 +1203,8 @@ export default function HomePageClient({
                   {locale === "vi" ? "Cấu Trúc Tệp Tĩnh Khoa Học & Dễ Tùy Biến" : "Clean & Modular Static File Architecture"}
                 </h3>
                 <p className="text-slate-400 text-xs sm:text-sm leading-relaxed max-w-xl font-normal">
-                  {locale === "vi" 
-                    ? "Tách biệt rõ ràng giữa file HTML semantic, bảng định dạng CSS/Bootstrap, hiệu ứng JavaScript và thư mục hình ảnh assets. Dễ dàng đổi logo, màu sắc, chữ và ghép nối vào bất kỳ hệ thống CMS nào." 
+                  {locale === "vi"
+                    ? "Tách biệt rõ ràng giữa file HTML semantic, bảng định dạng CSS/Bootstrap, hiệu ứng JavaScript và thư mục hình ảnh assets. Dễ dàng đổi logo, màu sắc, chữ và ghép nối vào bất kỳ hệ thống CMS nào."
                     : "Clear separation between semantic HTML, modular CSS/Bootstrap, interactive JavaScript, and assets. Easily modify colors, text, and images or integrate into any CMS."}
                 </p>
               </div>
@@ -1150,7 +1226,7 @@ export default function HomePageClient({
             </KineticTiltCard>
 
             {/* Card 2: VietQR Automated Fulfillment */}
-            <KineticTiltCard className="bento-card md:col-span-4 bg-slate-50/60 border border-slate-100 rounded-2xl p-7 hover:bg-white hover:border-slate-200 transition-all">
+            <KineticTiltCard className="bento-card md:col-span-4 bg-white shadow-sm border border-slate-100/60 rounded-2xl p-7 hover:shadow-md hover:border-slate-200 transition-all">
               <div>
                 <div className="w-9 h-9 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center mb-4">
                   <Zap size={18} />
@@ -1172,7 +1248,7 @@ export default function HomePageClient({
             </KineticTiltCard>
 
             {/* Card 3: Performance & Core Web Vitals */}
-            <KineticTiltCard className="bento-card md:col-span-6 bg-slate-50/60 border border-slate-100 rounded-2xl p-7 hover:bg-white hover:border-slate-200 transition-all">
+            <KineticTiltCard className="bento-card md:col-span-6 bg-white shadow-sm border border-slate-100/60 rounded-2xl p-7 hover:shadow-md hover:border-slate-200 transition-all">
               <div className="flex items-start justify-between">
                 <div>
                   <div className="w-9 h-9 rounded-lg bg-primary/10 text-primary flex items-center justify-center mb-4">
@@ -1200,7 +1276,7 @@ export default function HomePageClient({
             </KineticTiltCard>
 
             {/* Card 4: Full Unencrypted .ZIP Package */}
-            <KineticTiltCard className="bento-card md:col-span-6 bg-slate-50/60 border border-slate-100 rounded-2xl p-7 hover:bg-white hover:border-slate-200 transition-all">
+            <KineticTiltCard className="bento-card md:col-span-6 bg-white shadow-sm border border-slate-100/60 rounded-2xl p-7 hover:shadow-md hover:border-slate-200 transition-all">
               <div>
                 <div className="w-9 h-9 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center mb-4">
                   <FolderGit2 size={18} />
@@ -1231,10 +1307,10 @@ export default function HomePageClient({
       </section>
 
       {/* ══════════ CATEGORIES NAVIGATION ══════════ */}
-      <section ref={categoriesRef} className="py-14 bg-slate-50/50 border-t border-slate-100">
+      <section ref={categoriesRef} className="relative z-[10] py-14 border-t border-white/40">
         <div className="max-w-[1360px] mx-auto px-6 sm:px-8">
 
-          <div className="text-center max-w-2xl mx-auto mb-10 space-y-1">
+          <div className="section-header text-center max-w-2xl mx-auto mb-10 space-y-1">
             <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider block">
               {locale === "vi" ? "Danh mục giao diện" : "Template Catalog"}
             </span>
@@ -1253,17 +1329,15 @@ export default function HomePageClient({
                   whileHover={{ scale: 1.01 }}
                   whileTap={{ scale: 0.99 }}
                   onClick={() => handleCategorySelect(cat.filter)}
-                  className={`cat-card text-left rounded-xl p-4 border transition-all duration-200 cursor-pointer ${
-                    isSelected
-                      ? "bg-primary border-primary text-white shadow-xs"
-                      : "bg-white border-slate-100 text-slate-800 hover:border-slate-200"
-                  }`}
+                  className={`cat-card text-left rounded-xl p-4 border transition-all duration-200 cursor-pointer ${isSelected
+                    ? "bg-primary border-primary text-white shadow-xs"
+                    : "bg-white border-slate-100 text-slate-800 hover:border-slate-200"
+                    }`}
                 >
-                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all ${
-                    isSelected
-                      ? "bg-white/20 text-white"
-                      : "bg-slate-100 text-slate-600"
-                  } mb-2.5`}>
+                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all ${isSelected
+                    ? "bg-white/20 text-white"
+                    : "bg-slate-100 text-slate-600"
+                    } mb-2.5`}>
                     <Icon size={16} />
                   </div>
                   <h3 className={`font-semibold text-xs mb-0.5 ${isSelected ? "text-white" : "text-slate-900"}`}>{cat.name}</h3>
@@ -1277,10 +1351,10 @@ export default function HomePageClient({
       </section>
 
       {/* ══════════ SHOWCASE TEMPLATES GRID ══════════ */}
-      <section ref={showcaseRef} id="showcase" className="py-20 bg-white">
+      <section ref={showcaseRef} id="showcase" className="relative z-[10] py-20 border-t border-white/40">
         <div className="max-w-[1360px] mx-auto px-6 sm:px-8">
 
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 border-b border-slate-100 pb-5">
+          <div className="section-header flex flex-col md:flex-row justify-between items-start md:items-end mb-10 border-b border-slate-100 pb-5">
             <div className="space-y-1">
               <span className="text-xs font-semibold text-primary uppercase tracking-wider block">
                 {locale === "vi" ? "Mẫu template nổi bật" : "Featured Templates"}
@@ -1289,8 +1363,8 @@ export default function HomePageClient({
                 {dict?.home?.showcase?.title || (locale === "vi" ? "Giao diện sẵn sàng kích hoạt" : "Ready-to-Deploy Templates")}
               </h2>
             </div>
-            <Link 
-              href={ROUTES.SHOP} 
+            <Link
+              href={ROUTES.SHOP}
               className="magnetic-btn text-primary hover:text-primary-dark font-semibold text-xs mt-3 md:mt-0 flex items-center gap-1 transition-colors"
             >
               <span>{dict?.home?.showcase?.viewAll || (locale === "vi" ? "Xem toàn bộ template" : "View All Templates")}</span>
@@ -1305,9 +1379,8 @@ export default function HomePageClient({
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -16 }}
               transition={{ duration: 0.3, ease: [0.25, 1, 0.5, 1] }}
-              className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 transition-opacity duration-200 ${
-                isPending ? "opacity-60 pointer-events-none" : "opacity-100"
-              }`}
+              className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 transition-opacity duration-200 ${isPending ? "opacity-60 pointer-events-none" : "opacity-100"
+                }`}
             >
               {paginatedProducts.map((product) => {
                 const isFree = product.price === 0;
@@ -1338,9 +1411,8 @@ export default function HomePageClient({
 
                       {/* Status Badges */}
                       <div className="absolute top-3 left-3 flex gap-2">
-                        <span className={`px-2 py-0.5 rounded text-[10px] font-semibold uppercase font-mono ${
-                          isFree ? "bg-emerald-500 text-white" : "bg-slate-900/90 text-white"
-                        }`}>
+                        <span className={`px-2 py-0.5 rounded text-[10px] font-semibold uppercase font-mono ${isFree ? "bg-emerald-500 text-white" : "bg-slate-900/90 text-white"
+                          }`}>
                           {isFree ? (dict?.home?.showcase?.freeBadge || (locale === "vi" ? "Miễn phí" : "Free")) : "Premium"}
                         </span>
                       </div>
@@ -1469,10 +1541,10 @@ export default function HomePageClient({
       </section>
 
       {/* ══════════ DEVELOPER ENDORSEMENTS SECTION ══════════ */}
-      <section ref={testimonialsRef} className="py-20 bg-slate-50/50 border-t border-slate-100">
+      <section ref={testimonialsRef} className="relative z-[10] py-20 border-t border-white/40">
         <div className="max-w-[1360px] mx-auto px-6 sm:px-8">
 
-          <div className="text-center max-w-2xl mx-auto mb-14 space-y-1">
+          <div className="section-header text-center max-w-2xl mx-auto mb-14 space-y-1">
             <span className="text-xs font-semibold text-primary uppercase tracking-wider block">
               {locale === "vi" ? "Đánh giá thực tế" : "Engineer Reviews"}
             </span>
@@ -1517,10 +1589,10 @@ export default function HomePageClient({
       </section>
 
       {/* ══════════ SYSTEM TIMELINE JOURNEY ══════════ */}
-      <section ref={journeyRef} className="py-20 bg-white border-t border-slate-100 relative">
+      <section ref={journeyRef} className="relative z-[10] py-20 border-t border-white/40">
         <div className="max-w-[1360px] mx-auto px-6 sm:px-8 relative">
 
-          <div className="text-center max-w-2xl mx-auto mb-14 space-y-1">
+          <div className="section-header text-center max-w-2xl mx-auto mb-14 space-y-1">
             <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider block">
               {locale === "vi" ? "Quy trình triển khai" : "Deployment Workflow"}
             </span>
@@ -1536,9 +1608,9 @@ export default function HomePageClient({
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 relative z-10">
             {journeySteps.map((step) => (
-              <div 
-                key={step.step} 
-                className="jr-step bg-slate-50/70 border border-slate-100 rounded-xl p-6 shadow-2xs flex gap-4 items-start hover:bg-white hover:border-slate-200 transition-all cursor-default"
+              <div
+                key={step.step}
+                className="jr-step bg-white shadow-sm border border-slate-100 rounded-xl p-6 flex gap-4 items-start hover:shadow-md hover:border-slate-200 transition-all cursor-default"
               >
                 <div className="w-8 h-8 bg-slate-900 text-white font-mono font-bold text-xs rounded-lg flex items-center justify-center flex-shrink-0">
                   {step.step}
@@ -1555,7 +1627,7 @@ export default function HomePageClient({
       </section>
 
       {/* ══════════ NEWSLETTER ══════════ */}
-      <section className="relative py-20 overflow-hidden bg-slate-900 text-white border-t border-slate-800/40">
+      <section className="relative z-[10] py-20 overflow-hidden bg-slate-900 text-white border-t border-slate-800/40">
         <div className="max-w-[1360px] mx-auto px-6 sm:px-8 relative z-10">
 
           <div className="bg-slate-950/60 border border-slate-800/50 rounded-2xl p-8 sm:p-12 text-center max-w-2xl mx-auto space-y-4 shadow-xl">
@@ -1566,8 +1638,8 @@ export default function HomePageClient({
               {locale === "vi" ? "Nhận thông báo khi có Template mới" : "Get notified on new template releases"}
             </h2>
             <p className="text-slate-400 text-xs sm:text-sm max-w-md mx-auto leading-relaxed font-normal">
-              {locale === "vi" 
-                ? "Cập nhật các mẫu giao diện website tĩnh mới nhất, bộ icon và tài nguyên thiết kế hữu ích từ KhoUI." 
+              {locale === "vi"
+                ? "Cập nhật các mẫu giao diện website tĩnh mới nhất, bộ icon và tài nguyên thiết kế hữu ích từ KhoUI."
                 : "Subscribe to receive updates on new static template releases, icon packs, and design resources from KhoUI."}
             </p>
 
@@ -1599,7 +1671,7 @@ export default function HomePageClient({
                 placeholder={locale === "vi" ? "Địa chỉ email của bạn..." : "Your work email address..."}
                 className="flex-grow bg-slate-900 border border-slate-700/60 rounded-lg px-3.5 py-2.5 text-white placeholder:text-slate-500 outline-none focus:border-primary text-xs font-normal"
               />
-              <button 
+              <button
                 type="submit"
                 className="magnetic-btn bg-primary hover:bg-primary-dark text-white px-5 py-2.5 rounded-lg text-xs font-semibold transition-colors flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
               >

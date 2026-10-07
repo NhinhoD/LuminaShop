@@ -60,7 +60,7 @@ export function Footer() {
   ];
 
   return (
-    <footer className="bg-slate-950 text-white border-t border-slate-800/40 mt-auto font-sans">
+    <footer className="relative z-[10] bg-slate-950 text-white border-t border-slate-800/40 mt-auto font-sans">
       
       {/* ─── Technology & Quality Trust Bar ─── */}
       <div className="border-b border-slate-900 bg-slate-900/40 py-6">
