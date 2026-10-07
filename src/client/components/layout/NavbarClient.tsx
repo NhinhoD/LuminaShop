@@ -9,17 +9,17 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ROUTES } from "@/shared/constants";
 import NavbarCartIcon from "./NavbarCartIcon";
 import gsap from "gsap";
-import { 
-  Menu, 
-  X, 
-  Search, 
-  User, 
-  ArrowRight, 
-  Zap, 
-  ShieldCheck, 
-  Layout, 
-  Cpu, 
-  Code2, 
+import {
+  Menu,
+  X,
+  Search,
+  User,
+  ArrowRight,
+  Zap,
+  ShieldCheck,
+  Layout,
+  Cpu,
+  Code2,
   CreditCard,
   ChevronDown,
   Flame,
@@ -66,6 +66,16 @@ const TEMPLATE_MEGA_ITEMS = [
   },
 ];
 
+/**
+ * NavbarClient
+ * 
+ * Interactive client-side navigation bar component.
+ * Features glassmorphism effects, scroll-based background transitions,
+ * GSAP entrance animations, and handles cart drawer triggers.
+ *
+ * @param props - User session data, auth errors, and dynamic navigation links
+ * @returns The rendered navigation bar component
+ */
 export default function NavbarClient({ user, authError, navLinks }: NavbarClientProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -145,9 +155,9 @@ export default function NavbarClient({ user, authError, navLinks }: NavbarClient
   return (
     <>
       {/* ─── Topbar Announcement (Subtle, Refined Dark Strip) ─── */}
-      <div className="bg-slate-900/95 py-1.5 text-[12px] hidden md:block border-b border-slate-800/40 text-slate-400 font-sans">
+      <div className="relative z-[100] bg-slate-900/95 py-1.5 text-[12px] hidden md:block border-b border-slate-800/40 text-slate-400 font-sans">
         <div className="max-w-[1360px] mx-auto px-6 sm:px-8 flex justify-between items-center">
-          
+
           {/* Left: System Status */}
           <div className="flex items-center gap-4 text-[11.5px]">
             <div className="flex items-center gap-2">
@@ -183,30 +193,29 @@ export default function NavbarClient({ user, authError, navLinks }: NavbarClient
       {/* ─── Main Glassmorphic Navbar ─── */}
       <nav
         ref={headerRef}
-        className={`sticky top-0 z-[990] transition-all duration-200 font-sans ${
-          isScrolled
-            ? "bg-white/95 backdrop-blur-md shadow-xs border-b border-slate-100 h-[62px]"
-            : "bg-white/98 backdrop-blur-xs border-b border-slate-100/60 h-[68px]"
-        } flex items-center`}
+        className={`sticky top-0 z-[990] transition-all duration-300 font-sans hover:bg-white/95 hover:backdrop-blur-md ${isScrolled
+          ? "bg-white/60 backdrop-blur-md shadow-xs border-b border-slate-100 h-[62px]"
+          : "bg-transparent border-b border-white/20 h-[68px]"
+          } flex items-center`}
       >
         <div className="max-w-[1360px] mx-auto px-6 sm:px-8 flex justify-between items-center w-full">
-          
+
           {/* Logo */}
           <div className="flex items-center gap-2.5">
             <Link ref={logoRef} href={ROUTES.HOME} className="flex items-center gap-2">
-              <Image 
-                src="/LogoKhoUI.png" 
-                alt="KhoUI Logo" 
-                width={120} 
-                height={40} 
-                priority 
-                className="h-9 w-auto object-contain" 
+              <Image
+                src="/LogoKhoUI.png"
+                alt="KhoUI Logo"
+                width={120}
+                height={40}
+                priority
+                className="h-9 w-auto object-contain"
               />
             </Link>
           </div>
 
           {/* Desktop Navigation Links with Subtle Sliding Highlight */}
-          <div 
+          <div
             className="hidden lg:flex items-center gap-0.5 relative"
             onMouseLeave={() => setHoveredNav(null)}
           >
@@ -229,9 +238,8 @@ export default function NavbarClient({ user, authError, navLinks }: NavbarClient
                 >
                   <Link
                     href={link.href}
-                    className={`relative z-10 flex items-center gap-1 text-[13px] font-medium px-3.5 py-2 rounded-lg transition-colors ${
-                      isActive ? "text-primary font-semibold" : "text-slate-600 hover:text-slate-900"
-                    }`}
+                    className={`relative z-10 flex items-center gap-1 text-[13px] font-medium px-3.5 py-2 rounded-lg transition-colors ${isActive ? "text-primary font-semibold" : "text-slate-600 hover:text-slate-900"
+                      }`}
                   >
                     <span>{link.label}</span>
                     {isShop && (
@@ -265,7 +273,7 @@ export default function NavbarClient({ user, authError, navLinks }: NavbarClient
                             <span className="text-[11px] font-medium text-slate-400 uppercase tracking-wider">
                               {locale === "vi" ? "Danh mục phổ biến" : "Popular categories"}
                             </span>
-                            <Link 
+                            <Link
                               href={ROUTES.SHOP}
                               onClick={() => setIsMegaMenuOpen(false)}
                               className="text-xs font-semibold text-primary hover:underline flex items-center gap-1"
@@ -309,7 +317,7 @@ export default function NavbarClient({ user, authError, navLinks }: NavbarClient
                               <Flame size={13} className="text-amber-500" />
                               <span>{locale === "vi" ? "Template miễn phí cho cộng đồng" : "Free static templates"}</span>
                             </div>
-                            <Link 
+                            <Link
                               href={`${ROUTES.SHOP}?price=free`}
                               onClick={() => setIsMegaMenuOpen(false)}
                               className="text-primary font-medium hover:underline text-[11px]"
@@ -328,7 +336,7 @@ export default function NavbarClient({ user, authError, navLinks }: NavbarClient
 
           {/* Right Action Bar & CTAs */}
           <div className="flex items-center gap-1.5 sm:gap-2">
-            
+
             {/* Quick Search Trigger */}
             <button
               onClick={() => setIsSearchOpen(true)}

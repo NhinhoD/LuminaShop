@@ -20,6 +20,15 @@ import {
 } from "lucide-react";
 import { useI18n } from "@/client/components/common/I18nContext";
 
+/**
+ * Footer
+ * 
+ * Global footer component for the storefront application.
+ * Contains branding, navigation links, legal information, and payment methods.
+ * Ensures high z-index to stay above background layers.
+ *
+ * @returns The rendered footer section
+ */
 export function Footer() {
   const { dict, locale } = useI18n();
 
@@ -60,7 +69,7 @@ export function Footer() {
   ];
 
   return (
-    <footer className="bg-slate-950 text-white border-t border-slate-800/40 mt-auto font-sans">
+    <footer className="relative z-[10] bg-slate-950 text-white border-t border-slate-800/40 mt-auto font-sans">
       
       {/* ─── Technology & Quality Trust Bar ─── */}
       <div className="border-b border-slate-900 bg-slate-900/40 py-6">
