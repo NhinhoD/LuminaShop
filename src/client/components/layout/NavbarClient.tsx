@@ -66,6 +66,16 @@ const TEMPLATE_MEGA_ITEMS = [
   },
 ];
 
+/**
+ * NavbarClient
+ * 
+ * Interactive client-side navigation bar component.
+ * Features glassmorphism effects, scroll-based background transitions,
+ * GSAP entrance animations, and handles cart drawer triggers.
+ *
+ * @param props - User session data, auth errors, and dynamic navigation links
+ * @returns The rendered navigation bar component
+ */
 export default function NavbarClient({ user, authError, navLinks }: NavbarClientProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);

@@ -673,29 +673,32 @@ export default function HomePageClient({
       }
 
       // 13. Staggered reveal for all Section Headers
+      const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       const sectionHeaders = containerRef.current?.querySelectorAll(".section-header");
       sectionHeaders?.forEach((header) => {
-        gsap.fromTo(
-          header.children,
-          { opacity: 0, y: 20 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.6,
-            stagger: 0.1,
-            ease: "power2.out",
-            scrollTrigger: {
-              trigger: header,
-              start: "top 85%",
-              toggleActions: "play none none none"
+        if (!prefersReducedMotion) {
+          gsap.fromTo(
+            header.children,
+            { opacity: 0, y: 20 },
+            {
+              opacity: 1,
+              y: 0,
+              duration: 0.6,
+              stagger: 0.1,
+              ease: "power2.out",
+              scrollTrigger: {
+                trigger: header,
+                start: "top 85%",
+                toggleActions: "play none none none"
+              }
             }
-          }
-        );
+          );
+        }
       });
 
       // 14. Hero exit parallax scrub (smoothly fades and pushes hero up on scroll)
       const heroSection = containerRef.current?.querySelector(".hero-section");
-      if (heroSection) {
+      if (heroSection && !prefersReducedMotion) {
         gsap.to(".hero-inner", {
           yPercent: 15,
           opacity: 0,

@@ -27,6 +27,8 @@ interface Dot {
  * Renders a full-viewport canvas (fixed) with a dot grid.
  * Dots repel away from the mouse cursor with spring physics.
  * Brightness increases proportionally with displacement.
+ * Optimized to pause rendering when idle to save resources,
+ * and respects 'prefers-reduced-motion' system preferences.
  */
 export function InteractiveDotGrid() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -56,6 +58,7 @@ export function InteractiveDotGrid() {
     // ── Main animation loop ─────────────────────────────────────────
     function tick() {
       ctx!.clearRect(0, 0, canvas!.width, canvas!.height);
+      let needsRedraw = false;
 
       for (const d of dots) {
         // Mouse repulsion force
@@ -92,24 +95,53 @@ export function InteractiveDotGrid() {
         ctx!.arc(d.x, d.y, DOT_RADIUS, 0, Math.PI * 2);
         ctx!.fillStyle = `rgba(${DOT_R}, ${DOT_G}, ${DOT_B}, ${alpha})`;
         ctx!.fill();
+
+        // Check if dot is still moving significantly
+        if (Math.abs(d.vx) > 0.01 || Math.abs(d.vy) > 0.01 || dist < REPEL_RADIUS) {
+          needsRedraw = true;
+        }
       }
 
-      animId = requestAnimationFrame(tick);
+      if (needsRedraw) {
+        animId = requestAnimationFrame(tick);
+      } else {
+        animId = 0; // Mark as idle
+      }
     }
 
     // ── Event handlers ──────────────────────────────────────────────
     const onMouseMove = (e: MouseEvent) => {
       mouse.x = e.clientX;
       mouse.y = e.clientY;
+      if (!animId) tick(); // Resume animation if idle
     };
     const onMouseLeave = () => {
       mouse.x = -9999;
       mouse.y = -9999;
+      if (!animId) tick(); // Resume to animate dots returning to origin
     };
-    const onResize = () => buildGrid();
+    const onResize = () => {
+      buildGrid();
+      if (!animId) tick(); // Redraw static grid
+    };
 
     // ── Bootstrap ───────────────────────────────────────────────────
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
     buildGrid();
+    
+    if (prefersReducedMotion) {
+      // Just draw the initial static grid once, no animation loop
+      ctx!.clearRect(0, 0, canvas!.width, canvas!.height);
+      for (const d of dots) {
+        ctx!.beginPath();
+        ctx!.arc(d.x, d.y, DOT_RADIUS, 0, Math.PI * 2);
+        ctx!.fillStyle = `rgba(${DOT_R}, ${DOT_G}, ${DOT_B}, ${BASE_OPACITY})`;
+        ctx!.fill();
+      }
+      return; // Skip event listeners
+    }
+
     tick();
 
     window.addEventListener("mousemove", onMouseMove);
