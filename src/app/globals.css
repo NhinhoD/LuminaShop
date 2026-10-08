@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "lenis/dist/lenis.css";
 
 @theme inline {
   /* ─── KhoUI Premium Digital Marketplace Tokens ─── */
@@ -35,10 +36,6 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-  }
-
-  html {
-    scroll-behavior: smooth;
   }
 
   body {

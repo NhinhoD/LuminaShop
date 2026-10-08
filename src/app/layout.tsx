@@ -90,6 +90,7 @@ import { I18nProvider, Locale } from "@/client/components/common/I18nContext";
 import { getAppDictionary } from "@/server/di/container";
 import { ToastContainer } from "@/client/components/common/ToastContainer";
 import { GlobalLoadingIndicator } from "@/client/components/common/GlobalLoadingIndicator";
+import { SmoothScrollProvider } from "@/client/components/common/SmoothScrollProvider";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
 import { Plus_Jakarta_Sans } from "next/font/google";
@@ -118,12 +119,14 @@ export default async function RootLayout({
       <body className="bg-background text-on-background font-sans antialiased selection:bg-primary/10 selection:text-primary">
         <I18nProvider locale={locale} customDict={dict as unknown as Record<string, unknown>}>
           <BreadcrumbProvider>
-            <Suspense fallback={null}>
-              <GlobalLoadingIndicator />
-            </Suspense>
-            {children}
-            <ToastContainer />
-            <SpeedInsights />
+            <SmoothScrollProvider>
+              <Suspense fallback={null}>
+                <GlobalLoadingIndicator />
+              </Suspense>
+              {children}
+              <ToastContainer />
+              <SpeedInsights />
+            </SmoothScrollProvider>
           </BreadcrumbProvider>
         </I18nProvider>
       </body>
