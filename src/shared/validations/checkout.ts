@@ -1,5 +1,5 @@
-﻿import { z } from 'zod';
-import { PaymentMethod } from '@/server/domain/entities/Order';
+import { z } from 'zod';
+import { PaymentMethod } from '@/shared/types/order';
 
 export function createDigitalCheckoutSchema(messages?: {
   nameMin?: string;

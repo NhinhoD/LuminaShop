@@ -1,40 +1,5 @@
-export interface ProductVariant {
-  id: string;
-  productId: string;
-  sku: string;
-  name: string;
-  priceAdjustment: number; // For VND, this is an integer
-  stockQuantity: number;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-export interface Product {
-  id: string;
-  categoryId: string;
-  title: Record<string, string>;
-  slug: string;
-  description: Record<string, string>;
-  price: number; // VND, integer
-  stock: number;
-  imageUrl?: string;
-  isActive: boolean;
-  demoUrl: string;
-  sourceCodeUrl: string;
-  techStack: string[];
-  variants?: ProductVariant[];
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-export type CreateProductDTO = Omit<Product, 'id' | 'createdAt' | 'updatedAt' | 'variants' | 'isActive'> & {
-  variants?: (Omit<ProductVariant, 'id' | 'productId' | 'createdAt' | 'updatedAt' | 'sku'> & { sku?: string })[];
-};
-
-export type UpdateProductDTO = Partial<Omit<Product, 'id' | 'createdAt' | 'updatedAt' | 'variants'>> & {
-  variants?: (Omit<ProductVariant, 'id' | 'productId' | 'createdAt' | 'updatedAt' | 'sku'> & { id?: string; sku?: string })[];
-  isActive?: boolean;
-};
+export * from '@/shared/types/product';
+import type { Product } from '@/shared/types/product';
 
 /**
  * Sanitizes product entity for public exposure, stripping confidential sourceCodeUrl

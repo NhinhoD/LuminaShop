@@ -9,7 +9,7 @@ import { getLocalizedText } from "@/shared/utils/locale";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { PaymentMethod } from "@/server/domain/entities/Order";
+import { PaymentMethod } from "@/shared/types/order";
 import { createDigitalCheckoutSchema } from "@/shared/validations/checkout";
 import { motion, AnimatePresence } from "framer-motion";
 import { 

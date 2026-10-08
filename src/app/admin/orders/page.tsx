@@ -1,4 +1,4 @@
-﻿import { redirect } from "next/navigation";
+import { redirect } from "next/navigation";
 import { getAllOrdersAction } from "@/server/presentation/actions/order";
 import { OrderList } from "@/client/components/admin/orders/OrderList";
 import { PaginationControls } from "@/client/components/common/PaginationControls";
@@ -6,7 +6,7 @@ import { getAppDictionary } from "@/server/di/container";
 import { getLocale } from "@/i18n/getDictionary";
 import { Package } from "lucide-react";
 import { Metadata } from "next";
-import { OrderStatus } from "@/server/domain/entities/Order";
+import { OrderStatus } from "@/shared/types/order";
 
 export const metadata: Metadata = {
   title: "Quản lý đơn hàng | KhoUI Admin",

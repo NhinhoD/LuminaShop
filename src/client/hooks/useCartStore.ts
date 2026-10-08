@@ -1,4 +1,4 @@
-﻿import { create } from 'zustand';
+import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { 
   addToCartAction, 
@@ -7,7 +7,7 @@ import {
   getCartAction
 } from '@/server/presentation/actions/cart';
 
-import { CartItem as DomainCartItem } from '@/server/domain/entities/Cart';
+import { CartItem as DomainCartItem } from '@/shared/types/cart';
 
 export interface CartItem {
   id: string;

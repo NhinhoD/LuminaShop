@@ -1,8 +1,8 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
-import { OrderStatus, Order } from "@/server/domain/entities/Order";
+import { OrderStatus, Order } from "@/shared/types/order";
 import { StatusBadge } from "@/client/components/orders/StatusBadge";
 import { formatPrice, formatDate, cn } from "@/shared/utils";
 import { Search, Filter, Eye } from "lucide-react";

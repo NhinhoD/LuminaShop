@@ -3,9 +3,9 @@
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { createProductAction, updateProductAction } from "@/server/presentation/actions/product";
-import { Category } from "@/server/domain/entities/Category";
-import { CreateProductDTO, UpdateProductDTO, Product } from "@/server/domain/entities/Product";
-import { createClient } from "@/server/infrastructure/supabase/client";
+import { Category } from "@/shared/types/category";
+import { CreateProductDTO, UpdateProductDTO, Product } from "@/shared/types/product";
+import { createClient } from "@/client/lib/supabase";
 import { UploadCloud, CheckCircle, FileArchive, ImageIcon, Loader2 } from "lucide-react";
 import { toast } from "@/client/hooks/useToastStore";
 import { useI18n } from "@/client/components/common/I18nContext";

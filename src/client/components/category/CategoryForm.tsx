@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Category } from "@/server/domain/entities/Category";
+import { Category } from "@/shared/types/category";
 import { createCategoryAction, updateCategoryAction } from "@/server/presentation/actions/category";
 import { generateSlug } from "@/shared/utils";
 import { Loader2 } from "lucide-react";

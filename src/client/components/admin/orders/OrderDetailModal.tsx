@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Order, OrderItem } from "@/server/domain/entities/Order";
+import { Order, OrderItem } from "@/shared/types/order";
 import { getOrderAction, approveManualPaymentAction } from "@/server/presentation/actions/order";
 import { StatusBadge } from "@/client/components/orders/StatusBadge";
 import { formatPrice, formatDate, cn } from "@/shared/utils";

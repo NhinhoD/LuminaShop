@@ -12,8 +12,8 @@ import { useI18n } from "@/client/components/common/I18nContext";
 import { getLocalizedText } from "@/shared/utils/locale";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { Product } from "@/server/domain/entities/Product";
-import { Category } from "@/server/domain/entities/Category";
+import { Product } from "@/shared/types/product";
+import { Category } from "@/shared/types/category";
 import {
   Zap,
   ShoppingCart,

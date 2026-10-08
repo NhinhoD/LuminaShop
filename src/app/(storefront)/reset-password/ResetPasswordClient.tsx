@@ -1,9 +1,9 @@
-﻿"use client";
+"use client";
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { updatePasswordAction } from "@/server/presentation/actions/auth";
-import { createClient } from "@/server/infrastructure/supabase/client";
+import { createClient } from "@/client/lib/supabase";
 import { ROUTES } from "@/shared/constants";
 import { Lock, ArrowRight, CheckCircle2, Eye, EyeOff, Loader2 } from "lucide-react";
 

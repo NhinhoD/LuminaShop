@@ -1,9 +1,9 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import Link from "next/link";
 import { forgotPasswordAction } from "@/server/presentation/actions/auth";
-import { createClient } from "@/server/infrastructure/supabase/client";
+import { createClient } from "@/client/lib/supabase";
 import { ROUTES } from "@/shared/constants";
 import { Mail, ArrowRight, ArrowLeft, CheckCircle2, Loader2 } from "lucide-react";
 
