@@ -17,6 +17,7 @@ interface SmoothScrollProviderProps {
 /**
  * SmoothScrollProvider initializes Lenis inertia smooth scrolling
  * and synchronizes frame timing with GSAP ScrollTrigger and gsap.ticker.
+ * Dynamically reacts to system reduced-motion accessibility preference changes.
  *
  * @param {SmoothScrollProviderProps} props - Component properties containing children.
  * @returns {React.JSX.Element} Provider wrapper rendering children.
@@ -26,38 +27,65 @@ export function SmoothScrollProvider({ children }: SmoothScrollProviderProps): R
   const pathname = usePathname();
 
   useEffect(() => {
-    // Respect system accessibility setting for reduced motion
-    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (prefersReducedMotion) {
-      return;
-    }
+    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let tickerCallback: ((time: number) => void) | null = null;
 
-    const lenis = new Lenis({
-      duration: 1.2,
-      easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      orientation: "vertical",
-      gestureOrientation: "vertical",
-      smoothWheel: true,
-      touchMultiplier: 1.5,
-    });
+    const startLenis = () => {
+      if (lenisRef.current) return;
 
-    lenisRef.current = lenis;
+      const lenis = new Lenis({
+        duration: 1.2,
+        easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        orientation: "vertical",
+        gestureOrientation: "vertical",
+        smoothWheel: true,
+        touchMultiplier: 1.5,
+      });
 
-    // Synchronize Lenis scroll position events with GSAP ScrollTrigger calculations
-    lenis.on("scroll", ScrollTrigger.update);
+      lenisRef.current = lenis;
 
-    // Drive Lenis requestAnimationFrame loop directly via GSAP's global ticker
-    const tickerUpdate = (time: number) => {
-      lenis.raf(time * 1000);
+      // Synchronize Lenis scroll position events with GSAP ScrollTrigger calculations
+      lenis.on("scroll", ScrollTrigger.update);
+
+      // Drive Lenis requestAnimationFrame loop directly via GSAP's global ticker
+      tickerCallback = (time: number) => {
+        lenis.raf(time * 1000);
+      };
+
+      gsap.ticker.add(tickerCallback);
+      gsap.ticker.lagSmoothing(0);
     };
 
-    gsap.ticker.add(tickerUpdate);
-    gsap.ticker.lagSmoothing(0);
+    const stopLenis = () => {
+      if (tickerCallback) {
+        gsap.ticker.remove(tickerCallback);
+        tickerCallback = null;
+      }
+      if (lenisRef.current) {
+        lenisRef.current.destroy();
+        lenisRef.current = null;
+      }
+    };
+
+    // Initialize based on current system preference
+    if (!mediaQuery.matches) {
+      startLenis();
+    }
+
+    // React dynamically to system accessibility setting toggles
+    const handleMotionPreferenceChange = (event: MediaQueryListEvent) => {
+      if (event.matches) {
+        stopLenis();
+      } else {
+        startLenis();
+      }
+    };
+
+    mediaQuery.addEventListener("change", handleMotionPreferenceChange);
 
     return () => {
-      gsap.ticker.remove(tickerUpdate);
-      lenis.destroy();
-      lenisRef.current = null;
+      mediaQuery.removeEventListener("change", handleMotionPreferenceChange);
+      stopLenis();
     };
   }, []);
 
