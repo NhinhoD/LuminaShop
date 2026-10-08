@@ -54,8 +54,9 @@ Domain
 - **`infrastructure`**: Provides concrete implementations of the contracts required by the inner layers and contains external integrations.
 - **`presentation/actions`**: Calls application use cases and serves as safe server entry points ("use server").
 - **`client`**: Communicates with the server through permitted Server Actions.
-  - MUST NOT directly import server-only modules.
-  - MUST NOT directly import infrastructure, Supabase client, repositories, or payment gateways.
+  - MUST NOT directly import server-only modules, server-only Supabase clients, infrastructure, repositories, or payment gateways.
+  - Browser components may use the browser-safe Supabase helper (`@/client/lib/supabase.ts`) for client-side authentication listeners and realtime subscriptions.
+  - Server-rendered layout wrappers under `src/client` (e.g., `Navbar.tsx`) may use the server DI container before rendering client children, while client components (e.g., `NavbarClient.tsx`) remain subject to client boundary rules.
 - **`shared`**: Contains only code safe for shared use between client and server.
 - **`src/server/di/container.ts`**: Composition Root responsible for wiring concrete implementations into the application layer.
 
@@ -107,12 +108,13 @@ Domain
 ### `src/client/` — UI Presentation & Client State
 - Components, hooks, Zustand stores (`useCartStore`, `useToastStore`), client providers
 - Calls application use cases strictly via server actions
-- NEVER calls supabase or repositories directly
+- NEVER calls server-only Supabase clients or repositories directly (browser components may use `@/client/lib/supabase.ts` for browser auth/realtime)
 
 ### `src/shared/` — Shared Contracts
 - Zod schemas, constants, formatters, and types usable by both server and client without leakage.
 
 ## Naming Conventions
+
 | Type | Convention | Example |
 |------|-----------|---------|
 | Entities | PascalCase | `Order`, `CartItem` |

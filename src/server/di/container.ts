@@ -467,20 +467,40 @@ export async function getAppDictionary(): Promise<Dictionary> {
 }
 
 // Location Factories
+/**
+ * Factory creating an instance of HttpLocationRepository.
+ *
+ * @returns {HttpLocationRepository} Concrete HTTP location repository instance.
+ */
 export function makeLocationRepository(): HttpLocationRepository {
   return new HttpLocationRepository();
 }
 
+/**
+ * Factory creating an instance of GetProvincesUseCase with location repository dependency.
+ *
+ * @returns {GetProvincesUseCase} Instantiated GetProvincesUseCase.
+ */
 export function makeGetProvincesUseCase(): GetProvincesUseCase {
   const repo = makeLocationRepository();
   return new GetProvincesUseCase(repo);
 }
 
+/**
+ * Factory creating an instance of GetDistrictsUseCase with location repository dependency.
+ *
+ * @returns {GetDistrictsUseCase} Instantiated GetDistrictsUseCase.
+ */
 export function makeGetDistrictsUseCase(): GetDistrictsUseCase {
   const repo = makeLocationRepository();
   return new GetDistrictsUseCase(repo);
 }
 
+/**
+ * Factory creating an instance of GetWardsUseCase with location repository dependency.
+ *
+ * @returns {GetWardsUseCase} Instantiated GetWardsUseCase.
+ */
 export function makeGetWardsUseCase(): GetWardsUseCase {
   const repo = makeLocationRepository();
   return new GetWardsUseCase(repo);

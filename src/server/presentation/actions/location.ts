@@ -16,6 +16,11 @@ type ActionResult<T> =
 const provinceIdSchema = z.string().min(1, "Province ID is required");
 const districtIdSchema = z.string().min(1, "District ID is required");
 
+/**
+ * Retrieves the full list of provinces/cities via GetProvincesUseCase.
+ *
+ * @returns {Promise<ActionResult<Province[]>>} Result containing province list or error message.
+ */
 export async function getProvincesAction(): Promise<ActionResult<Province[]>> {
   try {
     const useCase = makeGetProvincesUseCase();
@@ -33,6 +38,12 @@ export async function getProvincesAction(): Promise<ActionResult<Province[]>> {
   }
 }
 
+/**
+ * Retrieves the list of districts for a given province ID.
+ *
+ * @param {string} provinceId - Identifier of the parent province.
+ * @returns {Promise<ActionResult<District[]>>} Result containing district list or error message.
+ */
 export async function getDistrictsAction(provinceId: string): Promise<ActionResult<District[]>> {
   try {
     const validation = provinceIdSchema.safeParse(provinceId);
@@ -55,6 +66,12 @@ export async function getDistrictsAction(provinceId: string): Promise<ActionResu
   }
 }
 
+/**
+ * Retrieves the list of wards for a given district ID.
+ *
+ * @param {string} districtId - Identifier of the parent district.
+ * @returns {Promise<ActionResult<Ward[]>>} Result containing ward list or error message.
+ */
 export async function getWardsAction(districtId: string): Promise<ActionResult<Ward[]>> {
   try {
     const validation = districtIdSchema.safeParse(districtId);

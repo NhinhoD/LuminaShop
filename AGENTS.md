@@ -54,7 +54,7 @@ Domain
 - **Application**: Coordinates use cases. May depend on `domain` and appropriate contracts in `shared`.
 - **Infrastructure**: Implements interfaces/contracts and contains external integrations (Supabase, payment gateways, Resend).
 - **Presentation / Server Actions**: Server entry points orchestrating application use cases.
-- **Client boundary**: Communicates with server strictly through permitted Server Actions. MUST NOT directly import server-only modules, infrastructure, Supabase client, repositories, or payment gateways.
+- **Client boundary**: Communicates with server strictly through permitted Server Actions. MUST NOT directly import server-only modules, server-only Supabase clients, infrastructure, repositories, or payment gateways. Browser components may use the browser-safe Supabase helper (`@/client/lib/supabase.ts`) for client-side authentication listeners and realtime subscriptions. Server-rendered layout wrappers under `src/client` (e.g., `Navbar.tsx`) may use the server DI container before rendering client children, while client components (e.g., `NavbarClient.tsx`) remain subject to client boundary rules.
 - **Shared boundary**: Only contains contracts safe for both server and client.
 - **DI boundary**: `src/server/di/container.ts` is the Composition Root wiring concrete implementations into application use cases.
 
@@ -97,6 +97,7 @@ Static sanity checks: no `console.log`, no explicit `any`, no architecture viola
 
 ## 10. PR Review Checklist
 When requested to create a PR, include this table:
+
 | Check | Status |
 |-------|--------|
 | TypeScript | PASS/FAIL |
