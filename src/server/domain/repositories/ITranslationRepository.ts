@@ -1,22 +1,5 @@
-export interface TranslationEntry {
-  key: string;
-  vi: string;
-  en: string;
-  namespace: string;
-}
-
-export interface TranslationFilters {
-  limit?: number;
-  offset?: number;
-  search?: string;
-  namespace?: string;
-}
-
-export interface PaginatedTranslations {
-  translations: TranslationEntry[];
-  total: number;
-  namespaces: string[];
-}
+export * from '@/shared/types/translation';
+import type { TranslationEntry, TranslationFilters, PaginatedTranslations } from '@/shared/types/translation';
 
 export interface ITranslationRepository {
   getAllTranslations(): Promise<TranslationEntry[]>;

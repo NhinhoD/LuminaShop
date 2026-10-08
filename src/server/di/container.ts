@@ -91,7 +91,6 @@ import { getDictionary, Dictionary } from '@/i18n/getDictionary';
 import { GetProvincesUseCase } from '@/server/application/use-cases/location/GetProvinces';
 import { GetDistrictsUseCase } from '@/server/application/use-cases/location/GetDistricts';
 import { GetWardsUseCase } from '@/server/application/use-cases/location/GetWards';
-import { LocationProvider } from '@/server/application/di/LocationProvider';
 
 // ==========================================
 // Repository Factories
@@ -486,10 +485,6 @@ export function makeGetWardsUseCase(): GetWardsUseCase {
   const repo = makeLocationRepository();
   return new GetWardsUseCase(repo);
 }
-
-LocationProvider.registerProvincesFactory(makeGetProvincesUseCase);
-LocationProvider.registerDistrictsFactory(makeGetDistrictsUseCase);
-LocationProvider.registerWardsFactory(makeGetWardsUseCase);
 
 // Email Factories
 export function makeEmailService(): IEmailService {

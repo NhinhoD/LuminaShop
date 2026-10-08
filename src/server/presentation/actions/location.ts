@@ -1,7 +1,10 @@
 "use server";
 
-import "@/server/di/container";
-import { LocationProvider } from "@/server/application/di/LocationProvider";
+import {
+  makeGetProvincesUseCase,
+  makeGetDistrictsUseCase,
+  makeGetWardsUseCase,
+} from "@/server/di/container";
 import { Province, District, Ward } from "@/server/domain/entities/Location";
 import { z } from "zod";
 
@@ -15,7 +18,7 @@ const districtIdSchema = z.string().min(1, "District ID is required");
 
 export async function getProvincesAction(): Promise<ActionResult<Province[]>> {
   try {
-    const useCase = LocationProvider.getGetProvincesUseCase();
+    const useCase = makeGetProvincesUseCase();
     const result = await useCase.execute();
 
     if (!result.success) {
@@ -37,7 +40,7 @@ export async function getDistrictsAction(provinceId: string): Promise<ActionResu
       return { data: [] };
     }
 
-    const useCase = LocationProvider.getGetDistrictsUseCase();
+    const useCase = makeGetDistrictsUseCase();
     const result = await useCase.execute(validation.data);
 
     if (!result.success) {
@@ -59,7 +62,7 @@ export async function getWardsAction(districtId: string): Promise<ActionResult<W
       return { data: [] };
     }
 
-    const useCase = LocationProvider.getGetWardsUseCase();
+    const useCase = makeGetWardsUseCase();
     const result = await useCase.execute(validation.data);
 
     if (!result.success) {

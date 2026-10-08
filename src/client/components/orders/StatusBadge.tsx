@@ -1,6 +1,6 @@
-﻿"use client";
+"use client";
 
-import { OrderStatus } from "@/server/domain/entities/Order";
+import { OrderStatus } from "@/shared/types/order";
 import { cn } from "@/shared/utils";
 import { useI18n } from "@/client/components/common/I18nContext";
 

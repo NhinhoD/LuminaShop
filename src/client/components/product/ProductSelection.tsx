@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
-import { Product, ProductVariant } from "@/server/domain/entities/Product";
+import { Product, ProductVariant } from "@/shared/types/product";
 import { formatCurrency } from "@/shared/utils";
 import { Heart, Download, CreditCard, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";

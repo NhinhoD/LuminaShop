@@ -1,8 +1,8 @@
-﻿'use client';
+'use client';
 
 import { useState, useEffect } from 'react';
 import { login, signup, signout } from '@/server/presentation/actions/auth';
-import { createClient } from '@/server/infrastructure/supabase/client';
+import { createClient } from '@/client/lib/supabase';
 import { User } from '@supabase/supabase-js';
 
 export function useAuth() {

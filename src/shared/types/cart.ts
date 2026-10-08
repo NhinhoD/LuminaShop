@@ -1,0 +1,19 @@
+export interface CartItem {
+  id: string;
+  cartId: string;
+  productId: string;
+  variantId?: string;
+  variantName?: string;
+  quantity: number;
+  productTitle?: Record<string, string>;
+  productPrice?: number;
+  productImageUrl?: string;
+}
+
+export interface Cart {
+  id: string;
+  userId: string;
+  items: CartItem[];
+  createdAt: Date;
+  updatedAt: Date;
+}

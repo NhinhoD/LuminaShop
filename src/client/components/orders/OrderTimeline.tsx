@@ -1,6 +1,6 @@
-﻿"use client";
+"use client";
 
-import { OrderStatus } from "@/server/domain/entities/Order";
+import { OrderStatus } from "@/shared/types/order";
 import { Check, Clock, Home, XCircle } from "lucide-react";
 import { cn } from "@/shared/utils";
 

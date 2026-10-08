@@ -1,7 +1,7 @@
-﻿"use client";
+"use client";
 
 import { useState, useTransition } from 'react';
-import { TranslationEntry } from '@/server/domain/repositories/ITranslationRepository';
+import { TranslationEntry } from '@/shared/types/translation';
 import { Edit3, Plus, Trash2, Search, Check, X, RefreshCw, Layers } from 'lucide-react';
 import { addTranslationAction, updateTranslationAction, deleteTranslationAction, syncAllTranslationsAction } from '@/server/presentation/actions/i18n';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';

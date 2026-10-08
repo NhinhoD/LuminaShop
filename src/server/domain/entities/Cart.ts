@@ -1,21 +1,2 @@
-export interface CartItem {
-  id: string;
-  cartId: string;
-  productId: string;
-  variantId?: string;
-  variantName?: string;
-  quantity: number;
-  // Denormalized for ease of display in UI if needed, 
-  // though usually fetched via join
-  productTitle?: Record<string, string>;
-  productPrice?: number;
-  productImageUrl?: string;
-}
+export * from '@/shared/types/cart';
 
-export interface Cart {
-  id: string;
-  userId: string;
-  items: CartItem[];
-  createdAt: Date;
-  updatedAt: Date;
-}

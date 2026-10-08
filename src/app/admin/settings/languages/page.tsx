@@ -1,5 +1,5 @@
-﻿import LanguageTableClient from "./LanguageTableClient";
-import { TranslationEntry } from "@/server/domain/repositories/ITranslationRepository";
+import LanguageTableClient from "./LanguageTableClient";
+import { TranslationEntry } from "@/shared/types/translation";
 import { getAppDictionary } from "@/server/di/container";
 import { getLocale } from "@/i18n/getDictionary";
 import { getTranslationsAction } from "@/server/presentation/actions/i18n";

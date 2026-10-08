@@ -1,7 +1,7 @@
-﻿"use client";
+"use client";
 
 import { useEffect } from "react";
-import { createClient } from "@/server/infrastructure/supabase/client";
+import { createClient } from "@/client/lib/supabase";
 import { useRouter } from "next/navigation";
 
 interface UserOrdersRealtimeTrackerProps {

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
-import { Category } from "@/server/domain/entities/Category";
+import { Category } from "@/shared/types/category";
 import { deleteCategoryAction } from "@/server/presentation/actions/category";
 import { CategoryForm } from "./CategoryForm";
 import { CategoryCard, AddCategoryPlaceholder } from "./CategoryCard";

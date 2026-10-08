@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useState, useCallback } from 'react';
 import { 
@@ -6,7 +6,7 @@ import {
   updateProductAction, 
   deleteProductAction 
 } from '@/server/presentation/actions/product';
-import { CreateProductDTO, UpdateProductDTO } from '@/server/domain/entities/Product';
+import { CreateProductDTO, UpdateProductDTO } from '@/shared/types/product';
 
 export function useProduct() {
   const [isLoading, setIsLoading] = useState(false);

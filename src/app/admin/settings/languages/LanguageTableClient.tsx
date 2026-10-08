@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { updateTranslationAction } from "@/server/presentation/actions/i18n";
-import { TranslationEntry } from "@/server/domain/repositories/ITranslationRepository";
+import { TranslationEntry } from "@/shared/types/translation";
 import { Edit3, Loader2 } from "lucide-react";
 import { toast } from "@/client/hooks/useToastStore";
 

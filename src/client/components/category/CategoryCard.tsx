@@ -1,6 +1,6 @@
 "use client";
 
-import { Category } from "@/server/domain/entities/Category";
+import { Category } from "@/shared/types/category";
 import { useLocale } from "@/client/hooks/useLocale";
 import { getLocalizedText } from "@/shared/utils/locale";
 import { 

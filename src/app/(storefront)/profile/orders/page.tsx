@@ -10,7 +10,7 @@ import { getLocalizedText } from "@/shared/utils/locale";
 import { getLocale } from "@/i18n/getDictionary";
 import { formatDate, formatCurrency } from "@/shared/utils";
 import { getUserOrdersAction, getUserPurchasedTemplatesAction } from "@/server/presentation/actions/order";
-import { OrderStatus } from "@/server/domain/entities/Order";
+import { OrderStatus } from "@/shared/types/order";
 import { StatusBadge } from "@/client/components/orders/StatusBadge";
 import { ProfileSidebar } from "../ProfileSidebar";
 import { UserOrdersRealtimeTracker } from "@/client/components/orders/UserOrdersRealtimeTracker";
