@@ -532,7 +532,7 @@ export default function HomePageClient({
           trigger: containerRef.current,
           start: "top top",
           end: "bottom top",
-          scrub: 0.8,
+          scrub: true,
         },
       });
 
@@ -732,7 +732,7 @@ export default function HomePageClient({
       {/* Fixed to viewport — consistent with the fixed canvas, no scroll conflict. */}
       <div
         aria-hidden="true"
-        className="fixed inset-0 pointer-events-none select-none overflow-hidden"
+        className="fixed inset-0 pointer-events-none select-none overflow-hidden isolate transform-gpu"
         style={{ zIndex: 1 }}
       >
         {/* 1. Soft blue-to-white gradient wash */}
@@ -768,7 +768,7 @@ export default function HomePageClient({
       <section className="hero-section relative z-[10] min-h-[70vh] flex items-center pt-12 pb-12 overflow-hidden border-b border-slate-100/60">
         {/* Hero content goes here */}
 
-        <div className="hero-inner max-w-[1360px] mx-auto px-6 sm:px-8 w-full relative z-10">
+        <div className="hero-inner max-w-[1360px] mx-auto px-6 sm:px-8 w-full relative z-10 will-change-transform transform-gpu">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 xl:gap-12 items-center">
 
             {/* Left Column: Headline & Content (Subtly elevated for optimal visual alignment with 3D device mockup) */}
@@ -903,7 +903,7 @@ export default function HomePageClient({
               </div>
 
               {/* ─── Mockup Container with Independent Floor Shadow Layer & 3D Tilting Devices ─── */}
-              <div className="hero-mockup-container relative w-full aspect-[1500/1720] max-w-[480px] xl:max-w-[510px] ml-auto select-none">
+              <div className="hero-mockup-container relative w-full aspect-[1500/1720] max-w-[480px] xl:max-w-[510px] ml-auto select-none will-change-transform transform-gpu">
 
                 {/* ─── LAYER 0: Authentic Ground Shadow (Fixed on floor plane, underneath devices) ─── */}
                 <div

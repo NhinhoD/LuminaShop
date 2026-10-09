@@ -93,6 +93,8 @@ export function SmoothScrollProvider({ children }: SmoothScrollProviderProps): R
   useEffect(() => {
     if (lenisRef.current) {
       lenisRef.current.scrollTo(0, { immediate: true });
+    } else {
+      window.scrollTo(0, 0);
     }
   }, [pathname]);
 
