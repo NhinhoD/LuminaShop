@@ -217,6 +217,8 @@ BEGIN
         GROUP BY o.user_id
         HAVING SUM(o.total_amount) >= 2000000
     ) sub;
+
+    RETURN NEXT;
 END;
 $function$;
 
