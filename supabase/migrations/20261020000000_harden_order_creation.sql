@@ -84,7 +84,11 @@ BEGIN
         'unpaid'
     ) RETURNING id INTO v_order_id;
 
-    FOR v_item IN SELECT * FROM jsonb_array_elements(items) LOOP
+    FOR v_item IN
+        SELECT value
+        FROM jsonb_array_elements(items)
+        ORDER BY value->>'product_id', COALESCE(value->>'variant_id', '')
+    LOOP
         v_quantity := COALESCE((v_item->>'quantity')::integer, 1);
         IF v_quantity < 1 OR v_quantity > 100 THEN
             RAISE EXCEPTION 'Invalid quantity';

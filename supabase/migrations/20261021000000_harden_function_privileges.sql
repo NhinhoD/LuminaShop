@@ -39,15 +39,21 @@ REVOKE ALL ON FUNCTION public.sync_inventory_to_catalog() FROM PUBLIC, anon, aut
 REVOKE ALL ON FUNCTION public.sync_variants_stock_to_product() FROM PUBLIC, anon, authenticated;
 
 -- 3. Store-wide revenue KPI: restrict to admins only.
-CREATE OR REPLACE FUNCTION public.get_customer_kpis()
-RETURNS jsonb
+--    Preserve the original TABLE return shape (total_spent numeric, vip_count
+--    bigint) that a fresh database already has and that the dashboard consumer
+--    expects. DROP + CREATE is required because PostgreSQL cannot change a
+--    function's return type via CREATE OR REPLACE.
+DROP FUNCTION IF EXISTS public.get_customer_kpis();
+
+CREATE FUNCTION public.get_customer_kpis()
+RETURNS TABLE (
+    total_spent numeric,
+    vip_count bigint
+)
 LANGUAGE plpgsql
 SECURITY DEFINER
 SET search_path = ''
 AS $function$
-DECLARE
-    v_total_spent numeric;
-    v_vip_count integer;
 BEGIN
     IF NOT EXISTS (
         SELECT 1 FROM public.profiles
@@ -56,26 +62,21 @@ BEGIN
         RAISE EXCEPTION 'Not authorized';
     END IF;
 
-    SELECT COALESCE(SUM(total_amount), 0)
-    INTO v_total_spent
-    FROM public.orders
-    WHERE status IN ('delivered', 'completed', 'paid') OR payment_status = 'paid';
+    SELECT COALESCE(SUM(o.total_amount), 0)
+    INTO total_spent
+    FROM public.orders o
+    WHERE o.status IN ('delivered', 'completed', 'paid') OR o.payment_status = 'paid';
 
     SELECT COUNT(*)
-    INTO v_vip_count
+    INTO vip_count
     FROM (
-        SELECT user_id
-        FROM public.orders
-        WHERE (status IN ('delivered', 'completed', 'paid') OR payment_status = 'paid')
-          AND user_id IS NOT NULL
-        GROUP BY user_id
-        HAVING SUM(total_amount) > 500000
+        SELECT o.user_id
+        FROM public.orders o
+        WHERE (o.status IN ('delivered', 'completed', 'paid') OR o.payment_status = 'paid')
+          AND o.user_id IS NOT NULL
+        GROUP BY o.user_id
+        HAVING SUM(o.total_amount) >= 2000000
     ) sub;
-
-    RETURN jsonb_build_object(
-        'total_spent', v_total_spent,
-        'vip_count', v_vip_count
-    );
 END;
 $function$;
 

@@ -1,5 +1,7 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
+let hasReportedMissingConfig = false;
+
 /**
  * Creates a server-only Supabase client authenticated with the service-role key.
  *
@@ -15,6 +17,12 @@ export function createServiceRoleClient(): SupabaseClient | null {
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
   if (!url || !key) {
+    if (!hasReportedMissingConfig && process.env.NODE_ENV === 'production') {
+      hasReportedMissingConfig = true;
+      console.error(
+        '[createServiceRoleClient] SUPABASE_SERVICE_ROLE_KEY or NEXT_PUBLIC_SUPABASE_URL is not configured; privileged payment RPCs (complete_order_payment, cancel_pending_order) will fail.'
+      );
+    }
     return null;
   }
 
