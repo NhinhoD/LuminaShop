@@ -1,6 +1,8 @@
 import { createClient as makeSupabaseClient } from '@/server/infrastructure/supabase/server';
 export { makeSupabaseClient };
 
+import { createServiceRoleClient } from '@/server/infrastructure/supabase/admin';
+
 // Repositories & Services
 import { SupabaseCartRepository } from '@/server/infrastructure/supabase/repositories/SupabaseCartRepository';
 import { SupabaseCategoryRepository } from '@/server/infrastructure/supabase/repositories/SupabaseCategoryRepository';
@@ -112,7 +114,7 @@ export async function makeInventoryRepository() {
 
 export async function makeOrderRepository() {
   const supabase = await makeSupabaseClient();
-  return new SupabaseOrderRepository(supabase);
+  return new SupabaseOrderRepository(supabase, createServiceRoleClient());
 }
 
 export async function makeProductRepository() {
@@ -137,7 +139,7 @@ export async function makeDashboardRepository() {
 
 export async function makePaymentRepository() {
   const supabase = await makeSupabaseClient();
-  return new SupabasePaymentRepository(supabase);
+  return new SupabasePaymentRepository(supabase, createServiceRoleClient());
 }
 
 // ==========================================
@@ -211,7 +213,8 @@ export async function makeUpdateCategoryUseCase() {
 
 export async function makeCreateOrderUseCase() {
   const orderRepo = await makeOrderRepository();
-  return new CreateOrderUseCase(orderRepo);
+  const productRepo = await makeProductRepository();
+  return new CreateOrderUseCase(orderRepo, productRepo);
 }
 
 export async function makeGetAllOrdersUseCase() {

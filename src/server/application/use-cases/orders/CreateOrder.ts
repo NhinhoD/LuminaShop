@@ -1,11 +1,13 @@
 ﻿import { IOrderRepository } from '@/server/domain/repositories/IOrderRepository';
-import { Order, OrderStatus, ShippingAddress, PaymentMethod } from '@/server/domain/entities/Order';
+import { IProductRepository } from '@/server/domain/repositories/IProductRepository';
+import { Order, OrderStatus, OrderItem, ShippingAddress, PaymentMethod } from '@/server/domain/entities/Order';
 import { Result, ok, fail } from '@/server/domain/shared/Result';
 
 export interface CartItemDTO {
   productId: string;
   variantId?: string;
   quantity: number;
+  /** Client-supplied price. Never trusted server-side; kept only for wire compatibility. */
   price: number;
   title: string;
   imageUrl?: string;
@@ -24,7 +26,8 @@ export interface CreateOrderDTO {
 
 export class CreateOrderUseCase {
   constructor(
-    private orderRepo: IOrderRepository
+    private orderRepo: IOrderRepository,
+    private productRepo: IProductRepository
   ) {}
 
   async execute(data: CreateOrderDTO): Promise<Result<Order>> {
@@ -33,28 +36,52 @@ export class CreateOrderUseCase {
         return fail(new Error('Giỏ hàng trống.'));
       }
 
-      // 1. Calculate total amount
-      const totalAmount = data.cartItems.reduce((acc, item) => acc + (item.price || 0) * item.quantity, 0);
-      
-      // 2. Map to OrderItems with productSnapshot
-      const orderItems = data.cartItems.map(item => ({
-        productId: item.productId,
-        variantId: item.variantId,
-        quantity: 1, // Enforce strict limit of exactly 1 per template
-        priceAtPurchase: item.price || 0,
-        productSnapshot: {
-          title: item.title,
-          image: item.imageUrl,
-          variantName: item.variantName
-        }
-      }));
+      // Recompute every price and the total from the database. The client's
+      // `price` field is ignored to prevent price tampering (CWE-472).
+      let totalAmount = 0;
+      const orderItems: Omit<OrderItem, 'id' | 'orderId'>[] = [];
 
-      // 3. Create order
-      // The repository now calls an atomic RPC that handles:
-      // - Real-time stock validation with row-level locking
-      // - Order and items insertion
-      // - Immediate stock deduction from quantity
-      // - Automatic sync to products/variants via DB triggers
+      for (const item of data.cartItems) {
+        const product = await this.productRepo.findById(item.productId);
+        if (!product || !product.isActive) {
+          return fail(new Error('Sản phẩm không tồn tại hoặc đã ngừng bán.'));
+        }
+
+        const quantity = Number.isInteger(item.quantity) && item.quantity > 0 ? item.quantity : 1;
+
+        let unitPrice = product.price;
+        let variantName = item.variantName;
+
+        if (item.variantId) {
+          const variant = product.variants?.find((candidate) => candidate.id === item.variantId);
+          if (!variant) {
+            return fail(new Error('Phiên bản sản phẩm không hợp lệ.'));
+          }
+          unitPrice += variant.priceAdjustment;
+          variantName = variant.name;
+        }
+
+        if (!Number.isFinite(unitPrice) || unitPrice < 0) {
+          return fail(new Error('Giá sản phẩm không hợp lệ.'));
+        }
+
+        totalAmount += unitPrice * quantity;
+
+        orderItems.push({
+          productId: product.id,
+          variantId: item.variantId,
+          quantity,
+          priceAtPurchase: unitPrice,
+          productSnapshot: {
+            title: product.title?.vi || product.title?.en || item.title,
+            image: product.imageUrl ?? item.imageUrl,
+            variantName
+          }
+        });
+      }
+
+      // The repository calls an atomic RPC that re-validates stock, recomputes
+      // the authoritative total, and inserts order + items in one transaction.
       const order = await this.orderRepo.create({
         userId: data.userId,
         totalAmount,
@@ -70,8 +97,14 @@ export class CreateOrderUseCase {
       return ok(order);
     } catch (error: unknown) {
       console.error('CreateOrderUseCase Error:', error);
-      const message = error instanceof Error ? error.message : 'Đã có lỗi xảy ra khi đặt hàng.';
-      return fail(new Error(message));
+      const message = error instanceof Error ? error.message : '';
+      if (message.includes('Insufficient stock')) {
+        return fail(new Error('Sản phẩm đã hết hàng.'));
+      }
+      if (message.includes('unavailable') || message.includes('not found')) {
+        return fail(new Error('Sản phẩm không còn khả dụng.'));
+      }
+      return fail(new Error('Không thể tạo đơn hàng. Vui lòng thử lại.'));
     }
   }
 }
