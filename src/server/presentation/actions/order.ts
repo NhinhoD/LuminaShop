@@ -16,6 +16,7 @@ import {
   makeCheckProductPurchasedUseCase
 } from "@/server/di/container";
 import { CreateOrderDTO } from "@/server/application/use-cases/orders/CreateOrder";
+import { createOrderSchema } from "@/shared/validations/checkout";
 import { OrderStatus, Order } from "@/server/domain/entities/Order";
 import { UserPurchasedTemplatesResult } from "@/server/domain/repositories/IOrderRepository";
 import { revalidatePath } from "next/cache";
@@ -76,9 +77,14 @@ export async function createOrderAction(data: Omit<CreateOrderDTO, 'userId'>): P
   const user = userResult.data;
   if (!user) return { success: false, error: "Bạn cần đăng nhập để đặt hàng." };
 
+  const parsed = createOrderSchema.safeParse(data);
+  if (!parsed.success) {
+    return { success: false, error: "Dữ liệu đơn hàng không hợp lệ." };
+  }
+
   try {
     const createOrderUseCase = await makeCreateOrderUseCase();
-    const result = await createOrderUseCase.execute({ ...data, userId: user.id });
+    const result = await createOrderUseCase.execute({ ...parsed.data, userId: user.id });
 
     if (!result.success) {
       return { success: false, error: result.error.message };

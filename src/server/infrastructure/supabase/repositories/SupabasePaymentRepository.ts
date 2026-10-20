@@ -3,7 +3,10 @@ import { IPaymentRepository, Payment } from '@/server/domain/repositories/IPayme
 import { PaymentRow } from '../types';
 
 export class SupabasePaymentRepository implements IPaymentRepository {
-  constructor(private supabase: SupabaseClient) {}
+  constructor(
+    private supabase: SupabaseClient,
+    private privilegedClient: SupabaseClient | null = null
+  ) {}
 
   private mapToDomain(row: PaymentRow): Payment {
     return {
@@ -49,7 +52,7 @@ export class SupabasePaymentRepository implements IPaymentRepository {
         .single();
 
       if (payment?.order_id) {
-        const { error: rpcError } = await this.supabase.rpc('complete_order_payment', {
+        const { error: rpcError } = await (this.privilegedClient ?? this.supabase).rpc('complete_order_payment', {
           p_order_id: payment.order_id,
           p_payment_id: id
         });

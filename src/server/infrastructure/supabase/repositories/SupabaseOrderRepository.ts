@@ -17,7 +17,10 @@ interface RawPurchasedTemplateRow {
 }
 
 export class SupabaseOrderRepository implements IOrderRepository {
-  constructor(private supabase: SupabaseClient) {}
+  constructor(
+    private supabase: SupabaseClient,
+    private privilegedClient: SupabaseClient | null = null
+  ) {}
 
   async findById(id: string): Promise<Order | null> {
     const supabase = this.supabase;
@@ -179,8 +182,10 @@ export class SupabaseOrderRepository implements IOrderRepository {
     const supabase = this.supabase;
     
     if (paymentStatus === 'paid') {
-      // Use atomic SECURITY DEFINER RPC to bypass user-level RLS restrictions and fulfill immediately
-      const { error: rpcError } = await supabase.rpc('complete_order_payment', {
+      // Use atomic SECURITY DEFINER RPC to bypass user-level RLS restrictions and fulfill immediately.
+      // Fulfilment is a privileged, server-authorized action, so it runs on the service-role
+      // client (the webhook has no session) rather than the caller's RLS-scoped client.
+      const { error: rpcError } = await (this.privilegedClient ?? supabase).rpc('complete_order_payment', {
         p_order_id: id
       });
       
@@ -239,8 +244,9 @@ export class SupabaseOrderRepository implements IOrderRepository {
    * @returns Promise resolving to true if cancelled, or false if already paid/cancelled or error.
    */
   async cancelPendingOrder(id: string): Promise<boolean> {
-    // 1. Try atomic PostgreSQL RPC with SECURITY DEFINER
-    const { data, error } = await this.supabase.rpc('cancel_pending_order', {
+    // 1. Try atomic PostgreSQL RPC with SECURITY DEFINER on the service-role
+    //    client (privileged, server-authorized cancellation).
+    const { data, error } = await (this.privilegedClient ?? this.supabase).rpc('cancel_pending_order', {
       p_order_id: id
     });
 
