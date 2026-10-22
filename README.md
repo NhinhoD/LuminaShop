@@ -27,12 +27,26 @@ Templates can be opened and tested directly in any modern browser without config
 
 ## Demo & Screenshots
 
-- **Live Demo**: <!-- TODO: Insert public production URL, e.g. https://khoui.io.vn -->
-- **Admin Portal**: <!-- TODO: Insert demo admin link or testing credentials if available -->
+- **Live Demo**: https://khoui.io.vn
+- **Admin Portal**: https://khoui.io.vn/admin (login required)
 
-| Storefront | Live Preview | Admin Dashboard |
-| :---: | :---: | :---: |
-| <!-- TODO: Add screenshot of homepage (e.g. ![Home](docs/screenshots/home.png)) --> | <!-- TODO: Add screenshot of template demo preview (e.g. ![Preview](docs/screenshots/preview.png)) --> | <!-- TODO: Add screenshot of admin dashboard (e.g. ![Admin](docs/screenshots/admin.png)) --> |
+Screenshots are taken from the production build in the Vietnamese locale. Click any image to open it at full resolution.
+
+### Storefront
+
+| Home | Template Catalog |
+| :---: | :---: |
+| [![KhoUI storefront homepage with hero, trust indicators and featured template categories](docs/screenshots/storefront-home.png)](docs/screenshots/storefront-home.png) | [![KhoUI template catalog with category filters, price range and technology filters](docs/screenshots/storefront-shop.png)](docs/screenshots/storefront-shop.png) |
+| **Product Detail & Sandboxed Preview** | **Checkout** |
+| [![Product detail page with sandboxed live preview, license information and purchase actions](docs/screenshots/storefront-product.png)](docs/screenshots/storefront-product.png) | [![Checkout step one with selected template, license details and order summary](docs/screenshots/storefront-checkout.png)](docs/screenshots/storefront-checkout.png) |
+
+### Admin
+
+| Dashboard | Product Management |
+| :---: | :---: |
+| [![Admin dashboard with revenue, order and customer KPIs plus quick actions](docs/screenshots/admin-dashboard.png)](docs/screenshots/admin-dashboard.png) | [![Admin product management table with pricing, stock status and row actions](docs/screenshots/admin-products.png)](docs/screenshots/admin-products.png) |
+| **Category Management** | **Translation Management** |
+| [![Admin category management grid with per-category product counts and status](docs/screenshots/admin-categories.png)](docs/screenshots/admin-categories.png) | [![Admin translation management table with Vietnamese and English dictionary entries](docs/screenshots/admin-translations.png)](docs/screenshots/admin-translations.png) |
 
 ---
 
