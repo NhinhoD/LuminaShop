@@ -10,6 +10,11 @@ import { LoginFormClient } from "./LoginFormClient";
  * Login page with email/password authentication form.
  * Harmonized with KhoUI design system specifications.
  */
+export const metadata = { title: { absolute: "Đăng nhập | KhoUI" } };
+
+/**
+ * Renders the login page with the localized authentication form.
+ */
 export default async function LoginPage({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
   const params = await searchParams;
   const locale = await getLocale();

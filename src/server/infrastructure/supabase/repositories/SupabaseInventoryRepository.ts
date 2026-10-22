@@ -4,7 +4,15 @@ import { InventoryItemRow } from '../types';
 import { SupabaseClient } from '@supabase/supabase-js';
 
 export class SupabaseInventoryRepository implements IInventoryRepository {
-  constructor(private supabase: SupabaseClient) {}
+  constructor(
+    private supabase: SupabaseClient,
+    private privilegedClient: SupabaseClient | null = null
+  ) {}
+
+  /** Returns the privileged client when configured, otherwise the request client. */
+  private get rpcClient(): SupabaseClient {
+    return this.privilegedClient ?? this.supabase;
+  }
 
   async findByProductId(productId: string): Promise<InventoryItem[]> {
     const supabase = this.supabase;
@@ -54,8 +62,9 @@ export class SupabaseInventoryRepository implements IInventoryRepository {
     return this.mapToEntity(data);
   }
 
+  /** Applies a stock delta through the privileged inventory RPC. */
   async updateQuantity(id: string, delta: number): Promise<void> {
-    const supabase = this.supabase;
+    const supabase = this.rpcClient;
     const { error } = await supabase.rpc('increment_inventory_quantity', { 
       item_id: id, 
       delta 
@@ -64,8 +73,9 @@ export class SupabaseInventoryRepository implements IInventoryRepository {
     if (error) throw new Error(error.message);
   }
 
+  /** Reserves stock through the privileged inventory RPC. */
   async reserve(id: string, quantity: number): Promise<void> {
-    const supabase = this.supabase;
+    const supabase = this.rpcClient;
     const { error } = await supabase.rpc('reserve_stock', { 
       item_id: id, 
       qty: quantity 
@@ -74,8 +84,9 @@ export class SupabaseInventoryRepository implements IInventoryRepository {
     if (error) throw new Error(error.message);
   }
 
+  /** Releases reserved stock through the privileged inventory RPC. */
   async release(id: string, quantity: number): Promise<void> {
-    const supabase = this.supabase;
+    const supabase = this.rpcClient;
     const { error } = await supabase.rpc('release_stock', { 
       item_id: id, 
       qty: quantity 

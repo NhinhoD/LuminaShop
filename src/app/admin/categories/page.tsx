@@ -4,13 +4,16 @@ import { getCategoriesAction } from "@/server/presentation/actions/category";
 import { PaginationControls } from "@/client/components/common/PaginationControls";
 
 export const metadata = {
-  title: "Quản lý danh mục - Admin KhoUI",
+  title: { absolute: "Quản lý danh mục - Admin KhoUI" },
 };
 
 interface AdminCategoriesPageProps {
   searchParams: Promise<{ page?: string; q?: string }>;
 }
 
+/**
+ * Renders the admin category management page.
+ */
 export default async function AdminCategoriesPage({ searchParams }: AdminCategoriesPageProps) {
   const params = await searchParams;
   const rawPage = typeof params?.page === 'string' ? parseInt(params.page, 10) : 1;

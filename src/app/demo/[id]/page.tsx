@@ -14,6 +14,11 @@ interface DemoPageProps {
  * @param props - Component props containing the async params object with product ID.
  * @returns Resolves with a Next.js redirect or error fallback UI.
  */
+export const metadata = { title: { absolute: "Xem trước template | KhoUI" } };
+
+/**
+ * Redirects to the sandboxed preview for the requested product.
+ */
 export default async function DemoPage({ params }: DemoPageProps) {
   const cookieStore = await cookies();
   const locale = (cookieStore.get('NEXT_LOCALE')?.value as 'vi' | 'en') || 'vi';

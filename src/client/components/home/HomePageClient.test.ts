@@ -37,7 +37,7 @@ function renderHome() {
     return ref;
   });
   const router: AppRouterInstance = {
-    back() {}, forward() {}, refresh() {}, push() {}, replace() {}, prefetch() {},
+    bfcacheId: '', back() {}, forward() {}, refresh() {}, push() {}, replace() {}, prefetch() {},
   };
   let tree: ReactNode;
   function Probe(): null {

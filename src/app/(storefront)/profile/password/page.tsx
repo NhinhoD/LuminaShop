@@ -8,10 +8,13 @@ import { ChangePasswordForm } from './ChangePasswordForm';
 import { UserOrdersRealtimeTracker } from '@/client/components/orders/UserOrdersRealtimeTracker';
 
 export const metadata: Metadata = {
-  title: 'Đổi mật khẩu | KhoUI',
+  title: { absolute: 'Đổi mật khẩu | KhoUI' },
   description: 'Cập nhật mật khẩu tài khoản của bạn trên KhoUI',
 };
 
+/**
+ * Renders the change-password page for signed-in customers.
+ */
 export default async function ChangePasswordPage() {
   const getCurrentUserUseCase = await makeGetCurrentUserUseCase();
   const userResult = await getCurrentUserUseCase.execute();

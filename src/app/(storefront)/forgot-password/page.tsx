@@ -5,6 +5,11 @@ import { getLocale } from "@/i18n/getDictionary";
 import { getAppDictionary } from "@/server/di/container";
 import { ForgotPasswordClient } from "./ForgotPasswordClient";
 
+export const metadata = { title: { absolute: "Quên mật khẩu | KhoUI" } };
+
+/**
+ * Renders the forgot-password request page.
+ */
 export default async function ForgotPasswordPage() {
   const locale = await getLocale();
   const dict = await getAppDictionary();

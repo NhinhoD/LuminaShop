@@ -16,7 +16,7 @@ import { getLocalizedText } from "@/shared/utils/locale";
 import { makeLanguageRepository, makeGetProductByIdUseCase } from "@/server/di/container";
 
 export const metadata: Metadata = {
-  title: "Chi tiết đơn hàng | KhoUI",
+  title: { absolute: "Chi tiết đơn hàng | KhoUI" },
 };
 
 interface PageProps {

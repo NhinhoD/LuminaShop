@@ -1,17 +1,24 @@
 import type { NextConfig } from "next";
 
+const isDevelopment = process.env.NODE_ENV === 'development';
+
+// Product demo URLs are data-driven and may point to external hosts. Supabase
+// Storage previews are rewritten to the same-origin proxy, while external demos
+// are framed from their own origin. Keep this list explicit: add the origin of
+// any new demo host here instead of allowing unrestricted https: framing.
+const previewFrameOrigins = ['https://*.vercel.app'];
 const cspHeader = `
   default-src 'self';
-  script-src 'self' 'unsafe-eval' 'unsafe-inline' https://va.vercel-scripts.com;
+  script-src 'self'${isDevelopment ? " 'unsafe-eval'" : ''} 'unsafe-inline' https://va.vercel-scripts.com;
   style-src 'self' 'unsafe-inline';
-  img-src 'self' blob: data: https://*.gstatic.com https://lh3.googleusercontent.com https://ui-avatars.com https://images.unsplash.com https://*.supabase.co https:;
+  img-src 'self' blob: data: https://*.gstatic.com https://lh3.googleusercontent.com https://ui-avatars.com https://images.unsplash.com https://*.supabase.co;
   font-src 'self' data:;
   object-src 'none';
   base-uri 'self';
   form-action 'self';
   frame-ancestors 'self';
-  frame-src 'self' https:;
-  connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.vercel-insights.com https://vitals.vercel-insights.com https://api.payos.vn https:;
+  frame-src 'self' ${previewFrameOrigins.join(' ')};
+  connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.vercel-insights.com https://vitals.vercel-insights.com https://api.payos.vn;
   upgrade-insecure-requests;
 `.replace(/\s{2,}/g, ' ').trim();
 
@@ -80,6 +87,10 @@ const nextConfig: NextConfig = {
           {
             key: 'Permissions-Policy',
             value: 'camera=(), microphone=(), geolocation=()',
+          },
+          {
+            key: 'Strict-Transport-Security',
+            value: 'max-age=63072000; includeSubDomains; preload',
           },
         ],
       },

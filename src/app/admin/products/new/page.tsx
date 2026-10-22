@@ -6,6 +6,11 @@ import { getLocale } from "@/i18n/getDictionary";
  * Admin new product creation page.
  * Renders the ProductForm in create mode with empty initial values.
  */
+export const metadata = { title: { absolute: "Thêm sản phẩm | KhoUI Admin" } };
+
+/**
+ * Renders the admin new product page.
+ */
 export default async function NewProductPage() {
   const getCategoriesUseCase = await makeGetCategoriesUseCase();
   const locale = await getLocale();

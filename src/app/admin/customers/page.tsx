@@ -29,6 +29,11 @@ interface AdminCustomersPageProps {
  * Displays registered users with aggregated order statistics (total orders, total spent, last order).
  * Supports database-level search filtering by name, email, or user ID, and unified pagination.
  */
+export const metadata = { title: { absolute: "Khách hàng | KhoUI Admin" } };
+
+/**
+ * Renders the admin customer list with pagination.
+ */
 export default async function AdminCustomersPage({
   searchParams,
 }: AdminCustomersPageProps): Promise<React.ReactElement> {

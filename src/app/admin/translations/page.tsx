@@ -9,6 +9,11 @@ interface AdminTranslationsPageProps {
   searchParams: Promise<{ page?: string; q?: string; ns?: string }>;
 }
 
+export const metadata = { title: { absolute: "Quản lý bản dịch | KhoUI Admin" } };
+
+/**
+ * Renders the admin translation management page.
+ */
 export default async function AdminTranslationsPage({
   searchParams,
 }: AdminTranslationsPageProps): Promise<React.ReactElement> {
