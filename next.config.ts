@@ -1,9 +1,12 @@
 import type { NextConfig } from "next";
 
-const isDevelopment = process.env.NODE_ENV !== 'production';
+const isDevelopment = process.env.NODE_ENV === 'development';
 
-// frame-src must allow external HTTPS origins: each product stores its own demo
-// URL, and only Supabase-hosted previews are rewritten to the same-origin proxy.
+// Product demo URLs are data-driven and may point to external hosts. Supabase
+// Storage previews are rewritten to the same-origin proxy, while external demos
+// are framed from their own origin. Keep this list explicit: add the origin of
+// any new demo host here instead of allowing unrestricted https: framing.
+const previewFrameOrigins = ['https://*.vercel.app'];
 const cspHeader = `
   default-src 'self';
   script-src 'self'${isDevelopment ? " 'unsafe-eval'" : ''} 'unsafe-inline' https://va.vercel-scripts.com;
@@ -14,7 +17,7 @@ const cspHeader = `
   base-uri 'self';
   form-action 'self';
   frame-ancestors 'self';
-  frame-src 'self' https:;
+  frame-src 'self' ${previewFrameOrigins.join(' ')};
   connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.vercel-insights.com https://vitals.vercel-insights.com https://api.payos.vn;
   upgrade-insecure-requests;
 `.replace(/\s{2,}/g, ' ').trim();
