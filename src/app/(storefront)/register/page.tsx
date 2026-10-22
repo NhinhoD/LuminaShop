@@ -10,7 +10,7 @@ import { RegisterFormClient } from "./RegisterFormClient";
  * User registration page with account creation form.
  * Harmonized with KhoUI design system specifications.
  */
-export const metadata = { title: "Đăng ký | KhoUI" };
+export const metadata = { title: { absolute: "Đăng ký | KhoUI" } };
 
 export default async function RegisterPage({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
   const params = await searchParams;

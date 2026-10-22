@@ -19,7 +19,7 @@ import { ROUTES } from "@/shared/constants";
 import { cn } from "@/shared/utils";
 
 export const metadata: Metadata = {
-  title: "Đơn hàng & Mã nguồn | KhoUI",
+  title: { absolute: "Đơn hàng & Mã nguồn | KhoUI" },
   description: "Quản lý đơn hàng, lịch sử thanh toán và tải xuống các gói mã nguồn đã sở hữu",
 };
 

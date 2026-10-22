@@ -9,7 +9,7 @@ import { Metadata } from "next";
 import { OrderStatus } from "@/shared/types/order";
 
 export const metadata: Metadata = {
-  title: "Quản lý đơn hàng | KhoUI Admin",
+  title: { absolute: "Quản lý đơn hàng | KhoUI Admin" },
 };
 
 interface AdminOrdersPageProps {

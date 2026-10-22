@@ -1,5 +1,10 @@
 -- Performance: cover foreign keys flagged by the Supabase performance advisor.
 -- Without these, FK checks and joins degrade to sequential scans as tables grow.
+--
+-- Locking note: Supabase applies each migration inside a transaction, so
+-- CREATE INDEX CONCURRENTLY cannot be used here. Run this migration during a
+-- maintenance window if any affected table is large; on current table sizes
+-- the write lock is negligible.
 
 CREATE INDEX IF NOT EXISTS idx_cart_items_cart_id ON public.cart_items (cart_id);
 CREATE INDEX IF NOT EXISTS idx_cart_items_product_id ON public.cart_items (product_id);

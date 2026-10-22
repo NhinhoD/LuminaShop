@@ -4,7 +4,7 @@ import { getCategoriesAction } from "@/server/presentation/actions/category";
 import { PaginationControls } from "@/client/components/common/PaginationControls";
 
 export const metadata = {
-  title: "Quản lý danh mục - Admin KhoUI",
+  title: { absolute: "Quản lý danh mục - Admin KhoUI" },
 };
 
 interface AdminCategoriesPageProps {

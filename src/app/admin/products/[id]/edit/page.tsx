@@ -11,7 +11,7 @@ import { getLocale } from "@/i18n/getDictionary";
  * Admin product editing page.
  * Loads product data and renders the ProductForm with existing values for editing.
  */
-export const metadata = { title: "Chỉnh sửa sản phẩm | KhoUI Admin" };
+export const metadata = { title: { absolute: "Chỉnh sửa sản phẩm | KhoUI Admin" } };
 
 export default async function EditProductPage({
   params,

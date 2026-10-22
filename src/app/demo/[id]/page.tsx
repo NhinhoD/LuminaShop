@@ -14,7 +14,7 @@ interface DemoPageProps {
  * @param props - Component props containing the async params object with product ID.
  * @returns Resolves with a Next.js redirect or error fallback UI.
  */
-export const metadata = { title: "Xem trước template | KhoUI" };
+export const metadata = { title: { absolute: "Xem trước template | KhoUI" } };
 
 export default async function DemoPage({ params }: DemoPageProps) {
   const cookieStore = await cookies();

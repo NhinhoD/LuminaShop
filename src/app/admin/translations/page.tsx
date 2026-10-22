@@ -9,7 +9,7 @@ interface AdminTranslationsPageProps {
   searchParams: Promise<{ page?: string; q?: string; ns?: string }>;
 }
 
-export const metadata = { title: "Quản lý bản dịch | KhoUI Admin" };
+export const metadata = { title: { absolute: "Quản lý bản dịch | KhoUI Admin" } };
 
 export default async function AdminTranslationsPage({
   searchParams,

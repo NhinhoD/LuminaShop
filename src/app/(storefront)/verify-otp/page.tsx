@@ -6,7 +6,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import React from 'react';
 
-export const metadata = { title: "Xác thực OTP | KhoUI" };
+export const metadata = { title: { absolute: "Xác thực OTP | KhoUI" } };
 
 export default async function VerifyOtpPage(): Promise<React.ReactNode> {
   const cookieStore = await cookies();
