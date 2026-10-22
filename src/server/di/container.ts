@@ -109,7 +109,7 @@ export async function makeCategoryRepository() {
 
 export async function makeInventoryRepository() {
   const supabase = await makeSupabaseClient();
-  return new SupabaseInventoryRepository(supabase);
+  return new SupabaseInventoryRepository(supabase, createServiceRoleClient());
 }
 
 export async function makeOrderRepository() {

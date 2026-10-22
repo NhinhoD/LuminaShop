@@ -4,7 +4,14 @@ import { InventoryItemRow } from '../types';
 import { SupabaseClient } from '@supabase/supabase-js';
 
 export class SupabaseInventoryRepository implements IInventoryRepository {
-  constructor(private supabase: SupabaseClient) {}
+  constructor(
+    private supabase: SupabaseClient,
+    private privilegedClient: SupabaseClient | null = null
+  ) {}
+
+  private get rpcClient(): SupabaseClient {
+    return this.privilegedClient ?? this.supabase;
+  }
 
   async findByProductId(productId: string): Promise<InventoryItem[]> {
     const supabase = this.supabase;
@@ -55,7 +62,7 @@ export class SupabaseInventoryRepository implements IInventoryRepository {
   }
 
   async updateQuantity(id: string, delta: number): Promise<void> {
-    const supabase = this.supabase;
+    const supabase = this.rpcClient;
     const { error } = await supabase.rpc('increment_inventory_quantity', { 
       item_id: id, 
       delta 
@@ -65,7 +72,7 @@ export class SupabaseInventoryRepository implements IInventoryRepository {
   }
 
   async reserve(id: string, quantity: number): Promise<void> {
-    const supabase = this.supabase;
+    const supabase = this.rpcClient;
     const { error } = await supabase.rpc('reserve_stock', { 
       item_id: id, 
       qty: quantity 
@@ -75,7 +82,7 @@ export class SupabaseInventoryRepository implements IInventoryRepository {
   }
 
   async release(id: string, quantity: number): Promise<void> {
-    const supabase = this.supabase;
+    const supabase = this.rpcClient;
     const { error } = await supabase.rpc('release_stock', { 
       item_id: id, 
       qty: quantity 
