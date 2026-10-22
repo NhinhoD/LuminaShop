@@ -24,6 +24,9 @@ export const dynamic = "force-dynamic";
  */
 export const metadata = { title: { absolute: "Cài đặt | KhoUI Admin" } };
 
+/**
+ * Renders the admin store settings page.
+ */
 export default async function AdminSettingsPage() {
   const dict = await getAppDictionary();
   const adminDict = (dict.admin as Record<string, string>) || {};

@@ -7,6 +7,9 @@ import { ForgotPasswordClient } from "./ForgotPasswordClient";
 
 export const metadata = { title: { absolute: "Quên mật khẩu | KhoUI" } };
 
+/**
+ * Renders the forgot-password request page.
+ */
 export default async function ForgotPasswordPage() {
   const locale = await getLocale();
   const dict = await getAppDictionary();

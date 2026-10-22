@@ -8,6 +8,9 @@ import { getLocale } from "@/i18n/getDictionary";
  */
 export const metadata = { title: { absolute: "Thêm sản phẩm | KhoUI Admin" } };
 
+/**
+ * Renders the admin new product page.
+ */
 export default async function NewProductPage() {
   const getCategoriesUseCase = await makeGetCategoriesUseCase();
   const locale = await getLocale();

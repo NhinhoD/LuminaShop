@@ -12,6 +12,9 @@ export const metadata: Metadata = {
   description: 'Cập nhật mật khẩu tài khoản của bạn trên KhoUI',
 };
 
+/**
+ * Renders the change-password page for signed-in customers.
+ */
 export default async function ChangePasswordPage() {
   const getCurrentUserUseCase = await makeGetCurrentUserUseCase();
   const userResult = await getCurrentUserUseCase.execute();

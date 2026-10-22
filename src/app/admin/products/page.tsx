@@ -16,6 +16,9 @@ import { Plus, Search, Edit3, Package, Image as ImageIcon } from "lucide-react";
  */
 export const metadata = { title: { absolute: "Quản lý sản phẩm | KhoUI Admin" } };
 
+/**
+ * Renders the admin product catalog management page.
+ */
 export default async function AdminProductsPage({
   searchParams,
 }: {

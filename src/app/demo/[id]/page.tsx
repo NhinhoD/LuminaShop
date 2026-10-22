@@ -16,6 +16,9 @@ interface DemoPageProps {
  */
 export const metadata = { title: { absolute: "Xem trước template | KhoUI" } };
 
+/**
+ * Redirects to the sandboxed preview for the requested product.
+ */
 export default async function DemoPage({ params }: DemoPageProps) {
   const cookieStore = await cookies();
   const locale = (cookieStore.get('NEXT_LOCALE')?.value as 'vi' | 'en') || 'vi';

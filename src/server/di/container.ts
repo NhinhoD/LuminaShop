@@ -107,6 +107,7 @@ export async function makeCategoryRepository() {
   return new SupabaseCategoryRepository(supabase);
 }
 
+/** Creates the inventory repository with a service-role client for stock RPCs. */
 export async function makeInventoryRepository() {
   const supabase = await makeSupabaseClient();
   return new SupabaseInventoryRepository(supabase, createServiceRoleClient());

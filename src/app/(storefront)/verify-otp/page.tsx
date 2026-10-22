@@ -8,6 +8,9 @@ import React from 'react';
 
 export const metadata = { title: { absolute: "Xác thực OTP | KhoUI" } };
 
+/**
+ * Renders the OTP verification page using the pending email cookie.
+ */
 export default async function VerifyOtpPage(): Promise<React.ReactNode> {
   const cookieStore = await cookies();
   const email = cookieStore.get('pending_verification_email')?.value;

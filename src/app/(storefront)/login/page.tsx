@@ -12,6 +12,9 @@ import { LoginFormClient } from "./LoginFormClient";
  */
 export const metadata = { title: { absolute: "Đăng nhập | KhoUI" } };
 
+/**
+ * Renders the login page with the localized authentication form.
+ */
 export default async function LoginPage({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
   const params = await searchParams;
   const locale = await getLocale();

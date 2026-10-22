@@ -7,6 +7,9 @@ import { ResetPasswordClient } from "./ResetPasswordClient";
 
 export const metadata = { title: { absolute: "Đặt lại mật khẩu | KhoUI" } };
 
+/**
+ * Renders the password reset page for recovery links.
+ */
 export default async function ResetPasswordPage({
   searchParams,
 }: {

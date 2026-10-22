@@ -8,6 +8,9 @@ export const dynamic = 'force-dynamic';
 
 export const metadata = { title: { absolute: "Ngôn ngữ | KhoUI Admin" } };
 
+/**
+ * Renders the admin language settings page.
+ */
 export default async function AdminLanguagesPage() {
   const languages = await getLanguagesAction();
   const dict = await getAppDictionary();

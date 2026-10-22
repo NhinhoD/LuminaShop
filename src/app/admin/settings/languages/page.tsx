@@ -8,6 +8,9 @@ export const dynamic = 'force-dynamic';
 
 export const metadata = { title: { absolute: "Cài đặt ngôn ngữ | KhoUI Admin" } };
 
+/**
+ * Renders the admin site language settings page.
+ */
 export default async function AdminLanguagesPage() {
   let translations: TranslationEntry[] = [];
   const locale = await getLocale();

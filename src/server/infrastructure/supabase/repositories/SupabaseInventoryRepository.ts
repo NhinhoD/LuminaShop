@@ -9,6 +9,7 @@ export class SupabaseInventoryRepository implements IInventoryRepository {
     private privilegedClient: SupabaseClient | null = null
   ) {}
 
+  /** Returns the privileged client when configured, otherwise the request client. */
   private get rpcClient(): SupabaseClient {
     return this.privilegedClient ?? this.supabase;
   }
@@ -61,6 +62,7 @@ export class SupabaseInventoryRepository implements IInventoryRepository {
     return this.mapToEntity(data);
   }
 
+  /** Applies a stock delta through the privileged inventory RPC. */
   async updateQuantity(id: string, delta: number): Promise<void> {
     const supabase = this.rpcClient;
     const { error } = await supabase.rpc('increment_inventory_quantity', { 
@@ -71,6 +73,7 @@ export class SupabaseInventoryRepository implements IInventoryRepository {
     if (error) throw new Error(error.message);
   }
 
+  /** Reserves stock through the privileged inventory RPC. */
   async reserve(id: string, quantity: number): Promise<void> {
     const supabase = this.rpcClient;
     const { error } = await supabase.rpc('reserve_stock', { 
@@ -81,6 +84,7 @@ export class SupabaseInventoryRepository implements IInventoryRepository {
     if (error) throw new Error(error.message);
   }
 
+  /** Releases reserved stock through the privileged inventory RPC. */
   async release(id: string, quantity: number): Promise<void> {
     const supabase = this.rpcClient;
     const { error } = await supabase.rpc('release_stock', { 

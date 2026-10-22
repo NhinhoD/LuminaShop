@@ -25,6 +25,9 @@ import {
  */
 export const metadata = { title: { absolute: "Tổng quan | KhoUI Admin" } };
 
+/**
+ * Renders the admin dashboard with business metrics.
+ */
 export default async function AdminDashboardPage() {
   const dictionary = await getAppDictionary();
   const dict = (dictionary.dashboard as Record<string, string>) || {};

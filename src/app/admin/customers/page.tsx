@@ -31,6 +31,9 @@ interface AdminCustomersPageProps {
  */
 export const metadata = { title: { absolute: "Khách hàng | KhoUI Admin" } };
 
+/**
+ * Renders the admin customer list with pagination.
+ */
 export default async function AdminCustomersPage({
   searchParams,
 }: AdminCustomersPageProps): Promise<React.ReactElement> {

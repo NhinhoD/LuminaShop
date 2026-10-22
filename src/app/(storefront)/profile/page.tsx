@@ -12,6 +12,9 @@ import { UserOrdersRealtimeTracker } from '@/client/components/orders/UserOrders
  */
 export const metadata = { title: { absolute: "Tài khoản của tôi | KhoUI" } };
 
+/**
+ * Renders the signed-in customer profile page.
+ */
 export default async function ProfilePage() {
   // Parallelize independent initial tasks: locale, dictionary, and DI factory creation
   const [locale, dict, getCurrentUserUseCase, getProfileUseCase] = await Promise.all([

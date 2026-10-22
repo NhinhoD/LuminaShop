@@ -12,6 +12,9 @@ import { RegisterFormClient } from "./RegisterFormClient";
  */
 export const metadata = { title: { absolute: "Đăng ký | KhoUI" } };
 
+/**
+ * Renders the registration page with the localized authentication form.
+ */
 export default async function RegisterPage({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
   const params = await searchParams;
   const locale = await getLocale();
