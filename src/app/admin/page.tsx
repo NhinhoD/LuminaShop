@@ -23,6 +23,8 @@ import {
  * Admin dashboard page displaying key business metrics and recent orders.
  * Shows revenue, order count, customer growth KPIs, and a live order feed.
  */
+export const metadata = { title: "Tổng quan | KhoUI Admin" };
+
 export default async function AdminDashboardPage() {
   const dictionary = await getAppDictionary();
   const dict = (dictionary.dashboard as Record<string, string>) || {};

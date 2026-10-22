@@ -22,6 +22,8 @@ export const dynamic = "force-dynamic";
  * Admin settings hub page with quick navigation cards.
  * Provides access to translations, language management, payment configuration, and infrastructure settings.
  */
+export const metadata = { title: "Cài đặt | KhoUI Admin" };
+
 export default async function AdminSettingsPage() {
   const dict = await getAppDictionary();
   const adminDict = (dict.admin as Record<string, string>) || {};

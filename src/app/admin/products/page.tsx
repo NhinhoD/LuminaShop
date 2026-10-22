@@ -14,6 +14,8 @@ import { Plus, Search, Edit3, Package, Image as ImageIcon } from "lucide-react";
  * Displays a filterable table of all products with search, category/status filters, and pagination.
  * Supports inline editing, deletion, and navigation to product detail pages.
  */
+export const metadata = { title: "Quản lý sản phẩm | KhoUI Admin" };
+
 export default async function AdminProductsPage({
   searchParams,
 }: {

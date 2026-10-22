@@ -6,6 +6,8 @@ import { getTranslationsAction } from "@/server/presentation/actions/i18n";
 
 export const dynamic = 'force-dynamic';
 
+export const metadata = { title: "Cài đặt ngôn ngữ | KhoUI Admin" };
+
 export default async function AdminLanguagesPage() {
   let translations: TranslationEntry[] = [];
   const locale = await getLocale();

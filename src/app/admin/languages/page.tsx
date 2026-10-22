@@ -6,6 +6,8 @@ import { revalidatePath } from 'next/cache';
 
 export const dynamic = 'force-dynamic';
 
+export const metadata = { title: "Ngôn ngữ | KhoUI Admin" };
+
 export default async function AdminLanguagesPage() {
   const languages = await getLanguagesAction();
   const dict = await getAppDictionary();

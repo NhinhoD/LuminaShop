@@ -10,6 +10,8 @@ import { UserOrdersRealtimeTracker } from '@/client/components/orders/UserOrders
  * User profile page displaying account information and navigation sidebar.
  * Requires authentication; redirects to login if not authenticated.
  */
+export const metadata = { title: "Tài khoản của tôi | KhoUI" };
+
 export default async function ProfilePage() {
   // Parallelize independent initial tasks: locale, dictionary, and DI factory creation
   const [locale, dict, getCurrentUserUseCase, getProfileUseCase] = await Promise.all([

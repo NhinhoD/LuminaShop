@@ -5,6 +5,8 @@ import { getLocale } from "@/i18n/getDictionary";
 import { getAppDictionary } from "@/server/di/container";
 import { ResetPasswordClient } from "./ResetPasswordClient";
 
+export const metadata = { title: "Đặt lại mật khẩu | KhoUI" };
+
 export default async function ResetPasswordPage({
   searchParams,
 }: {
