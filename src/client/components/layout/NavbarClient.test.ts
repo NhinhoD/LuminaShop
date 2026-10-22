@@ -31,7 +31,7 @@ function mountNavbar(t: TestContext) {
   const revert = mock.fn();
   mock.method(gsap, 'context', () => ({ revert }) as unknown as gsap.Context);
   const router: AppRouterInstance = {
-    back() {}, forward() {}, refresh() {}, push() {}, replace() {}, prefetch() {},
+    bfcacheId: '', back() {}, forward() {}, refresh() {}, push() {}, replace() {}, prefetch() {},
   };
   let isScrolled = false;
   let effects: React.EffectCallback[] = [];
