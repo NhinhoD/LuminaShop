@@ -44,25 +44,26 @@ const techBadges = [
  */
 export function Footer(): React.JSX.Element {
   const { dict } = useI18n();
-  const f = (dict?.footer as { readonly [key: string]: string }) ?? {};
+  const f = (dict?.footer as Record<string, string>) || {};
 
   const quickLinks = [
     { label: f.templates || "Templates", href: "/shop" },
-    { label: f.aboutUs || "About", href: "/" },
-    { label: f.contact || "Contact", href: "mailto:khoui.gmail@gmail.com" },
+    { label: f.pricing || "Pricing", href: "/pricing" },
+    { label: f.about || "About", href: "/about" },
+    { label: f.contact || "Contact", href: "/contact" },
   ];
 
   const menuLinks = [
-    { label: f.webTemplates || "Web Templates", href: "/shop?category=ecommerce" },
-    { label: f.portfolio || "Portfolio", href: "/shop?category=portfolio" },
-    { label: f.dashboards || "Dashboards", href: "/shop?category=saas" },
-    { label: f.components || "Components", href: "/shop?category=fintech" },
+    { label: f.webTemplates || "Web Templates", href: "/shop?category=web" },
+    { label: f.landingPages || "Landing Pages", href: "/shop?category=landing" },
+    { label: f.dashboards || "Dashboards", href: "/shop?category=dashboard" },
+    { label: f.components || "Components", href: "/shop?category=components" },
   ];
 
   const contactInfo = [
-    { label: f.emailLabel || "Email", value: "khoui.gmail@gmail.com", icon: Mail },
-    { label: f.phoneLabel || "Phone", value: "0987 654 321", icon: Phone },
-    { label: f.addressLabel || "Address", value: "Ho Chi Minh City, Vietnam", icon: MapPin },
+    { label: f.email || "Email", value: "khoui.gmail@gmail.com", icon: Mail },
+    { label: f.phone || "Phone", value: "0987 654 321", icon: Phone },
+    { label: f.address || "Address", value: "Ho Chi Minh City, Vietnam", icon: MapPin },
   ];
 
   return (
