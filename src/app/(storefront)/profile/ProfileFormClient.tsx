@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState, useTransition } from "react";
 import { updateProfileAction } from "@/server/presentation/actions/auth";
@@ -138,16 +138,16 @@ export function ProfileFormClient({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-5">
         {/* First Name */}
         <div>
-          <label className="block text-xs font-medium text-slate-700 mb-1.5">
+          <label className="mono-meta mb-1.5 block text-[8.5px] text-dark/55">
             {profileDict.firstNameLabel || (locale === "vi" ? "Họ & Tên lót" : "First Name")}
           </label>
           <div className="relative">
-            <User className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+            <User className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-dark/35" />
             <input
               type="text"
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
-              className="w-full h-10 pl-10 pr-3.5 bg-white border border-slate-200/80 rounded-xl text-sm font-normal focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all placeholder:text-slate-400"
+              className="h-10 w-full border border-border bg-background pl-9 pr-3 text-[12px] text-dark outline-none transition-colors placeholder:text-dark/30 focus:border-dark"
               placeholder={locale === "vi" ? "Nguyễn Văn" : "Jane"}
             />
           </div>
@@ -155,17 +155,17 @@ export function ProfileFormClient({
 
         {/* Last Name */}
         <div>
-          <label className="block text-xs font-medium text-slate-700 mb-1.5">
+          <label className="mono-meta mb-1.5 block text-[8.5px] text-dark/55">
             {profileDict.lastNameLabel || (locale === "vi" ? "Tên" : "Last Name")}{" "}
-            <span className="text-red-500">*</span>
+            <span className="text-primary">*</span>
           </label>
           <div className="relative">
-            <User className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+            <User className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-dark/35" />
             <input
               type="text"
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
-              className="w-full h-10 pl-10 pr-3.5 bg-white border border-slate-200/80 rounded-xl text-sm font-normal focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all placeholder:text-slate-400"
+              className="h-10 w-full border border-border bg-background pl-9 pr-3 text-[12px] text-dark outline-none transition-colors placeholder:text-dark/30 focus:border-dark"
               placeholder={locale === "vi" ? "A" : "Doe"}
               required
             />
@@ -174,27 +174,27 @@ export function ProfileFormClient({
 
         {/* Email Address */}
         <div className="md:col-span-2">
-          <label className="block text-xs font-medium text-slate-700 mb-1.5">
+          <label className="mono-meta mb-1.5 block text-[8.5px] text-dark/55">
             {profileDict.emailLabel || (locale === "vi" ? "Địa chỉ Email" : "Email Address")}
           </label>
           <div className="relative">
-            <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+            <Mail className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-dark/35" />
             <input
               type="email"
               readOnly
               defaultValue={email}
-              className="w-full h-10 pl-10 pr-3.5 bg-slate-50 border border-slate-200/80 rounded-xl text-sm font-normal text-slate-400 outline-none cursor-not-allowed"
+              className="h-10 w-full cursor-not-allowed border border-border bg-background-subtle pl-9 pr-3 text-[12px] text-dark/45 outline-none"
             />
           </div>
         </div>
 
         {/* Contact Phone */}
         <div className="md:col-span-2">
-          <label className="block text-xs font-medium text-slate-700 mb-1.5">
+          <label className="mono-meta mb-1.5 block text-[8.5px] text-dark/55">
             {profileDict.phoneLabel || (locale === "vi" ? "Số điện thoại liên hệ" : "Contact Phone Number")}
           </label>
           <div className="relative">
-            <Phone className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+            <Phone className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-dark/35" />
             <input
               type="tel"
               inputMode="tel"
@@ -204,7 +204,7 @@ export function ProfileFormClient({
               onPaste={handlePhonePaste}
               maxLength={12}
               placeholder="0912345678"
-              className="w-full h-10 pl-10 pr-3.5 bg-white border border-slate-200/80 rounded-xl text-sm font-normal focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all placeholder:text-slate-400"
+              className="h-10 w-full border border-border bg-background pl-9 pr-3 text-[12px] text-dark outline-none transition-colors placeholder:text-dark/30 focus:border-dark"
             />
           </div>
         </div>
@@ -214,7 +214,7 @@ export function ProfileFormClient({
         <button
           type="submit"
           disabled={isPending}
-          className="bg-primary hover:bg-primary-dark text-white font-medium px-6 py-2.5 rounded-xl transition-all shadow-xs text-sm active:scale-95 cursor-pointer flex items-center gap-2 disabled:opacity-50"
+          className="flex items-center gap-2 bg-dark px-5 py-3 text-[11.5px] font-semibold text-background transition-colors hover:bg-primary disabled:cursor-not-allowed disabled:opacity-60"
         >
           {isPending ? (
             <Loader2 size={15} className="animate-spin" />

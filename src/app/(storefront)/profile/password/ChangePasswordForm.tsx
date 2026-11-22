@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState, useTransition } from "react";
 import Link from "next/link";
@@ -87,19 +87,19 @@ export function ChangePasswordForm({ locale }: Props) {
         {/* Current Password */}
         <div>
           <div className="flex items-center justify-between mb-1.5">
-            <label className="block text-xs font-medium text-slate-700">
+            <label className="mono-meta block text-[8.5px] text-dark/55">
               {locale === "vi" ? "Mật khẩu hiện tại" : "Current Password"}{" "}
-              <span className="text-red-500">*</span>
+              <span className="text-primary">*</span>
             </label>
             <Link
               href="/forgot-password"
-              className="text-xs text-primary hover:text-primary-dark hover:underline transition-colors font-medium"
+              className="text-[10.5px] text-primary transition-colors hover:text-dark"
             >
               {locale === "vi" ? "Quên mật khẩu?" : "Forgot password?"}
             </Link>
           </div>
           <div className="relative">
-            <KeyRound className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+            <KeyRound className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-dark/35" />
             <input
               type={showCurrent ? "text" : "password"}
               value={currentPassword}
@@ -107,12 +107,12 @@ export function ChangePasswordForm({ locale }: Props) {
               placeholder="••••••••"
               required
               autoComplete="current-password"
-              className="w-full h-11 pl-10 pr-11 bg-white border border-slate-200/80 rounded-xl text-sm font-normal focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all placeholder:text-slate-400"
+              className="h-10 w-full border border-border bg-background pl-9 pr-10 text-[12px] text-dark outline-none transition-colors placeholder:text-dark/30 focus:border-dark"
             />
             <button
               type="button"
               onClick={() => setShowCurrent(!showCurrent)}
-              className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
+              className="absolute right-2.5 top-1/2 flex h-6 w-6 -translate-y-1/2 items-center justify-center text-dark/35 transition-colors hover:text-dark"
             >
               {showCurrent ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
             </button>
@@ -121,12 +121,12 @@ export function ChangePasswordForm({ locale }: Props) {
 
         {/* New Password */}
         <div>
-          <label className="block text-xs font-medium text-slate-700 mb-1.5">
+          <label className="mono-meta block text-[8.5px] text-dark/55 mb-1.5">
             {locale === "vi" ? "Mật khẩu mới (tối thiểu 6 ký tự)" : "New Password (min 6 chars)"}{" "}
-            <span className="text-red-500">*</span>
+            <span className="text-primary">*</span>
           </label>
           <div className="relative">
-            <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+            <Lock className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-dark/35" />
             <input
               type={showNew ? "text" : "password"}
               value={newPassword}
@@ -134,12 +134,12 @@ export function ChangePasswordForm({ locale }: Props) {
               placeholder="••••••••"
               required
               autoComplete="new-password"
-              className="w-full h-11 pl-10 pr-11 bg-white border border-slate-200/80 rounded-xl text-sm font-normal focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all placeholder:text-slate-400"
+              className="h-10 w-full border border-border bg-background pl-9 pr-10 text-[12px] text-dark outline-none transition-colors placeholder:text-dark/30 focus:border-dark"
             />
             <button
               type="button"
               onClick={() => setShowNew(!showNew)}
-              className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
+              className="absolute right-2.5 top-1/2 flex h-6 w-6 -translate-y-1/2 items-center justify-center text-dark/35 transition-colors hover:text-dark"
             >
               {showNew ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
             </button>
@@ -148,12 +148,12 @@ export function ChangePasswordForm({ locale }: Props) {
 
         {/* Confirm New Password */}
         <div>
-          <label className="block text-xs font-medium text-slate-700 mb-1.5">
+          <label className="mono-meta block text-[8.5px] text-dark/55 mb-1.5">
             {locale === "vi" ? "Xác nhận mật khẩu mới" : "Confirm New Password"}{" "}
-            <span className="text-red-500">*</span>
+            <span className="text-primary">*</span>
           </label>
           <div className="relative">
-            <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+            <Lock className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-dark/35" />
             <input
               type={showConfirm ? "text" : "password"}
               value={confirmPassword}
@@ -161,12 +161,12 @@ export function ChangePasswordForm({ locale }: Props) {
               placeholder="••••••••"
               required
               autoComplete="new-password"
-              className="w-full h-11 pl-10 pr-11 bg-white border border-slate-200/80 rounded-xl text-sm font-normal focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all placeholder:text-slate-400"
+              className="h-10 w-full border border-border bg-background pl-9 pr-10 text-[12px] text-dark outline-none transition-colors placeholder:text-dark/30 focus:border-dark"
             />
             <button
               type="button"
               onClick={() => setShowConfirm(!showConfirm)}
-              className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
+              className="absolute right-2.5 top-1/2 flex h-6 w-6 -translate-y-1/2 items-center justify-center text-dark/35 transition-colors hover:text-dark"
             >
               {showConfirm ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
             </button>
@@ -178,7 +178,7 @@ export function ChangePasswordForm({ locale }: Props) {
         <button
           type="submit"
           disabled={isPending}
-          className="inline-flex items-center gap-2 px-6 py-2.5 bg-primary text-white font-medium rounded-xl hover:bg-primary-dark active:scale-98 transition-all text-sm cursor-pointer shadow-xs disabled:opacity-50"
+          className="inline-flex items-center gap-2 bg-dark px-5 py-3 text-[11.5px] font-semibold text-background transition-colors hover:bg-primary disabled:cursor-not-allowed disabled:opacity-60"
         >
           {isPending ? (
             <>

@@ -18,12 +18,12 @@ interface CancelOrderButtonProps {
  * @param props - CancelOrderButtonProps containing orderId.
  * @returns JSX button element.
  */
-export function CancelOrderButton({ orderId }: CancelOrderButtonProps) {
+export function CancelOrderButton({ orderId }: CancelOrderButtonProps): React.JSX.Element {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { dict } = useI18n();
 
-  const handleCancel = async () => {
+  const handleCancel = async (): Promise<void> => {
     setLoading(true);
     try {
       const result = await cancelOrderAction(orderId);
@@ -45,11 +45,11 @@ export function CancelOrderButton({ orderId }: CancelOrderButtonProps) {
       onClick={handleCancel}
       disabled={loading}
       type="button"
-      className="inline-flex items-center gap-1.5 px-4 py-2 border border-red-200 text-red-600 rounded-xl hover:bg-red-50 transition-colors text-xs font-bold uppercase tracking-wider disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+      className="inline-flex cursor-pointer items-center gap-1.5 border border-error/40 px-3.5 py-2 text-[10.5px] font-semibold uppercase tracking-[0.08em] text-error transition-colors hover:bg-error/5 disabled:cursor-not-allowed disabled:opacity-50"
     >
       {loading ? (
         <>
-          <Loader2 className="w-3.5 h-3.5 animate-spin text-red-600" />
+          <Loader2 className="h-3.5 w-3.5 animate-spin" />
           <span>{dict?.common?.loading || "Processing..."}</span>
         </>
       ) : (

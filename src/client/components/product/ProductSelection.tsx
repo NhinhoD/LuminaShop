@@ -14,6 +14,12 @@ interface ProductSelectionProps {
   purchaseLookupError?: boolean;
 }
 
+/**
+ * License selection, price and purchase actions for a product.
+ *
+ * @param props - Product, purchase state and lookup error flag.
+ * @returns Purchase panel.
+ */
 export default function ProductSelection({ product, hasPurchased, purchaseLookupError }: ProductSelectionProps): React.ReactElement | null {
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(
     product.variants && product.variants.length > 0 ? product.variants[0] : null
@@ -39,40 +45,46 @@ export default function ProductSelection({ product, hasPurchased, purchaseLookup
   const isFree = currentPrice === 0;
 
   return (
-    <div className="space-y-6 font-sans">
-      {/* Price and Stock Status */}
-      <div>
-        <div className="flex items-center gap-3 mb-1">
-          <span className="text-2xl sm:text-3xl font-bold text-slate-900 font-mono">
-            {isFree ? (dict?.common?.free?.toUpperCase() || (locale === "vi" ? "MIỄN PHÍ" : "FREE")) : formatCurrency(currentPrice, locale)}
-          </span>
+    <div className="space-y-5 font-sans">
+      {/* Price and stock status */}
+      <div className="border border-border bg-surface p-4">
+        <div className="flex flex-wrap items-end justify-between gap-2">
+          <div>
+            <span className="mono-meta block text-[8px] text-dark/35">{dict.shop.priceLabel}</span>
+            <div className="mt-1.5 flex items-baseline gap-1.5">
+              <span className="font-mono text-[1.65rem] font-semibold leading-none text-dark">
+                {isFree ? dict.common.free : formatCurrency(currentPrice, locale)}
+              </span>
+              {!isFree ? (
+                <span className="mono-meta text-[8px] text-dark/35">{dict.shop.perLifetime}</span>
+              ) : null}
+            </div>
+          </div>
           <span
-            className={`text-xs font-medium px-2.5 py-0.5 rounded-md ${
-              isInStock
-                ? "text-emerald-700 bg-emerald-50"
-                : "text-red-700 bg-red-50"
+            className={`mono-meta flex items-center gap-1.5 border px-1.5 py-1 text-[8px] ${
+              isInStock ? "border-success/40 text-success" : "border-error/40 text-error"
             }`}
           >
-            {isInStock 
-              ? (dict?.product?.inStock || (locale === "vi" ? "Có sẵn" : "In Stock"))
-              : (dict?.product?.outOfStock || (locale === "vi" ? "Tạm hết" : "Out of Stock"))}
+            <span className={`h-1.5 w-1.5 ${isInStock ? "bg-success" : "bg-error"}`} />
+            {isInStock ? dict.product.inStock : dict.product.outOfStock}
           </span>
         </div>
+
         {selectedVariant && (
-          <p className="text-xs text-slate-500 font-normal">
-            {dict?.product?.selectedOption || (locale === "vi" ? "Đã chọn gói:" : "Selected license:")}{" "}
-            <strong className="font-semibold text-slate-800">{selectedVariant.name}</strong>
+          <p className="mono-meta mt-3 border-t border-border pt-3 text-[8px] text-dark/40">
+            {dict.product.selectedOption}{" "}
+            <strong className="font-semibold text-dark">{selectedVariant.name}</strong>
           </p>
         )}
       </div>
 
-      {/* Variant Selection */}
+      {/* Variant selection */}
       {product.variants && product.variants.length > 0 && (
         <div className="space-y-2.5">
-          <label className="block text-xs font-semibold text-slate-800 uppercase tracking-wider">
-            {dict?.product?.chooseOption || (locale === "vi" ? "Lựa chọn gói bản quyền" : "Choose License Option")}
+          <label className="mono-meta block text-[8.5px] text-dark/45">
+            {dict.product.chooseOption}
           </label>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+          <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-3">
             {product.variants.map((variant) => {
               const isSelected = selectedVariant?.id === variant.id;
               return (
@@ -80,15 +92,19 @@ export default function ProductSelection({ product, hasPurchased, purchaseLookup
                   key={variant.id}
                   onClick={() => setSelectedVariant(variant)}
                   type="button"
-                  className={`p-3 rounded-lg text-left transition-all border cursor-pointer ${
+                  className={`border p-3 text-left transition-colors ${
                     isSelected
-                      ? "bg-primary/5 text-primary border-primary font-semibold"
-                      : "bg-white text-slate-700 border-slate-200/80 hover:border-slate-300 font-medium"
+                      ? "border-dark bg-dark text-background"
+                      : "border-border bg-surface text-dark/70 hover:border-dark hover:text-dark"
                   }`}
                 >
-                  <div className="text-xs font-semibold">{variant.name}</div>
+                  <div className="text-[11.5px] font-semibold leading-tight">{variant.name}</div>
                   {variant.priceAdjustment !== 0 && (
-                    <div className={`text-[11px] font-mono mt-0.5 ${isSelected ? "text-primary" : "text-slate-500"}`}>
+                    <div
+                      className={`mt-1 font-mono text-[10px] ${
+                        isSelected ? "text-primary" : "text-dark/45"
+                      }`}
+                    >
                       {variant.priceAdjustment > 0 ? "+" : ""}
                       {formatCurrency(variant.priceAdjustment, locale)}
                     </div>
@@ -100,24 +116,21 @@ export default function ProductSelection({ product, hasPurchased, purchaseLookup
         </div>
       )}
 
-      {/* Error Notice */}
+      {/* Error notices */}
       {errorMsg && (
-        <div className="bg-red-50 text-red-600 text-xs p-3 rounded-lg border border-red-100 font-medium">
+        <div className="border border-error/30 bg-error/5 p-3 text-[11.5px] font-medium text-error">
           {errorMsg}
         </div>
       )}
 
-      {/* Lookup Error Notice */}
       {purchaseLookupError && (
-        <div className="bg-amber-50 text-amber-700 text-xs p-3 rounded-lg border border-amber-200 font-medium">
-          {dict?.product?.lookupError || (locale === "vi" 
-            ? "Không thể kiểm tra trạng thái bản quyền do lỗi kết nối. Vui lòng tải lại trang." 
-            : "Could not verify your license status due to a connection error. Please reload the page.")}
+        <div className="border border-primary/40 bg-primary/5 p-3 mono-meta text-[8.5px] leading-relaxed text-primary">
+          {dict.product.lookupError}
         </div>
       )}
 
-      {/* Add to Cart Actions */}
-      <div className="space-y-2.5 pt-1">
+      {/* Purchase actions */}
+      <div className="space-y-2 pt-1">
         <button
           onClick={async () => {
             if (purchaseLookupError) {
@@ -152,27 +165,27 @@ export default function ProductSelection({ product, hasPurchased, purchaseLookup
             }
           }}
           disabled={isProcessing}
-          className="w-full py-3.5 rounded-xl bg-primary hover:bg-primary-dark text-white font-semibold text-xs sm:text-sm transition-colors shadow-xs cursor-pointer flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+          className="flex w-full items-center justify-center gap-2 bg-dark py-3.5 text-[12px] font-semibold text-background transition-colors hover:bg-primary disabled:cursor-not-allowed disabled:opacity-70"
         >
           {isProcessing ? (
-            <Loader2 size={16} className="animate-spin" />
+            <Loader2 size={15} className="animate-spin" />
           ) : purchaseLookupError ? (
-            <>{dict?.product?.reloadToVerify || (locale === "vi" ? "Tải lại trang để kiểm tra bản quyền" : "Reload to verify license")}</>
+            <>{dict.product.reloadToVerify}</>
           ) : isFree ? (
-            <><Download size={16} /> {dict?.product?.freeDownload || (locale === "vi" ? "Tải xuống miễn phí" : "Free Download")}</>
+            <><Download size={15} /> {dict.product.freeDownload}</>
           ) : hasPurchased ? (
-            <><Download size={16} /> {dict?.product?.downloadZip || (locale === "vi" ? "Tải trọn bộ file tĩnh (.zip)" : "Download Static Files (.zip)")}</>
+            <><Download size={15} /> {dict.product.downloadZip}</>
           ) : (
-            <><CreditCard size={16} /> {dict?.product?.payToPurchase || (locale === "vi" ? "Mở khóa template ngay" : "Unlock Template Now")}</>
+            <><CreditCard size={15} /> {dict.product.payToPurchase}</>
           )}
         </button>
 
-        <button 
+        <button
           type="button"
-          className="w-full py-3 rounded-xl border border-slate-200 hover:border-slate-300 text-slate-700 font-medium text-xs sm:text-sm hover:bg-slate-50 transition-colors cursor-pointer flex items-center justify-center gap-1.5"
+          className="flex w-full items-center justify-center gap-1.5 border border-border py-3 text-[11.5px] font-medium text-dark/60 transition-colors hover:border-dark hover:text-dark"
         >
-          <Heart size={15} />
-          <span>{dict?.product?.addToWishlist || (locale === "vi" ? "Thêm vào danh sách yêu thích" : "Add to Wishlist")}</span>
+          <Heart size={14} />
+          <span>{dict.product.addToWishlist}</span>
         </button>
       </div>
     </div>

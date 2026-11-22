@@ -12,8 +12,11 @@ interface BackButtonProps {
 /**
  * A reusable back button that returns the user to the previous page in history.
  * Browsers automatically preserve scroll position when using history.back().
+ *
+ * @param props - Optional class overrides.
+ * @returns Spec Sheet styled back control, or null when no history exists.
  */
-export function BackButton({ className = "" }: BackButtonProps) {
+export function BackButton({ className = "" }: BackButtonProps): React.JSX.Element | null {
   const router = useRouter();
   const [canGoBack, setCanGoBack] = useState(false);
   const { dict } = useI18n();
@@ -29,17 +32,16 @@ export function BackButton({ className = "" }: BackButtonProps) {
   return (
     <button
       onClick={() => router.back()}
-      className={`group flex items-center gap-2 text-slate-500 hover:text-slate-900 transition-all duration-200 cursor-pointer ${className}`}
+      className={`group flex cursor-pointer items-center gap-2 text-dark/45 transition-colors hover:text-dark ${className}`}
       aria-label={dict?.common?.back || "Go back"}
       type="button"
     >
-      <div className="flex items-center justify-center w-8 h-8 rounded-full bg-slate-100 group-hover:bg-slate-200 transition-colors">
-        <ArrowLeft size={16} className="transition-transform group-hover:-translate-x-0.5" />
-      </div>
-      <span className="text-xs font-bold tracking-[0.1em] uppercase hidden sm:inline font-sans">
+      <span className="flex h-7 w-7 items-center justify-center border border-border bg-surface transition-colors group-hover:border-dark">
+        <ArrowLeft size={13} className="transition-transform group-hover:-translate-x-0.5" />
+      </span>
+      <span className="mono-meta hidden text-[8px] sm:inline">
         {dict?.common?.back || "Back"}
       </span>
     </button>
   );
 }
-

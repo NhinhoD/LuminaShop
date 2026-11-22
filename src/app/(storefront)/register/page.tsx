@@ -1,14 +1,13 @@
 ﻿import Link from "next/link";
-import Image from "next/image";
 import { ROUTES } from "@/shared/constants";
 import { getLocale } from "@/i18n/getDictionary";
 import { getAppDictionary } from "@/server/di/container";
 import { AuthErrorToast } from "@/client/components/auth/AuthErrorToast";
+import { AuthShell } from "@/client/components/auth/AuthShell";
 import { RegisterFormClient } from "./RegisterFormClient";
 
 /**
  * User registration page with account creation form.
- * Harmonized with KhoUI design system specifications.
  */
 export const metadata = { title: { absolute: "Đăng ký | KhoUI" } };
 
@@ -22,53 +21,26 @@ export default async function RegisterPage({ searchParams }: { searchParams: Pro
   const authDict = (dict?.auth as Record<string, string>) || {};
 
   return (
-    <main className="min-h-[calc(100vh-140px)] bg-background-subtle flex flex-col items-center justify-center py-16 px-4 font-sans">
-      <AuthErrorToast locale={locale} />
-
-      {/* Brand Logo */}
-      <Link href={ROUTES.HOME} className="mb-8 group transition-transform hover:scale-102 flex flex-col items-center">
-        <Image
-          src="/LogoKhoUI.png"
-          alt="KhoUI Logo"
-          width={140}
-          height={48}
-          priority
-          className="h-11 w-auto object-contain"
-        />
-      </Link>
-
-      {/* Registration Card */}
-      <div className="w-full max-w-[500px] bg-white rounded-3xl border border-slate-100 p-8 sm:p-10 shadow-[0_4px_24px_rgba(0,0,0,0.02)]">
-        <div className="text-center mb-8">
-          <span className="text-xs font-semibold tracking-wider text-primary uppercase block mb-1">
-            {authDict.tag || (locale === "vi" ? "TÀI KHOẢN KHOUI" : "KHOUI ACCOUNT")}
-          </span>
-          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
-            {authDict.registerTitle || (locale === "vi" ? "Tạo tài khoản mới" : "Create an Account")}
-          </h1>
-          <p className="text-slate-500 text-xs mt-1.5 font-normal leading-relaxed">
-            {authDict.registerSubtitle || (locale === "vi" ? "Tham gia cùng KhoUI để sở hữu bản quyền và tải các mẫu website dễ dàng." : "Join KhoUI to license and download premium templates.")}
-          </p>
-        </div>
-
-        <RegisterFormClient locale={locale} authDict={authDict} error={params?.error} />
-
-        <div className="relative my-8">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-slate-100"></div>
-          </div>
-          <div className="relative flex justify-center text-xs font-normal text-slate-400">
-            <span className="bg-white px-3">{authDict.orText || (locale === "vi" ? "Hoặc" : "Or")}</span>
-          </div>
-        </div>
-
-        <div className="text-center text-xs text-slate-500 font-normal">
-          {authDict.hasAccount || (locale === "vi" ? "Đã có tài khoản?" : "Already have an account?")}{" "}
-          <Link href={ROUTES.LOGIN} className="text-primary font-semibold hover:underline">
+    <AuthShell
+      code="AUTH-02"
+      tag={authDict.tag || (locale === "vi" ? "TÀI KHOẢN KHOUI" : "KHOUI ACCOUNT")}
+      title={authDict.registerTitle || (locale === "vi" ? "Tạo tài khoản mới" : "Create an Account")}
+      subtitle={authDict.registerSubtitle || (locale === "vi" ? "Tham gia cùng KhoUI để sở hữu bản quyền và tải các mẫu website dễ dàng." : "Join KhoUI to license and download premium templates.")}
+      footer={
+        <div className="flex flex-wrap items-center justify-between gap-2 text-[11.5px] text-dark/50">
+          <span>{authDict.hasAccount || (locale === "vi" ? "Đã có tài khoản?" : "Already have an account?")}</span>
+          <Link
+            href={ROUTES.LOGIN}
+            className="mono-meta border-b border-dark/30 pb-0.5 text-[8.5px] text-primary transition-colors hover:border-primary"
+          >
             {authDict.loginButton || (locale === "vi" ? "Đăng nhập" : "Sign In")}
           </Link>
         </div>
-      </div>
-    </main>
+      }
+    >
+      <AuthErrorToast locale={locale} />
+
+      <RegisterFormClient locale={locale} authDict={authDict} error={params?.error} />
+    </AuthShell>
   );
 }

@@ -9,21 +9,27 @@ interface StatusBadgeProps {
   className?: string;
 }
 
-export function StatusBadge({ status, className }: StatusBadgeProps) {
+/**
+ * Square spec-sheet status chip for order states.
+ *
+ * @param props - Order status and optional class overrides.
+ * @returns Status badge.
+ */
+export function StatusBadge({ status, className }: StatusBadgeProps): React.JSX.Element {
   const { dict } = useI18n();
 
   const statusConfig = {
     [OrderStatus.PENDING]: {
       label: dict?.orders?.statusPending || "Pending",
-      classes: "bg-yellow-100 text-yellow-700 border-yellow-200",
+      classes: "bg-primary/5 text-primary border-primary/30",
     },
     [OrderStatus.COMPLETED]: {
       label: dict?.orders?.statusCompleted || "Completed",
-      classes: "bg-green-100 text-green-700 border-green-200",
+      classes: "bg-success/5 text-success border-success/30",
     },
     [OrderStatus.CANCELLED]: {
       label: dict?.orders?.statusCancelled || "Cancelled",
-      classes: "bg-red-100 text-red-700 border-red-200",
+      classes: "bg-error/5 text-error border-error/30",
     },
   };
 
@@ -32,11 +38,12 @@ export function StatusBadge({ status, className }: StatusBadgeProps) {
   return (
     <span
       className={cn(
-        "px-2.5 py-0.5 rounded-full text-xs font-medium border",
+        "inline-flex items-center gap-1.5 border px-2 py-1 text-[9px] font-semibold uppercase tracking-[0.08em]",
         config.classes,
         className
       )}
     >
+      <span className="h-1 w-1 bg-current" />
       {config.label}
     </span>
   );

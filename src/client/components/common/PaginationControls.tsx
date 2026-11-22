@@ -3,7 +3,6 @@
 import React from "react";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
-import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useI18n } from "@/client/components/common/I18nContext";
 
@@ -22,9 +21,9 @@ export interface PaginationControlsProps {
   readonly isPending?: boolean;
   /** Optional hash anchor to append to URL, e.g. 'showcase' -> '#showcase' */
   readonly anchor?: string;
-  /** Unique layoutId for Framer Motion spring active capsule */
+  /** Retained for API compatibility; the Spec Sheet style uses no spring capsule. */
   readonly layoutId?: string;
-  /** Label for item counter, e.g. { vi: "template", en: "templates" } or "đơn hàng" */
+  /** Label for item counter, e.g. "template" or { vi: "template", en: "templates" } */
   readonly itemName?: string | { vi: string; en: string };
   /** Explicitly toggle item counter display */
   readonly showItemCount?: boolean;
@@ -37,39 +36,41 @@ export interface PaginationControlsProps {
 }
 
 /**
- * Computes the page numbers array with smart ellipsis windowing
- * Keeps max 7 visible pill slots for clean mobile/tablet responsiveness.
+ * Computes the page numbers array with smart ellipsis windowing.
+ *
+ * @param currentPage - Active 1-based page.
+ * @param totalPages - Total page count.
+ * @returns Visible page numbers and ellipsis markers.
  */
 export function getPageNumbers(currentPage: number, totalPages: number): (number | "...")[] {
-  if (totalPages <= 1) {
-    return [1];
-  }
-  if (totalPages <= 7) {
-    return Array.from({ length: totalPages }, (_, i) => i + 1);
-  }
+  if (totalPages <= 1) return [1];
+  if (totalPages <= 7) return Array.from({ length: totalPages }, (_, index) => index + 1);
 
-  // Near start: [1, 2, 3, 4, 5, '...', totalPages]
-  if (currentPage <= 4) {
-    return [1, 2, 3, 4, 5, "...", totalPages];
-  }
+  if (currentPage <= 4) return [1, 2, 3, 4, 5, "...", totalPages];
 
-  // Near end: [1, '...', totalPages - 4, totalPages - 3, totalPages - 2, totalPages - 1, totalPages]
   if (currentPage >= totalPages - 3) {
-    return [
-      1,
-      "...",
-      totalPages - 4,
-      totalPages - 3,
-      totalPages - 2,
-      totalPages - 1,
-      totalPages,
-    ];
+    return [1, "...", totalPages - 4, totalPages - 3, totalPages - 2, totalPages - 1, totalPages];
   }
 
-  // Middle: [1, '...', currentPage - 1, currentPage, currentPage + 1, '...', totalPages]
   return [1, "...", currentPage - 1, currentPage, currentPage + 1, "...", totalPages];
 }
 
+const CONTROL_BASE =
+  "flex h-8 w-8 items-center justify-center border text-[11px] font-medium transition-colors";
+const CONTROL_IDLE =
+  "border-border bg-surface text-dark/65 hover:border-dark hover:text-dark";
+const CONTROL_DISABLED = "border-border/60 bg-background-subtle/40 text-dark/20 cursor-not-allowed select-none";
+
+/**
+ * Hairline pagination control.
+ *
+ * Supports both server-driven `Link` navigation and a client callback. Active
+ * page is marked with `aria-current`; disabled edges use spans so keyboard focus
+ * cannot land on an inert action.
+ *
+ * @param props - Page state, navigation mode and copy overrides.
+ * @returns Pagination row or null when there is nothing to paginate.
+ */
 export function PaginationControls({
   currentPage,
   totalPages,
@@ -78,164 +79,118 @@ export function PaginationControls({
   onPageChange,
   isPending = false,
   anchor,
-  layoutId = "pagination-pill-active",
   itemName,
   showItemCount,
   className = "",
   bordered = true,
   scroll = true,
-}: PaginationControlsProps) {
+}: PaginationControlsProps): React.JSX.Element | null {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const { locale } = useI18n();
 
   const shouldShowCount = showItemCount ?? (totalItems !== undefined && totalItems > 0);
-  const resolvedItemName = typeof itemName === "object"
-    ? (locale === "vi" ? itemName.vi : itemName.en)
-    : (itemName || (locale === "vi" ? "kết quả" : "items"));
+  const resolvedItemName =
+    typeof itemName === "object"
+      ? locale === "vi"
+        ? itemName.vi
+        : itemName.en
+      : itemName || (locale === "vi" ? "kết quả" : "items");
 
-  // If there is only 1 page (or 0):
-  // Render item count summary if requested and items exist, otherwise return null
   if (totalPages <= 1) {
-    if (!shouldShowCount || totalItems === undefined || totalItems <= 0) {
-      return null;
-    }
+    if (!shouldShowCount || totalItems === undefined || totalItems <= 0) return null;
 
     return (
       <div
-        className={`flex items-center justify-between gap-4 pt-6 font-sans ${bordered ? "border-t border-slate-100" : ""} ${className}`}
+        className={`flex items-center justify-between gap-4 pt-5 font-sans ${
+          bordered ? "border-t border-border" : ""
+        } ${className}`}
       >
-        <div className="text-xs font-medium text-slate-500 text-center sm:text-left">
-          {locale === "vi" ? (
-            <span>
-              Hiển thị{" "}
-              <span className="font-semibold text-slate-900">
-                1 - {totalItems}
-              </span>{" "}
-              trên{" "}
-              <span className="font-semibold text-slate-900">{totalItems}</span>{" "}
-              {resolvedItemName}
-            </span>
-          ) : (
-            <span>
-              Showing{" "}
-              <span className="font-semibold text-slate-900">
-                1 - {totalItems}
-              </span>{" "}
-              of{" "}
-              <span className="font-semibold text-slate-900">{totalItems}</span>{" "}
-              {resolvedItemName}
-            </span>
-          )}
-        </div>
+        <p className="mono-meta text-[9px] text-dark/40">
+          {locale === "vi" ? "Hiển thị" : "Showing"}{" "}
+          <span className="text-dark">1 – {totalItems}</span> / {totalItems} {resolvedItemName}
+        </p>
       </div>
     );
   }
 
   const safeCurrentPage = Math.min(Math.max(1, currentPage), totalPages);
+  const isPrevDisabled = safeCurrentPage <= 1 || isPending;
+  const isNextDisabled = safeCurrentPage >= totalPages || isPending;
 
-  const createPageUrl = (pageNumber: number) => {
+  const from =
+    totalItems && totalItems > 0 && itemsPerPage
+      ? (safeCurrentPage - 1) * itemsPerPage + 1
+      : 1;
+  const to =
+    totalItems && totalItems > 0 && itemsPerPage
+      ? Math.min(safeCurrentPage * itemsPerPage, totalItems)
+      : totalItems;
+
+  const pageNumbers = getPageNumbers(safeCurrentPage, totalPages);
+
+  const createPageUrl = (pageNumber: number): string => {
     const params = new URLSearchParams(searchParams ? searchParams.toString() : "");
     params.set("page", pageNumber.toString());
     const cleanAnchor = anchor ? (anchor.startsWith("#") ? anchor : `#${anchor}`) : "";
     return `${pathname}?${params.toString()}${cleanAnchor}`;
   };
 
-  const isPrevDisabled = safeCurrentPage <= 1 || isPending;
-  const isNextDisabled = safeCurrentPage >= totalPages || isPending;
-
-  const from = totalItems && totalItems > 0 && itemsPerPage
-    ? (safeCurrentPage - 1) * itemsPerPage + 1
-    : 1;
-  const to = totalItems && totalItems > 0 && itemsPerPage
-    ? Math.min(safeCurrentPage * itemsPerPage, totalItems)
-    : totalItems;
-
-  const pageNumbers = getPageNumbers(safeCurrentPage, totalPages);
+  const previousLabel = locale === "vi" ? "Trang trước" : "Previous page";
+  const nextLabel = locale === "vi" ? "Trang sau" : "Next page";
 
   return (
     <div
-      className={`flex flex-col sm:flex-row items-center ${
-        shouldShowCount && totalItems !== undefined ? "justify-between" : "justify-center"
-      } gap-4 pt-6 font-sans ${bordered ? "border-t border-slate-100" : ""} ${className}`}
+      className={`flex flex-col items-center gap-4 pt-5 font-sans sm:flex-row sm:justify-between ${
+        bordered ? "border-t border-border" : ""
+      } ${className}`}
     >
-      {/* ─── Item Count Summary ─── */}
-      {shouldShowCount && totalItems !== undefined && (
-        <div className="text-xs font-medium text-slate-500 order-2 sm:order-1 text-center sm:text-left">
-          {locale === "vi" ? (
-            <span>
-              Hiển thị{" "}
-              <span className="font-semibold text-slate-900">
-                {from} - {to}
-              </span>{" "}
-              trên{" "}
-              <span className="font-semibold text-slate-900">{totalItems}</span>{" "}
-              {resolvedItemName}
-            </span>
-          ) : (
-            <span>
-              Showing{" "}
-              <span className="font-semibold text-slate-900">
-                {from} - {to}
-              </span>{" "}
-              of{" "}
-              <span className="font-semibold text-slate-900">{totalItems}</span>{" "}
-              {resolvedItemName}
-            </span>
-          )}
-        </div>
+      {shouldShowCount && totalItems !== undefined ? (
+        <p className="mono-meta order-2 text-[9px] text-dark/40 sm:order-1">
+          {locale === "vi" ? "Hiển thị" : "Showing"}{" "}
+          <span className="text-dark">
+            {from} – {to}
+          </span>{" "}
+          / {totalItems} {resolvedItemName}
+        </p>
+      ) : (
+        <span className="order-2 hidden sm:order-1 sm:block" />
       )}
 
-      {/* ─── Navigation Controls ─── */}
-      <div className="flex items-center gap-1.5 order-1 sm:order-2">
-        {/* Previous Button */}
+      <nav aria-label={locale === "vi" ? "Phân trang" : "Pagination"} className="order-1 flex items-center gap-1 sm:order-2">
         {onPageChange ? (
           <button
             type="button"
             onClick={() => onPageChange(safeCurrentPage - 1)}
             disabled={isPrevDisabled}
-            aria-label={locale === "vi" ? "Trang trước" : "Previous page"}
-            className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-200 border ${
-              isPrevDisabled
-                ? "border-slate-100 text-slate-300 bg-slate-50/50 cursor-not-allowed"
-                : "border-slate-200 bg-white text-slate-700 hover:text-primary hover:border-primary/40 hover:bg-primary/5 shadow-2xs active:scale-95 cursor-pointer"
-            }`}
+            aria-label={previousLabel}
+            className={`${CONTROL_BASE} ${isPrevDisabled ? CONTROL_DISABLED : CONTROL_IDLE}`}
           >
-            <ChevronLeft size={16} />
+            <ChevronLeft size={14} />
           </button>
         ) : isPrevDisabled ? (
-          <span
-            aria-disabled="true"
-            aria-label={locale === "vi" ? "Trang trước" : "Previous page"}
-            className="w-9 h-9 rounded-xl flex items-center justify-center border border-slate-100 text-slate-300 bg-slate-50/50 cursor-not-allowed select-none"
-          >
-            <ChevronLeft size={16} />
+          <span aria-disabled="true" aria-label={previousLabel} className={`${CONTROL_BASE} ${CONTROL_DISABLED}`}>
+            <ChevronLeft size={14} />
           </span>
         ) : (
-          <Link
-            href={createPageUrl(safeCurrentPage - 1)}
-            scroll={scroll}
-            aria-label={locale === "vi" ? "Trang trước" : "Previous page"}
-            className="w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-200 border border-slate-200 bg-white text-slate-700 hover:text-primary hover:border-primary/40 hover:bg-primary/5 shadow-2xs active:scale-95 cursor-pointer"
-          >
-            <ChevronLeft size={16} />
+          <Link href={createPageUrl(safeCurrentPage - 1)} scroll={scroll} aria-label={previousLabel} className={`${CONTROL_BASE} ${CONTROL_IDLE}`}>
+            <ChevronLeft size={14} />
           </Link>
         )}
 
-        {/* Number Pills & Ellipsis */}
         {pageNumbers.map((page, index) => {
           if (page === "...") {
             return (
-              <span
-                key={`ellipsis-${index}`}
-                className="w-8 h-9 flex items-center justify-center text-xs font-semibold text-slate-400 select-none"
-              >
-                ...
+              <span key={`ellipsis-${index}`} aria-hidden="true" className="flex h-8 w-6 items-center justify-center text-[11px] text-dark/30">
+                …
               </span>
             );
           }
 
           const isActive = page === safeCurrentPage;
+          const className = isActive
+            ? `${CONTROL_BASE} border-dark bg-dark text-background`
+            : `${CONTROL_BASE} ${CONTROL_IDLE}`;
 
           if (onPageChange) {
             return (
@@ -244,20 +199,10 @@ export function PaginationControls({
                 type="button"
                 disabled={isPending}
                 onClick={() => onPageChange(page)}
-                className={`relative w-9 h-9 rounded-xl flex items-center justify-center text-xs font-semibold transition-all duration-200 cursor-pointer ${
-                  isActive
-                    ? "text-white"
-                    : "text-slate-600 hover:text-slate-900 hover:bg-slate-100/80 active:scale-95"
-                } ${isPending ? "opacity-60 cursor-wait" : ""}`}
+                aria-current={isActive ? "page" : undefined}
+                className={`${className} ${isPending ? "cursor-wait opacity-60" : ""}`}
               >
-                {isActive && (
-                  <motion.div
-                    layoutId={layoutId}
-                    className="absolute inset-0 bg-primary rounded-xl shadow-xs shadow-primary/25"
-                    transition={{ type: "spring", stiffness: 380, damping: 28 }}
-                  />
-                )}
-                <span className="relative z-10">{page}</span>
+                {page}
               </button>
             );
           }
@@ -267,58 +212,34 @@ export function PaginationControls({
               key={page}
               href={createPageUrl(page)}
               scroll={scroll}
-              className={`relative w-9 h-9 rounded-xl flex items-center justify-center text-xs font-semibold transition-all duration-200 cursor-pointer ${
-                isActive
-                  ? "text-white"
-                  : "text-slate-600 hover:text-slate-900 hover:bg-slate-100/80 active:scale-95"
-              }`}
+              aria-current={isActive ? "page" : undefined}
+              className={className}
             >
-              {isActive && (
-                <motion.div
-                  layoutId={layoutId}
-                  className="absolute inset-0 bg-primary rounded-xl shadow-xs shadow-primary/25"
-                  transition={{ type: "spring", stiffness: 380, damping: 28 }}
-                />
-              )}
-              <span className="relative z-10">{page}</span>
+              {page}
             </Link>
           );
         })}
 
-        {/* Next Button */}
         {onPageChange ? (
           <button
             type="button"
             onClick={() => onPageChange(safeCurrentPage + 1)}
             disabled={isNextDisabled}
-            aria-label={locale === "vi" ? "Trang sau" : "Next page"}
-            className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-200 border ${
-              isNextDisabled
-                ? "border-slate-100 text-slate-300 bg-slate-50/50 cursor-not-allowed"
-                : "border-slate-200 bg-white text-slate-700 hover:text-primary hover:border-primary/40 hover:bg-primary/5 shadow-2xs active:scale-95 cursor-pointer"
-            }`}
+            aria-label={nextLabel}
+            className={`${CONTROL_BASE} ${isNextDisabled ? CONTROL_DISABLED : CONTROL_IDLE}`}
           >
-            <ChevronRight size={16} />
+            <ChevronRight size={14} />
           </button>
         ) : isNextDisabled ? (
-          <span
-            aria-disabled="true"
-            aria-label={locale === "vi" ? "Trang sau" : "Next page"}
-            className="w-9 h-9 rounded-xl flex items-center justify-center border border-slate-100 text-slate-300 bg-slate-50/50 cursor-not-allowed select-none"
-          >
-            <ChevronRight size={16} />
+          <span aria-disabled="true" aria-label={nextLabel} className={`${CONTROL_BASE} ${CONTROL_DISABLED}`}>
+            <ChevronRight size={14} />
           </span>
         ) : (
-          <Link
-            href={createPageUrl(safeCurrentPage + 1)}
-            scroll={scroll}
-            aria-label={locale === "vi" ? "Trang sau" : "Next page"}
-            className="w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-200 border border-slate-200 bg-white text-slate-700 hover:text-primary hover:border-primary/40 hover:bg-primary/5 shadow-2xs active:scale-95 cursor-pointer"
-          >
-            <ChevronRight size={16} />
+          <Link href={createPageUrl(safeCurrentPage + 1)} scroll={scroll} aria-label={nextLabel} className={`${CONTROL_BASE} ${CONTROL_IDLE}`}>
+            <ChevronRight size={14} />
           </Link>
         )}
-      </div>
+      </nav>
     </div>
   );
 }

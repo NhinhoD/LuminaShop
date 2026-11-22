@@ -70,7 +70,7 @@ function ToastMessage({ toast, onRemove }: { toast: ToastItem; onRemove: (id: st
 
       {/* Content */}
       <div className="flex-1 min-w-0 pr-4">
-        <h4 className="font-extrabold text-slate-900 dark:text-slate-100 text-xs md:text-sm leading-snug">
+        <h4 className="font-semibold text-slate-900 dark:text-slate-100 text-xs md:text-sm leading-snug">
           {toast.title}
         </h4>
         {toast.description && (

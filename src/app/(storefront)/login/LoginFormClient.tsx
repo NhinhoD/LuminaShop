@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState, useTransition } from "react";
 import Link from "next/link";
@@ -11,11 +11,17 @@ interface LoginFormClientProps {
   error?: string;
 }
 
-export function LoginFormClient({ locale, authDict, error }: LoginFormClientProps) {
+/**
+ * Email/password sign-in form on the Spec Sheet chrome.
+ *
+ * @param props - Locale, dictionary section and optional server error code.
+ * @returns Sign-in form.
+ */
+export function LoginFormClient({ locale, authDict, error }: LoginFormClientProps): React.JSX.Element {
   const [showPassword, setShowPassword] = useState(false);
   const [isPending, startTransition] = useTransition();
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     startTransition(async () => {
@@ -24,21 +30,21 @@ export function LoginFormClient({ locale, authDict, error }: LoginFormClientProp
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5">
+    <form onSubmit={handleSubmit} className="space-y-4">
       {error && (
-        <div className="text-red-600 text-xs font-medium bg-red-50 py-2.5 px-3.5 rounded-xl border border-red-100 flex items-center gap-2">
+        <div className="flex items-start gap-2 border border-error/30 bg-error/5 p-3 text-[11.5px] leading-relaxed text-error">
           <span>{authDict.loginError || (locale === "vi" ? "Email hoặc mật khẩu không chính xác." : "Invalid email or password.")}</span>
         </div>
       )}
 
-      {/* Email Input */}
+      {/* Email */}
       <div>
-        <label className="block text-xs font-medium text-slate-700 mb-1.5" htmlFor="email">
+        <label className="mono-meta mb-1.5 block text-[8.5px] text-dark/55" htmlFor="email">
           {authDict.emailLabel || (locale === "vi" ? "Địa chỉ Email" : "Email Address")}{" "}
-          <span className="text-red-500">*</span>
+          <span className="text-primary">*</span>
         </label>
         <div className="relative">
-          <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+          <Mail className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-dark/35" />
           <input
             id="email"
             name="email"
@@ -46,27 +52,27 @@ export function LoginFormClient({ locale, authDict, error }: LoginFormClientProp
             required
             autoComplete="email"
             placeholder="example@gmail.com"
-            className="w-full h-11 pl-10 pr-4 bg-white border border-slate-200/80 rounded-xl text-sm font-normal focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all placeholder:text-slate-400"
+            className="h-10 w-full border border-border bg-background pl-9 pr-3 text-[12px] text-dark outline-none transition-colors placeholder:text-dark/30 focus:border-dark"
           />
         </div>
       </div>
 
-      {/* Password Input */}
+      {/* Password */}
       <div>
-        <div className="flex justify-between items-center mb-1.5">
-          <label className="block text-xs font-medium text-slate-700" htmlFor="password">
+        <div className="mb-1.5 flex items-center justify-between gap-2">
+          <label className="mono-meta block text-[8.5px] text-dark/55" htmlFor="password">
             {authDict.passwordLabel || (locale === "vi" ? "Mật khẩu" : "Password")}{" "}
-            <span className="text-red-500">*</span>
+            <span className="text-primary">*</span>
           </label>
           <Link
             href="/forgot-password"
-            className="text-xs text-primary hover:text-primary-dark hover:underline transition-colors font-medium"
+            className="text-[10.5px] text-primary transition-colors hover:text-dark"
           >
             {authDict.forgotPassword || (locale === "vi" ? "Quên mật khẩu?" : "Forgot password?")}
           </Link>
         </div>
         <div className="relative">
-          <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+          <Lock className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-dark/35" />
           <input
             id="password"
             name="password"
@@ -74,36 +80,39 @@ export function LoginFormClient({ locale, authDict, error }: LoginFormClientProp
             required
             autoComplete="current-password"
             placeholder="••••••••"
-            className="w-full h-11 pl-10 pr-11 bg-white border border-slate-200/80 rounded-xl text-sm font-normal focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all placeholder:text-slate-400"
+            className="h-10 w-full border border-border bg-background pl-9 pr-10 text-[12px] text-dark outline-none transition-colors placeholder:text-dark/30 focus:border-dark"
           />
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
+            className="absolute right-2.5 top-1/2 flex h-6 w-6 -translate-y-1/2 items-center justify-center text-dark/35 transition-colors hover:text-dark"
+            aria-label={showPassword ? (authDict.hidePassword || "Hide password") : (authDict.showPassword || "Show password")}
           >
-            {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+            {showPassword ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
           </button>
         </div>
       </div>
 
-      {/* Submit Button */}
-      <button
-        type="submit"
-        disabled={isPending}
-        className="w-full h-11 bg-primary text-white font-medium rounded-xl hover:bg-primary-dark transition-all flex items-center justify-center gap-2 group shadow-xs active:scale-98 cursor-pointer text-sm disabled:opacity-50"
-      >
-        {isPending ? (
-          <>
-            <Loader2 className="w-4 h-4 animate-spin" />
-            <span>{locale === "vi" ? "Đang đăng nhập..." : "Signing in..."}</span>
-          </>
-        ) : (
-          <>
-            <span>{authDict.loginButton || (locale === "vi" ? "Đăng nhập" : "Sign In")}</span>
-            <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
-          </>
-        )}
-      </button>
+      {/* Submit */}
+      <div className="pt-1">
+        <button
+          type="submit"
+          disabled={isPending}
+          className="flex w-full items-center justify-center gap-2 bg-primary py-3 text-[11.5px] font-semibold text-background transition-colors hover:bg-primary-dark disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          {isPending ? (
+            <>
+              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              <span>{locale === "vi" ? "Đang đăng nhập..." : "Signing in..."}</span>
+            </>
+          ) : (
+            <>
+              <span>{authDict.loginButton || (locale === "vi" ? "Đăng nhập" : "Sign In")}</span>
+              <ArrowRight className="h-3.5 w-3.5" />
+            </>
+          )}
+        </button>
+      </div>
     </form>
   );
 }

@@ -1,4 +1,4 @@
-﻿import Link from 'next/link';
+import Link from 'next/link';
 import Image from 'next/image';
 import { User, Lock, LogOut, ShoppingBag } from 'lucide-react';
 import { signout } from '@/server/presentation/actions/auth';
@@ -33,7 +33,7 @@ export function ProfileSidebar({
   activeTab,
   locale,
   profileDict = {},
-}: ProfileSidebarProps) {
+}: ProfileSidebarProps): React.JSX.Element {
   const navItems = [
     {
       id: 'profile',
@@ -56,35 +56,42 @@ export function ProfileSidebar({
   ];
 
   return (
-    <aside className="lg:col-span-3 lg:sticky lg:top-24 z-10 self-start space-y-6">
-      <div className="bg-white rounded-3xl border border-slate-100 p-6 shadow-[0_4px_24px_rgba(0,0,0,0.02)]">
-        {/* User Identity */}
-        <div className="flex flex-col items-center text-center mb-8">
-          <div className="w-20 h-20 rounded-full overflow-hidden mb-4 border-2 border-slate-100 shadow-sm relative">
-            {profile?.avatarUrl ? (
-              <Image
-                alt="Profile"
-                className="object-cover"
-                src={profile.avatarUrl}
-                fill
-                sizes="80px"
-              />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center bg-gradient-to-tr from-blue-600 to-indigo-600 text-white font-extrabold text-2xl select-none">
-                {(profile?.fullName?.trim() || user.email?.trim() || 'U').charAt(0).toUpperCase()}
-              </div>
-            )}
+    <aside className="z-10 self-start lg:sticky lg:top-24 lg:col-span-3">
+      <div className="border border-border bg-surface">
+        {/* Identity */}
+        <div className="border-b border-border p-5">
+          <div className="flex items-center gap-3">
+            <div className="relative h-12 w-12 shrink-0 overflow-hidden border border-border">
+              {profile?.avatarUrl ? (
+                <Image
+                  alt="Profile"
+                  className="object-cover"
+                  src={profile.avatarUrl}
+                  fill
+                  sizes="48px"
+                />
+              ) : (
+                <div className="flex h-full w-full select-none items-center justify-center bg-dark font-display text-lg font-bold text-background">
+                  {(profile?.fullName?.trim() || user.email?.trim() || 'U').charAt(0).toUpperCase()}
+                </div>
+              )}
+            </div>
+            <div className="min-w-0">
+              <span className="mono-meta block text-[7.5px] text-dark/30">
+                {profileDict.accountLabel || (locale === 'vi' ? 'Tài khoản' : 'Account')}
+              </span>
+              <h2 className="mt-1 truncate text-[13.5px] font-semibold leading-tight text-dark">
+                {profile?.fullName || profileDict.userDefault || (locale === 'vi' ? 'Khách hàng KhoUI' : 'KhoUI Customer')}
+              </h2>
+              <p className="mt-1 truncate font-mono text-[10px] text-dark/40">
+                {user.email}
+              </p>
+            </div>
           </div>
-          <h2 className="text-base font-extrabold text-slate-900 leading-snug">
-            {profile?.fullName || profileDict.userDefault || (locale === 'vi' ? 'Khách hàng KhoUI' : 'KhoUI Customer')}
-          </h2>
-          <p className="text-slate-400 text-[11px] truncate w-full font-bold mt-1 uppercase tracking-wider">
-            {user.email}
-          </p>
         </div>
 
-        {/* Sidebar Navigation */}
-        <nav className="space-y-1">
+        {/* Navigation */}
+        <nav className="space-y-px bg-border">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = activeTab === item.id;
@@ -92,28 +99,29 @@ export function ProfileSidebar({
               <Link
                 key={item.id}
                 href={item.href}
-                className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-medium text-sm transition-all ${
+                aria-current={isActive ? 'page' : undefined}
+                className={`flex items-center gap-2.5 px-4 py-3 text-[11.5px] font-medium transition-colors ${
                   isActive
-                    ? 'bg-primary text-white shadow-xs'
-                    : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                    ? 'bg-dark text-background'
+                    : 'bg-surface text-dark/60 hover:bg-background hover:text-dark'
                 }`}
               >
-                <Icon size={16} className={isActive ? 'text-white' : 'text-slate-400'} />
+                <Icon size={14} className={isActive ? 'text-primary' : 'text-dark/35'} />
                 <span>{item.label}</span>
               </Link>
             );
           })}
-
-          <form action={signout} className="pt-3 border-t border-slate-100">
-            <button
-              type="submit"
-              className="w-full flex items-center gap-3 px-3.5 py-2.5 text-red-500 hover:bg-red-50 rounded-xl font-medium text-sm transition-all group cursor-pointer"
-            >
-              <LogOut size={16} className="text-red-400 group-hover:text-red-500 transition-colors" />
-              <span>{profileDict.logout || (locale === 'vi' ? 'Đăng xuất' : 'Sign Out')}</span>
-            </button>
-          </form>
         </nav>
+
+        <form action={signout} className="border-t border-border">
+          <button
+            type="submit"
+            className="flex w-full items-center gap-2.5 px-4 py-3 text-[11.5px] font-medium text-error/80 transition-colors hover:bg-error/5 hover:text-error"
+          >
+            <LogOut size={14} />
+            <span>{profileDict.logout || (locale === 'vi' ? 'Đăng xuất' : 'Sign Out')}</span>
+          </button>
+        </form>
       </div>
     </aside>
   );

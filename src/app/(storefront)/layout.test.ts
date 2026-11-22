@@ -26,7 +26,7 @@ describe('Storefront background layering', () => {
     const classes = new Set(footer[1].split(' '));
     assert.ok(classes.has('relative'));
     assert.ok(classes.has('z-[10]'));
-    assert.ok(classes.has('bg-slate-950'));
+    assert.ok(classes.has('bg-background'));
     assert.ok(classes.has('mt-auto'));
   });
 });
