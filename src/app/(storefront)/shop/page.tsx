@@ -59,7 +59,7 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
   const categorySlug = rawCategory
     ? (CATEGORY_SLUG_MAP[rawCategory.toLowerCase()] || rawCategory)
     : undefined;
-  
+
   const locale = await getLocale();
   const dict = await getAppDictionary();
   const shopDict = (dict?.shop as Record<string, string>) || {};
@@ -69,14 +69,12 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
 
   if (!categoriesResult.success) {
     return (
-      <main className="flex-grow bg-background-subtle/40 py-12 font-sans">
-        <div className="max-w-[1400px] mx-auto px-6 sm:px-8 lg:px-12">
-          <div className="p-8 text-center bg-red-50 border border-red-200 rounded-2xl text-red-700 max-w-xl mx-auto my-12 font-sans">
-            <p className="font-semibold text-sm">
-              {locale === "vi" ? "Không thể tải danh mục sản phẩm từ máy chủ" : "Failed to load product categories from database"}
-            </p>
-            <p className="text-xs text-red-500 mt-1 font-mono">
-              {categoriesResult.error?.message || "Unknown error"}
+      <main className="flex-grow py-16 font-sans">
+        <div className="mx-auto max-w-[1440px] px-5 sm:px-8">
+          <div className="mx-auto max-w-xl border border-error/40 bg-surface p-8">
+            <span className="mono-meta text-error">{shopDict.loadCategoriesError}</span>
+            <p className="mt-3 text-[12.5px] leading-relaxed text-dark/55">
+              {shopDict.unknownError || (locale === "vi" ? "Lỗi không xác định" : "Unknown error")}
             </p>
           </div>
         </div>
@@ -104,17 +102,17 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
   }
   let sortType: 'newest' | 'price_asc' | 'price_desc' | 'popular' = 'newest';
   if (
-    params?.sort === 'price_asc' || 
-    params?.sort === 'price_desc' || 
+    params?.sort === 'price_asc' ||
+    params?.sort === 'price_desc' ||
     params?.sort === 'popular'
   ) {
     sortType = params.sort as 'newest' | 'price_asc' | 'price_desc' | 'popular';
   }
 
   const getProductsUseCase = await makeGetProductsUseCase();
-  const productsResult = await getProductsUseCase.execute({ 
-    limit: itemsPerPage, 
-    offset, 
+  const productsResult = await getProductsUseCase.execute({
+    limit: itemsPerPage,
+    offset,
     isActive: true,
     search,
     categoryId,
@@ -123,14 +121,12 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
 
   if (!productsResult.success) {
     return (
-      <main className="flex-grow bg-background-subtle/40 py-12 font-sans">
-        <div className="max-w-[1400px] mx-auto px-6 sm:px-8 lg:px-12">
-          <div className="p-8 text-center bg-red-50 border border-red-200 rounded-2xl text-red-700 max-w-xl mx-auto my-12 font-sans">
-            <p className="font-semibold text-sm">
-              {locale === "vi" ? "Không thể tải danh sách sản phẩm từ máy chủ" : "Failed to load products from database"}
-            </p>
-            <p className="text-xs text-red-500 mt-1 font-mono">
-              {productsResult.error?.message || "Unknown error"}
+      <main className="flex-grow py-16 font-sans">
+        <div className="mx-auto max-w-[1440px] px-5 sm:px-8">
+          <div className="mx-auto max-w-xl border border-error/40 bg-surface p-8">
+            <span className="mono-meta text-error">{shopDict.loadProductsError}</span>
+            <p className="mt-3 text-[12.5px] leading-relaxed text-dark/55">
+              {shopDict.unknownError || (locale === "vi" ? "Lỗi không xác định" : "Unknown error")}
             </p>
           </div>
         </div>
@@ -139,7 +135,7 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
   }
 
   const { products, total } = productsResult.data;
-  
+
   const totalPages = Math.max(1, Math.ceil(total / itemsPerPage));
 
   if (total > 0 && currentPage > totalPages) {
@@ -154,82 +150,79 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
   }
 
   return (
-    <main className="flex-grow bg-background-subtle/40 py-12 font-sans">
-      <div className="max-w-[1400px] mx-auto px-6 sm:px-8 lg:px-12">
-        
-        {/* Header Area */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 border-b border-slate-100/80 pb-8 gap-6">
-          <div className="max-w-2xl">
-            {/* Eyebrow Badge */}
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/8 border border-primary/15 mb-3.5 backdrop-blur-xs">
-              <span className="flex h-2 w-2 rounded-full bg-primary animate-pulse" />
-              <span className="text-xs font-semibold text-primary tracking-wide">
-                {shopDict.breadcrumbsShop || (locale === "vi" ? "Kho Template Tĩnh Chọn Lọc" : "Curated Template Store")}
-              </span>
-              <span className="text-primary/30">•</span>
-              <span className="text-xs font-medium text-slate-500">HTML5, CSS3, JS &amp; Bootstrap 5</span>
-            </div>
+    <main className="flex-grow font-sans">
+      <div className="mx-auto max-w-[1440px] px-5 py-10 sm:px-8 sm:py-14">
+        {/* Header */}
+        <div className="grid grid-cols-1 gap-6 border-b border-border pb-8 lg:grid-cols-12 lg:items-end">
+          <div className="lg:col-span-8">
+            <span className="mono-meta flex items-center gap-2 text-primary">
+              <span className="h-1.5 w-1.5 bg-primary" />
+              {shopDict.breadcrumbsShop}
+              <span className="text-dark/25">/</span>
+              <span className="text-dark/40">{shopDict.badgeTech}</span>
+            </span>
 
-            {/* Headline */}
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 mb-3 tracking-tight">
-              {locale === "vi" ? (
-                <>
-                  Bộ sưu tập <span className="bg-gradient-to-r from-primary via-indigo-600 to-violet-600 bg-clip-text text-transparent">Giao diện Website Tĩnh</span> chọn lọc
-                </>
-              ) : (
-                <>
-                  Curated <span className="bg-gradient-to-r from-primary via-indigo-600 to-violet-600 bg-clip-text text-transparent">Static Templates</span> Collection
-                </>
-              )}
+            <h1 className="mt-4 display text-[clamp(1.8rem,4vw,3.4rem)] text-dark">
+              {shopDict.headingLead}{" "}
+              <span className="text-primary">{shopDict.headingHighlight}</span>{" "}
+              {shopDict.headingTail}
             </h1>
 
-            {/* Subtitle */}
-            <p className="text-slate-600 text-sm sm:text-base leading-relaxed font-normal">
-              {shopDict.subtitle || (locale === "vi" ? "Khám phá các mẫu template HTML5, CSS3, JavaScript, Bootstrap chất lượng cao, tối ưu hiển thị và sẵn sàng tùy biến cho dự án của bạn." : "Production-ready static website templates engineered with modern HTML5, CSS3, Bootstrap 5 aesthetics, and instant zip delivery.")}
+            <p className="mt-4 max-w-2xl text-[13px] leading-relaxed text-dark/55 sm:text-sm">
+              {shopDict.subtitle}
             </p>
           </div>
 
-          {/* Quick Metrics & Highlights */}
-          <div className="flex flex-wrap sm:flex-nowrap items-center gap-3 shrink-0">
-            <div className="flex items-center gap-3 px-4 py-2.5 rounded-2xl bg-white border border-slate-200/80 shadow-xs">
-              <div className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center text-primary shrink-0">
-                <Sparkles size={16} />
-              </div>
-              <div>
-                <div className="text-xs font-bold text-slate-900 font-mono">{total} {shopDict.templateCount || (locale === "vi" ? "giao diện" : "templates")}</div>
-                <div className="text-[11px] text-slate-500 font-normal">{locale === "vi" ? "Đã kiểm định chất lượng" : "Production Tested"}</div>
+          <div className="grid grid-cols-1 gap-px border border-border bg-border sm:grid-cols-2 lg:col-span-4">
+            <div className="flex items-start gap-3 bg-surface p-4">
+              <span className="flex h-8 w-8 shrink-0 items-center justify-center border border-border text-primary">
+                <Sparkles size={14} />
+              </span>
+              <div className="min-w-0">
+                <div className="font-mono text-[13px] font-semibold text-dark">
+                  {String(total).padStart(2, "0")} {shopDict.templateCount}
+                </div>
+                <div className="mono-meta mt-1.5 text-[8px] leading-relaxed text-dark/40">
+                  {shopDict.metricsQuality}
+                </div>
               </div>
             </div>
 
-            <div className="flex items-center gap-3 px-4 py-2.5 rounded-2xl bg-white border border-slate-200/80 shadow-xs">
-              <div className="w-8 h-8 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-600 shrink-0">
-                <Zap size={16} />
-              </div>
-              <div>
-                <div className="text-xs font-bold text-slate-900">{locale === "vi" ? "Tải về tức thì" : "Instant Access"}</div>
-                <div className="text-[11px] text-slate-500 font-normal">{locale === "vi" ? "Trọn bộ file tĩnh .zip" : "Full .ZIP Archive"}</div>
+            <div className="flex items-start gap-3 bg-surface p-4">
+              <span className="flex h-8 w-8 shrink-0 items-center justify-center border border-border text-success">
+                <Zap size={14} />
+              </span>
+              <div className="min-w-0">
+                <div className="text-[12.5px] font-semibold leading-tight text-dark">
+                  {shopDict.metricsInstant}
+                </div>
+                <div className="mono-meta mt-1.5 text-[8px] leading-relaxed text-dark/40">
+                  {shopDict.metricsZip}
+                </div>
               </div>
             </div>
           </div>
         </div>
 
-        <ShopProductGrid 
-          initialProducts={sanitizeProductsForPublic(products)} 
-          currentSearch={search || ""} 
-          currentSort={sortType} 
-          currentCategory={categorySlug || "all"}
-          initialCategory={categorySlug}
-          dbCategories={dbCategories}
-        />
-        
-        <PaginationControls 
-          currentPage={currentPage} 
-          totalPages={totalPages} 
+        <div className="mt-8">
+          <ShopProductGrid
+            initialProducts={sanitizeProductsForPublic(products)}
+            currentSearch={search || ""}
+            currentSort={sortType}
+            currentCategory={categorySlug || "all"}
+            initialCategory={categorySlug}
+            dbCategories={dbCategories}
+          />
+        </div>
+
+        <PaginationControls
+          currentPage={currentPage}
+          totalPages={totalPages}
           totalItems={total}
           itemsPerPage={itemsPerPage}
           itemName={{ vi: "template", en: "templates" }}
           layoutId="shop-page-pagination"
-          className="mt-12"
+          className="mt-10"
         />
       </div>
     </main>

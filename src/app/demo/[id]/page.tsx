@@ -19,7 +19,7 @@ export const metadata = { title: { absolute: "Xem trước template | KhoUI" } }
 /**
  * Redirects to the sandboxed preview for the requested product.
  */
-export default async function DemoPage({ params }: DemoPageProps) {
+export default async function DemoPage({ params }: DemoPageProps): Promise<React.JSX.Element> {
   const cookieStore = await cookies();
   const locale = (cookieStore.get('NEXT_LOCALE')?.value as 'vi' | 'en') || 'vi';
 
@@ -31,12 +31,12 @@ export default async function DemoPage({ params }: DemoPageProps) {
   if (!productResult.success) {
     console.error("DemoPage: failed to load product preview:", productResult.error);
     return (
-      <div className="min-h-screen flex items-center justify-center p-6 bg-slate-50 font-sans">
-        <div className="p-8 text-center bg-red-50 border border-red-200 rounded-2xl text-red-700 max-w-xl mx-auto">
-          <p className="font-semibold text-sm">
-            {locale === "vi" ? "Không thể tải bản xem trước sản phẩm từ máy chủ" : "Failed to load product preview from database"}
-          </p>
-          <p className="text-xs text-red-500 mt-1">
+      <div className="flex min-h-screen items-center justify-center bg-background p-6 font-sans">
+        <div className="mx-auto max-w-xl border border-error/40 bg-surface p-8">
+          <span className="mono-meta text-error">
+            {locale === "vi" ? "Không thể tải bản xem trước sản phẩm" : "Failed to load product preview"}
+          </span>
+          <p className="mt-3 text-[12.5px] leading-relaxed text-dark/55">
             {locale === "vi" ? "Vui lòng thử lại sau." : "Please try again later."}
           </p>
         </div>

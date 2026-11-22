@@ -6,7 +6,13 @@ import { useDebouncedCallback } from "use-debounce";
 import { useState } from "react";
 import { useI18n } from "@/client/components/common/I18nContext";
 
-export function ProfileOrderSearch({ currentSearch }: { currentSearch: string }) {
+/**
+ * Debounced search field for the customer order/template history.
+ *
+ * @param props - Current search query from the URL.
+ * @returns Search input.
+ */
+export function ProfileOrderSearch({ currentSearch }: { currentSearch: string }): React.JSX.Element {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -25,8 +31,8 @@ export function ProfileOrderSearch({ currentSearch }: { currentSearch: string })
   }, 500);
 
   return (
-    <div className="relative w-full max-w-md mx-auto md:mx-0 mb-8">
-      <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+    <div className="relative mb-6 w-full max-w-md">
+      <Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-dark/35" />
       <input
         type="text"
         placeholder={dict?.shop?.searchPlaceholder || "Search..."}
@@ -35,7 +41,7 @@ export function ProfileOrderSearch({ currentSearch }: { currentSearch: string })
           setSearchTerm(e.target.value);
           handleSearch(e.target.value);
         }}
-        className="w-full pl-11 pr-4 py-3 bg-white border border-slate-200/80 rounded-xl text-xs font-medium focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all shadow-xs placeholder:text-slate-400"
+        className="h-9 w-full border border-border bg-background pl-9 pr-3 text-[12px] text-dark outline-none transition-colors placeholder:text-dark/30 focus:border-dark"
       />
     </div>
   );
