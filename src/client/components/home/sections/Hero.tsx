@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import gsap from "gsap";
 import { ArrowDown, ArrowUpRight, Star } from "lucide-react";
 
@@ -37,6 +37,43 @@ function SpecimenCard({ product, index, locale, dict }: SpecimenCardProps): Reac
   const ui = dict.homeUi;
   const title = getLocalizedText(product.title, locale);
   const isFree = product.price === 0;
+  const isSample = product.id.startsWith("sample-");
+
+  if (isSample) {
+    return (
+      <div
+        data-hero-card
+        data-rotate={CARD_ROTATIONS[index]}
+        style={{ zIndex: 30 - index }}
+        className={`absolute ${CARD_POSITIONS[index]} group border border-dark/20 bg-surface shadow-[0_24px_60px_-38px_rgba(11,11,15,0.7)] transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform hover:z-50 hover:scale-[1.04] hover:border-primary hover:shadow-[0_32px_80px_-30px_rgba(27,42,255,0.45)]`}
+      >
+        <div className="flex items-center gap-1.5 border-b border-border bg-background-subtle px-3 py-2">
+          <span className="h-1.5 w-1.5 rounded-full bg-primary" />
+          <span className="h-1.5 w-1.5 rounded-full bg-dark/20" />
+          <span className="h-1.5 w-1.5 rounded-full bg-dark/20" />
+          <span className="mono-meta ml-1.5 truncate text-[8px] text-dark/35">
+            khoui.demo / {product.slug || product.id}
+          </span>
+        </div>
+
+        <div className="relative aspect-[16/10] overflow-hidden bg-background-subtle">
+          <div className="flex h-full items-center justify-center bg-dark">
+            <span className="mono-meta text-[9px] text-background/40">{ui.labelPreview}</span>
+          </div>
+        </div>
+
+        <div className="flex items-center justify-between gap-3 px-3 py-2.5">
+          <div className="min-w-0">
+            <p className="mono-meta text-[8px] text-dark/35">{ui.labelSpec} {String(index + 1).padStart(3, "0")}</p>
+            <p className="truncate text-[12px] font-semibold leading-tight text-dark">{title}</p>
+          </div>
+          <span className="mono-meta shrink-0 text-[10px] text-primary">
+            {isFree ? ui.labelFree : formatCurrency(product.price, locale)}
+          </span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <Link
@@ -104,6 +141,8 @@ function SpecimenCard({ product, index, locale, dict }: SpecimenCardProps): Reac
 export function Hero({ dict, locale, specimens, totalTemplates }: HeroProps): React.JSX.Element {
   const ref = useRef<HTMLElement>(null);
   const ui = dict.homeUi;
+  const [isPaused, setIsPaused] = useState(false);
+  const controlsRef = useRef<{ toggle: () => void } | null>(null);
 
   useGsapEffect((scope) => {
     const mm = gsap.matchMedia();
@@ -184,7 +223,7 @@ export function Hero({ dict, locale, specimens, totalTemplates }: HeroProps): Re
 
       // Auto-rotate slideshow (GSAP-driven, pauses on hover) - only under normal motion
       let activeIndex = 0;
-      let paused = false;
+      let paused = stack?.matches(":hover") ?? false;
       let delayed: gsap.core.Tween | null = null;
 
       const schedule = () => {
@@ -209,19 +248,45 @@ export function Hero({ dict, locale, specimens, totalTemplates }: HeroProps): Re
         paused = false;
         schedule();
       };
+      const onFocusIn = () => {
+        paused = true;
+        if (delayed) { delayed.kill(); delayed = null; }
+      };
+      const onFocusOut = (e: FocusEvent) => {
+        if (stack?.contains(e.relatedTarget as Node)) return;
+        paused = false;
+        schedule();
+      };
       stack?.addEventListener('pointerenter', onEnter);
       stack?.addEventListener('pointerleave', onLeave);
+      stack?.addEventListener('focusin', onFocusIn);
+      stack?.addEventListener('focusout', onFocusOut);
+
+      controlsRef.current = {
+        toggle: () => {
+          paused = !paused;
+          setIsPaused(paused);
+          if (paused) {
+            if (delayed) { delayed.kill(); delayed = null; }
+          } else {
+            schedule();
+          }
+        },
+      };
 
       return () => {
         if (delayed) delayed.kill();
         startTimer.kill();
         stack?.removeEventListener('pointerenter', onEnter);
         stack?.removeEventListener('pointerleave', onLeave);
+        stack?.removeEventListener('focusin', onFocusIn);
+        stack?.removeEventListener('focusout', onFocusOut);
+        controlsRef.current = null;
       };
     });
 
     return () => mm.revert();
-  }, ref);
+  }, ref, [specimens.map((s) => s.id).join(",")]);
 
   return (
     <section ref={ref} className="relative overflow-hidden border-b border-border">
@@ -310,6 +375,19 @@ export function Hero({ dict, locale, specimens, totalTemplates }: HeroProps): Re
                   dict={dict}
                 />
               ))}
+            </div>
+
+            <div className="mt-3 flex items-center justify-between">
+              <button
+                type="button"
+                onClick={() => controlsRef.current?.toggle()}
+                className="mono-meta inline-flex items-center gap-1.5 border border-border px-2.5 py-1.5 text-[8px] text-dark/55 transition-colors hover:border-dark hover:text-dark"
+                aria-pressed={isPaused}
+              >
+                <span className="h-1.5 w-1.5 bg-primary" />
+                {isPaused ? "Resume rotation" : "Pause rotation"}
+              </button>
+              <span className="mono-meta text-[8px] text-dark/35">auto-rotates every 3s</span>
             </div>
 
             <div data-hero-fade className="mt-5 flex items-center justify-between border-t border-border pt-3">

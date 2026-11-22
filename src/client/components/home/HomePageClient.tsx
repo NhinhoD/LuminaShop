@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useRef, useState, useTransition } from "react";
+import { useRef, useState, useTransition, useCallback } from "react";
 import gsap from "gsap";
 
 import { getLocalizedText } from "@/shared/utils/locale";
@@ -75,6 +75,11 @@ export default function HomePageClient({
   const { dict: contextDict, locale } = useI18n();
   const copy = dict ?? contextDict;
   const ui = copy.homeUi;
+
+  const formatCount = useCallback(
+    (value: number) => Math.round(value).toLocaleString(locale === "vi" ? "vi-VN" : "en-US"),
+    [locale]
+  );
 
   useGsapEffect((scope) => {
     const bar = scope.querySelector<HTMLElement>("[data-scroll-progress]");
@@ -199,8 +204,7 @@ export default function HomePageClient({
   };
   for (const category of categories) {
     const match = displayProducts.find((product) => product.categoryId === category.id);
-    previews[category.id] =
-      match?.imageUrl ?? displayProducts.find((product) => product.imageUrl)?.imageUrl;
+    previews[category.id] = match?.imageUrl;
   }
 
   const stats = [
@@ -255,7 +259,7 @@ export default function HomePageClient({
               <span className="flex items-baseline gap-1 font-display text-[1.6rem] font-bold leading-none tracking-[-0.04em] text-dark sm:text-[1.9rem]">
                 <Counter
                   value={stat.value}
-                  format={(value) => Math.round(value).toLocaleString(locale === "vi" ? "vi-VN" : "en-US")}
+                  format={formatCount}
                 />
                 <span className="font-mono text-[11px] font-medium text-primary">{stat.suffix}</span>
               </span>
