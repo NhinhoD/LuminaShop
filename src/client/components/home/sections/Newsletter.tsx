@@ -14,7 +14,7 @@ import type { SectionCopy } from "./types";
  * @param props - Copy and locale.
  * @returns Newsletter section.
  */
-export function Newsletter({ dict }: SectionCopy): React.JSX.Element {
+export function Newsletter({ dict, locale }: SectionCopy): React.JSX.Element {
   const ref = useRef<HTMLElement>(null);
   const ui = dict.homeUi;
 
@@ -37,8 +37,13 @@ export function Newsletter({ dict }: SectionCopy): React.JSX.Element {
       return;
     }
 
-    toast.success(ui.newsletterSuccessTitle, ui.newsletterSuccessDesc);
-    form.reset();
+    toast.info(
+      ui.newsletterSuccessTitle,
+      locale === "vi"
+        ? "Tính năng đăng ký nhận bản tin sẽ sớm được kích hoạt."
+        : "Newsletter signup will be available soon."
+    );
+    // Keep the entered address; do not pretend a subscription was persisted.
   };
 
   return (

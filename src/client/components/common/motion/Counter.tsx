@@ -24,7 +24,6 @@ export function Counter({ value, format, className, duration = 1.6 }: CounterPro
   const ref = useRef<HTMLSpanElement>(null);
 
   useGsapEffect((scope) => {
-    const mm = gsap.matchMedia();
 
     mm.add("(prefers-reduced-motion: reduce)", () => {
       scope.textContent = format(value);
@@ -50,7 +49,7 @@ export function Counter({ value, format, className, duration = 1.6 }: CounterPro
     });
 
     return () => mm.revert();
-  }, ref);
+  }, ref, [value, format, duration]);
 
   return (
     <span ref={ref} className={className}>

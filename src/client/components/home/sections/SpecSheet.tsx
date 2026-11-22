@@ -85,7 +85,7 @@ export function SpecSheet({ dict }: SectionCopy): React.JSX.Element {
     <section
       id="specs"
       ref={ref}
-      className="relative scroll-mt-20 overflow-hidden border-b border-border bg-primary/5 py-16 sm:py-24"
+      className="relative scroll-mt-20 border-b border-border bg-primary/5 py-16 sm:py-24"
     >
       <div aria-hidden="true" className="hairline-grid pointer-events-none absolute inset-0 opacity-60" />
 

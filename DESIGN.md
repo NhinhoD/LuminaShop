@@ -28,9 +28,9 @@ The storefront was rebuilt on an editorial "SPEC SHEET" palette. Tokens live in 
 | `dark` (ink) | `#0B0B0F` | Headings, high-contrast text, primary buttons |
 | `primary` (blue, synced hue with logo) | `#2563EB` | Brand action, active links, focus |
 | `primary-dark` | `#1E40AF` | Hover state for primary buttons |
-| `accent` (vermilion) | `#FF4A1C` | Eyebrows, live indicators, error-ish highlights |
+| `accent` (blue, aligned with primary) | `#2563EB` | Eyebrows, live indicators, accents |
 | `success` | `#127A52` | Verified/paid states, free-fulfillment |
-| `error` | `#B42318` | Form errors, failed/cancelled states |
+| `error` | `#C81E1E` | Form errors, failed/cancelled states |
 | `text-muted` (dark/40–55) | `#0B0B0F` @ 40–55% | Secondary captions |
 
 Rules:

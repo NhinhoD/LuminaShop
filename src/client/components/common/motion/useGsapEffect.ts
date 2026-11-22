@@ -19,11 +19,13 @@ export type GsapSetupCleanup = void | (() => void);
  *
  * @param setup - Animation setup, receives the scoped root element.
  * @param scopeRef - Ref to the element that scopes selectors and cleanup.
+ * @param deps - Optional dependency array; re-runs setup when these change.
  * @returns Nothing.
  */
 export function useGsapEffect(
   setup: (scope: HTMLElement) => GsapSetupCleanup,
-  scopeRef: RefObject<HTMLElement | null>
+  scopeRef: RefObject<HTMLElement | null>,
+  deps?: readonly unknown[]
 ): void {
   const setupRef = useRef(setup);
 
@@ -46,5 +48,6 @@ export function useGsapEffect(
     return () => {
       ctx.revert();
     };
-  }, [scopeRef]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [scopeRef, ...(deps ?? [])]);
 }

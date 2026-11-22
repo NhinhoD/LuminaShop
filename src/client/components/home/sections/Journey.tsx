@@ -75,7 +75,7 @@ export function Journey({ dict }: SectionCopy): React.JSX.Element {
   ];
 
   return (
-    <section className="relative border-b border-border py-16 sm:py-24">
+    <section ref={ref} className="relative border-b border-border py-16 sm:py-24">
       <div className="mx-auto max-w-[1440px] px-5 sm:px-8">
         <div className="mb-12 grid grid-cols-1 gap-6 border-b border-border pb-6 lg:grid-cols-12">
           <div data-reveal className="lg:col-span-7">
