@@ -181,45 +181,46 @@ export function Hero({ dict, locale, specimens, totalTemplates }: HeroProps): Re
 
       // initial slot layout after entrance
       gsap.delayedCall(1.2, () => applySlots(0));
-    });
 
-    // Auto-rotate slideshow (GSAP-driven, pauses on hover)
-    let activeIndex = 0;
-    let paused = false;
-    let delayed: gsap.core.Tween | null = null;
+      // Auto-rotate slideshow (GSAP-driven, pauses on hover) - only under normal motion
+      let activeIndex = 0;
+      let paused = false;
+      let delayed: gsap.core.Tween | null = null;
 
-    const schedule = () => {
-      if (paused || cardList.length <= 1) return;
-      delayed = gsap.delayedCall(3, () => {
-        activeIndex = (activeIndex + 1) % cardList.length;
-        applySlots(activeIndex);
-        schedule();
+      const schedule = () => {
+        if (delayed) delayed.kill();
+        if (paused || cardList.length <= 1) return;
+        delayed = gsap.delayedCall(3, () => {
+          activeIndex = (activeIndex + 1) % cardList.length;
+          applySlots(activeIndex);
+          schedule();
+        });
+      };
+
+      const startTimer = gsap.delayedCall(4.2, () => {
+        if (!paused) schedule();
       });
-    };
 
-    const startTimer = gsap.delayedCall(4.2, () => {
-      if (!paused) schedule();
+      const onEnter = () => {
+        paused = true;
+        if (delayed) { delayed.kill(); delayed = null; }
+      };
+      const onLeave = () => {
+        paused = false;
+        schedule();
+      };
+      stack?.addEventListener('pointerenter', onEnter);
+      stack?.addEventListener('pointerleave', onLeave);
+
+      return () => {
+        if (delayed) delayed.kill();
+        startTimer.kill();
+        stack?.removeEventListener('pointerenter', onEnter);
+        stack?.removeEventListener('pointerleave', onLeave);
+      };
     });
 
-    const onEnter = () => {
-      paused = true;
-      delayed?.kill();
-      delayed = null;
-    };
-    const onLeave = () => {
-      paused = false;
-      schedule();
-    };
-    stack?.addEventListener("pointerenter", onEnter);
-    stack?.addEventListener("pointerleave", onLeave);
-
-    return () => {
-      mm.revert();
-      delayed?.kill();
-      startTimer?.kill();
-      stack?.removeEventListener("pointerenter", onEnter);
-      stack?.removeEventListener("pointerleave", onLeave);
-    };
+    return () => mm.revert();
   }, ref);
 
   return (
