@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 import React from 'react';
@@ -51,6 +52,29 @@ type HomeProps = React.ComponentProps<typeof HomePageClient>;
 function renderHome(overrides: Partial<HomeProps> = {}): string {
   const router: AppRouterInstance = {
     bfcacheId: '',
+=======
+import assert from "node:assert/strict";
+import { describe, it } from "node:test";
+import React from "react";
+import { renderToStaticMarkup } from "react-dom/server";
+import { AppRouterContext, type AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
+import HomePageClient from "./HomePageClient";
+
+interface ElementProps {
+  children?: React.ReactNode;
+  className?: string;
+}
+
+function elements(node: React.ReactNode): React.ReactElement<ElementProps>[] {
+  if (Array.isArray(node)) return node.flatMap(elements);
+  if (!React.isValidElement<ElementProps>(node)) return [];
+  return [node as React.ReactElement<ElementProps>, ...elements((node as React.ReactElement<ElementProps>).props.children)];
+}
+
+function renderHome() {
+  const router: AppRouterInstance = {
+    bfcacheId: "",
+>>>>>>> Stashed changes
     back() {},
     forward() {},
     refresh() {},
@@ -58,6 +82,7 @@ function renderHome(overrides: Partial<HomeProps> = {}): string {
     replace() {},
     prefetch() {},
   };
+<<<<<<< Updated upstream
 
   const props: HomeProps = {
     featuredProducts: [],
@@ -168,5 +193,30 @@ describe('HomePageClient — Spec Sheet landing page', () => {
     assert.match(html, /id="newsletter_email"/);
     assert.match(html, new RegExp(vi.home.newsletter.button));
     assert.equal((html.match(/animate-marquee\b/g) ?? []).length, 1);
+=======
+  let tree: React.ReactNode;
+  function Probe(): null {
+    tree = HomePageClient({ featuredProducts: [], categories: [], initialCategory: "all" });
+    return null;
+  }
+  renderToStaticMarkup(React.createElement(AppRouterContext.Provider, { value: router }, React.createElement(Probe)));
+  return elements(tree);
+}
+
+describe("HomePageClient - Spec Sheet homepage", () => {
+  it("renders the hero, proof strip, category index, catalog and trailing sections", () => {
+    const nodes = renderHome();
+    assert.ok(nodes.length > 0);
+    const sections = nodes.filter((node) => node.type === "section");
+    assert.ok(sections.length >= 1);
+    const hero = nodes.find((node) => node.type === "section");
+    assert.ok(hero);
+  });
+
+  it("keeps the isolate wrapper and avoids a white page background", () => {
+    const nodes = renderHome();
+    assert.ok(nodes[0].props.className?.includes("isolate"));
+    assert.ok(!nodes[0].props.className?.split(" ").includes("bg-white"));
+>>>>>>> Stashed changes
   });
 });
