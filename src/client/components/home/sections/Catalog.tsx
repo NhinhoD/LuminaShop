@@ -154,6 +154,7 @@ export function Catalog({
           >
             {products.map((product, index) => {
               const isFree = product.price === 0;
+              const isSample = product.id.startsWith("sample-");
               const title = titleOf(product, locale);
               const description = descriptionOf(product, locale);
               const serial = String((currentPage - 1) * itemsPerPage + index + 1).padStart(3, "0");
@@ -182,7 +183,8 @@ export function Catalog({
                   </div>
 
                   <Link
-                    href={`${ROUTES.PRODUCT}/${product.id}`}
+                    href={isSample ? "#" : `${ROUTES.PRODUCT}/${product.id}`}
+                    onClick={isSample ? (e: React.MouseEvent) => e.preventDefault() : undefined}
                     className="relative block aspect-[16/10] overflow-hidden border-b border-border bg-background-subtle"
                   >
                     {product.imageUrl ? (
@@ -214,7 +216,7 @@ export function Catalog({
                       </span>
                     </div>
 
-                    <Link href={`${ROUTES.PRODUCT}/${product.id}`} className="mt-1.5">
+                    <Link href={isSample ? "#" : `${ROUTES.PRODUCT}/${product.id}`} onClick={isSample ? (e: React.MouseEvent) => e.preventDefault() : undefined} className="mt-1.5">
                       <h3 className="truncate font-display text-[1.05rem] font-semibold leading-tight tracking-[-0.03em] text-dark transition-colors group-hover:text-primary">
                         {title}
                       </h3>
@@ -265,13 +267,15 @@ export function Catalog({
                             <ExternalLink size={10} />
                           </a>
                         ) : null}
-                        <Link
-                          href={`${ROUTES.PRODUCT}/${product.id}`}
-                          className="flex h-8 items-center gap-1 bg-dark px-3 text-[10.5px] font-semibold text-background transition-colors hover:bg-primary"
-                        >
-                          <span>{ui.labelDetails}</span>
-                          <ArrowUpRight size={11} />
-                        </Link>
+                        {!isSample && (
+                          <Link
+                            href={`${ROUTES.PRODUCT}/${product.id}`}
+                            className="flex h-8 items-center gap-1 bg-dark px-3 text-[10.5px] font-semibold text-background transition-colors hover:bg-primary"
+                          >
+                            <span>{ui.labelDetails}</span>
+                            <ArrowUpRight size={11} />
+                          </Link>
+                        )}
                       </div>
                     </div>
                   </div>
