@@ -224,6 +224,7 @@ export function Hero({ dict, locale, specimens, totalTemplates }: HeroProps): Re
       // Auto-rotate slideshow (GSAP-driven, pauses on hover) - only under normal motion
       let activeIndex = 0;
       let paused = stack?.matches(":hover") ?? false;
+      let userPaused = false;
       let delayed: gsap.core.Tween | null = null;
 
       const schedule = () => {
@@ -245,6 +246,7 @@ export function Hero({ dict, locale, specimens, totalTemplates }: HeroProps): Re
         if (delayed) { delayed.kill(); delayed = null; }
       };
       const onLeave = () => {
+        if (userPaused) return;
         paused = false;
         schedule();
       };
@@ -254,6 +256,7 @@ export function Hero({ dict, locale, specimens, totalTemplates }: HeroProps): Re
       };
       const onFocusOut = (e: FocusEvent) => {
         if (stack?.contains(e.relatedTarget as Node)) return;
+        if (userPaused) return;
         paused = false;
         schedule();
       };
@@ -264,8 +267,9 @@ export function Hero({ dict, locale, specimens, totalTemplates }: HeroProps): Re
 
       controlsRef.current = {
         toggle: () => {
-          paused = !paused;
-          setIsPaused(paused);
+          userPaused = !userPaused;
+          paused = userPaused || (stack?.matches(":hover") ?? false);
+          setIsPaused(userPaused);
           if (paused) {
             if (delayed) { delayed.kill(); delayed = null; }
           } else {
