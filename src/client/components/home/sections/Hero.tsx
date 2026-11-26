@@ -268,7 +268,11 @@ export function Hero({ dict, locale, specimens, totalTemplates }: HeroProps): Re
       controlsRef.current = {
         toggle: () => {
           userPaused = !userPaused;
+<<<<<<< Updated upstream
           paused = userPaused || (stack?.matches(":hover") ?? false);
+=======
+          paused = userPaused || (stack?.matches(':hover') ?? false);
+>>>>>>> Stashed changes
           setIsPaused(userPaused);
           if (paused) {
             if (delayed) { delayed.kill(); delayed = null; }
@@ -389,9 +393,15 @@ export function Hero({ dict, locale, specimens, totalTemplates }: HeroProps): Re
                 aria-pressed={isPaused}
               >
                 <span className="h-1.5 w-1.5 bg-primary" />
+<<<<<<< Updated upstream
                 {isPaused ? "Resume rotation" : "Pause rotation"}
               </button>
               <span className="mono-meta text-[8px] text-dark/35">auto-rotates every 3s</span>
+=======
+                {isPaused ? ui.heroPauseResume : ui.heroPausePause}
+              </button>
+              <span className="mono-meta text-[8px] text-dark/35">{ui.heroPauseAuto}</span>
+>>>>>>> Stashed changes
             </div>
 
             <div data-hero-fade className="mt-5 flex items-center justify-between border-t border-border pt-3">
