@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { cookies } from "next/headers";
-import { Plus_Jakarta_Sans } from "next/font/google";
+import { Archivo, Be_Vietnam_Pro, IBM_Plex_Mono } from "next/font/google";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
 import { BreadcrumbProvider } from "@/client/components/common/BreadcrumbContext";
@@ -9,14 +9,29 @@ import { I18nProvider, Locale } from "@/client/components/common/I18nContext";
 import { getAppDictionary } from "@/server/di/container";
 import { ToastContainer } from "@/client/components/common/ToastContainer";
 import { GlobalLoadingIndicator } from "@/client/components/common/GlobalLoadingIndicator";
+import { ScrollProgress } from "@/client/components/common/ScrollProgress";
 import { SmoothScrollProvider } from "@/client/components/common/SmoothScrollProvider";
 
 import "./globals.css";
 
-const plusJakartaSans = Plus_Jakarta_Sans({
+const archivo = Archivo({
   subsets: ["latin", "vietnamese"],
-  weight: ["300", "400", "500", "600", "700", "800"],
-  variable: "--font-jakarta",
+  weight: ["400", "500", "600", "700", "800", "900"],
+  variable: "--font-archivo",
+  display: "swap",
+});
+
+const beVietnamPro = Be_Vietnam_Pro({
+  subsets: ["latin", "vietnamese"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-body",
+  display: "swap",
+});
+
+const ibmPlexMono = IBM_Plex_Mono({
+  subsets: ["latin", "vietnamese"],
+  weight: ["400", "500", "600"],
+  variable: "--font-plex-mono",
   display: "swap",
 });
 
@@ -112,13 +127,14 @@ export default async function RootLayout({
   const dict = await getAppDictionary();
 
   return (
-    <html lang={locale} className={`light ${plusJakartaSans.variable}`}>
+    <html lang={locale} className={`light ${archivo.variable} ${beVietnamPro.variable} ${ibmPlexMono.variable}`}>
       <body className="bg-background text-on-background font-sans antialiased selection:bg-primary/10 selection:text-primary">
         <I18nProvider locale={locale} customDict={dict as unknown as Record<string, unknown>}>
           <BreadcrumbProvider>
             <SmoothScrollProvider>
               <Suspense fallback={null}>
                 <GlobalLoadingIndicator />
+                <ScrollProgress />
               </Suspense>
               {children}
               <ToastContainer />
