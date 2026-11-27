@@ -24,7 +24,7 @@ export const metadata: Metadata = {
  * @param props - Component props containing the async params promise with order ID.
  * @returns JSX Element for the order failed/cancelled page.
  */
-export default async function OrderFailedPage(props: { params: Promise<{ id: string }> }) {
+export default async function OrderFailedPage(props: { params: Promise<{ id: string }> }): Promise<React.JSX.Element> {
   const params = await props.params;
 
   const result = await getOrderAction(params.id);
@@ -46,47 +46,58 @@ export default async function OrderFailedPage(props: { params: Promise<{ id: str
   const isCancelled = order.status === OrderStatus.CANCELLED;
 
   return (
-    <div className="min-h-screen bg-background-subtle/50 py-16 sm:py-20 px-4 sm:px-6 font-sans">
-      <div className="max-w-[640px] mx-auto text-center bg-white p-8 sm:p-12 rounded-3xl border border-slate-100 shadow-xs">
-        <div className="w-16 h-16 rounded-2xl bg-red-500/10 text-red-500 flex items-center justify-center mx-auto mb-6 border border-red-500/20 shadow-xs">
-          <XCircle className="w-8 h-8" />
-        </div>
-        
-        <div className="inline-flex items-center gap-2 mb-3">
-          <StatusBadge status={order.status} className="text-xs px-3 py-1 font-bold rounded-lg" />
-        </div>
+    <div className="flex-grow bg-background font-sans">
+      <div className="mx-auto max-w-[720px] px-5 py-12 sm:px-8 sm:py-16">
+        <div className="border border-border bg-surface">
+          <div className="flex items-center justify-between border-b border-border px-4 py-2.5">
+            <span className="mono-meta text-[8.5px] text-dark/45">
+              ORDER / {order.id.split("-")[0].toUpperCase()}
+            </span>
+            <span className="mono-meta text-[8px] text-dark/25">KHOUI / STATUS</span>
+          </div>
 
-        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight mb-3 text-slate-900">
-          {isCancelled
-            ? (orderDict.failedTitle || (locale === "vi" ? "Giao Dịch Thanh Toán Đã Bị Hủy" : "Payment Cancelled"))
-            : (orderDict.pendingTitle || (locale === "vi" ? "Thanh Toán Chưa Hoàn Tất" : "Payment Incomplete"))}
-        </h1>
-        <p className="text-slate-500 text-xs mb-8 max-w-md mx-auto leading-relaxed font-normal">
-          {isCancelled
-            ? (orderDict.failedSubtitle || (locale === "vi" ? "Giao dịch thanh toán đã bị hủy. Đơn hàng của bạn đã được hủy tự động." : "Payment transaction was cancelled. Your order has been automatically cancelled."))
-            : (orderDict.pendingSubtitle || (locale === "vi" ? "Đơn hàng đang chờ xử lý thanh toán." : "Order is awaiting payment completion."))}
-          {" "}
-          <strong className="text-slate-900 font-mono bg-slate-50 px-2 py-0.5 rounded-md border border-slate-200 font-medium">
-            #{order.id.split("-")[0].toUpperCase()}
-          </strong>.
-        </p>
+          <div className="p-6 sm:p-10">
+            <div className="flex items-start gap-4">
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center border border-error/30 bg-error/5 text-error">
+                <XCircle size={22} />
+              </span>
+              <div className="min-w-0">
+                <StatusBadge status={order.status} className="text-[10px] font-semibold" />
+                <h1 className="mt-3 display text-[clamp(1.5rem,3vw,2rem)] text-dark">
+                  {isCancelled
+                    ? (orderDict.failedTitle || (locale === "vi" ? "Giao dịch thanh toán đã bị hủy" : "Payment Cancelled"))
+                    : (orderDict.pendingTitle || (locale === "vi" ? "Thanh toán chưa hoàn tất" : "Payment Incomplete"))}
+                </h1>
+              </div>
+            </div>
 
-        <div className="flex flex-col sm:flex-row justify-center gap-3.5">
-          <Link 
-            href={`/profile/orders/${order.id}`} 
-            className="px-6 py-3 bg-primary text-white rounded-xl font-medium hover:bg-primary-dark transition-all text-sm shadow-xs active:scale-95 text-center"
-          >
-            {orderDict.viewOrderDetail || (locale === "vi" ? "Kiểm tra chi tiết đơn hàng" : "View Order Details")}
-          </Link>
-          <Link 
-            href="/shop" 
-            className="px-6 py-3 bg-white border border-slate-200/80 text-slate-700 rounded-xl font-medium hover:bg-slate-50 transition-all text-sm active:scale-95 text-center shadow-xs"
-          >
-            {orderDict.continueShoppingButton || (locale === "vi" ? "Tiếp tục xem giao diện" : "Browse Templates")}
-          </Link>
+            <p className="mt-5 border-t border-border pt-5 text-[12.5px] leading-relaxed text-dark/55">
+              {isCancelled
+                ? (orderDict.failedSubtitle || (locale === "vi" ? "Giao dịch thanh toán đã bị hủy. Đơn hàng của bạn đã được hủy tự động." : "Payment transaction was cancelled. Your order has been automatically cancelled."))
+                : (orderDict.pendingSubtitle || (locale === "vi" ? "Đơn hàng đang chờ xử lý thanh toán." : "Order is awaiting payment completion."))}
+              {" "}
+              <strong className="mono-meta border border-border bg-background px-1.5 py-1 text-[8.5px] text-dark">
+                #{order.id.split("-")[0].toUpperCase()}
+              </strong>
+            </p>
+
+            <div className="mt-6 flex flex-col gap-2 border-t border-border pt-5 sm:flex-row">
+              <Link
+                href={`/profile/orders/${order.id}`}
+                className="flex flex-1 items-center justify-center bg-dark px-5 py-3 text-[11.5px] font-semibold text-background transition-colors hover:bg-primary"
+              >
+                {orderDict.viewOrderDetail || (locale === "vi" ? "Kiểm tra chi tiết đơn hàng" : "View Order Details")}
+              </Link>
+              <Link
+                href="/shop"
+                className="flex flex-1 items-center justify-center border border-border bg-surface px-5 py-3 text-[11.5px] font-medium text-dark/70 transition-colors hover:border-dark hover:text-dark"
+              >
+                {orderDict.continueShoppingButton || (locale === "vi" ? "Tiếp tục xem giao diện" : "Browse Templates")}
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   );
 }
-

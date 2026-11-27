@@ -12,9 +12,17 @@ import { useEffect, useRef, useState } from "react";
 import { formatCurrency } from "@/shared/utils";
 import { getLocalizedText } from "@/shared/utils/locale";
 import { toast } from "@/client/hooks/useToastStore";
-import { ShoppingBag, X, ArrowRight, Image as ImageIcon, Loader2 } from "lucide-react";
+import { ShoppingBag, X, ArrowUpRight, Image as ImageIcon, Loader2 } from "lucide-react";
 
-export default function CartDrawer() {
+/**
+ * Slide-over cart panel on the Spec Sheet chrome.
+ *
+ * Business logic is unchanged: quantity updates, removal, route-aware closing
+ * and the checkout pending state all keep their previous behaviour.
+ *
+ * @returns Cart drawer tree.
+ */
+export default function CartDrawer(): React.JSX.Element {
   const { dict, locale } = useI18n();
   const { items, subtotal, removeItem, updateQuantity, isLoading, error } = useCart();
   const { isOpen, closeDrawer } = useCartDrawerStore();
@@ -53,7 +61,7 @@ export default function CartDrawer() {
 
   // Close on ESC keypress
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
+    const handleKeyDown = (e: KeyboardEvent): void => {
       if (e.key === "Escape") {
         closeDrawer();
       }
@@ -70,172 +78,170 @@ export default function CartDrawer() {
     };
   }, [isOpen, closeDrawer]);
 
-  const handleRemove = (id: string, title?: string) => {
+  const handleRemove = (id: string, title?: string): void => {
     removeItem(id);
-    toast.info(
-      locale === "vi" ? "Đã xóa sản phẩm khỏi giỏ hàng" : "Item removed from cart",
-      title ? `${title}` : undefined
-    );
+    toast.info(dict.cart.removedTitle, title ? `${title}` : undefined);
   };
 
   return (
     <AnimatePresence>
       {isOpen && (
         <>
-          {/* Dark Glassmorphism Overlay */}
+          {/* Overlay */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={closeDrawer}
-            className="fixed inset-0 z-50 bg-slate-950/40 backdrop-blur-sm cursor-pointer"
+            className="fixed inset-0 z-50 cursor-pointer bg-dark/45"
           />
 
-          {/* Sliding Side-Drawer */}
+          {/* Sliding side drawer */}
           <motion.div
             ref={drawerRef}
             initial={{ x: "100%" }}
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "spring", stiffness: 320, damping: 32 }}
-            className="fixed right-0 top-0 bottom-0 w-full max-w-[420px] bg-white z-50 shadow-2xl flex flex-col h-full border-l border-slate-100 font-sans"
+            className="fixed bottom-0 right-0 top-0 z-50 flex h-full w-full max-w-[420px] flex-col border-l border-border bg-background font-sans"
           >
             {/* Header */}
-            <div className="flex items-center justify-between px-6 py-5 bg-white border-b border-slate-100">
+            <div className="flex items-center justify-between border-b border-border bg-surface px-5 py-4">
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
-                  <ShoppingBag size={17} />
-                </div>
-                <h2 className="text-base font-extrabold text-slate-950">
-                  {dict?.drawer?.title || (locale === "vi" ? "Giỏ hàng của bạn" : "Your Cart")}
+                <span className="flex h-8 w-8 items-center justify-center border border-border text-primary">
+                  <ShoppingBag size={16} />
+                </span>
+                <h2 className="font-display text-[15px] font-bold tracking-[-0.03em] text-dark">
+                  {dict.drawer.title}
                 </h2>
-                <span className="bg-slate-100 text-slate-700 text-[11px] font-extrabold px-2 py-0.5 rounded-full">
-                  {items.reduce((acc, curr) => acc + curr.quantity, 0)}
+                <span className="mono-meta border border-border px-1.5 py-1 text-[8px] text-dark/60">
+                  {String(items.reduce((acc, curr) => acc + curr.quantity, 0)).padStart(2, "0")}
                 </span>
               </div>
-              <button 
+              <button
                 onClick={closeDrawer}
-                className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-slate-100 text-slate-400 hover:text-slate-900 transition-colors focus:outline-none cursor-pointer"
+                className="flex h-8 w-8 items-center justify-center border border-border text-dark/45 transition-colors hover:border-dark hover:text-dark"
                 type="button"
+                aria-label={dict.drawer.closeDrawer}
               >
-                <X size={18} />
+                <X size={16} />
               </button>
             </div>
 
-            {/* Content Area */}
-            <div className="flex-1 overflow-y-auto px-6 py-5 space-y-4">
+            {/* Content */}
+            <div className="flex-1 space-y-3 overflow-y-auto px-5 py-4">
               {error && (
-                <div className="bg-red-50 text-red-600 p-3 text-xs font-medium border border-red-100 rounded-xl mb-3">
+                <div className="mb-3 border border-error/30 bg-error/5 p-3 text-[11.5px] font-medium text-error">
                   {error}
                 </div>
               )}
               {isLoading && items.length === 0 ? (
-                <div className="space-y-4 py-8">
+                <div className="space-y-3 py-6">
                   {[1, 2].map((i) => (
-                    <div key={i} className="flex gap-4 animate-pulse">
-                      <div className="w-20 h-20 bg-slate-100 rounded-xl" />
+                    <div key={i} className="flex animate-pulse gap-3">
+                      <div className="h-18 w-18 border border-border bg-background-subtle" />
                       <div className="flex-1 space-y-2 py-1">
-                        <div className="h-4 bg-slate-100 w-3/4 rounded" />
-                        <div className="h-3 bg-slate-100 w-1/2 rounded" />
-                        <div className="h-3 bg-slate-100 w-1/4 mt-4 rounded" />
+                        <div className="h-3 w-3/4 bg-background-subtle" />
+                        <div className="h-2.5 w-1/2 bg-background-subtle" />
+                        <div className="mt-4 h-2.5 w-1/4 bg-background-subtle" />
                       </div>
                     </div>
                   ))}
                 </div>
               ) : items.length === 0 ? (
-                <div className="flex flex-col items-center justify-center h-full text-center py-16">
-                  <div className="w-16 h-16 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mb-4">
-                    <ShoppingBag size={28} />
-                  </div>
-                  <p className="text-slate-900 font-extrabold text-sm mb-1 uppercase tracking-wider">
-                    {dict?.drawer?.emptyTitle || (locale === "vi" ? "Giỏ hàng đang trống" : "Your cart is empty")}
+                <div className="flex h-full flex-col items-center justify-center py-16 text-center">
+                  <span className="mb-4 flex h-14 w-14 items-center justify-center border border-border text-dark/25">
+                    <ShoppingBag size={24} />
+                  </span>
+                  <p className="font-display text-[15px] font-bold tracking-[-0.03em] text-dark">
+                    {dict.drawer.emptyTitle}
                   </p>
-                  <p className="text-slate-400 text-xs mb-6 max-w-[220px]">
-                    {dict?.drawer?.emptyDesc || (locale === "vi" ? "Hãy chọn các mẫu website cao cấp để bắt đầu" : "Select premium website templates to get started")}
+                  <p className="mt-1.5 max-w-[220px] text-[11.5px] leading-relaxed text-dark/45">
+                    {dict.drawer.emptyDesc}
                   </p>
-                  <button 
+                  <button
                     onClick={closeDrawer}
                     type="button"
-                    className="bg-primary text-white text-xs uppercase tracking-wider px-6 py-3 hover:bg-primary-dark transition-colors font-bold rounded-xl shadow-sm cursor-pointer"
+                    className="mt-6 bg-dark px-5 py-2.5 mono-meta text-[8.5px] text-background transition-colors hover:bg-primary"
                   >
-                    {dict?.drawer?.exploreMenu || (locale === "vi" ? "Khám phá Template" : "Explore Templates")}
+                    {dict.drawer.exploreMenu}
                   </button>
                 </div>
               ) : (
-                <div className="space-y-3">
+                <div className="space-y-2">
                   <AnimatePresence>
                     {items.map((item, index) => {
                       const productTitle = getLocalizedText(item.title as unknown as Record<string, string>, locale);
                       return (
-                        <motion.div 
+                        <motion.div
                           key={item.id}
                           initial={{ opacity: 0, y: 10 }}
                           animate={{ opacity: 1, y: 0 }}
                           exit={{ opacity: 0, y: -10 }}
                           transition={{ delay: index * 0.04 }}
-                          className="flex gap-3.5 p-3.5 bg-slate-50/70 hover:bg-white rounded-2xl border border-slate-100 transition-all group shadow-xs"
+                          className="group flex gap-3 border border-border bg-surface p-3 transition-colors hover:border-dark/30"
                         >
-                          <div className="w-18 h-18 bg-slate-100 overflow-hidden relative flex-shrink-0 rounded-lg">
+                          <div className="relative h-18 w-18 shrink-0 overflow-hidden border border-border bg-background-subtle">
                             {item.imageUrl ? (
-                              <Image 
-                                src={item.imageUrl} 
-                                alt={productTitle} 
+                              <Image
+                                src={item.imageUrl}
+                                alt={productTitle}
                                 fill
                                 sizes="72px"
                                 className="object-cover"
                               />
                             ) : (
-                              <div className="w-full h-full flex items-center justify-center text-slate-300">
-                                <ImageIcon size={18} />
-                              </div>
+                              <span className="flex h-full w-full items-center justify-center text-dark/20">
+                                <ImageIcon size={16} />
+                              </span>
                             )}
                           </div>
 
-                          <div className="flex-1 flex flex-col justify-between py-0.5">
+                          <div className="flex flex-1 flex-col justify-between py-0.5">
                             <div>
-                              <div className="flex justify-between items-start gap-2">
-                                <h3 className="font-extrabold text-slate-900 text-xs line-clamp-2 leading-tight">
+                              <div className="flex items-start justify-between gap-2">
+                                <h3 className="line-clamp-2 text-[11.5px] font-semibold leading-tight text-dark">
                                   {productTitle}
                                 </h3>
-                                <button 
+                                <button
                                   onClick={() => handleRemove(item.id, productTitle)}
-                                  className="text-slate-400 hover:text-red-500 transition-colors p-0.5 cursor-pointer"
-                                  aria-label="Remove item"
+                                  className="p-0.5 text-dark/30 transition-colors hover:text-error"
+                                  aria-label={dict.drawer.removeItem}
                                   type="button"
                                 >
-                                  <X size={13} />
+                                  <X size={12} />
                                 </button>
                               </div>
                               {item.variantName && (
-                                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mt-0.5">
-                                  {dict?.drawer?.portion || (locale === "vi" ? "Gói:" : "License:")} {item.variantName}
+                                <p className="mono-meta mt-1 text-[7.5px] text-dark/35">
+                                  {dict.drawer.portion} {item.variantName}
                                 </p>
                               )}
                             </div>
 
-                            <div className="flex justify-between items-end mt-2">
-                              <div className="flex items-center bg-white border border-slate-200 px-2 py-0.5 rounded-lg">
-                                <button 
+                            <div className="mt-2 flex items-end justify-between">
+                              <div className="flex items-center border border-border bg-background px-1.5 py-0.5">
+                                <button
                                   onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                                  className="w-5 h-5 flex items-center justify-center text-slate-400 hover:text-slate-900 text-xs cursor-pointer"
-                                  aria-label="Decrease quantity"
+                                  className="flex h-5 w-5 items-center justify-center text-[11px] text-dark/45 transition-colors hover:text-dark"
+                                  aria-label={dict.drawer.decreaseQty}
                                   type="button"
                                 >
                                   -
                                 </button>
-                                <span className="text-slate-900 text-xs font-bold w-5 text-center select-none">
+                                <span className="w-5 select-none text-center font-mono text-[10px] font-semibold text-dark">
                                   {item.quantity}
                                 </span>
-                                <button 
+                                <button
                                   onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                                  className="w-5 h-5 flex items-center justify-center text-slate-400 hover:text-slate-900 text-xs cursor-pointer"
-                                  aria-label="Increase quantity"
+                                  className="flex h-5 w-5 items-center justify-center text-[11px] text-dark/45 transition-colors hover:text-dark"
+                                  aria-label={dict.drawer.increaseQty}
                                   type="button"
                                 >
                                   +
                                 </button>
                               </div>
-                              <span className="font-extrabold text-primary text-xs">
+                              <span className="font-mono text-[11px] font-semibold text-primary">
                                 {formatCurrency(item.price * item.quantity, locale)}
                               </span>
                             </div>
@@ -248,22 +254,18 @@ export default function CartDrawer() {
               )}
             </div>
 
-            {/* Footer Summary (Checkout CTA) */}
+            {/* Footer summary */}
             {items.length > 0 && (
-              <div className="px-6 py-5 bg-slate-50/80 border-t border-slate-100 space-y-4">
-                <div className="flex justify-between items-center text-slate-900 font-bold">
-                  <span className="text-xs text-slate-500 uppercase tracking-wider font-semibold">
-                    {dict?.drawer?.subtotal || (locale === "vi" ? "Tạm tính" : "Subtotal")}
-                  </span>
-                  <span className="text-base font-extrabold text-primary">
+              <div className="space-y-3 border-t border-border bg-surface px-5 py-4">
+                <div className="flex items-center justify-between">
+                  <span className="mono-meta text-[8.5px] text-dark/40">{dict.drawer.subtotal}</span>
+                  <span className="font-mono text-[15px] font-semibold text-primary">
                     {formatCurrency(subtotal, locale)}
                   </span>
                 </div>
-                <p className="text-[11px] text-slate-400 leading-relaxed">
-                  {dict?.drawer?.deliveryNote || (locale === "vi" ? "File template (.zip) và giấy phép được cấp quyền tải về tự động ngay sau khi thanh toán." : "Template archive (.zip) and license will be instantly available for download upon payment completion.")}
-                </p>
-                <div className="grid grid-cols-1 gap-2 pt-1">
-                  <Link 
+                <p className="text-[10.5px] leading-relaxed text-dark/40">{dict.drawer.deliveryNote}</p>
+                <div className="grid grid-cols-1 gap-1.5 pt-1">
+                  <Link
                     href={ROUTES.CHECKOUT}
                     onClick={(e) => {
                       // Do not trigger pending state if opened in a new tab/window via modifier keys or non-primary click
@@ -272,28 +274,28 @@ export default function CartDrawer() {
                       }
                       setIsNavigatingToCheckout(true);
                     }}
-                    className={`w-full bg-primary text-white text-xs py-3.5 hover:bg-primary-dark transition-all flex items-center justify-center gap-2 uppercase tracking-wider font-extrabold rounded-xl shadow-md active:scale-95 ${
-                      isNavigatingToCheckout ? "opacity-75 pointer-events-none cursor-not-allowed" : ""
+                    className={`flex w-full items-center justify-center gap-2 bg-dark py-3 text-[11.5px] font-semibold text-background transition-colors hover:bg-primary ${
+                      isNavigatingToCheckout ? "pointer-events-none cursor-not-allowed opacity-75" : ""
                     }`}
                   >
                     {isNavigatingToCheckout ? (
                       <>
                         <Loader2 size={14} className="animate-spin" />
-                        <span>{dict?.common?.redirecting || (locale === "vi" ? "Đang chuyển trang..." : "Redirecting...")}</span>
+                        <span>{dict.common.redirecting}</span>
                       </>
                     ) : (
                       <>
-                        <span>{dict?.drawer?.checkoutCTA || (locale === "vi" ? "Tiến hành thanh toán" : "Proceed to Checkout")}</span>
-                        <ArrowRight size={14} />
+                        <span>{dict.drawer.checkoutCTA}</span>
+                        <ArrowUpRight size={14} />
                       </>
                     )}
                   </Link>
-                  <button 
+                  <button
                     onClick={closeDrawer}
                     type="button"
-                    className="w-full bg-transparent border-none text-slate-500 hover:text-slate-900 text-[11px] uppercase tracking-wider py-1.5 transition-all cursor-pointer font-bold"
+                    className="w-full py-1.5 mono-meta text-[8px] text-dark/45 transition-colors hover:text-dark"
                   >
-                    {dict?.drawer?.continueCTA || (locale === "vi" ? "Tiếp tục xem giao diện" : "Continue Browsing")}
+                    {dict.drawer.continueCTA}
                   </button>
                 </div>
               </div>
