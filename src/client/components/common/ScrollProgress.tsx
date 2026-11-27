@@ -11,7 +11,7 @@ export function ScrollProgress() {
   return (
     <div
       aria-hidden="true"
-      className="pointer-events-none fixed left-0 top-0 z-[1002] h-[2px] w-full origin-left bg-primary shadow-[0_0_8px_0_rgba(37,99,235,0.6)] scroll-progress"
+      className="pointer-events-none fixed left-0 top-0 z-[1002] h-[2px] w-full origin-left bg-primary scroll-progress"
     />
   );
 }

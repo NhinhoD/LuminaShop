@@ -148,7 +148,7 @@ export default function HomePageClient({
     if (showcaseRef.current) {
       const rect = showcaseRef.current.getBoundingClientRect();
       if (rect.top < 0 || rect.top > window.innerHeight / 2) {
-        showcaseRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+        const _b = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth"; showcaseRef.current.scrollIntoView({ behavior: _b, block: "start" });
       }
     }
   };
@@ -171,7 +171,7 @@ export default function HomePageClient({
     });
 
     if (showcaseRef.current) {
-      showcaseRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+      const _b = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth"; showcaseRef.current.scrollIntoView({ behavior: _b, block: "start" });
     }
   };
 
@@ -203,7 +203,7 @@ export default function HomePageClient({
     all: displayProducts.find((product) => product.imageUrl)?.imageUrl,
   };
   for (const category of categories) {
-    const match = displayProducts.find((product) => product.categoryId === category.id);
+    const match = displayProducts.find((product) => product.categoryId === category.id && product.imageUrl);
     previews[category.id] = match?.imageUrl;
   }
 

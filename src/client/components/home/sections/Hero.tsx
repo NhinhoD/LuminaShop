@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import gsap from "gsap";
 import { ArrowDown, ArrowUpRight, Star } from "lucide-react";
 
@@ -45,7 +45,7 @@ function SpecimenCard({ product, index, locale, dict }: SpecimenCardProps): Reac
         data-hero-card
         data-rotate={CARD_ROTATIONS[index]}
         style={{ zIndex: 30 - index }}
-        className={`absolute ${CARD_POSITIONS[index]} group border border-dark/20 bg-surface shadow-[0_24px_60px_-38px_rgba(11,11,15,0.7)] transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform hover:z-50 hover:scale-[1.04] hover:border-primary hover:shadow-[0_32px_80px_-30px_rgba(27,42,255,0.45)]`}
+        className={`absolute ${CARD_POSITIONS[index]} group border border-dark/20 bg-surface transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform hover:z-50 hover:scale-[1.04] hover:border-primary`}
       >
         <div className="flex items-center gap-1.5 border-b border-border bg-background-subtle px-3 py-2">
           <span className="h-1.5 w-1.5 rounded-full bg-primary" />
@@ -81,7 +81,7 @@ function SpecimenCard({ product, index, locale, dict }: SpecimenCardProps): Reac
       data-hero-card
       data-rotate={CARD_ROTATIONS[index]}
       style={{ zIndex: 30 - index }}
-      className={`absolute ${CARD_POSITIONS[index]} group border border-dark/20 bg-surface shadow-[0_24px_60px_-38px_rgba(11,11,15,0.7)] transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform hover:z-50 hover:scale-[1.04] hover:border-primary hover:shadow-[0_32px_80px_-30px_rgba(27,42,255,0.45)]`}
+      className={`absolute ${CARD_POSITIONS[index]} group border border-dark/20 bg-surface transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform hover:z-50 hover:scale-[1.04] hover:border-primary`}
     >
       <div className="flex items-center gap-1.5 border-b border-border bg-background-subtle px-3 py-2 transition-colors group-hover:bg-primary/5">
         <span className="h-1.5 w-1.5 rounded-full bg-primary" />
@@ -111,7 +111,7 @@ function SpecimenCard({ product, index, locale, dict }: SpecimenCardProps): Reac
           </div>
         )}
         {/* Hover overlay */}
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-dark/70 via-dark/0 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+        <div className="pointer-events-none absolute inset-0 bg-dark/60 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
         <span className="pointer-events-none absolute bottom-2 left-2.5 mono-meta text-[8px] text-background opacity-0 transition-opacity duration-300 group-hover:opacity-100">
           {ui.labelSpec} {String(index + 1).padStart(3, "0")} · {title}
         </span>
@@ -142,7 +142,15 @@ export function Hero({ dict, locale, specimens, totalTemplates }: HeroProps): Re
   const ref = useRef<HTMLElement>(null);
   const ui = dict.homeUi;
   const [isPaused, setIsPaused] = useState(false);
+  const [reducedMotion, setReducedMotion] = useState(false);
   const controlsRef = useRef<{ toggle: () => void } | null>(null);
+  const userPausedRef = useRef(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setReducedMotion(window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+    }
+  }, []);
 
   useGsapEffect((scope) => {
     const mm = gsap.matchMedia();
@@ -224,7 +232,7 @@ export function Hero({ dict, locale, specimens, totalTemplates }: HeroProps): Re
       // Auto-rotate slideshow (GSAP-driven, pauses on hover) - only under normal motion
       let activeIndex = 0;
       let paused = stack?.matches(":hover") ?? false;
-      let userPaused = false;
+      let userPaused = userPausedRef.current;
       let delayed: gsap.core.Tween | null = null;
 
       const schedule = () => {
@@ -247,8 +255,8 @@ export function Hero({ dict, locale, specimens, totalTemplates }: HeroProps): Re
       };
       const onLeave = () => {
         if (userPaused) return;
-        paused = false;
-        schedule();
+        paused = stack?.contains(document.activeElement) ?? false;
+        if (!paused) schedule();
       };
       const onFocusIn = () => {
         paused = true;
@@ -256,6 +264,7 @@ export function Hero({ dict, locale, specimens, totalTemplates }: HeroProps): Re
       };
       const onFocusOut = (e: FocusEvent) => {
         if (stack?.contains(e.relatedTarget as Node)) return;
+        if (stack?.matches(":hover")) return;
         if (userPaused) return;
         paused = false;
         schedule();
@@ -268,6 +277,7 @@ export function Hero({ dict, locale, specimens, totalTemplates }: HeroProps): Re
       controlsRef.current = {
         toggle: () => {
           userPaused = !userPaused;
+          userPausedRef.current = userPaused;
           paused = userPaused || (stack?.matches(":hover") ?? false);
           setIsPaused(userPaused);
           if (paused) {
@@ -381,18 +391,20 @@ export function Hero({ dict, locale, specimens, totalTemplates }: HeroProps): Re
               ))}
             </div>
 
-            <div className="mt-3 flex items-center justify-between">
-              <button
-                type="button"
-                onClick={() => controlsRef.current?.toggle()}
-                className="mono-meta inline-flex items-center gap-1.5 border border-border px-2.5 py-1.5 text-[8px] text-dark/55 transition-colors hover:border-dark hover:text-dark"
-                aria-pressed={isPaused}
-              >
-                <span className="h-1.5 w-1.5 bg-primary" />
-                {isPaused ? ui.heroPauseResume : ui.heroPausePause}
-              </button>
-              <span className="mono-meta text-[8px] text-dark/35">{ui.heroPauseAuto}</span>
-            </div>
+            {specimens.length >= 2 && !reducedMotion && (
+              <div className="mt-3 flex items-center justify-between">
+                <button
+                  type="button"
+                  onClick={() => controlsRef.current?.toggle()}
+                  className="mono-meta inline-flex items-center gap-1.5 border border-border px-2.5 py-1.5 text-[8px] text-dark/55 transition-colors hover:border-dark hover:text-dark"
+                  aria-pressed={isPaused}
+                >
+                  <span className="h-1.5 w-1.5 bg-primary" />
+                  {isPaused ? ui.heroPauseResume : ui.heroPausePause}
+                </button>
+                <span className="mono-meta text-[8px] text-dark/35">{ui.heroPauseAuto}</span>
+              </div>
+            )}
 
             <div data-hero-fade className="mt-5 flex items-center justify-between border-t border-border pt-3">
               <span className="mono-meta text-[9px] text-dark/40">{ui.heroScroll}</span>
