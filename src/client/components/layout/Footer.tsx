@@ -54,7 +54,7 @@ export function Footer(): React.JSX.Element {
 
   const menuLinks = [
     { label: f.webTemplates || "Web Templates", href: "/shop?category=ecommerce" },
-    { label: f.landingPage || "Landing Pages", href: "/shop?category=portfolio" },
+    { label: f.portfolio || "Portfolio", href: "/shop?category=portfolio" },
     { label: f.dashboards || "Dashboards", href: "/shop?category=saas" },
     { label: f.components || "Components", href: "/shop?category=fintech" },
   ];
