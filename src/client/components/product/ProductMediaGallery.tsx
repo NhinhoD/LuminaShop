@@ -105,7 +105,7 @@ export default function ProductMediaGallery({ productId: _productId, title, imag
   );
   const [iframeLoading, setIframeLoading] = useState(true);
   const [prevDemoUrl, setPrevDemoUrl] = useState(normalizedDemoUrl);
-  const { dict, locale } = useI18n();
+  const { dict } = useI18n();
 
   if (normalizedDemoUrl !== prevDemoUrl) {
     setPrevDemoUrl(normalizedDemoUrl);
@@ -116,27 +116,29 @@ export default function ProductMediaGallery({ productId: _productId, title, imag
   const mockUrl = getDisplayMockUrl(normalizedDemoUrl, title);
 
   return (
-    <div className="space-y-4 font-sans">
-      {/* Tab Selectors */}
+    <div className="space-y-3 font-sans">
+      {/* Tab selectors */}
       {hasValidDemo && (
-        <div className="flex items-center justify-between border-b border-slate-100 pb-1.5">
-          <div className="flex gap-4">
+        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border pb-2">
+          <div className="flex gap-1">
             <button
               onClick={() => {
                 setActiveTab("live");
                 setIframeLoading(true);
               }}
               type="button"
-              className={`flex items-center gap-1.5 pb-2 text-xs font-medium relative cursor-pointer transition-colors ${
-                activeTab === "live" ? "text-primary font-semibold" : "text-slate-500 hover:text-slate-900"
+              className={`relative flex items-center gap-1.5 px-3 py-2 mono-meta text-[9px] transition-colors ${
+                activeTab === "live"
+                  ? "bg-dark text-background"
+                  : "border border-border bg-surface text-dark/55 hover:border-dark hover:text-dark"
               }`}
             >
-              <Monitor size={13} />
-              <span>{dict?.media?.liveDemo || (locale === "vi" ? "Trải nghiệm trực tiếp" : "Live Demo")}</span>
+              <Monitor size={11} />
+              <span>{dict.media.liveDemo}</span>
               {activeTab === "live" && (
                 <motion.div
                   layoutId="activeMediaTab"
-                  className="absolute bottom-0 left-0 right-0 h-[2px] bg-primary rounded-full"
+                  className="absolute inset-x-0 bottom-0 h-[2px] bg-primary"
                   transition={{ type: "spring", stiffness: 400, damping: 30 }}
                 />
               )}
@@ -144,16 +146,18 @@ export default function ProductMediaGallery({ productId: _productId, title, imag
             <button
               onClick={() => setActiveTab("image")}
               type="button"
-              className={`flex items-center gap-1.5 pb-2 text-xs font-medium relative cursor-pointer transition-colors ${
-                activeTab === "image" ? "text-primary font-semibold" : "text-slate-500 hover:text-slate-900"
+              className={`relative flex items-center gap-1.5 px-3 py-2 mono-meta text-[9px] transition-colors ${
+                activeTab === "image"
+                  ? "bg-dark text-background"
+                  : "border border-border bg-surface text-dark/55 hover:border-dark hover:text-dark"
               }`}
             >
-              <ImageIcon size={13} />
-              <span>{dict?.media?.designMockup || (locale === "vi" ? "Ảnh giao diện" : "Design Mockup")}</span>
+              <ImageIcon size={11} />
+              <span>{dict.media.designMockup}</span>
               {activeTab === "image" && (
                 <motion.div
                   layoutId="activeMediaTab"
-                  className="absolute bottom-0 left-0 right-0 h-[2px] bg-primary rounded-full"
+                  className="absolute inset-x-0 bottom-0 h-[2px] bg-primary"
                   transition={{ type: "spring", stiffness: 400, damping: 30 }}
                 />
               )}
@@ -164,94 +168,105 @@ export default function ProductMediaGallery({ productId: _productId, title, imag
             href={resolvedIframeSrc}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-1.5 bg-slate-900 hover:bg-slate-800 text-white px-3 py-1.5 rounded-lg text-xs font-medium transition-colors shadow-2xs -mt-1.5"
+            className="flex items-center gap-1.5 border border-border bg-surface px-3 py-2 mono-meta text-[9px] text-dark/65 transition-colors hover:border-dark hover:text-dark"
           >
-            <span>{dict?.media?.openFullscreen || (locale === "vi" ? "Toàn màn hình" : "Fullscreen")}</span>
-            <ExternalLink size={12} />
+            <span>{dict.media.openFullscreen}</span>
+            <ExternalLink size={11} />
           </Link>
         </div>
       )}
 
-      {/* Media Window Container */}
-      <div className={`rounded-xl overflow-hidden shadow-xs border border-slate-200/70 relative transition-all duration-300 ${
-        activeTab === "live" && hasValidDemo
-          ? "w-full h-[65vh] min-h-[460px]"
-          : "aspect-[4/3] sm:aspect-[16/10] bg-slate-900"
-      }`}>
+      {/* Media window */}
+      <div
+        className={`relative overflow-hidden border border-border transition-all duration-300 ${
+          activeTab === "live" && hasValidDemo
+            ? "h-[65vh] min-h-[460px] w-full"
+            : "aspect-[4/3] bg-dark sm:aspect-[16/10]"
+        }`}
+      >
         {activeTab === "live" && hasValidDemo ? (
-          <div className="w-full h-full relative bg-slate-950">
-            {/* Top Browser Bar Mock */}
-            <div className="h-8 bg-slate-900 border-b border-slate-800/60 flex items-center px-3.5 gap-2 select-none">
-              <div className="flex gap-1.5 shrink-0">
-                <span className="w-2.5 h-2.5 rounded-full bg-red-500/70" />
-                <span className="w-2.5 h-2.5 rounded-full bg-amber-500/70" />
-                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500/70" />
+          <div className="relative h-full w-full bg-dark">
+            {/* Browser chrome mock */}
+            <div className="flex h-8 select-none items-center gap-2 border-b border-background/15 bg-dark px-3.5">
+              <div className="flex shrink-0 gap-1.5">
+                <span className="h-2 w-2 bg-primary/80" />
+                <span className="h-2 w-2 bg-background/25" />
+                <span className="h-2 w-2 bg-background/15" />
               </div>
-              <div className="flex-grow mx-3 sm:mx-8 bg-slate-950 h-5.5 rounded flex items-center px-2.5 text-[11px] font-mono overflow-hidden whitespace-nowrap text-ellipsis border border-slate-800/60 shadow-inner">
-                <Lock size={10} className="text-emerald-400 mr-1.5 shrink-0" />
-                <span className="text-emerald-400 font-semibold select-none">https://</span>
-                <span className="text-slate-200 font-medium">{mockUrl.domain}</span>
-                <span className="text-slate-400">{mockUrl.path}</span>
-                <span className="ml-auto text-[9px] text-emerald-400/90 font-sans font-semibold uppercase tracking-wider bg-emerald-950/70 border border-emerald-800/40 px-1.5 py-0.5 rounded hidden md:inline-flex items-center gap-1 select-none">
-                  Verified
+              <div className="mx-3 flex h-5 flex-grow items-center overflow-hidden text-ellipsis whitespace-nowrap border border-background/15 bg-dark-surface px-2.5 font-mono text-[10px] sm:mx-8">
+                <Lock size={9} className="mr-1.5 shrink-0 text-success" />
+                <span className="select-none font-semibold text-success">https://</span>
+                <span className="font-medium text-background/80">{mockUrl.domain}</span>
+                <span className="text-background/40">{mockUrl.path}</span>
+                <span className="mono-meta ml-auto hidden items-center gap-1 border border-background/20 px-1.5 py-0.5 text-[8px] text-background/50 md:inline-flex">
+                  {dict.homeUi.labelVerified}
                 </span>
               </div>
             </div>
 
-            {/* Embedded Live Iframe */}
+            {/* Embedded live iframe */}
             <iframe
               src={resolvedIframeSrc}
               title={`Live Preview of ${title}`}
-              className="w-full h-[calc(100%-32px)] border-0 bg-white"
+              className="h-[calc(100%-32px)] w-full border-0 bg-white"
               sandbox="allow-scripts allow-popups allow-forms"
               allow="autoplay; fullscreen; clipboard-read; clipboard-write; encrypted-media"
               onLoad={() => setIframeLoading(false)}
               loading="lazy"
             />
 
-            {/* Loader Overlay */}
+            {/* Loader overlay */}
             <AnimatePresence>
               {iframeLoading && (
                 <motion.div
                   initial={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.2 }}
-                  className="absolute inset-x-0 bottom-0 top-8 bg-slate-950/80 backdrop-blur-xs flex flex-col items-center justify-center gap-3 z-10"
+                  className="absolute inset-x-0 bottom-0 top-8 z-10 flex flex-col items-center justify-center gap-3 bg-dark/85"
                 >
-                  <div className="w-6 h-6 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
-                  <p className="text-xs text-slate-300 font-normal">
-                    {dict?.media?.loadingPreview || (locale === "vi" ? "Đang tải giao diện trực tiếp..." : "Loading live preview...")}
+                  <div className="h-6 w-6 animate-spin rounded-full border-2 border-background/20 border-t-accent" />
+                  <p className="mono-meta text-[8.5px] text-background/60">
+                    {dict.media.loadingPreview}
                   </p>
                 </motion.div>
               )}
             </AnimatePresence>
           </div>
         ) : (
-          <div className="w-full h-full relative">
+          <div className="relative h-full w-full">
             {imageUrl ? (
               <Image
                 alt={title}
-                className="w-full h-full object-cover"
+                className="h-full w-full object-cover"
                 src={imageUrl}
                 fill
                 priority
                 sizes="(max-width: 1024px) 100vw, 50vw"
               />
             ) : (
-              <div className="w-full h-full flex flex-col items-center justify-center bg-slate-950 text-slate-400 gap-2.5 p-6 text-center select-none">
-                <ImageIcon size={32} className="text-slate-600" />
-                <span className="text-xs text-slate-400 font-medium">{title}</span>
-                <span className="text-[11px] text-slate-500 font-mono">Template tĩnh (.zip) • HTML5 & CSS3</span>
+              <div className="flex h-full w-full select-none flex-col items-center justify-center gap-2.5 bg-dark p-6 text-center">
+                <span className="mono-meta text-[8px] text-background/30">
+                  {dict.homeUi.labelPreview}
+                </span>
+                <ImageIcon size={30} className="text-background/25" />
+                <span className="text-[12px] font-medium text-background/60">{title}</span>
+                <span className="mono-meta text-[8px] text-background/30">
+                  HTML5 · CSS3 · .ZIP
+                </span>
               </div>
             )}
+
+            <span className="mono-meta absolute left-2.5 top-2.5 border border-background/20 bg-dark/85 px-1.5 py-1 text-[8px] text-background/60">
+              {dict.homeUi.labelSpec} / {title.slice(0, 20)}
+            </span>
           </div>
         )}
       </div>
 
-      {/* Extra helper notice for live frame */}
+      {/* Helper notice for live frame */}
       {activeTab === "live" && hasValidDemo && (
-        <p className="text-[11px] text-slate-400 font-normal text-center">
-          {dict?.media?.interactiveHint || (locale === "vi" ? "Bạn có thể tương tác trực tiếp bên trong khung xem trước." : "You can interact directly inside the preview window.")}
+        <p className="mono-meta text-center text-[8px] leading-relaxed text-dark/40">
+          {dict.media.interactiveHint}
         </p>
       )}
     </div>

@@ -117,6 +117,7 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
     makeGetCurrentUserUseCase(),
   ]);
   const prodDict = (dict?.product as Record<string, string>) || {};
+  const homeUi = (dict?.homeUi as Record<string, string>) || {};
 
   // Execute product query and user lookup in parallel to eliminate waterfall latency
   const [productResult, userResult] = await Promise.all([
@@ -127,13 +128,13 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
   if (!productResult.success) {
     console.error("ProductDetailPage: failed to load product:", productResult.error);
     return (
-      <main className="flex-grow bg-white py-16 font-sans">
-        <div className="max-w-xl mx-auto px-6 text-center">
-          <div className="p-8 bg-red-50 border border-red-200 rounded-2xl text-red-700">
-            <p className="font-semibold text-sm">
-              {locale === "vi" ? "Không thể tải thông tin sản phẩm từ máy chủ" : "Failed to load product details from database"}
-            </p>
-            <p className="text-xs text-red-500 mt-1">
+      <main className="flex-grow py-16 font-sans">
+        <div className="mx-auto max-w-xl px-6">
+          <div className="border border-error/40 bg-surface p-8">
+            <span className="mono-meta text-error">
+              {locale === "vi" ? "Không thể tải thông tin sản phẩm" : "Failed to load product details"}
+            </span>
+            <p className="mt-3 text-[12.5px] leading-relaxed text-dark/55">
               {locale === "vi" ? "Vui lòng thử lại sau." : "Please try again later."}
             </p>
           </div>
@@ -309,7 +310,7 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
   };
 
   return (
-    <main className="flex-grow bg-white py-10 font-sans">
+    <main className="flex-grow py-8 font-sans sm:py-12">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -321,94 +322,87 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
         parentLabels={{ [ROUTES.SHOP]: locale === "vi" ? "Kho giao diện tĩnh" : "Static Templates" }}
       />
 
-      <div className="max-w-[1360px] mx-auto px-6 sm:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start">
-          
-          {/* Left: Media Gallery & Interactive Sandbox */}
+      <div className="mx-auto max-w-[1440px] px-5 sm:px-8">
+        <div className="grid grid-cols-1 items-start gap-10 lg:grid-cols-12 lg:gap-12">
+          {/* Left: media gallery & interactive sandbox */}
           <div className="lg:col-span-7">
             <ProductMediaGallery
               productId={product.id}
-              title={getLocalizedText(product.title as unknown as Record<string, string>, locale)}
+              title={localizedTitle}
               imageUrl={product.imageUrl}
               demoUrl={product.demoUrl}
             />
           </div>
 
-          {/* Right: Product Details */}
-          <div className="lg:col-span-5 pt-1">
-            <div className="mb-6">
-              
-              {/* Subtle Status Pill */}
-              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-slate-50 border border-slate-200/70 mb-3 text-xs text-slate-700 font-medium">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                <span>
-                  {prodDict.badge || (locale === "vi" ? "Template Tĩnh Đã Kiểm Thử" : "Verified Static Template")}
+          {/* Right: product details */}
+          <div className="lg:col-span-5">
+            <div className="mb-6 border-b border-border pb-6">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="stamp">
+                  <span className="h-1.5 w-1.5 bg-success" />
+                  {prodDict.badge}
+                </span>
+                <span className="mono-meta text-[8.5px] text-dark/35">
+                  {homeUi.labelSpec} / {product.slug.slice(0, 14)}
                 </span>
               </div>
 
-              {/* Refined Heading */}
-              <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-3 leading-[1.25] tracking-tight">
-                {getLocalizedText(product.title as unknown as Record<string, string>, locale)}
+              <h1 className="mt-4 font-display text-[clamp(1.7rem,3.2vw,2.6rem)] font-bold leading-[1.05] tracking-[-0.04em] text-dark">
+                {localizedTitle}
               </h1>
 
-              {/* Rating & Delivery Info */}
-              <div className="flex items-center gap-3 text-xs text-slate-500 font-normal">
-                <div className="flex items-center gap-1 text-slate-800 font-semibold">
-                  <div className="flex text-amber-500">
+              <div className="mt-4 flex flex-wrap items-center gap-3">
+                <span className="flex items-center gap-1 text-primary">
+                  <span className="flex gap-0.5">
                     {[1, 2, 3, 4, 5].map((s) => (
-                      <Star key={s} size={11} fill="currentColor" />
+                      <Star key={s} size={10} fill="currentColor" />
                     ))}
-                  </div>
-                  <span className="ml-0.5">4.9/5</span>
-                </div>
-                <span className="text-slate-400 font-normal">{prodDict.reviews || "(128 đánh giá)"}</span>
-                <span className="text-slate-300">•</span>
-                <span className="text-emerald-600 font-medium flex items-center gap-1">
-                  <Zap size={12} />
-                  {prodDict.instantDelivery || (locale === "vi" ? "Tự động bàn giao 24/7" : "Automated Delivery")}
+                  </span>
+                  <span className="mono-meta ml-1 text-[9px] text-dark">4.9/5</span>
+                </span>
+                <span className="mono-meta text-[8.5px] text-dark/40">{prodDict.reviews}</span>
+                <span className="h-3 w-px bg-border" />
+                <span className="mono-meta flex items-center gap-1 text-[8.5px] text-success">
+                  <Zap size={10} />
+                  {prodDict.instantDelivery}
                 </span>
               </div>
             </div>
 
-            {/* Description */}
-            <div className="mb-6 pb-6 border-b border-slate-100">
-              <p className="text-slate-600 leading-relaxed text-xs sm:text-sm font-normal">
-                {getLocalizedText(product.description as unknown as Record<string, string>, locale) ||
-                  (locale === "vi" 
-                    ? "Mẫu template website tĩnh chuẩn HTML5, CSS3, JavaScript hoặc Bootstrap 5, giao diện hiện đại và tối ưu hiển thị trên mọi thiết bị." 
+            <div className="mb-6 border-b border-border pb-6">
+              <p className="text-[13px] leading-relaxed text-dark/60">
+                {localizedDesc ||
+                  (locale === "vi"
+                    ? "Mẫu template website tĩnh chuẩn HTML5, CSS3, JavaScript hoặc Bootstrap 5, giao diện hiện đại và tối ưu hiển thị trên mọi thiết bị."
                     : "Professional static website template crafted with HTML5, CSS3, JavaScript or Bootstrap 5, responsive and ready to customize.")}
               </p>
             </div>
 
-            {/* Price, Options & Purchase Actions */}
-            <ProductSelection 
-              product={sanitizeProductForPublic(product, hasPurchased)} 
-              hasPurchased={hasPurchased} 
+            <ProductSelection
+              product={sanitizeProductForPublic(product, hasPurchased)}
+              hasPurchased={hasPurchased}
               purchaseLookupError={purchaseLookupError}
             />
 
-            {/* Technical Accordion / Info Items */}
-            <div className="mt-8 pt-6 border-t border-slate-100 space-y-4">
-              {accordionItems.map((item) => {
+            <div className="mt-8 border-t border-border">
+              {accordionItems.map((item, index) => {
                 const Icon = item.Icon;
                 return (
-                  <div key={item.title} className="flex items-start gap-3">
-                    <div className="w-7 h-7 rounded-lg bg-slate-50 border border-slate-100 text-slate-700 flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <Icon size={14} className="text-primary" />
-                    </div>
+                  <div key={item.title} className="grid grid-cols-[2rem_1fr] gap-3 border-b border-border py-4">
+                    <span className="mono-meta pt-1 text-[9px] text-dark/30">
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
                     <div>
-                      <h4 className="text-xs font-semibold text-slate-900 leading-tight">
+                      <h4 className="flex items-center gap-2 text-[12.5px] font-semibold leading-tight text-dark">
+                        <Icon size={13} className="text-primary" />
                         {item.title}
                       </h4>
-                      <p className="text-[11.5px] text-slate-500 leading-relaxed font-normal mt-0.5">
-                        {item.desc}
-                      </p>
+                      <p className="mt-1.5 text-[11.5px] leading-relaxed text-dark/55">{item.desc}</p>
                     </div>
                   </div>
                 );
               })}
             </div>
-
           </div>
         </div>
       </div>

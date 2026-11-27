@@ -4,7 +4,6 @@ import VerifyOtpForm from '@/client/components/VerifyOtpForm';
 import { ROUTES } from '@/shared/constants';
 import Link from 'next/link';
 import Image from 'next/image';
-import React from 'react';
 
 export const metadata = { title: { absolute: "Xác thực OTP | KhoUI" } };
 
@@ -20,20 +19,33 @@ export default async function VerifyOtpPage(): Promise<React.ReactNode> {
   }
 
   return (
-    <main className="min-h-[calc(100vh-140px)] bg-background-subtle flex flex-col items-center justify-center py-16 px-4 font-sans">
-      {/* Brand Logo */}
-      <Link href={ROUTES.HOME} className="mb-8 group transition-transform hover:scale-102 flex flex-col items-center">
-        <Image
-          src="/LogoKhoUI.png"
-          alt="KhoUI Logo"
-          width={140}
-          height={48}
-          priority
-          className="h-11 w-auto object-contain"
-        />
-      </Link>
+    <main className="flex-grow bg-background font-sans">
+      <div className="mx-auto max-w-[1440px] px-5 py-10 sm:px-8 sm:py-16">
+        <div className="mx-auto max-w-[560px]">
+          <Link href={ROUTES.HOME} className="inline-flex items-center gap-2 transition-opacity hover:opacity-70">
+            <Image
+              src="/LogoKhoUI.png"
+              alt="KhoUI"
+              width={110}
+              height={34}
+              className="h-8 w-auto object-contain"
+            />
+            <span className="mono-meta border border-border px-1.5 py-1 text-[7.5px] text-dark/40">
+              VN
+            </span>
+          </Link>
 
-      <VerifyOtpForm email={email} />
+          <div className="mt-8 border border-border bg-surface">
+            <div className="flex items-center justify-between border-b border-border px-4 py-2.5">
+              <span className="mono-meta text-[8.5px] text-dark/45">AUTH-05 / VERIFY</span>
+              <span className="mono-meta text-[8px] text-dark/25">KHOUI / SECURE</span>
+            </div>
+            <div className="p-5 text-center sm:p-8">
+              <VerifyOtpForm email={email} />
+            </div>
+          </div>
+        </div>
+      </div>
     </main>
   );
 }
