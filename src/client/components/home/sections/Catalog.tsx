@@ -154,6 +154,7 @@ export function Catalog({
           >
             {products.map((product, index) => {
               const isFree = product.price === 0;
+              const isSample = product.id.startsWith("sample-");
               const title = titleOf(product, locale);
               const description = descriptionOf(product, locale);
               const serial = String((currentPage - 1) * itemsPerPage + index + 1).padStart(3, "0");
@@ -181,28 +182,48 @@ export function Catalog({
                     </span>
                   </div>
 
-                  <Link
-                    href={`${ROUTES.PRODUCT}/${product.id}`}
-                    className="relative block aspect-[16/10] overflow-hidden border-b border-border bg-background-subtle"
-                  >
-                    {product.imageUrl ? (
-                      <Image
-                        src={product.imageUrl}
-                        alt={title}
-                        fill
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                        className="object-cover transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.035]"
-                      />
-                    ) : (
-                      <span className="flex h-full items-center justify-center bg-dark text-background/35">
-                        <Monitor size={26} />
+                  {isSample ? (
+                    <div className="relative block aspect-[16/10] overflow-hidden border-b border-border bg-background-subtle">
+                      {product.imageUrl ? (
+                        <Image
+                          src={product.imageUrl}
+                          alt={title}
+                          fill
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                          className="object-cover"
+                        />
+                      ) : (
+                        <span className="flex h-full w-full items-center justify-center bg-dark text-background/35">
+                          <Monitor size={26} />
+                        </span>
+                      )}
+                      <span className="mono-meta absolute bottom-2.5 right-2.5 border border-dark/15 bg-surface/95 px-1.5 py-1 text-[8px] text-dark/70 backdrop-blur-sm">
+                        {ui.labelInstant}
                       </span>
-                    )}
-
-                    <span className="mono-meta absolute bottom-2.5 right-2.5 border border-dark/15 bg-surface/95 px-1.5 py-1 text-[8px] text-dark/70 backdrop-blur-sm">
-                      {ui.labelInstant}
-                    </span>
-                  </Link>
+                    </div>
+                  ) : (
+                    <Link
+                      href={`${ROUTES.PRODUCT}/${product.id}`}
+                      className="relative block aspect-[16/10] overflow-hidden border-b border-border bg-background-subtle"
+                    >
+                      {product.imageUrl ? (
+                        <Image
+                          src={product.imageUrl}
+                          alt={title}
+                          fill
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                          className="object-cover transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.035]"
+                        />
+                      ) : (
+                        <span className="flex h-full w-full items-center justify-center bg-dark text-background/35">
+                          <Monitor size={26} />
+                        </span>
+                      )}
+                      <span className="mono-meta absolute bottom-2.5 right-2.5 border border-dark/15 bg-surface/95 px-1.5 py-1 text-[8px] text-dark/70 backdrop-blur-sm">
+                        {ui.labelInstant}
+                      </span>
+                    </Link>
+                  )}
 
                   <div className="flex flex-1 flex-col p-4">
                     <div className="flex items-baseline justify-between gap-2">
@@ -214,11 +235,19 @@ export function Catalog({
                       </span>
                     </div>
 
-                    <Link href={`${ROUTES.PRODUCT}/${product.id}`} className="mt-1.5">
-                      <h3 className="truncate font-display text-[1.05rem] font-semibold leading-tight tracking-[-0.03em] text-dark transition-colors group-hover:text-primary">
-                        {title}
-                      </h3>
-                    </Link>
+                    {isSample ? (
+                      <span className="mt-1.5 block">
+                        <h3 className="truncate font-display text-[1.05rem] font-semibold leading-tight tracking-[-0.03em] text-dark">
+                          {title}
+                        </h3>
+                      </span>
+                    ) : (
+                      <Link href={`${ROUTES.PRODUCT}/${product.id}`} className="mt-1.5">
+                        <h3 className="truncate font-display text-[1.05rem] font-semibold leading-tight tracking-[-0.03em] text-dark transition-colors group-hover:text-primary">
+                          {title}
+                        </h3>
+                      </Link>
+                    )}
 
                     <p className="mt-2 line-clamp-2 min-h-[2.6em] text-[12px] leading-relaxed text-dark/55">
                       {description || ui.labelLicense}
@@ -265,13 +294,15 @@ export function Catalog({
                             <ExternalLink size={10} />
                           </a>
                         ) : null}
-                        <Link
-                          href={`${ROUTES.PRODUCT}/${product.id}`}
-                          className="flex h-8 items-center gap-1 bg-dark px-3 text-[10.5px] font-semibold text-background transition-colors hover:bg-primary"
-                        >
-                          <span>{ui.labelDetails}</span>
-                          <ArrowUpRight size={11} />
-                        </Link>
+                        {!isSample && (
+                          <Link
+                            href={`${ROUTES.PRODUCT}/${product.id}`}
+                            className="flex h-8 items-center gap-1 bg-dark px-3 text-[10.5px] font-semibold text-background transition-colors hover:bg-primary"
+                          >
+                            <span>{ui.labelDetails}</span>
+                            <ArrowUpRight size={11} />
+                          </Link>
+                        )}
                       </div>
                     </div>
                   </div>
