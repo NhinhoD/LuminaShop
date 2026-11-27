@@ -440,8 +440,8 @@ export default function ShopProductGrid({
                             </span>
                           </div>
                           <span className="mono-meta flex shrink-0 items-center gap-1 border border-border px-1.5 py-1 text-[8px] text-dark/55">
-                            <span className="h-1.5 w-1.5 bg-success" />
-                            {shop.availableLabel}
+                            <span className={`h-1.5 w-1.5 ${product.stock > 0 ? "bg-success" : "bg-dark/30"}`} />
+                            {product.stock > 0 ? shop.availableLabel : dict.common.outOfStock}
                           </span>
                         </div>
 

@@ -49,7 +49,7 @@ export default function QuickAddButton({ product, hasVariants = false }: QuickAd
   const addToCartText = dict.shop.addToCart;
 
   return (
-    <div className="absolute bottom-2.5 right-2.5 z-10 translate-y-1 opacity-0 transition-all duration-200 group-hover:translate-y-0 group-hover:opacity-100">
+    <div className="absolute bottom-2.5 right-2.5 z-10 translate-y-1 opacity-0 transition-all duration-200 group-hover:translate-y-0 group-hover:opacity-100 focus-within:translate-y-0 focus-within:opacity-100">
       <button
         onClick={handleAdd}
         disabled={isLoading}
