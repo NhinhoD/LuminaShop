@@ -93,7 +93,7 @@ export default function CartDrawer(): React.JSX.Element {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={closeDrawer}
-            className="fixed inset-0 z-50 cursor-pointer bg-dark/45"
+            className="fixed inset-0 z-[991] cursor-pointer bg-dark/45"
           />
 
           {/* Sliding side drawer */}
@@ -103,7 +103,7 @@ export default function CartDrawer(): React.JSX.Element {
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "spring", stiffness: 320, damping: 32 }}
-            className="fixed bottom-0 right-0 top-0 z-50 flex h-full w-full max-w-[420px] flex-col border-l border-border bg-background font-sans"
+            className="fixed bottom-0 right-0 top-0 z-[991] flex h-full w-full max-w-[420px] flex-col border-l border-border bg-background font-sans"
           >
             {/* Header */}
             <div className="flex items-center justify-between border-b border-border bg-surface px-5 py-4">

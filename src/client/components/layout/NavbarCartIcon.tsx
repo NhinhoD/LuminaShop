@@ -22,7 +22,7 @@ export default function NavbarCartIcon(): React.JSX.Element {
   return (
     <button
       onClick={() => toggleDrawer()}
-      className="relative flex h-9 w-9 items-center justify-center border border-border text-dark/70 transition-colors hover:border-dark hover:text-dark focus-visible:outline-none"
+      className="relative flex h-9 w-9 items-center justify-center border border-border text-dark/70 transition-colors hover:border-dark hover:text-dark focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
       aria-label={dict.cart.title}
       title={dict.cart.title}
       type="button"
