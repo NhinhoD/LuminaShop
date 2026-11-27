@@ -1,8 +1,7 @@
-﻿'use client';
+'use client';
 
 import { useState, useRef, useEffect, useTransition } from 'react';
 import { verifySignupOtpAction, resendOtpAction } from '@/server/presentation/actions/auth';
-import { motion } from 'framer-motion';
 import { useI18n } from '@/client/components/common/I18nContext';
 import { toast } from '@/client/hooks/useToastStore';
 import { MailCheck, Loader2, ArrowRight } from 'lucide-react';
@@ -11,7 +10,16 @@ interface VerifyOtpFormProps {
   email: string;
 }
 
-export default function VerifyOtpForm({ email }: VerifyOtpFormProps) {
+/**
+ * Six-digit OTP verification form.
+ *
+ * Renders inside the auth Spec Sheet panel provided by the page; input,
+ * paste, auto-submit and resend logic are unchanged.
+ *
+ * @param props - Pending verification email.
+ * @returns OTP form.
+ */
+export default function VerifyOtpForm({ email }: VerifyOtpFormProps): React.JSX.Element {
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const [isPending, startTransition] = useTransition();
@@ -30,7 +38,7 @@ export default function VerifyOtpForm({ email }: VerifyOtpFormProps) {
     return () => clearInterval(interval);
   }, [timer]);
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, index: number) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, index: number): void => {
     if (e.key === 'Backspace') {
       if (!otp[index] && index > 0) {
         inputRefs.current[index - 1]?.focus();
@@ -38,7 +46,7 @@ export default function VerifyOtpForm({ email }: VerifyOtpFormProps) {
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>, index: number): void => {
     const value = e.target.value;
     if (!/^[0-9]*$/.test(value)) return;
 
@@ -55,7 +63,7 @@ export default function VerifyOtpForm({ email }: VerifyOtpFormProps) {
     }
   };
 
-  const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
+  const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>): void => {
     e.preventDefault();
     const pastedData = e.clipboardData.getData('text').replace(/[^0-9]/g, '').slice(0, 6);
     if (!pastedData) return;
@@ -74,7 +82,7 @@ export default function VerifyOtpForm({ email }: VerifyOtpFormProps) {
     }
   };
 
-  const submitOtp = (tokenString: string) => {
+  const submitOtp = (tokenString: string): void => {
     setError(null);
     setResendStatus(null);
 
@@ -97,7 +105,7 @@ export default function VerifyOtpForm({ email }: VerifyOtpFormProps) {
     });
   };
 
-  const handleResend = async () => {
+  const handleResend = async (): Promise<void> => {
     if (resendStatus?.type === 'pending') {
       return;
     }
@@ -131,50 +139,46 @@ export default function VerifyOtpForm({ email }: VerifyOtpFormProps) {
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 16 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, ease: 'easeOut' }}
-      className="w-full max-w-[460px] bg-white rounded-3xl border border-slate-100 p-8 sm:p-10 shadow-[0_4px_24px_rgba(0,0,0,0.02)] text-center font-sans"
-    >
-      <div className="mb-6 flex justify-center">
-        <div className="w-14 h-14 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shadow-xs">
-          <MailCheck className="w-7 h-7" />
-        </div>
+    <div>
+      <div className="mb-5 flex justify-center">
+        <span className="flex h-12 w-12 items-center justify-center border border-border text-primary">
+          <MailCheck className="h-5 w-5" />
+        </span>
       </div>
 
-      <div className="mb-8">
-        <span className="text-xs font-semibold tracking-wider text-primary uppercase block mb-1">
+      <div className="border-b border-border pb-5">
+        <span className="mono-meta flex items-center justify-center gap-2 text-primary">
+          <span className="h-1.5 w-1.5 bg-primary" />
           {dict?.auth?.verifyOtpTag || (locale === 'vi' ? 'BẢO MẬT & XÁC THỰC' : 'SECURITY & VERIFICATION')}
         </span>
-        <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
+        <h2 className="mt-2.5 font-display text-[1.4rem] font-bold tracking-[-0.04em] text-dark">
           {dict?.auth?.verifyEmailTitle || (locale === 'vi' ? 'Xác minh Email' : 'Verify Email')}
-        </h1>
-        <p className="text-slate-500 text-xs mt-1.5 font-normal leading-relaxed">
+        </h2>
+        <p className="mt-2 text-[11.5px] leading-relaxed text-dark/50">
           {dict?.auth?.verifyEmailSent || (locale === 'vi' ? 'Mã OTP 6 chữ số đã được gửi đến:' : 'A 6-digit code was sent to:')}{' '}
-          <strong className="font-semibold text-slate-900">{email}</strong>
+          <strong className="font-semibold text-dark">{email}</strong>
         </p>
       </div>
 
       {error && (
-        <div className="text-red-600 text-xs font-medium bg-red-50 py-2.5 px-3.5 rounded-xl border border-red-100 mb-6 text-left">
+        <div className="mt-4 border border-error/30 bg-error/5 p-3 text-left text-[11.5px] leading-relaxed text-error">
           {error}
         </div>
       )}
 
       {resendStatus && (
         <div
-          className={`text-xs font-medium py-2.5 px-3.5 rounded-xl mb-6 text-left ${
+          className={`mt-4 border p-3 text-left text-[11.5px] leading-relaxed ${
             resendStatus.type === 'error'
-              ? 'bg-red-50 text-red-600 border border-red-100'
-              : 'bg-emerald-50 text-emerald-700 border border-emerald-100'
+              ? 'border-error/30 bg-error/5 text-error'
+              : 'border-success/30 bg-success/5 text-success'
           }`}
         >
           {resendStatus.message}
         </div>
       )}
 
-      <div className="flex justify-center gap-2.5 sm:gap-3 mb-8">
+      <div className="mb-6 mt-6 flex justify-center gap-1.5 sm:gap-2">
         {otp.map((digit, index) => (
           <input
             key={index}
@@ -191,7 +195,7 @@ export default function VerifyOtpForm({ email }: VerifyOtpFormProps) {
             onKeyDown={(e) => handleKeyDown(e, index)}
             onPaste={handlePaste}
             disabled={isPending}
-            className="w-11 h-13 sm:w-12 sm:h-13 text-center text-xl font-mono font-bold bg-white border border-slate-200/80 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all disabled:opacity-50 disabled:bg-slate-50"
+            className="h-12 w-10 border border-border bg-background text-center font-mono text-[1.15rem] font-bold text-dark outline-none transition-colors focus:border-dark disabled:bg-background-subtle disabled:opacity-50 sm:w-12"
           />
         ))}
       </div>
@@ -200,38 +204,38 @@ export default function VerifyOtpForm({ email }: VerifyOtpFormProps) {
         type="button"
         onClick={() => submitOtp(otp.join(''))}
         disabled={isPending || otp.some((d) => d === '')}
-        className="w-full h-11 bg-primary text-white font-medium rounded-xl hover:bg-primary-dark transition-all flex items-center justify-center gap-2 group shadow-xs active:scale-98 cursor-pointer text-sm mb-6 disabled:opacity-50"
+        className="mb-5 flex w-full items-center justify-center gap-2 bg-dark py-3 text-[11.5px] font-semibold text-background transition-colors hover:bg-primary disabled:cursor-not-allowed disabled:opacity-50"
       >
         {isPending ? (
           <>
-            <Loader2 className="w-4 h-4 animate-spin" />
+            <Loader2 className="h-3.5 w-3.5 animate-spin" />
             <span>{locale === 'vi' ? 'Đang xác thực...' : 'Verifying...'}</span>
           </>
         ) : (
           <>
             <span>{dict?.auth?.confirm || (locale === 'vi' ? 'Xác nhận & Hoàn tất' : 'Confirm & Complete')}</span>
-            <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
+            <ArrowRight className="h-3.5 w-3.5" />
           </>
         )}
       </button>
 
-      <div className="text-xs text-slate-500 font-normal">
+      <div className="border-t border-border pt-4 text-[11px] text-dark/45">
         {dict?.auth?.noCodeReceived || (locale === 'vi' ? 'Chưa nhận được mã?' : "Didn't receive code?")}{' '}
         {canResend ? (
           <button
             type="button"
             onClick={handleResend}
             disabled={isPending}
-            className="text-primary font-semibold hover:underline cursor-pointer"
+            className="font-semibold text-primary transition-colors hover:text-dark"
           >
             {dict?.auth?.resendCode || (locale === 'vi' ? 'Gửi lại mã' : 'Resend Code')}
           </button>
         ) : (
-          <span className="text-slate-400 font-mono">
+          <span className="font-mono text-dark/35">
             {dict?.auth?.resendIn || (locale === 'vi' ? 'Gửi lại sau' : 'Resend in')} {timer}s
           </span>
         )}
       </div>
-    </motion.div>
+    </div>
   );
 }

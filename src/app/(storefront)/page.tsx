@@ -73,12 +73,12 @@ export default async function HomePage({ searchParams }: HomePageProps): Promise
   if (!productsResult.success) {
     console.error("[HomePage] Failed to fetch products from database:", productsResult.error);
     return (
-      <main className="flex flex-col min-h-screen items-center justify-center p-6 bg-background-subtle/40 font-sans">
-        <div className="p-8 text-center bg-red-50 border border-red-200 rounded-2xl text-red-700 max-w-xl mx-auto my-12 font-sans">
-          <p className="font-semibold text-sm">
-            {locale === "vi" ? "Không thể tải danh sách sản phẩm từ máy chủ" : "Failed to load products from database"}
-          </p>
-          <p className="text-xs text-red-500 mt-1 font-sans">
+      <main className="flex min-h-[60vh] flex-grow flex-col items-center justify-center bg-background px-5 py-16 font-sans">
+        <div className="mx-auto max-w-xl border border-error/40 bg-surface p-8">
+          <span className="mono-meta text-error">
+            {locale === "vi" ? "Không thể tải danh sách sản phẩm" : "Failed to load products"}
+          </span>
+          <p className="mt-3 text-[12.5px] leading-relaxed text-dark/55">
             {locale === "vi" ? "Vui lòng làm mới trang hoặc thử lại sau giây lát." : "Please refresh or try again shortly."}
           </p>
         </div>
@@ -89,12 +89,12 @@ export default async function HomePage({ searchParams }: HomePageProps): Promise
   if (!categoriesResult.success) {
     console.error("[HomePage] Failed to fetch categories from database:", categoriesResult.error);
     return (
-      <main className="flex flex-col min-h-screen items-center justify-center p-6 bg-background-subtle/40 font-sans">
-        <div className="p-8 text-center bg-red-50 border border-red-200 rounded-2xl text-red-700 max-w-xl mx-auto my-12 font-sans">
-          <p className="font-semibold text-sm">
-            {locale === "vi" ? "Không thể tải danh mục sản phẩm từ máy chủ" : "Failed to load product categories from database"}
-          </p>
-          <p className="text-xs text-red-500 mt-1 font-sans">
+      <main className="flex min-h-[60vh] flex-grow flex-col items-center justify-center bg-background px-5 py-16 font-sans">
+        <div className="mx-auto max-w-xl border border-error/40 bg-surface p-8">
+          <span className="mono-meta text-error">
+            {locale === "vi" ? "Không thể tải danh mục sản phẩm" : "Failed to load product categories"}
+          </span>
+          <p className="mt-3 text-[12.5px] leading-relaxed text-dark/55">
             {locale === "vi" ? "Vui lòng làm mới trang hoặc thử lại sau giây lát." : "Please refresh or try again shortly."}
           </p>
         </div>

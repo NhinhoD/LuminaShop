@@ -14,7 +14,14 @@ interface Props {
   code?: string;
 }
 
-export function ResetPasswordClient({ locale, authDict = {}, initialError, code }: Props) {
+/**
+ * Completes a password reset via the browser Supabase session with a
+ * server-action fallback. Business logic is unchanged.
+ *
+ * @param props - Locale, dictionary section, initial error and PKCE code.
+ * @returns Reset form or success state.
+ */
+export function ResetPasswordClient({ locale, authDict = {}, initialError, code }: Props): React.JSX.Element {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -55,7 +62,7 @@ export function ResetPasswordClient({ locale, authDict = {}, initialError, code 
     };
   }, [code]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault();
     if (loading || isExchangingCode) return;
 
@@ -97,8 +104,8 @@ export function ResetPasswordClient({ locale, authDict = {}, initialError, code 
       setSubmitted(true);
     } else {
       setError(
-        locale === "vi" 
-          ? "Phiên đặt lại mật khẩu không hợp lệ hoặc đã hết hạn. Vui lòng gửi lại yêu cầu mới." 
+        locale === "vi"
+          ? "Phiên đặt lại mật khẩu không hợp lệ hoặc đã hết hạn. Vui lòng gửi lại yêu cầu mới."
           : (res.error || "Password reset session is invalid or expired.")
       );
     }
@@ -106,27 +113,28 @@ export function ResetPasswordClient({ locale, authDict = {}, initialError, code 
 
   if (submitted) {
     return (
-      <div className="text-center py-4 space-y-5">
-        <div className="w-14 h-14 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center mx-auto border border-emerald-100 shadow-xs">
-          <CheckCircle2 className="w-7 h-7" />
+      <div className="py-2">
+        <div className="flex items-start gap-3 border border-success/30 border-l-2 border-l-success bg-success/5 p-4">
+          <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-success" />
+          <div className="min-w-0">
+            <h2 className="font-display text-[15px] font-semibold tracking-[-0.03em] text-dark">
+              {locale === "vi" ? "Đổi mật khẩu thành công!" : "Password Updated!"}
+            </h2>
+            <p className="mt-1.5 text-[11.5px] leading-relaxed text-dark/55">
+              {locale === "vi"
+                ? "Mật khẩu của bạn đã được cập nhật an toàn. Bạn có thể đăng nhập lại ngay bây giờ."
+                : "Your password has been successfully updated. You can now sign in with your new password."}
+            </p>
+          </div>
         </div>
-        <div>
-          <h2 className="text-xl font-bold text-slate-900 mb-2">
-            {locale === "vi" ? "Đổi mật khẩu thành công!" : "Password Updated!"}
-          </h2>
-          <p className="text-xs text-slate-500 max-w-sm mx-auto leading-relaxed">
-            {locale === "vi" 
-              ? "Mật khẩu của bạn đã được cập nhật an toàn. Bạn có thể đăng nhập lại ngay bây giờ." 
-              : "Your password has been successfully updated. You can now sign in with your new password."}
-          </p>
-        </div>
-        <div className="pt-2">
+
+        <div className="mt-5 border-t border-border pt-5">
           <Link
             href={ROUTES.LOGIN}
-            className="inline-flex items-center justify-center gap-2 h-11 px-6 bg-primary text-white font-medium rounded-xl hover:bg-primary-dark transition-all text-sm shadow-xs active:scale-98"
+            className="inline-flex items-center justify-center gap-2 bg-dark px-5 py-3 text-[11.5px] font-semibold text-background transition-colors hover:bg-primary"
           >
             <span>{locale === "vi" ? "Đăng nhập ngay" : "Sign In Now"}</span>
-            <ArrowRight className="w-4 h-4" />
+            <ArrowRight className="h-3.5 w-3.5" />
           </Link>
         </div>
       </div>
@@ -136,89 +144,91 @@ export function ResetPasswordClient({ locale, authDict = {}, initialError, code 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       {error && (
-        <div className="text-red-600 text-xs font-medium bg-red-50 py-2.5 px-3.5 rounded-xl border border-red-100">
+        <div className="border border-error/30 bg-error/5 p-3 text-[11.5px] leading-relaxed text-error">
           {error}
         </div>
       )}
 
-      {/* New Password */}
+      {/* New password */}
       <div>
-        <label className="block text-xs font-medium text-slate-700 mb-1.5" htmlFor="password">
+        <label className="mono-meta mb-1.5 block text-[8.5px] text-dark/55" htmlFor="password">
           {authDict.newPasswordLabel || (locale === "vi" ? "Mật khẩu mới (tối thiểu 6 ký tự)" : "New Password (min 6 characters)")}{" "}
-          <span className="text-red-500">*</span>
+          <span className="text-primary">*</span>
         </label>
         <div className="relative">
-          <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-          <input 
-            id="password" 
-            name="password" 
+          <Lock className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-dark/35" />
+          <input
+            id="password"
+            name="password"
             type={showPassword ? "text" : "password"}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="••••••••"
-            required 
+            required
             autoComplete="new-password"
-            className="w-full h-11 pl-10 pr-11 bg-white border border-slate-200/80 rounded-xl text-sm font-normal focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all placeholder:text-slate-400"
+            className="h-10 w-full border border-border bg-background pl-9 pr-10 text-[12px] text-dark outline-none transition-colors placeholder:text-dark/30 focus:border-dark"
           />
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
+            className="absolute right-2.5 top-1/2 flex h-6 w-6 -translate-y-1/2 items-center justify-center text-dark/35 transition-colors hover:text-dark"
+            aria-label={showPassword ? (authDict.hidePassword || "Hide password") : (authDict.showPassword || "Show password")}
           >
-            {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+            {showPassword ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
           </button>
         </div>
       </div>
 
-      {/* Confirm New Password */}
+      {/* Confirm new password */}
       <div>
-        <label className="block text-xs font-medium text-slate-700 mb-1.5" htmlFor="confirmPassword">
+        <label className="mono-meta mb-1.5 block text-[8.5px] text-dark/55" htmlFor="confirmPassword">
           {authDict.confirmPasswordLabel || (locale === "vi" ? "Xác nhận mật khẩu mới" : "Confirm New Password")}{" "}
-          <span className="text-red-500">*</span>
+          <span className="text-primary">*</span>
         </label>
         <div className="relative">
-          <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-          <input 
-            id="confirmPassword" 
-            name="confirmPassword" 
+          <Lock className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-dark/35" />
+          <input
+            id="confirmPassword"
+            name="confirmPassword"
             type={showConfirmPassword ? "text" : "password"}
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             placeholder="••••••••"
-            required 
+            required
             autoComplete="new-password"
-            className="w-full h-11 pl-10 pr-11 bg-white border border-slate-200/80 rounded-xl text-sm font-normal focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all placeholder:text-slate-400"
+            className="h-10 w-full border border-border bg-background pl-9 pr-10 text-[12px] text-dark outline-none transition-colors placeholder:text-dark/30 focus:border-dark"
           />
           <button
             type="button"
             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-            className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
+            className="absolute right-2.5 top-1/2 flex h-6 w-6 -translate-y-1/2 items-center justify-center text-dark/35 transition-colors hover:text-dark"
+            aria-label={showConfirmPassword ? (authDict.hidePassword || "Hide password") : (authDict.showPassword || "Show password")}
           >
-            {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+            {showConfirmPassword ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
           </button>
         </div>
       </div>
 
-      <div className="pt-2">
-        <button 
+      <div className="border-t border-border pt-4">
+        <button
           type="submit"
           disabled={loading || isExchangingCode}
-          className="w-full h-11 bg-primary text-white font-medium rounded-xl hover:bg-primary-dark transition-all flex items-center justify-center gap-2 group shadow-xs active:scale-98 cursor-pointer text-sm disabled:opacity-50"
+          className="flex w-full items-center justify-center gap-2 bg-primary py-3 text-[11.5px] font-semibold text-background transition-colors hover:bg-primary-dark disabled:cursor-not-allowed disabled:opacity-60"
         >
           {loading ? (
             <>
-              <Loader2 className="w-4 h-4 animate-spin" />
+              <Loader2 className="h-3.5 w-3.5 animate-spin" />
               <span>{locale === "vi" ? "Đang lưu..." : "Saving..."}</span>
             </>
           ) : isExchangingCode ? (
             <>
-              <Loader2 className="w-4 h-4 animate-spin" />
+              <Loader2 className="h-3.5 w-3.5 animate-spin" />
               <span>{locale === "vi" ? "Đang xác thực phiên..." : "Verifying session..."}</span>
             </>
           ) : (
             <>
               <span>{authDict.saveNewPassword || (locale === "vi" ? "Lưu mật khẩu mới" : "Save New Password")}</span>
-              <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
+              <ArrowRight className="h-3.5 w-3.5" />
             </>
           )}
         </button>

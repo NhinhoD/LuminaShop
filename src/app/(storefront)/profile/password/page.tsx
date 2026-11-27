@@ -1,4 +1,4 @@
-﻿import { redirect } from 'next/navigation';
+import { redirect } from 'next/navigation';
 import { Metadata } from 'next';
 import { makeGetCurrentUserUseCase, makeGetProfileUseCase, getAppDictionary } from '@/server/di/container';
 import { ROUTES } from '@/shared/constants';
@@ -23,13 +23,13 @@ export default async function ChangePasswordPage() {
   if (!userResult.success) {
     console.error("ChangePasswordPage: failed to authenticate user:", userResult.error);
     return (
-      <main className="flex-grow pt-16 pb-24 bg-background-subtle font-sans">
-        <div className="max-w-xl mx-auto px-6 text-center">
-          <div className="p-8 bg-red-50 border border-red-200 rounded-2xl text-red-700">
-            <p className="font-semibold text-sm">
-              {locale === "vi" ? "Không thể xác thực thông tin người dùng từ máy chủ" : "Failed to authenticate user from server"}
-            </p>
-            <p className="text-xs text-red-500 mt-1">
+      <main className="flex-grow bg-background py-16 font-sans">
+        <div className="mx-auto max-w-xl px-6">
+          <div className="border border-error/40 bg-surface p-8">
+            <span className="mono-meta text-error">
+              {locale === "vi" ? "Không thể xác thực thông tin người dùng" : "Failed to authenticate user"}
+            </span>
+            <p className="mt-3 text-[12.5px] leading-relaxed text-dark/55">
               {locale === "vi" ? "Vui lòng thử lại sau hoặc đăng nhập lại." : "Please try again later or sign in again."}
             </p>
           </div>
@@ -49,13 +49,13 @@ export default async function ChangePasswordPage() {
   if (!profileResult.success) {
     console.error("ChangePasswordPage: failed to load user profile:", profileResult.error);
     return (
-      <main className="flex-grow pt-16 pb-24 bg-background-subtle font-sans">
-        <div className="max-w-xl mx-auto px-6 text-center">
-          <div className="p-8 bg-red-50 border border-red-200 rounded-2xl text-red-700">
-            <p className="font-semibold text-sm">
-              {locale === "vi" ? "Không thể tải thông tin hồ sơ từ máy chủ" : "Failed to load profile details from database"}
-            </p>
-            <p className="text-xs text-red-500 mt-1">
+      <main className="flex-grow bg-background py-16 font-sans">
+        <div className="mx-auto max-w-xl px-6">
+          <div className="border border-error/40 bg-surface p-8">
+            <span className="mono-meta text-error">
+              {locale === "vi" ? "Không thể tải thông tin hồ sơ" : "Failed to load profile details"}
+            </span>
+            <p className="mt-3 text-[12.5px] leading-relaxed text-dark/55">
               {locale === "vi" ? "Vui lòng thử lại sau." : "Please try again later."}
             </p>
           </div>
@@ -67,12 +67,13 @@ export default async function ChangePasswordPage() {
   const profile = profileResult.data;
   const dict = await getAppDictionary();
   const profileDict = (dict?.profile as Record<string, string>) || {};
+  const homeUi = (dict?.homeUi as Record<string, string>) || {};
 
   return (
-    <main className="flex-grow pt-16 pb-24 bg-background-subtle">
+    <main className="flex-grow bg-background font-sans">
       <UserOrdersRealtimeTracker userId={user.id} />
-      <div className="max-w-[1400px] mx-auto px-6 sm:px-8 lg:px-12">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      <div className="mx-auto max-w-[1440px] px-5 py-10 sm:px-8 sm:py-14">
+        <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-12 lg:gap-8">
           {/* Navigation Sidebar */}
           <ProfileSidebar
             activeTab="password"
@@ -83,24 +84,33 @@ export default async function ChangePasswordPage() {
           />
 
           {/* Main Content Area */}
-          <div className="lg:col-span-9 space-y-8">
-            <section className="bg-white rounded-3xl border border-slate-100 p-8 md:p-10 shadow-xs">
-              <div className="mb-8">
-                <span className="text-xs font-semibold tracking-wider text-primary uppercase block mb-1">
-                  {locale === 'vi' ? 'BẢO MẬT TÀI KHOẢN' : 'ACCOUNT SECURITY'}
+          <div className="space-y-6 lg:col-span-9">
+            <section className="border border-border bg-surface">
+              <div className="flex items-center justify-between border-b border-border px-4 py-2.5">
+                <span className="mono-meta text-[8.5px] text-dark/45">
+                  02 / {profileDict.passwordCode || (locale === 'vi' ? 'Bảo mật' : 'Security')}
                 </span>
-                <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
-                  {profileDict.changePassword || (locale === 'vi' ? 'Đổi mật khẩu' : 'Change Password')}
-                </h1>
-                <p className="text-slate-500 text-xs mt-1.5 font-normal">
-                  {locale === 'vi'
-                    ? 'Để bảo mật tài khoản, vui lòng sử dụng mật khẩu mạnh và không chia sẻ cho người khác.'
-                    : 'For your security, please use a strong password and do not share it with others.'}
-                </p>
-                <div className="h-0.5 w-12 bg-primary rounded-full mt-3" />
+                <span className="mono-meta text-[8px] text-dark/25">{homeUi.labelSpec}</span>
               </div>
 
-              <ChangePasswordForm locale={locale} />
+              <div className="p-5 sm:p-8">
+                <div className="mb-6 border-b border-border pb-5">
+                  <span className="mono-meta flex items-center gap-2 text-primary">
+                    <span className="h-1.5 w-1.5 bg-primary" />
+                    {locale === 'vi' ? 'BẢO MẬT TÀI KHOẢN' : 'ACCOUNT SECURITY'}
+                  </span>
+                  <h1 className="mt-2.5 display text-[clamp(1.5rem,2.6vw,2rem)] text-dark">
+                    {profileDict.changePassword || (locale === 'vi' ? 'Đổi mật khẩu' : 'Change Password')}
+                  </h1>
+                  <p className="mt-3 max-w-xl text-[12.5px] leading-relaxed text-dark/55">
+                    {locale === 'vi'
+                      ? 'Để bảo mật tài khoản, vui lòng sử dụng mật khẩu mạnh và không chia sẻ cho người khác.'
+                      : 'For your security, please use a strong password and do not share it with others.'}
+                  </p>
+                </div>
+
+                <ChangePasswordForm locale={locale} />
+              </div>
             </section>
           </div>
         </div>
