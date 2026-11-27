@@ -1,6 +1,6 @@
 # KhoUI — UI Rebuild & GSAP Motion Plan
 
-> Trạng thái: **PLAN — đã chốt phạm vi, chưa sửa code**
+> Trang thai: **COMPLETED** - storefront da rebuild (tru /admin). Xem docs/STATUS.md.
 > Phạm vi đã xác nhận: **toàn bộ storefront, trừ `/admin`**, chia 6 phase.
 > Tài liệu liên quan: [`AGENTS.md`](../AGENTS.md), [`DESIGN.md`](../DESIGN.md), [`docs/STATUS.md`](STATUS.md)
 
