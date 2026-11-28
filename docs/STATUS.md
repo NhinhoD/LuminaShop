@@ -46,6 +46,15 @@
 ## 🔄 In Progress
 - None recorded at the time this document was last updated.
 
+## 🆕 Storefront UI Rebuild (Spec Sheet / Danh mục bản vẽ) — completed
+- Rebuilt all storefront surfaces (Home, Shop, Product, Cart, Checkout, Auth, Profile/Orders, Navbar/Footer, error/loading/not-found) on the editorial Spec Sheet design system.
+- Palette: paper `#F2F0EA`, ink `#0B0B0F`, cobalt `#1B2AFF`, vermilion `#FF4A1C`, line `#D6D3C9`, surface `#FBFAF6`, success `#127A52`.
+- Typography: Archivo (display), Be Vietnam Pro (body), IBM Plex Mono (meta).
+- Motion primitives in `src/client/components/common/motion/` (`useGsapEffect`, `useRevealBatch`, `SplitLines`, `Magnetic`, `Marquee`, `Counter`); ScrollTrigger-based, transform/opacity only, reduced-motion aware.
+- All copy centralized in `src/i18n/dictionaries/vi.ts` / `en.ts` (new keys kept in sync).
+- Validation (final): `npx tsc --noEmit` PASS, `npm test` 96/96 PASS, `npm run lint` PASS, `npm run build` PASS (retry after Next.js security reminder).
+- Known non-blocking: Next.js `SecurityFatalError` upgrade reminder on first `build`/`dev` run; retry succeeds. Run `next upgrade --agent=security` only with user consent.
+
 ## ⏳ Next Tasks (recommended order)
 - Configure Supabase Auth Custom SMTP using the project's Resend SMTP configuration to unlock high-capacity Auth OTP sending.
 

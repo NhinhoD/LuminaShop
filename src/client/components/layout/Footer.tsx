@@ -3,135 +3,129 @@
 import Link from "next/link";
 import Image from "next/image";
 import { ROUTES } from "@/shared/constants";
-import { 
-  MapPin, 
-  Phone, 
-  Mail, 
-  Clock, 
-  ChevronRight, 
-  Globe, 
-  Camera, 
-  MessageCircle, 
-  Play, 
-  ShieldCheck, 
-  Zap, 
-  Code2, 
-  Layers 
+import {
+  MapPin,
+  Phone,
+  Mail,
+  Zap,
+  Code2,
+  Globe,
+  ArrowUpRight,
+  Cpu,
 } from "lucide-react";
 import { useI18n } from "@/client/components/common/I18nContext";
 
+interface SocialLink {
+  readonly key: string;
+  readonly Icon: React.ComponentType<{ size?: number; className?: string }>;
+  readonly href: string;
+}
+
+const socialLinks: readonly SocialLink[] = [
+  { key: "Facebook", Icon: Globe, href: "#" },
+  { key: "Twitter", Icon: Globe, href: "#" },
+  { key: "GitHub", Icon: Code2, href: "#" },
+];
+
+const techBadges = [
+  { title: "HTML5", desc: "Semantic markup", icon: Code2 },
+  { title: "CSS3", desc: "Modern styling", icon: Zap },
+  { title: "JavaScript", desc: "Interactive", icon: Cpu },
+  { title: "Bootstrap 5", desc: "Responsive grid", icon: Globe },
+] as const;
+
 /**
- * Footer
- * 
- * Global footer component for the storefront application.
- * Contains branding, navigation links, legal information, and payment methods.
- * Ensures high z-index to stay above background layers.
+ * Site footer on the Spec Sheet paper theme.
  *
- * @returns The rendered footer section
+ * Uses a light paper background so the brand logo keeps its original navy
+ * colours and the footer stays consistent with the rest of the storefront.
+ *
+ * @returns Footer element.
  */
-export function Footer() {
-  const { dict, locale } = useI18n();
+export function Footer(): React.JSX.Element {
+  const { dict } = useI18n();
+  const f = (dict?.footer as { readonly [key: string]: string }) ?? {};
 
   const quickLinks = [
-    { label: dict?.footer?.home || (locale === "vi" ? "Trang chủ" : "Home"), href: ROUTES.HOME },
-    { label: dict?.footer?.templates || (locale === "vi" ? "Kho Template" : "Templates"), href: ROUTES.SHOP },
-    { label: dict?.footer?.aboutUs || (locale === "vi" ? "Về KhoUI" : "About KhoUI"), href: "#advantages" },
-    { label: dict?.footer?.contact || (locale === "vi" ? "Liên hệ hỗ trợ" : "Technical Support"), href: "mailto:khoui.gmail@gmail.com" },
+    { label: f.templates || "Templates", href: "/shop" },
+    { label: f.aboutUs || "About", href: "/" },
+    { label: f.contact || "Contact", href: "mailto:khoui.gmail@gmail.com" },
   ];
 
   const menuLinks = [
-    { label: "Landing Page", href: `${ROUTES.SHOP}?category=landing-page` },
-    { label: "E-Commerce", href: `${ROUTES.SHOP}?category=e-commerce` },
-    { label: "Admin Dashboard", href: `${ROUTES.SHOP}?category=admin-dashboard` },
-    { label: "Portfolio", href: `${ROUTES.SHOP}?category=portfolio` },
-    { label: locale === "vi" ? "Mẫu miễn phí" : "Free Templates", href: `${ROUTES.SHOP}?category=free` },
+    { label: f.webTemplates || "Web Templates", href: "/shop?category=ecommerce" },
+    { label: f.portfolio || "Portfolio", href: "/shop?category=portfolio" },
+    { label: f.dashboards || "Dashboards", href: "/shop?category=saas" },
+    { label: f.components || "Components", href: "/shop?category=fintech" },
   ];
 
   const contactInfo = [
-    { icon: MapPin, label: dict?.footer?.addressLabel || (locale === "vi" ? "Địa chỉ" : "Address"), value: dict?.footer?.addressValue || "TP. Hồ Chí Minh, Việt Nam" },
-    { icon: Phone, label: dict?.footer?.phoneLabel || (locale === "vi" ? "Hotline" : "Hotline"), value: dict?.nav?.contactPhone || "0987 654 321" },
-    { icon: Mail, label: dict?.footer?.emailLabel || (locale === "vi" ? "Email" : "Email"), value: dict?.nav?.contactEmail || "khoui.gmail@gmail.com" },
-    { icon: Clock, label: dict?.footer?.supportLabel || (locale === "vi" ? "Hỗ trợ" : "Fulfillment"), value: dict?.footer?.supportValue || "Tự động bàn giao 24/7" },
-  ];
-
-  const socialLinks = [
-    { key: "facebook", Icon: Globe, href: "#" },
-    { key: "instagram", Icon: Camera, href: "#" },
-    { key: "twitter", Icon: MessageCircle, href: "#" },
-    { key: "youtube", Icon: Play, href: "#" },
-  ];
-
-  const techBadges = [
-    { icon: Code2, title: locale === "vi" ? "HTML5 & CSS3 Chuẩn W3C" : "W3C Valid HTML5 & CSS3", desc: locale === "vi" ? "Cấu trúc sạch, chuẩn semantic" : "Semantic & Clean Code" },
-    { icon: Layers, title: locale === "vi" ? "Bootstrap 5 & Responsive" : "Bootstrap 5 & Responsive", desc: locale === "vi" ? "Tương thích 100% mọi màn hình" : "100% Mobile & Desktop Ready" },
-    { icon: Zap, title: locale === "vi" ? "Thanh Toán VietQR Tự Động" : "Instant VietQR Automated Pay", desc: locale === "vi" ? "Tải file .zip tức thì sau 3 giây" : "Automated .ZIP Delivery" },
-    { icon: ShieldCheck, title: locale === "vi" ? "Dễ Dàng Tùy Biến" : "Easy to Customize", desc: locale === "vi" ? "Tương thích mọi Backend & CMS" : "Ready for WordPress, Laravel..." },
+    { label: f.emailLabel || "Email", value: "khoui.gmail@gmail.com", icon: Mail },
+    { label: f.phoneLabel || "Phone", value: "0987 654 321", icon: Phone },
+    { label: f.addressLabel || "Address", value: "Ho Chi Minh City, Vietnam", icon: MapPin },
   ];
 
   return (
-    <footer className="relative z-[10] bg-slate-950 text-white border-t border-slate-800/40 mt-auto font-sans">
-      
-      {/* ─── Technology & Quality Trust Bar ─── */}
-      <div className="border-b border-slate-900 bg-slate-900/40 py-6">
-        <div className="max-w-[1360px] mx-auto px-6 sm:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
-            {techBadges.map((badge, idx) => {
-              const Icon = badge.icon;
-              return (
-                <div key={idx} className="flex items-center gap-3 p-2.5 rounded-xl bg-white/[0.02] border border-slate-800/40">
-                  <div className="w-8 h-8 rounded-lg bg-primary/15 text-primary flex items-center justify-center flex-shrink-0">
-                    <Icon size={16} />
-                  </div>
-                  <div>
-                    <h5 className="font-semibold text-xs text-white leading-tight">{badge.title}</h5>
-                    <p className="text-[10px] text-slate-400 font-normal mt-0.5">{badge.desc}</p>
-                  </div>
+    <footer className="relative z-[10] mt-auto overflow-hidden border-t border-border bg-background text-dark">
+      {/* Capability strip */}
+      <div className="border-b border-border">
+        <div className="mx-auto grid max-w-[1440px] grid-cols-2 gap-px bg-border px-0 md:grid-cols-4">
+          {techBadges.map((badge, index) => {
+            const Icon = badge.icon;
+            return (
+              <div key={badge.title} className="flex items-start gap-3 bg-surface px-5 py-5 sm:px-8">
+                <span className="mono-meta mt-0.5 text-[9px] text-dark/30">{String(index + 1).padStart(2, "0")}</span>
+                <Icon size={15} className="mt-0.5 shrink-0 text-primary" />
+                <div>
+                  <p className="text-[12px] font-semibold leading-tight text-dark">{badge.title}</p>
+                  <p className="mt-1 text-[11px] leading-snug text-dark/45">{badge.desc}</p>
                 </div>
-              );
-            })}
-          </div>
+              </div>
+            );
+          })}
         </div>
       </div>
 
-      {/* ─── Main Footer ─── */}
-      <div className="max-w-[1360px] mx-auto px-6 sm:px-8 py-12">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
-          
-          {/* Brand Column */}
-          <div className="space-y-3">
-            <Link href={ROUTES.HOME} className="inline-block">
-              <Image src="/LogoKhoUI.png" alt="KhoUI Logo" width={120} height={40} className="h-9 w-auto object-contain mb-1.5" />
+      {/* Main columns */}
+      <div className="mx-auto max-w-[1440px] px-5 py-14 sm:px-8">
+        <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-12">
+          {/* Brand */}
+          <div className="lg:col-span-5">
+            <Link href={ROUTES.HOME} className="group inline-flex items-center gap-2">
+              <Image
+                src="/LogoKhoUI.png"
+                alt="KhoUI"
+                width={120}
+                height={36}
+                className="h-8 w-auto object-contain transition-transform duration-300 group-hover:scale-[1.03]"
+              />
             </Link>
-            <p className="text-slate-400 text-xs leading-relaxed max-w-sm font-normal">
-              {dict?.footer?.brandDesc || (locale === "vi" ? "Kho mẫu template website tĩnh (HTML5, CSS3, JavaScript, Bootstrap) chất lượng cao. Sở hữu và tải về trọn bộ file giao diện (.zip) ngay lập tức." : "High-quality static website templates (HTML5, CSS3, JavaScript, Bootstrap). Download full template .zip packages instantly upon payment.")}
-            </p>
-            <div className="flex gap-2 pt-1">
+            <p className="mono-meta mt-3 text-[9px] text-dark/35">{f.tagline}</p>
+            <p className="mt-5 max-w-sm text-[12.5px] leading-relaxed text-dark/55">{f.brandDesc}</p>
+            <div className="mt-6 flex gap-2">
               {socialLinks.map(({ key, Icon, href }) => (
                 <Link
                   key={key}
                   href={href}
-                  className="w-8 h-8 rounded-lg bg-slate-900 border border-slate-800/60 flex items-center justify-center text-slate-400 hover:bg-primary hover:text-white transition-colors"
                   aria-label={key}
+                  className="flex h-8 w-8 items-center justify-center border border-border text-dark/55 transition-colors hover:border-primary hover:bg-primary hover:text-background"
                 >
-                  <Icon size={14} />
+                  <Icon size={13} />
                 </Link>
               ))}
             </div>
           </div>
 
-          {/* Quick Links */}
-          <div>
-            <h4 className="text-white text-xs font-semibold uppercase tracking-wider mb-4">
-              {dict?.footer?.quickLinks || (locale === "vi" ? "Liên kết nhanh" : "Quick Links")}
-            </h4>
-            <ul className="list-none space-y-2">
+          {/* Quick links */}
+          <div className="lg:col-span-2">
+            <h4 className="mono-meta mb-4 text-[9px] text-dark/35">{f.quickLinks}</h4>
+            <ul className="space-y-2.5">
               {quickLinks.map((link) => (
                 <li key={link.label}>
                   <Link
                     href={link.href}
-                    className="text-slate-400 text-xs flex items-center gap-1 hover:text-primary transition-colors font-normal"
+                    className="link-underline inline-flex items-center gap-1 text-[12.5px] text-dark/70 transition-colors hover:text-dark"
                   >
-                    <ChevronRight size={12} className="text-slate-600" />
                     <span>{link.label}</span>
                   </Link>
                 </li>
@@ -139,19 +133,16 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Menu Links */}
-          <div>
-            <h4 className="text-white text-xs font-semibold uppercase tracking-wider mb-4">
-              {dict?.footer?.categories || (locale === "vi" ? "Danh mục template" : "Categories")}
-            </h4>
-            <ul className="list-none space-y-2">
+          {/* Categories */}
+          <div className="lg:col-span-2">
+            <h4 className="mono-meta mb-4 text-[9px] text-dark/35">{f.categories}</h4>
+            <ul className="space-y-2.5">
               {menuLinks.map((link) => (
                 <li key={link.label}>
                   <Link
                     href={link.href}
-                    className="text-slate-400 text-xs flex items-center gap-1 hover:text-primary transition-colors font-normal"
+                    className="link-underline inline-flex items-center gap-1 text-[12.5px] text-dark/70 transition-colors hover:text-dark"
                   >
-                    <ChevronRight size={12} className="text-slate-600" />
                     <span>{link.label}</span>
                   </Link>
                 </li>
@@ -159,45 +150,50 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Contact Info */}
-          <div>
-            <h4 className="text-white text-xs font-semibold uppercase tracking-wider mb-4">
-              {dict?.footer?.getInTouch || (locale === "vi" ? "Thông tin liên hệ" : "Get In Touch")}
-            </h4>
-            <div className="space-y-3">
+          {/* Contact */}
+          <div className="lg:col-span-3">
+            <h4 className="mono-meta mb-4 text-[9px] text-dark/35">{f.getInTouch}</h4>
+            <div className="space-y-3.5">
               {contactInfo.map((item) => (
                 <div key={item.label} className="flex items-start gap-2.5">
-                  <div className="w-7 h-7 rounded-md bg-primary/10 text-primary flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <item.icon size={13} />
-                  </div>
+                  <item.icon size={13} className="mt-0.5 shrink-0 text-primary" />
                   <div>
-                    <strong className="block text-slate-500 text-[10px] uppercase tracking-wider font-normal">
-                      {item.label}
-                    </strong>
-                    <span className="text-slate-200 text-xs font-medium">{item.value}</span>
+                    <span className="mono-meta block text-[8.5px] text-dark/35">{item.label}</span>
+                    <span className="mt-1 block text-[12px] font-medium text-dark/80">{item.value}</span>
                   </div>
                 </div>
               ))}
             </div>
-          </div>
-
-        </div>
-      </div>
-
-      {/* ─── Bottom Copyright Bar ─── */}
-      <div className="border-t border-slate-900 py-4 bg-slate-950">
-        <div className="max-w-[1360px] mx-auto px-6 sm:px-8 flex flex-col sm:flex-row justify-between items-center gap-2 text-xs text-slate-500 font-normal">
-          <p>
-            &copy; {dict?.footer?.copyright || "2026 KhoUI. Bảo lưu mọi quyền."}
-          </p>
-          <div className="flex gap-5 text-[11px]">
-            <Link href="#" className="hover:text-slate-300 transition-colors">{dict?.footer?.privacyPolicy || "Chính sách bảo mật"}</Link>
-            <Link href="#" className="hover:text-slate-300 transition-colors">{dict?.footer?.terms || "Điều khoản dịch vụ"}</Link>
-            <Link href="#" className="hover:text-slate-300 transition-colors">{dict?.footer?.cookies || "Bản quyền giấy phép"}</Link>
+            <Link
+              href="mailto:khoui.gmail@gmail.com"
+              className="mt-5 inline-flex items-center gap-1.5 border border-border px-3 py-2 text-[11px] font-semibold text-dark transition-colors hover:border-primary hover:bg-primary hover:text-background"
+            >
+              <span>{f.supportCta}</span>
+              <ArrowUpRight size={12} />
+            </Link>
           </div>
         </div>
       </div>
 
+      {/* Bottom bar */}
+      <div className="border-t border-border">
+        <div className="mx-auto flex max-w-[1440px] flex-col items-start justify-between gap-3 px-5 py-4 text-[11px] text-dark/40 sm:flex-row sm:items-center sm:px-8">
+          <p>&copy; {f.copyright}</p>
+          <div className="flex flex-wrap gap-5">
+            <Link href="#" className="transition-colors hover:text-dark">{f.privacyPolicy}</Link>
+            <Link href="#" className="transition-colors hover:text-dark">{f.terms}</Link>
+            <Link href="#" className="transition-colors hover:text-dark">{f.cookies}</Link>
+          </div>
+        </div>
+      </div>
+
+      {/* Running accent line */}
+      <span
+        aria-hidden="true"
+        className="pointer-events-none absolute bottom-0 left-0 h-px w-1/3 bg-gradient-to-r from-transparent via-primary to-transparent animate-line-run motion-reduce:animate-none"
+      />
     </footer>
   );
 }
+
+export default Footer;

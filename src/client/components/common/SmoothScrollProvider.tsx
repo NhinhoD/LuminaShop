@@ -72,6 +72,9 @@ export function SmoothScrollProvider({ children }: SmoothScrollProviderProps): R
       startLenis();
     }
 
+    // Keep pinned/scrub measurements stable on mobile browser chrome resize.
+    ScrollTrigger.config({ ignoreMobileResize: true });
+
     // React dynamically to system accessibility setting toggles
     const handleMotionPreferenceChange = (event: MediaQueryListEvent) => {
       if (event.matches) {
@@ -96,7 +99,31 @@ export function SmoothScrollProvider({ children }: SmoothScrollProviderProps): R
     } else {
       window.scrollTo(0, 0);
     }
+
+    const frame = window.requestAnimationFrame(() => {
+      ScrollTrigger.refresh();
+    });
+
+    return () => window.cancelAnimationFrame(frame);
   }, [pathname]);
+
+  // Re-measure once webfonts and the initial images settle.
+  useEffect(() => {
+    let active = true;
+    const refresh = () => {
+      if (active) ScrollTrigger.refresh();
+    };
+
+    if (typeof document.fonts !== "undefined") {
+      document.fonts.ready.then(refresh).catch(() => undefined);
+    }
+    window.addEventListener("load", refresh);
+
+    return () => {
+      active = false;
+      window.removeEventListener("load", refresh);
+    };
+  }, []);
 
   return <>{children}</>;
 }
