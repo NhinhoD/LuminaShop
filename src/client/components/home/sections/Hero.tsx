@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState } from "react";
 import gsap from "gsap";
 import { ArrowDown, ArrowUpRight, Star } from "lucide-react";
 
@@ -142,15 +142,11 @@ export function Hero({ dict, locale, specimens, totalTemplates }: HeroProps): Re
   const ref = useRef<HTMLElement>(null);
   const ui = dict.homeUi;
   const [isPaused, setIsPaused] = useState(false);
-  const [reducedMotion, setReducedMotion] = useState(false);
+  const [reducedMotion] = useState(
+    () => typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches
+  );
   const controlsRef = useRef<{ toggle: () => void } | null>(null);
   const userPausedRef = useRef(false);
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      setReducedMotion(window.matchMedia("(prefers-reduced-motion: reduce)").matches);
-    }
-  }, []);
 
   useGsapEffect((scope) => {
     const mm = gsap.matchMedia();
