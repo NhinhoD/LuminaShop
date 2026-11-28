@@ -57,7 +57,8 @@ export function CategoryIndex({
       const yTo = gsap.quickTo(preview, "y", { duration: 0.5, ease: "power3.out" });
 
       const handleMove = (event: PointerEvent) => {
-        const rect = scope.getBoundingClientRect();
+        const wrapper = preview?.parentElement;
+        const rect = (wrapper ?? scope).getBoundingClientRect();
         xTo(event.clientX - rect.left + 28);
         yTo(event.clientY - rect.top - 90);
       };
@@ -109,7 +110,7 @@ export function CategoryIndex({
           <div
             ref={previewRef}
             aria-hidden="true"
-            className={`pointer-events-none absolute left-0 top-0 z-20 hidden w-[220px] overflow-hidden border border-dark bg-surface shadow-[0_24px_60px_-32px_rgba(11,11,15,0.6)] lg:block ${
+            className={`pointer-events-none absolute left-0 top-0 z-20 hidden w-[220px] overflow-hidden border border-dark bg-surface lg:block ${
               previewSrc ? "" : "invisible"
             }`}
           >
@@ -128,9 +129,17 @@ export function CategoryIndex({
                 type="button"
                 data-reveal
                 onClick={() => onSelect(category.filter)}
-                onMouseEnter={() => setHovered(category.filter)}
+                onMouseEnter={() => {
+                  if (window.matchMedia("(pointer: fine) and (prefers-reduced-motion: no-preference)").matches) {
+                    setHovered(category.filter);
+                  }
+                }}
                 onMouseLeave={() => setHovered(null)}
-                onFocus={() => setHovered(category.filter)}
+                onFocus={() => {
+                  if (window.matchMedia("(pointer: fine) and (prefers-reduced-motion: no-preference)").matches) {
+                    setHovered(category.filter);
+                  }
+                }}
                 onBlur={() => setHovered(null)}
                 aria-pressed={isActive}
                 className={`group grid w-full grid-cols-[2.25rem_1fr_auto] items-center gap-3 border-t border-border py-5 text-left transition-colors sm:grid-cols-[3rem_1fr_9rem_auto] sm:gap-5 ${
@@ -151,12 +160,12 @@ export function CategoryIndex({
                   </span>
                 </span>
 
-                <span className="mono-meta hidden text-[9px] text-dark/40 group-hover:text-background/45 sm:block">
+                <span className={`mono-meta hidden text-[9px] sm:block ${isActive ? "text-background/70" : "text-dark/40 group-hover:text-background/45"}`}>
                   {category.count}
                 </span>
 
                 <span className="flex items-center gap-4">
-                  <span className="mono-meta text-[9px] text-dark/40 group-hover:text-background/45 sm:hidden">
+                  <span className={`mono-meta text-[9px] sm:hidden ${isActive ? "text-background/70" : "text-dark/40 group-hover:text-background/45"}`}>
                     {category.count}
                   </span>
                   <ArrowUpRight

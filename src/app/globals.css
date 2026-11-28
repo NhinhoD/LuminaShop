@@ -25,14 +25,14 @@
   --font-display: var(--font-archivo), "Archivo", ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-plex-mono), "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
 
-  --radius-card: 6px;
-  --radius-control: 4px;
+  --radius-card: 0;
+  --radius-control: 0;
 
   --spacing-gutter: 24px;
-  --shadow-subtle: 0 1px 0 rgba(11, 11, 15, 0.06);
-  --shadow-card: 0 1px 0 rgba(11, 11, 15, 0.06), 0 18px 40px -32px rgba(11, 11, 15, 0.45);
-  --shadow-card-hover: 0 1px 0 rgba(11, 11, 15, 0.1), 0 26px 48px -30px rgba(11, 11, 15, 0.5);
-  --shadow-glow: 0 0 0 3px rgba(27, 42, 255, 0.18);
+  --shadow-subtle: none;
+  --shadow-card: none;
+  --shadow-card-hover: none;
+  --shadow-glow: none;
 }
 
 @layer base {
@@ -250,23 +250,19 @@
 
 /* ─── Surfaces ─── */
 .glass-header {
-  background: rgba(242, 240, 234, 0.9);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  background: var(--color-background);
+  border-bottom: 1px solid var(--color-border);
 }
 
 .glass-card {
-  background: rgba(251, 250, 246, 0.92);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background: var(--color-surface);
   border: 1px solid var(--color-border);
 }
 
 .glass-dark {
-  background: rgba(11, 11, 15, 0.92);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border: 1px solid rgba(242, 240, 234, 0.12);
+  background: var(--color-dark);
+  border: 1px solid var(--color-border);
+  color: var(--color-background);
 }
 
 .card-hover-lift {

@@ -108,7 +108,7 @@ export function GlobalLoadingIndicator(): React.JSX.Element | null {
       </div>
 
       {/* Floating status chip */}
-      <div className="absolute right-4 top-3 flex items-center gap-2 border border-border bg-surface px-2.5 py-1.5 shadow-sm sm:right-6">
+      <div className="absolute right-4 top-3 flex items-center gap-2 border border-border bg-surface px-2.5 py-1.5 sm:right-6">
         <Loader2 className="h-3 w-3 animate-spin text-primary motion-reduce:animate-none" />
         <span className="mono-meta text-[7.5px] text-dark/60">
           {dict?.common?.loading || (locale === "vi" ? "Đang tải..." : "Loading...")}
